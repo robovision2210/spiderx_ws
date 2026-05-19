@@ -1,0 +1,847 @@
+<?xml version="1.0" ?>
+<robot name="spiderx" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find spiderx_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find spiderx_description)/urdf/spiderx.trans" />
+<xacro:include filename="$(find spiderx_description)/urdf/spiderx.gazebo" />
+
+<link name="dummy_link">
+</link>
+
+<joint name="dummy_joint" type="fixed">
+  <parent link="dummy_link"/>
+  <child link="base_link"/>
+</joint>
+
+<link name="base_link">
+  <inertial>
+    <origin xyz="0.05100000000000491 -0.04499999999999987 0.0924979814706024" rpy="0 0 0"/>
+    <mass value="0.7776425370322263"/>
+    <inertia ixx="0.001511" iyy="0.001544" izz="0.0026" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="b_s4_1">
+  <inertial>
+    <origin xyz="0.005 -0.010335860777646774 -0.02396530677100231" rpy="0 0 0"/>
+    <mass value="0.2623017408147158"/>
+    <inertia ixx="7.3e-05" iyy="4.6e-05" izz="4.5e-05" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.005 -0.0024 -0.091" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s4_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.005 -0.0024 -0.091" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s4_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="b_s1_1">
+  <inertial>
+    <origin xyz="-0.005000000000000088 0.010335860777646755 -0.02396530677100231" rpy="0 0 0"/>
+    <mass value="0.2623017408147158"/>
+    <inertia ixx="7.3e-05" iyy="4.6e-05" izz="4.5e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.097 0.0924 -0.091" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.097 0.0924 -0.091" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="b_s2_1">
+  <inertial>
+    <origin xyz="-0.0050000000000000044 -0.01033586077764674 -0.02396530677100231" rpy="0 0 0"/>
+    <mass value="0.2623017408147158"/>
+    <inertia ixx="7.3e-05" iyy="4.6e-05" izz="4.5e-05" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.097 -0.0024 -0.091" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.097 -0.0024 -0.091" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="b_s3_1">
+  <inertial>
+    <origin xyz="-0.005000000000000011 0.010335860777646755 -0.023965306771002323" rpy="0 0 0"/>
+    <mass value="0.2623017408147158"/>
+    <inertia ixx="7.3e-05" iyy="4.6e-05" izz="4.5e-05" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.015 0.0924 -0.091" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.015 0.0924 -0.091" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="b_s1_c_horn_1">
+  <inertial>
+    <origin xyz="1.9542700790964318e-13 0.0002969285186710108 -9.71445146547012e-17" rpy="0 0 0"/>
+    <mass value="0.004911019644749942"/>
+    <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="-0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.092 0.1061 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s1_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.092 0.1061 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s1_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="b_s3_c_horn_1">
+  <inertial>
+    <origin xyz="1.9533680228889239e-13 0.00029692851867103853 -1.249000902703301e-16" rpy="0 0 0"/>
+    <mass value="0.004911019644749942"/>
+    <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="-0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.01 0.1061 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s3_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.01 0.1061 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s3_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="b_s2_c_horn_1">
+  <inertial>
+    <origin xyz="1.9531598560718066e-13 -0.000296928518671042 -1.1102230246251565e-16" rpy="0 0 0"/>
+    <mass value="0.004911019644749942"/>
+    <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.092 -0.0161 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s2_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.092 -0.0161 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s2_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="b_s4_c_horn_1">
+  <inertial>
+    <origin xyz="1.9534547590627227e-13 -0.00029692851867095527 -9.71445146547012e-17" rpy="0 0 0"/>
+    <mass value="0.004911019644749942"/>
+    <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.01 -0.0161 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s4_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.01 -0.0161 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/b_s4_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rr_holder_suppor1_1">
+  <inertial>
+    <origin xyz="0.008851885054504613 -0.004307212814628245 2.7755575615628914e-17" rpy="0 0 0"/>
+    <mass value="0.10814549917555419"/>
+    <inertia ixx="2.7e-05" iyy="4e-05" izz="1.5e-05" ixy="1e-06" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.092 0.1051 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_holder_suppor1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.092 0.1051 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_holder_suppor1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lr_holder_suppor1_1">
+  <inertial>
+    <origin xyz="-0.008851885054504538 -0.004307212814628217 -4.163336342344337e-17" rpy="0 0 0"/>
+    <mass value="0.10814549917555413"/>
+    <inertia ixx="2.7e-05" iyy="4e-05" izz="1.5e-05" ixy="-1e-06" iyz="-0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.01 0.1051 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_holder_suppor1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.01 0.1051 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_holder_suppor1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rf_holder_suppor1_1">
+  <inertial>
+    <origin xyz="0.008851885054504585 0.004307212814628305 0.0" rpy="0 0 0"/>
+    <mass value="0.10814549917555413"/>
+    <inertia ixx="2.7e-05" iyy="4e-05" izz="1.5e-05" ixy="-1e-06" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.092 -0.0151 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_holder_suppor1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.092 -0.0151 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_holder_suppor1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lf_holder_suppor1_1">
+  <inertial>
+    <origin xyz="-0.008851885054504523 0.004307212814628288 2.7755575615628914e-17" rpy="0 0 0"/>
+    <mass value="0.10814549917555416"/>
+    <inertia ixx="2.7e-05" iyy="4e-05" izz="1.5e-05" ixy="1e-06" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.01 -0.0151 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_holder_suppor1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.01 -0.0151 -0.07725" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_holder_suppor1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rr_holder_1">
+  <inertial>
+    <origin xyz="-0.009722803880234943 -0.024000000000009333 -0.01649999999999563" rpy="0 0 0"/>
+    <mass value="0.5981499101455445"/>
+    <inertia ixx="0.000212" iyy="0.000186" izz="0.000174" ixy="0.0" iyz="-1e-06" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.112 0.1151 -0.09375" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_holder_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.112 0.1151 -0.09375" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_holder_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rf_holder_1">
+  <inertial>
+    <origin xyz="-0.009722803880234818 0.023999999999990567 -0.01649999999999563" rpy="0 0 0"/>
+    <mass value="0.5981499101455445"/>
+    <inertia ixx="0.000212" iyy="0.000186" izz="0.000174" ixy="0.0" iyz="-1e-06" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.112 -0.0251 -0.09375" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_holder_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.112 -0.0251 -0.09375" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_holder_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lr_holder_1">
+  <inertial>
+    <origin xyz="0.009722803880234781 -0.02399999999999057 -0.01649999999999567" rpy="0 0 0"/>
+    <mass value="0.5981499101455445"/>
+    <inertia ixx="0.000212" iyy="0.000186" izz="0.000174" ixy="0.0" iyz="1e-06" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.01 0.1151 -0.09375" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_holder_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.01 0.1151 -0.09375" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_holder_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lf_holder_1">
+  <inertial>
+    <origin xyz="0.009722803880235074 0.02400000000000933 -0.01649999999999563" rpy="0 0 0"/>
+    <mass value="0.5981499101455445"/>
+    <inertia ixx="0.000212" iyy="0.000186" izz="0.000174" ixy="0.0" iyz="1e-06" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.01 -0.0251 -0.09375" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_holder_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.01 -0.0251 -0.09375" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_holder_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rr_c_horn_1">
+  <inertial>
+    <origin xyz="-0.0002969285186709414 1.3877787807814457e-16 -1.9548251906087444e-13" rpy="0 0 0"/>
+    <mass value="0.004911019644749942"/>
+    <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.1257 0.14935 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.1257 0.14935 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rr_thigh_1">
+  <inertial>
+    <origin xyz="0.009040884172903663 -0.03228680444260626 -0.03228053393594165" rpy="0 0 0"/>
+    <mass value="0.4204100883578535"/>
+    <inertia ixx="0.000532" iyy="0.000278" izz="0.000278" ixy="-1e-06" iyz="-0.000243" ixz="-1e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.1267 0.14935 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_thigh_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.1267 0.14935 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_thigh_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rf_c_horn_1">
+  <inertial>
+    <origin xyz="-0.00029692851867108017 1.9537843565231583e-13 -9.71445146547012e-17" rpy="0 0 0"/>
+    <mass value="0.004911019644749942"/>
+    <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.1257 -0.03885 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.1257 -0.03885 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lr_c_horn_1">
+  <inertial>
+    <origin xyz="0.00029692851867092057 1.9551027463649007e-13 -1.3877787807814457e-16" rpy="0 0 0"/>
+    <mass value="0.004911019644749942"/>
+    <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0237 0.14935 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0237 0.14935 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lf_c_horn_1">
+  <inertial>
+    <origin xyz="0.0002969285186709657 1.952465966681416e-13 -8.326672684688674e-17" rpy="0 0 0"/>
+    <mass value="0.004911019644749942"/>
+    <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0237 -0.03885 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0237 -0.03885 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_c_horn_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rf_thigh_1">
+  <inertial>
+    <origin xyz="0.009040884172903663 -0.03228680444260652 -0.03228053393594174" rpy="0 0 0"/>
+    <mass value="0.4204100883578536"/>
+    <inertia ixx="0.000532" iyy="0.000278" izz="0.000278" ixy="-1e-06" iyz="-0.000243" ixz="-1e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.1267 -0.03885 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_thigh_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.1267 -0.03885 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_thigh_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lr_thigh_1">
+  <inertial>
+    <origin xyz="-0.009040884172903704 -0.0322805339359416 -0.03228680444260654" rpy="0 0 0"/>
+    <mass value="0.42041008835785404"/>
+    <inertia ixx="0.000532" iyy="0.000278" izz="0.000278" ixy="1e-06" iyz="-0.000243" ixz="1e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0247 0.14935 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_thigh_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0247 0.14935 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_thigh_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lf_thigh_1">
+  <inertial>
+    <origin xyz="-0.009040884172903718 -0.03228053393594189 -0.032286804442606475" rpy="0 0 0"/>
+    <mass value="0.4204100883578538"/>
+    <inertia ixx="0.000532" iyy="0.000278" izz="0.000278" ixy="1e-06" iyz="-0.000243" ixz="1e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0247 -0.03885 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_thigh_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0247 -0.03885 -0.08875" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_thigh_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rf_foot_1">
+  <inertial>
+    <origin xyz="-0.0030000043174171764 0.03041164447313976 -0.0201697512788014" rpy="0 0 0"/>
+    <mass value="0.09755477017512412"/>
+    <inertia ixx="0.000178" iyy="6.1e-05" izz="0.000118" ixy="0.0" iyz="8.2e-05" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.1387 0.038932 -0.010968" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_foot_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.1387 0.038932 -0.010968" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rf_foot_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="rr_foot_1">
+  <inertial>
+    <origin xyz="-0.003000004317417232 0.030411644473140348 -0.02016975127880133" rpy="0 0 0"/>
+    <mass value="0.0975547701751245"/>
+    <inertia ixx="0.000178" iyy="6.1e-05" izz="0.000118" ixy="0.0" iyz="8.2e-05" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.1387 0.227132 -0.010968" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_foot_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.1387 0.227132 -0.010968" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/rr_foot_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lr_foot_1">
+  <inertial>
+    <origin xyz="-0.0030000043174173256 0.030411644473140154 -0.020169751278801495" rpy="0 0 0"/>
+    <mass value="0.0975547701751239"/>
+    <inertia ixx="0.000178" iyy="6.1e-05" izz="0.000118" ixy="0.0" iyz="8.2e-05" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0307 0.227132 -0.010968" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_foot_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0307 0.227132 -0.010968" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lr_foot_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lf_foot_1">
+  <inertial>
+    <origin xyz="0.00299999568258269 0.03041164447313985 -0.02016975127880144" rpy="0 0 0"/>
+    <mass value="0.09755477017512418"/>
+    <inertia ixx="0.000178" iyy="6.1e-05" izz="0.000118" ixy="0.0" iyz="8.2e-05" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0.0367 0.038932 -0.010968" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_foot_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0.0367 0.038932 -0.010968" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/lf_foot_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="top_1">
+  <inertial>
+    <origin xyz="-0.034999999999999996 8.743006318923108e-16 0.0020000000000000434" rpy="0 0 0"/>
+    <mass value="0.5252537896398041"/>
+    <inertia ixx="0.003404" iyy="0.000162" izz="0.003565" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.086 0.045 -0.107" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/top_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.086 0.045 -0.107" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find spiderx_description)/meshes/top_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="Rigid 1" type="fixed">
+  <origin xyz="0.005 0.0024 0.091" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="b_s4_1"/>
+</joint>
+
+<joint name="Rigid 2" type="fixed">
+  <origin xyz="0.097 -0.0924 0.091" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="b_s1_1"/>
+</joint>
+
+<joint name="Rigid 3" type="fixed">
+  <origin xyz="0.097 0.0024 0.091" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="b_s2_1"/>
+</joint>
+
+<joint name="Rigid 4" type="fixed">
+  <origin xyz="0.015 -0.0924 0.091" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="b_s3_1"/>
+</joint>
+
+<joint name="rr_hip" type="revolute">
+  <origin xyz="-0.005 -0.0137 -0.01375" rpy="0 0 0"/>
+  <parent link="b_s1_1"/>
+  <child link="b_s1_c_horn_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+  <limit upper="0.698132" lower="-0.610865" effort="100" velocity="100"/>
+</joint>
+
+<joint name="lr_hip" type="revolute">
+  <origin xyz="-0.005 -0.0137 -0.01375" rpy="0 0 0"/>
+  <parent link="b_s3_1"/>
+  <child link="b_s3_c_horn_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+  <limit upper="0.610865" lower="-0.698132" effort="100" velocity="100"/>
+</joint>
+
+<joint name="rf_hip" type="revolute">
+  <origin xyz="-0.005 0.0137 -0.01375" rpy="0 0 0"/>
+  <parent link="b_s2_1"/>
+  <child link="b_s2_c_horn_1"/>
+  <axis xyz="0.0 1.0 0.0"/>
+  <limit upper="0.610865" lower="-0.698132" effort="100" velocity="100"/>
+</joint>
+
+<joint name="lf_hip" type="revolute">
+  <origin xyz="0.005 0.0137 -0.01375" rpy="0 0 0"/>
+  <parent link="b_s4_1"/>
+  <child link="b_s4_c_horn_1"/>
+  <axis xyz="-0.0 1.0 -0.0"/>
+  <limit upper="0.698132" lower="-0.610865" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Rigid 9" type="fixed">
+  <origin xyz="0.0 0.001 0.0" rpy="0 0 0"/>
+  <parent link="b_s1_c_horn_1"/>
+  <child link="rr_holder_suppor1_1"/>
+</joint>
+
+<joint name="Rigid 10" type="fixed">
+  <origin xyz="0.0 0.001 0.0" rpy="0 0 0"/>
+  <parent link="b_s3_c_horn_1"/>
+  <child link="lr_holder_suppor1_1"/>
+</joint>
+
+<joint name="Rigid 11" type="fixed">
+  <origin xyz="0.0 -0.001 0.0" rpy="0 0 0"/>
+  <parent link="b_s2_c_horn_1"/>
+  <child link="rf_holder_suppor1_1"/>
+</joint>
+
+<joint name="Rigid 12" type="fixed">
+  <origin xyz="0.0 -0.001 0.0" rpy="0 0 0"/>
+  <parent link="b_s4_c_horn_1"/>
+  <child link="lf_holder_suppor1_1"/>
+</joint>
+
+<joint name="Rigid 13" type="fixed">
+  <origin xyz="0.02 -0.01 0.0165" rpy="0 0 0"/>
+  <parent link="rr_holder_suppor1_1"/>
+  <child link="rr_holder_1"/>
+</joint>
+
+<joint name="Rigid 14" type="fixed">
+  <origin xyz="0.02 0.01 0.0165" rpy="0 0 0"/>
+  <parent link="rf_holder_suppor1_1"/>
+  <child link="rf_holder_1"/>
+</joint>
+
+<joint name="Rigid 15" type="fixed">
+  <origin xyz="-0.02 -0.01 0.0165" rpy="0 0 0"/>
+  <parent link="lr_holder_suppor1_1"/>
+  <child link="lr_holder_1"/>
+</joint>
+
+<joint name="Rigid 16" type="fixed">
+  <origin xyz="-0.02 0.01 0.0165" rpy="0 0 0"/>
+  <parent link="lf_holder_suppor1_1"/>
+  <child link="lf_holder_1"/>
+</joint>
+
+<joint name="rr_thigh_joint" type="revolute">
+  <origin xyz="0.0137 -0.03425 -0.005" rpy="0 0 0"/>
+  <parent link="rr_holder_1"/>
+  <child link="rr_c_horn_1"/>
+  <axis xyz="1.0 0.0 -0.0"/>
+  <limit upper="0.610865" lower="-0.785398" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Rigid 18" type="fixed">
+  <origin xyz="0.001 0.0 0.0" rpy="0 0 0"/>
+  <parent link="rr_c_horn_1"/>
+  <child link="rr_thigh_1"/>
+</joint>
+
+<joint name="rf_thigh_joint" type="revolute">
+  <origin xyz="0.0137 0.01375 -0.005" rpy="0 0 0"/>
+  <parent link="rf_holder_1"/>
+  <child link="rf_c_horn_1"/>
+  <axis xyz="1.0 -0.0 0.0"/>
+  <limit upper="0.610865" lower="-0.785398" effort="100" velocity="100"/>
+</joint>
+
+<joint name="lr_thigh_joint" type="revolute">
+  <origin xyz="-0.0137 -0.03425 -0.005" rpy="0 0 0"/>
+  <parent link="lr_holder_1"/>
+  <child link="lr_c_horn_1"/>
+  <axis xyz="-1.0 0.0 -0.0"/>
+  <limit upper="0.785398" lower="-0.610865" effort="100" velocity="100"/>
+</joint>
+
+<joint name="lf_thigh_joint" type="revolute">
+  <origin xyz="-0.0137 0.01375 -0.005" rpy="0 0 0"/>
+  <parent link="lf_holder_1"/>
+  <child link="lf_c_horn_1"/>
+  <axis xyz="-1.0 0.0 0.0"/>
+  <limit upper="0.785398" lower="-0.610865" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Rigid 23" type="fixed">
+  <origin xyz="0.001 0.0 0.0" rpy="0 0 0"/>
+  <parent link="rf_c_horn_1"/>
+  <child link="rf_thigh_1"/>
+</joint>
+
+<joint name="Rigid 24" type="fixed">
+  <origin xyz="-0.001 0.0 0.0" rpy="0 0 0"/>
+  <parent link="lr_c_horn_1"/>
+  <child link="lr_thigh_1"/>
+</joint>
+
+<joint name="Rigid 25" type="fixed">
+  <origin xyz="-0.001 0.0 0.0" rpy="0 0 0"/>
+  <parent link="lf_c_horn_1"/>
+  <child link="lf_thigh_1"/>
+</joint>
+
+<joint name="rf_foot_joint" type="revolute">
+  <origin xyz="0.012 -0.077782 -0.077782" rpy="0 0 0"/>
+  <parent link="rf_thigh_1"/>
+  <child link="rf_foot_1"/>
+  <axis xyz="-1.0 -0.0 -0.0"/>
+  <limit upper="0.698132" lower="-0.436332" effort="100" velocity="100"/>
+</joint>
+
+<joint name="rr_foot_joint" type="revolute">
+  <origin xyz="0.012 -0.077782 -0.077782" rpy="0 0 0"/>
+  <parent link="rr_thigh_1"/>
+  <child link="rr_foot_1"/>
+  <axis xyz="-1.0 -0.0 0.0"/>
+  <limit upper="0.698132" lower="-0.436332" effort="100" velocity="100"/>
+</joint>
+
+<joint name="lr_foot_joint" type="revolute">
+  <origin xyz="-0.006 -0.077782 -0.077782" rpy="0 0 0"/>
+  <parent link="lr_thigh_1"/>
+  <child link="lr_foot_1"/>
+  <axis xyz="-1.0 0.0 -0.0"/>
+  <limit upper="0.698132" lower="-0.436332" effort="100" velocity="100"/>
+</joint>
+
+<joint name="lf_foot_joint" type="revolute">
+  <origin xyz="-0.012 -0.077782 -0.077782" rpy="0 0 0"/>
+  <parent link="lf_thigh_1"/>
+  <child link="lf_foot_1"/>
+  <axis xyz="1.0 -0.0 -0.0"/>
+  <limit upper="0.436332" lower="-0.698132" effort="100" velocity="100"/>
+</joint>
+
+<joint name="Rigid 31" type="fixed">
+  <origin xyz="0.086 -0.045 0.107" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="top_1"/>
+</joint>
+
+
+
+
+</robot>
