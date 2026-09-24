@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>spiderx_description</name>
-  <version>0.0.1</version>
-  <description>SpiderX Quadruped Robot - URDF, meshes and Gazebo config</description>
-  <maintainer email="jagadeswar@gmail.com">Jagadeswar</maintainer>
+  <name>spiderx_bringup</name>
+  <version>0.0.0</version>
+  <description>SpiderX bringup package</description>
+  <maintainer email="pssjagadeswar22@gmail.com">jagadeswar</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>urdf</depend>
-  <depend>xacro</depend>
+  <depend>spiderx_description</depend>
+  <depend>spiderx_mapping</depend>
+  <depend>spiderx_localization</depend>
+  <depend>spiderx_navigation</depend>
+  <depend>gazebo_ros</depend>
   <depend>robot_state_publisher</depend>
   <depend>joint_state_publisher</depend>
-  <depend>joint_state_publisher_gui</depend>
-  <depend>rviz2</depend>
-  <depend>ros2_control</depend>
-  <depend>ros2_controllers</depend>
-  <depend>gazebo_ros</depend>
-  <depend>gazebo_ros2_control</depend>
+  <depend>xacro</depend>
+  <depend>nav2_bringup</depend>
+  <depend>rplidar_ros</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
