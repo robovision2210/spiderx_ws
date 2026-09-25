@@ -17,15 +17,20 @@ M0 model + sim  ─►  M1 joint control  ─►  M2 stand  ─►  M3 FK/IK  �
 - [x] Leg and joint groups validated against the URDF (`spiderx_controller`)
 - [x] Validated locally on Ubuntu 22.04
 
-## M1 – Joint position control in simulation
+## M1 – Joint position control in simulation ✅ done (cloud + local)
+
+See [`M1_JOINT_POSITION_CONTROL_GUIDE.md`](M1_JOINT_POSITION_CONTROL_GUIDE.md) and [`M1_TEST_RESULTS.md`](M1_TEST_RESULTS.md).
 
 1. Add a Fortress `<ros2_control>` block to `spiderx_fortress.gazebo.xacro`, using the `gz_ros2_control/GazeboSimSystem` hardware plugin and the `gz_ros2_control-system` Gazebo plugin.
 2. Load `spiderx_controller/config/spiderx_ros2_controllers.yaml` (`joint_state_broadcaster` and `leg_trajectory_controller`).
 3. Replace the URDF effort/velocity placeholders (100 N·m, 100 rad/s) with servo datasheet values, and add joint damping.
 
-- [ ] `ros2 control list_controllers` shows both controllers active
-- [ ] A 0.2 rad step on one joint is tracked; steady-state error is recorded
+- [x] `ros2 control list_controllers` shows both controllers active (cloud)
+- [x] A 0.2 rad step on one joint is tracked; steady-state error recorded: 0.0000 rad, idealised by the placeholder effort limit (cloud)
+- [x] All 12 joints follow one trajectory to `cad_neutral` (cloud)
+- [x] The same checks on the owner's Ubuntu PC
 - [ ] With the robot lifted (fixed base), every joint reaches both soft limits
+- [ ] Servo datasheet effort/velocity limits and joint damping (moved to M9: hardware evidence needed)
 
 ## M2 – Standing controller
 

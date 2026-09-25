@@ -14,6 +14,19 @@
   ${xacro.fatal("sim_backend must be 'classic', 'fortress' or 'none', got '" + sim_backend + "'")}
 </xacro:unless>
 
+<!-- enable_control (M1): add gz_ros2_control joint position control (fortress only).
+     controllers_file: absolute path of the ros2_control controller YAML (set by the launch file).
+     Default false keeps the verified passive simulation unchanged. -->
+<xacro:arg name="enable_control" default="false" />
+<xacro:arg name="controllers_file" default="" />
+<xacro:property name="enable_control" value="$(arg enable_control)" />
+<xacro:if value="${enable_control and sim_backend != 'fortress'}">
+  ${xacro.fatal("enable_control:=true is only supported with sim_backend:=fortress")}
+</xacro:if>
+<xacro:if value="${enable_control and '$(arg controllers_file)' == ''}">
+  ${xacro.fatal("enable_control:=true requires controllers_file:=/absolute/path/to/controllers.yaml")}
+</xacro:if>
+
 <xacro:include filename="$(find spiderx_description)/urdf/materials.xacro" />
 <xacro:if value="${sim_backend == 'classic'}">
   <xacro:include filename="$(find spiderx_description)/urdf/spiderx.trans" />
@@ -21,6 +34,9 @@
 </xacro:if>
 <xacro:if value="${sim_backend == 'fortress'}">
   <xacro:include filename="$(find spiderx_description)/urdf/spiderx_fortress.gazebo.xacro" />
+</xacro:if>
+<xacro:if value="${sim_backend == 'fortress' and enable_control}">
+  <xacro:include filename="$(find spiderx_description)/urdf/spiderx_fortress_control.xacro" />
 </xacro:if>
 
 <link name="dummy_link">

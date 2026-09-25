@@ -1,6 +1,10 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/spiderx-mechaprime-architecture`.
+Last updated on branch `claude/spiderx-m1-joint-control` (M1).
+
+**M1 was verified locally** by the owner on Ubuntu 22.04: all 26 steps of the M1 test sequence passed, including `validate_m1_control.sh --runtime` and `validate_fortress.sh --runtime`.
+
+The architecture branch was verified **locally** by the owner: 8 packages built, `validate_fortress.sh` and `--runtime` passed, 6 `colcon test` results, `read_lidar` and `read_joint_states` working.
 
 | Status | Meaning |
 |---|---|
@@ -21,7 +25,7 @@ Last updated on branch `claude/spiderx-mechaprime-architecture`.
 | `/clock` | ✅ Verified (local + cloud) | |
 | RViz view (`rviz:=true`) | ✅ Verified (cloud) | Global Status OK |
 | `validate_fortress.sh` static checks | ✅ Verified (local: previous version; cloud: current version) | |
-| `validate_fortress.sh --runtime` | ✅ Verified (cloud, GUI under Xvfb) | Needs a local run |
+| `validate_fortress.sh --runtime` | ✅ Verified (local + cloud) | Passive-path regression during M1 |
 | `spiderx_scripts read_lidar`, `read_joint_states` | ✅ Verified (cloud, against the live simulation) | |
 | Controller config vs URDF (`validate_controller_config`) | ✅ Verified (cloud) | Plus 3 unit tests |
 | Passive physics (legs fold to their joint limits, stable rest) | ✅ Verified (local + cloud) | Expected: no actuation |
@@ -33,10 +37,10 @@ Last updated on branch `claude/spiderx-mechaprime-architecture`.
 | Feature | Status | Evidence / blocker |
 |---|---|---|
 | Leg / joint groups, chain order, soft limits | ✅ Verified against the URDF | `spiderx_controller/config/spiderx_legs.yaml` |
-| Named pose `cad_neutral` | 🟡 Configured (geometric only) | Within limits and feet coplanar at q = 0; never held by a controller |
-| ros2_control controllers (`spiderx_ros2_controllers.yaml`) | 🟡 Configured but blocked | The robot description has no Fortress `<ros2_control>` block yet (M1) |
-| Joint position control in Fortress (`gz_ros2_control`) | ⚪ Future work | Roadmap M1 |
-| Standing controller | ⚪ Future work | M2, needs M1 |
+| Named pose `cad_neutral` | ✅ Reached by joint position control (local + cloud) | 12-joint trajectory, max error 0.0000 rad (`test_neutral_pose.py`). **Not** a standing controller |
+| ros2_control controllers (`joint_state_broadcaster`, `leg_trajectory_controller`) | ✅ Verified active (local + cloud) | `fortress_control.launch.py`; [M1 results](docs/M1_TEST_RESULTS.md) |
+| Joint position control in Fortress (`gz_ros2_control` 0.7.x, 12 joints) | ✅ Verified (local + cloud) | `lf_hip` → +0.2 rad and back, error 0.0000; invalid joints and out-of-limit targets refused. Tracking is idealised by the 100 N·m placeholder effort limit |
+| Standing controller | ⚪ Future work | M2. M1 only holds joint angles; there is no balance feedback |
 | Forward / inverse kinematics | ⚪ Future work | M3 |
 | Gait generator | ⚪ Future work | M4 |
 | `/cmd_vel` → gait bridge | ⚪ Future work | M5. Nothing consumes `/cmd_vel` today |

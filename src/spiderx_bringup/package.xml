@@ -21,6 +21,10 @@
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>rviz2</exec_depend>
 
+  <!-- launch/fortress_control.launch.py (M1) -->
+  <exec_depend>spiderx_controller</exec_depend>
+  <exec_depend>gz_ros2_control</exec_depend>
+
   <!-- launch/real_robot.launch.py (real robot only, never started in simulation) -->
   <exec_depend>spiderx_firmware</exec_depend>
 

@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+  M1: joint position control for Gazebo Fortress through gz_ros2_control (Humble 0.7.x).
+
+  Included by spiderx.urdf.xacro only with sim_backend:=fortress enable_control:=true.
+  Declares the 12 real SpiderX leg joints with a position command interface and position +
+  velocity state interfaces, and loads the gz_ros2_control system plugin. The controller YAML path
+  is passed in by the launch file (xacro arg controllers_file), so this package does not depend on
+  spiderx_controller.
+
+  Joint limits are NOT repeated here: gz_ros2_control and the controllers read them from the URDF
+  <limit> tags, which stay unchanged.
+
+  The legacy Gazebo Classic control (gazebo_ros2_control) remains isolated in spiderx.trans and
+  spiderx.gazebo, which are included only with sim_backend:=classic.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="spiderx_position_joint" params="name">
+    <joint name="${name}">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+  <ros2_control name="SpiderXGazeboSimSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    <!-- Order per leg: hip, thigh, foot (knee). Names from the URDF. -->
+    <xacro:spiderx_position_joint name="lf_hip"/>
+    <xacro:spiderx_position_joint name="lf_thigh_joint"/>
+    <xacro:spiderx_position_joint name="lf_foot_joint"/>
+    <xacro:spiderx_position_joint name="rf_hip"/>
+    <xacro:spiderx_position_joint name="rf_thigh_joint"/>
+    <xacro:spiderx_position_joint name="rf_foot_joint"/>
+    <xacro:spiderx_position_joint name="lr_hip"/>
+    <xacro:spiderx_position_joint name="lr_thigh_joint"/>
+    <xacro:spiderx_position_joint name="lr_foot_joint"/>
+    <xacro:spiderx_position_joint name="rr_hip"/>
+    <xacro:spiderx_position_joint name="rr_thigh_joint"/>
+    <xacro:spiderx_position_joint name="rr_foot_joint"/>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(arg controllers_file)</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>

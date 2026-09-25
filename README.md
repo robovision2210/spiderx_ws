@@ -42,7 +42,8 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | Simulated lidar → `/scan` (`lidar_link`) | ✅ Verified |
 | Joint states (`/joint_states`, 12 joints) | ✅ Verified |
 | Leg/joint groups, soft limits, config checker | ✅ Verified against the URDF |
-| Standing controller | 🟡 Planned. Neutral pose and ros2_control scaffold prepared |
+| Joint position control (`gz_ros2_control`, 12 joints) | ✅ Verified in simulation, locally and in the cloud (M1): one joint and all-joint neutral-pose trajectory |
+| Standing controller | ⚪ Planned (M2). M1 holds joint angles only, with no balance |
 | Gait generation, IK, `/cmd_vel` bridge | ⚪ Planned |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
@@ -156,7 +157,24 @@ ros2 launch spiderx_bringup fortress.launch.py
 
 # optional: with RViz
 ros2 launch spiderx_bringup fortress.launch.py rviz:=true
+
+# M1: the same simulation with gz_ros2_control joint position control
+ros2 launch spiderx_bringup fortress_control.launch.py
 ```
+
+## 🦾 Joint Position Control (M1)
+
+```bash
+# Terminal 2, with fortress_control.launch.py running
+ros2 control list_controllers        # joint_state_broadcaster + leg_trajectory_controller: active
+ros2 run spiderx_controller test_one_joint.py --joint lf_hip --target 0.2 --return-to-initial
+ros2 run spiderx_controller test_neutral_pose.py      # all 12 joints -> cad_neutral
+./scripts/validate_m1_control.sh --runtime            # automated M1 checks
+```
+
+This is joint-position control only. It is **not** standing or walking. See the
+[M1 guide](docs/M1_JOINT_POSITION_CONTROL_GUIDE.md) and the [M1 results](docs/M1_TEST_RESULTS.md).
+![M1: joints held at cad_neutral by position control (cloud capture)](media/cloud_validation/m1_joints_held_cad_neutral.png)
 
 ## 🔍 Verification
 
@@ -201,7 +219,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 
 ## ⚠️ Known Limitations
 
-- **Passive model.** No joint is actuated, so the legs fold under gravity until the knees reach their limits.
+- **No balance.** `fortress.launch.py` is passive, so the legs fold under gravity. `fortress_control.launch.py` (M1) holds the joint angles with stiff placeholder limits, but it has no balance or standing controller.
 - **Nothing moves the robot.** Nothing consumes `/cmd_vel` and no odometry exists, so SLAM, AMCL and Nav2 cannot run usefully and are never auto-launched.
 - **Frame convention.** `base_link` faces **+y** (CAD convention, not REP-103). A REP-103 base frame is needed before Nav2.
 - **Mass properties.** CAD masses use the default steel density; the servo effort/velocity limits in the URDF are placeholders.
@@ -210,7 +228,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 
 ## 🗺️ Roadmap
 
-**joint control → standing controller → leg FK/IK → gait generator → `/cmd_vel` bridge →
+**joint control ✅ (M1) → standing controller → leg FK/IK → gait generator → `/cmd_vel` bridge →
 odometry → SLAM → Nav2 → real-hardware validation**
 
 Nav2 comes last because it only decides where to go. It needs a robot that executes `/cmd_vel` and

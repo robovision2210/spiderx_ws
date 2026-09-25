@@ -6,7 +6,9 @@ Starts:
   * ros_gz_sim `create`, which spawns that same robot_description
   * ros_gz_bridge for /clock, /scan and /joint_states (config/fortress_bridge.yaml)
 
-The robot is passive: no joint is actuated. No Gazebo Classic package, plugin or
+By default the robot is passive: no joint is actuated. With enable_control:=true (M1, normally
+via spiderx_bringup/launch/fortress_control.launch.py) the description adds gz_ros2_control and
+/joint_states comes from joint_state_broadcaster instead of the Gazebo bridge. No Gazebo Classic package, plugin or
 environment variable is used here.
 """
 
@@ -21,7 +23,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import Command, LaunchConfiguration
+from launch.substitutions import Command, LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 
@@ -36,10 +38,12 @@ def generate_launch_description():
     xacro_file = os.path.join(pkg_share, 'urdf', 'spiderx.urdf.xacro')
     default_world = os.path.join(pkg_share, 'worlds', 'spiderx_fortress.sdf')
     bridge_config = os.path.join(pkg_share, 'config', 'fortress_bridge.yaml')
+    bridge_config_control = os.path.join(pkg_share, 'config', 'fortress_bridge_control.yaml')
 
     world = LaunchConfiguration('world')
     headless = LaunchConfiguration('headless')
     gz_verbosity = LaunchConfiguration('gz_verbosity')
+    enable_control = LaunchConfiguration('enable_control')
 
     declare_args = [
         DeclareLaunchArgument(
@@ -61,6 +65,14 @@ def generate_launch_description():
             'spawn_z', default_value=DEFAULT_SPAWN_Z,
             description='Spawn height of the root link [m]; must stay above 0.0545.'),
         DeclareLaunchArgument('spawn_yaw', default_value='0.0', description='Spawn yaw [rad].'),
+        DeclareLaunchArgument(
+            'enable_control', default_value='false',
+            description='true: add gz_ros2_control joint position control (M1). Requires '
+                        'controllers_file. false (default): passive, verified sensor simulation.'),
+        DeclareLaunchArgument(
+            'controllers_file', default_value='',
+            description='Absolute path of the ros2_control controller YAML '
+                        '(used only with enable_control:=true).'),
     ]
 
     # Let Gazebo resolve model:// URIs under this package's share tree. Fortress reads
@@ -74,7 +86,9 @@ def generate_launch_description():
     ]
 
     robot_description = ParameterValue(
-        Command(['xacro ', xacro_file, ' sim_backend:=fortress']),
+        Command(['xacro ', xacro_file, ' sim_backend:=fortress',
+                 ' enable_control:=', enable_control,
+                 " controllers_file:='", LaunchConfiguration('controllers_file'), "'"]),
         value_type=str)
 
     robot_state_publisher = Node(
@@ -128,7 +142,14 @@ def generate_launch_description():
         executable='parameter_bridge',
         name='spiderx_gz_bridge',
         output='screen',
-        parameters=[{'config_file': bridge_config, 'use_sim_time': True}],
+        # In control mode /joint_states comes from joint_state_broadcaster, so the bridge
+        # config without /joint_states is used (exactly one publisher).
+        parameters=[{
+            'config_file': PythonExpression([
+                "'", bridge_config_control, "' if '", enable_control, "' == 'true' else '",
+                bridge_config, "'"]),
+            'use_sim_time': True,
+        }],
     )
 
     return LaunchDescription(

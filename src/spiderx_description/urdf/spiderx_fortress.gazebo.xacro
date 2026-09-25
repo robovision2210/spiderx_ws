@@ -58,15 +58,19 @@
     </sensor>
   </gazebo>
 
+  <!-- enable_control:=true (M1) omits this system, because joint_state_broadcaster
+       (gz_ros2_control) publishes /joint_states instead. Exactly one publisher either way. -->
+  <xacro:unless value="$(arg enable_control)">
   <!-- Publishes the state of every model joint as measured by the physics engine.
        The launch file bridges this to /joint_states, which robot_state_publisher uses
        for the leg TF. Nothing here commands the joints: the model is passive. -->
-  <gazebo>
-    <plugin filename="ignition-gazebo-joint-state-publisher-system"
-            name="ignition::gazebo::systems::JointStatePublisher">
-      <topic>${gz_joint_state_topic}</topic>
-    </plugin>
-  </gazebo>
+    <gazebo>
+      <plugin filename="ignition-gazebo-joint-state-publisher-system"
+              name="ignition::gazebo::systems::JointStatePublisher">
+        <topic>${gz_joint_state_topic}</topic>
+      </plugin>
+    </gazebo>
+  </xacro:unless>
 
   <!-- Contact parameters kept identical to the legacy Classic file (spiderx.gazebo):
        mu1 = mu2 = 0.2 and self_collide = false on the same 30 CAD links. These are the

@@ -19,15 +19,24 @@ def _share(pkg):
     return get_package_share_directory(pkg)
 
 
+def _expand(*xacro_args):
+    xacro_file = os.path.join(_share('spiderx_description'), 'urdf', 'spiderx.urdf.xacro')
+    out = subprocess.run(['xacro', xacro_file, *xacro_args],
+                         check=True, capture_output=True, text=True).stdout
+    return ET.fromstring(out)
+
+
 def load_urdf(urdf_path=None):
     """Return the parsed URDF root, expanding the SpiderX xacro when no file is given."""
     if urdf_path:
         with open(urdf_path) as f:
             return ET.fromstring(f.read())
-    xacro_file = os.path.join(_share('spiderx_description'), 'urdf', 'spiderx.urdf.xacro')
-    out = subprocess.run(['xacro', xacro_file, 'sim_backend:=none'],
-                         check=True, capture_output=True, text=True).stdout
-    return ET.fromstring(out)
+    return _expand('sim_backend:=none')
+
+
+def load_passive_fortress_urdf():
+    """The verified passive Fortress description (enable_control default false)."""
+    return _expand('sim_backend:=fortress')
 
 
 def load_configs(config_dir=None):
@@ -188,9 +197,75 @@ def check(urdf_root, legs_cfg, poses_cfg, ctrl_cfg):
     if sorted(ctrl_joints) != sorted(cfg_joints) or len(ctrl_joints) != len(set(ctrl_joints)):
         errors.append('spiderx_ros2_controllers.yaml joints differ from the legs config')
     else:
-        info.append('ros2_control scaffold lists exactly the 12 leg joints')
+        info.append('controller YAML (leg_trajectory_controller) lists exactly the 12 leg joints')
 
     vmax = legs_cfg['motion_constraints']['max_joint_velocity_rad_s']
     if not (vmax is not None and float(vmax) > 0):
         errors.append('motion_constraints.max_joint_velocity_rad_s must be > 0')
+    return errors, info
+
+
+EXPECTED_HW_PLUGIN = 'gz_ros2_control/GazeboSimSystem'
+EXPECTED_GZ_PLUGIN = ('gz_ros2_control-system', 'gz_ros2_control::GazeboSimROS2ControlPlugin')
+
+
+def load_control_urdf(controllers_file=None):
+    """Expand the SpiderX xacro in M1 control mode (fortress + enable_control)."""
+    controllers_file = controllers_file or os.path.join(
+        _share('spiderx_controller'), 'config', 'spiderx_ros2_controllers.yaml')
+    return _expand('sim_backend:=fortress', 'enable_control:=true',
+                   f'controllers_file:={controllers_file}')
+
+
+def check_ros2_control(control_root, legs_cfg, passive_root=None):
+    """Static checks of the M1 <ros2_control> integration. Returns (errors, info)."""
+    errors, info = [], []
+    blocks = control_root.findall('ros2_control')
+    if len(blocks) != 1:
+        return [f'expected exactly one <ros2_control> block, found {len(blocks)}'], info
+    block = blocks[0]
+    plugin = block.findtext('hardware/plugin', '').strip()
+    if plugin != EXPECTED_HW_PLUGIN:
+        errors.append(f'hardware plugin is "{plugin}", expected {EXPECTED_HW_PLUGIN}')
+    leg_joints = {leg['joints'][r]['name'] for leg in legs_cfg['legs'].values()
+                  for r in legs_cfg['joint_order']}
+    rc_joints = {}
+    for j in block.findall('joint'):
+        rc_joints[j.get('name')] = (
+            sorted(c.get('name') for c in j.findall('command_interface')),
+            sorted(s.get('name') for s in j.findall('state_interface')))
+    if set(rc_joints) != leg_joints:
+        errors.append(f'ros2_control joints differ from the 12 leg joints: '
+                      f'missing {sorted(leg_joints - set(rc_joints))}, '
+                      f'extra {sorted(set(rc_joints) - leg_joints)}')
+    for name, (cmd, st) in rc_joints.items():
+        if cmd != ['position'] or st != ['position', 'velocity']:
+            errors.append(f'{name}: interfaces command={cmd} state={st}, '
+                          'expected command=[position] state=[position, velocity]')
+    urdf_joints = {j.get('name'): j.get('type') for j in control_root.findall('joint')}
+    for name in rc_joints:
+        if urdf_joints.get(name) != 'revolute':
+            errors.append(f'{name}: not a revolute joint in the URDF')
+    plugins = [(p.get('filename'), p.get('name')) for g in control_root.findall('gazebo')
+               for p in g.findall('plugin')]
+    gz = [p for p in plugins if p == EXPECTED_GZ_PLUGIN]
+    if len(gz) != 1:
+        errors.append(f'expected one Gazebo plugin {EXPECTED_GZ_PLUGIN}, found {plugins}')
+    else:
+        params = [p.findtext('parameters', '').strip() for g in control_root.findall('gazebo')
+                  for p in g.findall('plugin') if p.get('filename') == EXPECTED_GZ_PLUGIN[0]]
+        if not params[0] or not os.path.isfile(params[0]):
+            errors.append(f'gz_ros2_control <parameters> file does not exist: "{params[0]}"')
+    if any('JointStatePublisher' in (n or '') for _, n in plugins):
+        errors.append('control mode must not also load the Gazebo JointStatePublisher '
+                      '(would create a second /joint_states publisher)')
+    if not errors:
+        info.append(f'<ros2_control> {EXPECTED_HW_PLUGIN}: 12 leg joints, command=position, '
+                    'state=position+velocity; gz_ros2_control-system plugin; one /joint_states '
+                    'source')
+    if passive_root is not None:
+        if passive_root.findall('ros2_control'):
+            errors.append('passive fortress description must not contain <ros2_control>')
+        else:
+            info.append('passive fortress description has no <ros2_control> (unchanged)')
     return errors, info
