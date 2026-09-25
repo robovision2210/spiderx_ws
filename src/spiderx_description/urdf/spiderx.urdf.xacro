@@ -1,9 +1,27 @@
 <?xml version="1.0" ?>
 <robot name="spiderx" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+<!-- sim_backend selects which simulator-specific extensions are merged into this
+     description. Geometry, inertia and kinematics are identical for every value.
+       classic  : legacy Gazebo Classic tags (spiderx.trans + spiderx.gazebo).
+                  Default, so existing Classic/RViz users get the previous output.
+       fortress : Gazebo Fortress (Ignition Gazebo 6) sensor/systems only
+                  (spiderx_fortress.gazebo.xacro). No Gazebo Classic plugins.
+       none     : no simulator tags (RViz, hardware bring-up). -->
+<xacro:arg name="sim_backend" default="classic" />
+<xacro:property name="sim_backend" value="$(arg sim_backend)" />
+<xacro:unless value="${sim_backend in ['classic', 'fortress', 'none']}">
+  ${xacro.fatal("sim_backend must be 'classic', 'fortress' or 'none', got '" + sim_backend + "'")}
+</xacro:unless>
+
 <xacro:include filename="$(find spiderx_description)/urdf/materials.xacro" />
-<xacro:include filename="$(find spiderx_description)/urdf/spiderx.trans" />
-<xacro:include filename="$(find spiderx_description)/urdf/spiderx.gazebo" />
+<xacro:if value="${sim_backend == 'classic'}">
+  <xacro:include filename="$(find spiderx_description)/urdf/spiderx.trans" />
+  <xacro:include filename="$(find spiderx_description)/urdf/spiderx.gazebo" />
+</xacro:if>
+<xacro:if value="${sim_backend == 'fortress'}">
+  <xacro:include filename="$(find spiderx_description)/urdf/spiderx_fortress.gazebo.xacro" />
+</xacro:if>
 
 <link name="dummy_link">
 </link>
@@ -122,6 +140,8 @@
   <inertial>
     <origin xyz="1.9542700790964318e-13 0.0002969285186710108 -9.71445146547012e-17" rpy="0 0 0"/>
     <mass value="0.004911019644749942"/>
+    <!-- PLACEHOLDER inertia, not CAD-exact (CAD ~1.2e-7..2.3e-7 was rounded to 0 by the
+         exporter). Physically valid; kept unchanged. See docs/URDF_INERTIA_AUDIT.md -->
     <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="-0.0" iyz="-0.0" ixz="0.0"/>
   </inertial>
   <visual>
@@ -143,6 +163,8 @@
   <inertial>
     <origin xyz="1.9533680228889239e-13 0.00029692851867103853 -1.249000902703301e-16" rpy="0 0 0"/>
     <mass value="0.004911019644749942"/>
+    <!-- PLACEHOLDER inertia, not CAD-exact (CAD ~1.2e-7..2.3e-7 was rounded to 0 by the
+         exporter). Physically valid; kept unchanged. See docs/URDF_INERTIA_AUDIT.md -->
     <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="-0.0" iyz="-0.0" ixz="0.0"/>
   </inertial>
   <visual>
@@ -164,6 +186,8 @@
   <inertial>
     <origin xyz="1.9531598560718066e-13 -0.000296928518671042 -1.1102230246251565e-16" rpy="0 0 0"/>
     <mass value="0.004911019644749942"/>
+    <!-- PLACEHOLDER inertia, not CAD-exact (CAD ~1.2e-7..2.3e-7 was rounded to 0 by the
+         exporter). Physically valid; kept unchanged. See docs/URDF_INERTIA_AUDIT.md -->
     <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
@@ -185,6 +209,8 @@
   <inertial>
     <origin xyz="1.9534547590627227e-13 -0.00029692851867095527 -9.71445146547012e-17" rpy="0 0 0"/>
     <mass value="0.004911019644749942"/>
+    <!-- PLACEHOLDER inertia, not CAD-exact (CAD ~1.2e-7..2.3e-7 was rounded to 0 by the
+         exporter). Physically valid; kept unchanged. See docs/URDF_INERTIA_AUDIT.md -->
     <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
@@ -374,6 +400,8 @@
   <inertial>
     <origin xyz="-0.0002969285186709414 1.3877787807814457e-16 -1.9548251906087444e-13" rpy="0 0 0"/>
     <mass value="0.004911019644749942"/>
+    <!-- PLACEHOLDER inertia, not CAD-exact (CAD ~1.2e-7..2.3e-7 was rounded to 0 by the
+         exporter). Physically valid; kept unchanged. See docs/URDF_INERTIA_AUDIT.md -->
     <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0.0" iyz="0.0" ixz="-0.0"/>
   </inertial>
   <visual>
@@ -416,6 +444,8 @@
   <inertial>
     <origin xyz="-0.00029692851867108017 1.9537843565231583e-13 -9.71445146547012e-17" rpy="0 0 0"/>
     <mass value="0.004911019644749942"/>
+    <!-- PLACEHOLDER inertia, not CAD-exact (CAD ~1.2e-7..2.3e-7 was rounded to 0 by the
+         exporter). Physically valid; kept unchanged. See docs/URDF_INERTIA_AUDIT.md -->
     <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0.0" iyz="0.0" ixz="0.0"/>
   </inertial>
   <visual>
@@ -437,6 +467,8 @@
   <inertial>
     <origin xyz="0.00029692851867092057 1.9551027463649007e-13 -1.3877787807814457e-16" rpy="0 0 0"/>
     <mass value="0.004911019644749942"/>
+    <!-- PLACEHOLDER inertia, not CAD-exact (CAD ~1.2e-7..2.3e-7 was rounded to 0 by the
+         exporter). Physically valid; kept unchanged. See docs/URDF_INERTIA_AUDIT.md -->
     <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
   </inertial>
   <visual>
@@ -458,6 +490,8 @@
   <inertial>
     <origin xyz="0.0002969285186709657 1.952465966681416e-13 -8.326672684688674e-17" rpy="0 0 0"/>
     <mass value="0.004911019644749942"/>
+    <!-- PLACEHOLDER inertia, not CAD-exact (CAD ~1.2e-7..2.3e-7 was rounded to 0 by the
+         exporter). Physically valid; kept unchanged. See docs/URDF_INERTIA_AUDIT.md -->
     <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
   </inertial>
   <visual>
@@ -839,6 +873,46 @@
   <origin xyz="0.086 -0.045 0.107" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="top_1"/>
+</joint>
+
+<!-- ==========================================================================
+     lidar_link: added for simulation. It is NOT part of the Fusion 360 export and no
+     lidar CAD exists. The mount pose comes from the measured meshes (see
+     docs/SPIDERX_URDF_AUDIT.md): centred on the top plate (x=0.051, y=-0.045), body
+     resting on the plate's top surface (z=0.111), scan plane 0.030 m above it.
+     Yawed +90 deg so lidar_link +x points to the robot's front, which is +y of
+     base_link (base_link is not REP-103 aligned, audit item T1).
+     Replace the pose with the real mount/CAD when available.
+     ========================================================================== -->
+<link name="lidar_link">
+  <inertial>
+    <!-- SIMULATION_ESTIMATE: 0.17 kg (nominal RPLidar A1-class mass, not weighed) as a
+         solid cylinder r=0.035 m, h=0.040 m. See docs/URDF_INERTIA_AUDIT.md -->
+    <origin xyz="0 0 -0.010" rpy="0 0 0"/>
+    <mass value="0.17"/>
+    <inertia ixx="7.47e-05" iyy="7.47e-05" izz="1.041e-04" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 -0.010" rpy="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.035" length="0.040"/>
+    </geometry>
+    <material name="lidar_black">
+      <color rgba="0.100 0.100 0.100 1.000"/>
+    </material>
+  </visual>
+  <collision>
+    <origin xyz="0 0 -0.010" rpy="0 0 0"/>
+    <geometry>
+      <cylinder radius="0.035" length="0.040"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="lidar_joint" type="fixed">
+  <origin xyz="0.051 -0.045 0.141" rpy="0 0 1.5707963267948966"/>
+  <parent link="base_link"/>
+  <child link="lidar_link"/>
 </joint>
 
 
