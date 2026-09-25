@@ -88,7 +88,15 @@ The negative tests include:
 
 ## Regression
 
-Regression runs (`colcon test`, M1 static and runtime, passive Fortress runtime) are in progress; results will be added here.
+| Check | Result |
+|---|---|
+| `colcon test` (whole workspace) + `colcon test-result --verbose` | ✅ 86 tests, 0 errors, 0 failures, 0 skipped (82 pytest cases + 4 CTest wrappers) |
+| `./scripts/validate_m1_control.sh` (static) | ✅ All M1 checks passed |
+| `./scripts/validate_m1_control.sh --runtime` | ✅ All M1 checks passed: `lf_hip` +0.2 rad and back (error 0.0000), `cad_neutral` trajectory moved 3 joints, max error 0.0000 |
+| `./scripts/validate_fortress.sh --runtime` (passive path) | ✅ All checks passed |
+| Leftover simulation/controller processes after all runs | ✅ none |
+| Fresh clone of the branch: clean build, `colcon test`, static M2 / M1 / Fortress validation | ✅ 8 packages; 86 tests, 0 failures; all static checks passed |
+| M1 and passive files unchanged vs PR #6 (`spiderx_description/**`, `fortress.launch.py`, `fortress_control.launch.py`, controller/leg/pose configs, M1 tools and scripts) | ✅ `git diff` empty |
 
 ## Problems found during M2
 
