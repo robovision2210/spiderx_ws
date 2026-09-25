@@ -1,0 +1,28 @@
+# Named joint poses for SpiderX (radians). Every value must lie within the soft limits in
+# spiderx_legs.yaml; scripts/validate_controller_config enforces this.
+#
+# cad_neutral is the only evidence-based pose: the CAD zero configuration. At q = 0 the meshes
+# show all four feet touching the same plane (z = -0.0545 m in base_link) and the whole-robot
+# centre of mass inside the support polygon (docs/SPIDERX_URDF_AUDIT.md section 3).
+# It is a geometric standing pose. It has NOT been shown to be dynamically stable, because no
+# joint controller exists yet.
+#
+# Other poses (for example crouch or a tuned stand height) must be added only after they are
+# tested with a working joint controller.
+
+poses:
+  cad_neutral:
+    status: GEOMETRIC_ONLY   # not yet held by any controller
+    joints:
+      lf_hip: 0.0
+      lf_thigh_joint: 0.0
+      lf_foot_joint: 0.0
+      rf_hip: 0.0
+      rf_thigh_joint: 0.0
+      rf_foot_joint: 0.0
+      lr_hip: 0.0
+      lr_thigh_joint: 0.0
+      lr_foot_joint: 0.0
+      rr_hip: 0.0
+      rr_thigh_joint: 0.0
+      rr_foot_joint: 0.0

@@ -1,0 +1,42 @@
+# SCAFFOLD - ros2_control controllers for the FUTURE Gazebo Fortress / hardware joint layer.
+#
+# No launch file loads this yet. It becomes usable only after the robot description gains a
+# <ros2_control> block (gz_ros2_control/GazeboSimSystem in simulation, a SpiderX actuator
+# interface on hardware) and that integration has been validated.
+# See docs/SPIDERX_DEVELOPMENT_ROADMAP.md milestone M1.
+#
+# The legacy Gazebo Classic controller file stays at
+# spiderx_description/config/controllers.yaml.
+#
+# Joint names come from spiderx_legs.yaml (validated against the URDF).
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    leg_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+leg_trajectory_controller:
+  ros__parameters:
+    joints:
+      - lf_hip
+      - lf_thigh_joint
+      - lf_foot_joint
+      - rf_hip
+      - rf_thigh_joint
+      - rf_foot_joint
+      - lr_hip
+      - lr_thigh_joint
+      - lr_foot_joint
+      - rr_hip
+      - rr_thigh_joint
+      - rr_foot_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: false
