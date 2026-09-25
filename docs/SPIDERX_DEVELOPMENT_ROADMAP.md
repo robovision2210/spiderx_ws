@@ -1,0 +1,72 @@
+# SpiderX Development Roadmap
+
+A legged robot has to be built bottom-up. Each milestone depends on the one before it and has a
+test that proves it works. Do not start Nav2 or SLAM work until M6 is done: they need a robot that
+moves when commanded (`/cmd_vel`) and reports its motion (`/odom`).
+
+```
+M0 model + sim  ─►  M1 joint control  ─►  M2 stand  ─►  M3 FK/IK  ─►  M4 gait
+                                                                          │
+      M9 hardware ◄─ M8 Nav2 ◄─ M7 SLAM/AMCL ◄─ M6 odometry ◄─ M5 /cmd_vel bridge
+```
+
+## M0 – Model and simulation ✅ done
+
+- [x] CAD URDF audited (`SPIDERX_URDF_AUDIT.md`)
+- [x] Gazebo Fortress world, spawn, lidar `/scan`, `/joint_states`, `/clock`, TF
+- [x] Leg and joint groups validated against the URDF (`spiderx_controller`)
+- [x] Validated locally on Ubuntu 22.04
+
+## M1 – Joint position control in simulation
+
+1. Add a Fortress `<ros2_control>` block to `spiderx_fortress.gazebo.xacro`, using the `gz_ros2_control/GazeboSimSystem` hardware plugin and the `gz_ros2_control-system` Gazebo plugin.
+2. Load `spiderx_controller/config/spiderx_ros2_controllers.yaml` (`joint_state_broadcaster` and `leg_trajectory_controller`).
+3. Replace the URDF effort/velocity placeholders (100 N·m, 100 rad/s) with servo datasheet values, and add joint damping.
+
+- [ ] `ros2 control list_controllers` shows both controllers active
+- [ ] A 0.2 rad step on one joint is tracked; steady-state error is recorded
+- [ ] With the robot lifted (fixed base), every joint reaches both soft limits
+
+## M2 – Standing controller
+
+- [ ] Command `cad_neutral` from the folded rest pose, with a smooth interpolation at ≤ `max_joint_velocity_rad_s`
+- [ ] Body height and roll/pitch stay within set tolerances for 60 s
+- [ ] Tune the stand height (a new named pose in `spiderx_poses.yaml`, only after testing)
+
+## M3 – Leg forward and inverse kinematics
+
+- [ ] FK matches TF (`base_link → *_foot_1`) within 1 mm for random joint samples
+- [ ] IK round-trips FK within tolerance over the reachable workspace
+- [ ] Per-joint sign table validated, including `lr_foot_joint` −x and `lf_foot_joint` +x
+
+## M4 – Gait generator
+
+- [ ] Static walk (3 feet down), then trot, with the stance COM kept inside the support polygon
+- [ ] Walks forward 1 m in simulation without falling (a video is required before claiming it)
+
+## M5 – `/cmd_vel` → gait bridge
+
+- [ ] Stepping velocity follows `/cmd_vel` (vx, vy, ωz) within limits
+- [ ] A timeout stops the robot safely
+
+## M6 – Odometry
+
+- [ ] Leg odometry publishes `/spiderx/leg_odometry`
+- [ ] The EKF (`spiderx_localization`) fuses it with the IMU and publishes `odom → dummy_link`
+- [ ] Drift is measured against Gazebo ground truth
+- [ ] Add a REP-103 base frame (x forward) for Nav2
+
+## M7 – SLAM and localization
+
+- [ ] `spiderx_mapping slam.launch.py` builds a map of `spiderx_fortress.sdf`
+- [ ] AMCL localizes on that map
+
+## M8 – Nav2
+
+- [ ] Replace the velocity placeholders with gait-measured limits
+- [ ] Reach a goal in simulation
+
+## M9 – Real hardware
+
+- [ ] Actuator interface (`SPIDERX_HARDWARE_INTERFACE.md`), then repeat M1–M8 on the robot
+- [ ] Real masses (weighed parts) replace the steel-density CAD values

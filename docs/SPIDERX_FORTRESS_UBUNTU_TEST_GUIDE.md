@@ -91,10 +91,10 @@ Before anything was changed, the whole model was audited. The full report is in
 | `src/spiderx_description/config/fortress_bridge.yaml` | Tells the bridge which Gazebo topics become ROS topics: `/clock`, `/scan`, `/joint_states`. |
 | `src/spiderx_description/config/controllers.yaml` | Legacy Gazebo Classic controller settings. It fixes the build and is not used by Fortress. |
 | `src/spiderx_bringup/rviz/spiderx_fortress.rviz` | RViz view settings: robot, TF and laser scan. |
-| `src/spiderx_bringup/launch/hardware_lidar.launch.py` | **Real robot only.** Starts the physical RPLidar driver. Never run it for simulation. |
+| `src/spiderx_bringup/launch/real_robot.launch.py` | **Real robot only.** Starts the physical RPLidar driver (via `spiderx_firmware`). Never run it for simulation. |
 | `scripts/validate_fortress.sh` | Automatic checks of the files and packages. |
 | `docs/SPIDERX_URDF_AUDIT.md`, `docs/URDF_INERTIA_AUDIT.md` | Detailed engineering audit reports. |
-| `README.md`, `MIGRATION_FORTRESS.md` | Project overview and migration notes. |
+| `README.md`, `docs/MIGRATION_FORTRESS.md` | Project overview and migration notes. |
 
 ---
 
