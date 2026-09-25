@@ -23,7 +23,7 @@ The packages are RoboStack builds of the same Humble packages that Ubuntu apt sh
 | # | Test | Result |
 |---|---|---|
 | 1 | `validate_controller_config` (12 joints, axes, limits, chain order, `<ros2_control>`: `gz_ros2_control/GazeboSimSystem`, command=position, state=position+velocity, plugin present, no second `/joint_states` source; passive description has no `<ros2_control>`) | ✅ valid |
-| 2 | Unit tests: `spiderx_controller` 18 (config vs URDF, `<ros2_control>` checks, joint-safety rejections), `spiderx_scripts` 2 | ✅ 20/20 passed |
+| 2 | Unit tests: `spiderx_controller` 18 (config vs URDF, `<ros2_control>` checks, joint-safety rejections), `spiderx_scripts` 2 | ✅ 20/20 passed (`colcon test-result` prints `22 tests`: it also counts the 2 CTest wrapper entries) |
 | 3 | Passive description unchanged (`sim_backend:=fortress` default, and `classic`/`none`) | ✅ byte-identical XML to the previous branch |
 | 4 | `validate_fortress.sh` (static) and `--runtime` on the passive path | ✅ All checks passed |
 | 5 | `validate_m1_control.sh` (static) | ✅ All M1 checks passed |
