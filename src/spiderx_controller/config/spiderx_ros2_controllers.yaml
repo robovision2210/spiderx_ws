@@ -1,17 +1,19 @@
-# SCAFFOLD - ros2_control controllers for the FUTURE Gazebo Fortress / hardware joint layer.
+# ros2_control controllers for SpiderX joint position control (M1), Gazebo Fortress + gz_ros2_control.
 #
-# No launch file loads this yet. It becomes usable only after the robot description gains a
-# <ros2_control> block (gz_ros2_control/GazeboSimSystem in simulation, a SpiderX actuator
-# interface on hardware) and that integration has been validated.
-# See docs/SPIDERX_DEVELOPMENT_ROADMAP.md milestone M1.
+# Loaded by the gz_ros2_control plugin (spiderx_description/urdf/spiderx_fortress_control.xacro)
+# when launched with: ros2 launch spiderx_bringup fortress_control.launch.py
+# Spawned in order by spiderx_controller/launch/controller.launch.py:
+#   1. joint_state_broadcaster  2. leg_trajectory_controller
 #
-# The legacy Gazebo Classic controller file stays at
-# spiderx_description/config/controllers.yaml.
+# This is joint-position control only. It is NOT a standing controller, balance controller or gait.
+# Joint names are validated against the URDF by validate_controller_config.
+# Joint limits come from the URDF <limit> tags (not repeated here).
 #
-# Joint names come from spiderx_legs.yaml (validated against the URDF).
+# The legacy Gazebo Classic controller file is spiderx_description/config/controllers.yaml.
 controller_manager:
   ros__parameters:
-    update_rate: 100  # Hz
+    update_rate: 100  # Hz, simulation-only tuning
+    use_sim_time: true
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -39,4 +41,8 @@ leg_trajectory_controller:
     state_interfaces:
       - position
       - velocity
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    # Every goal must name all 12 joints. The test tools hold the non-tested joints at their
+    # measured positions.
     allow_partial_joints_goal: false

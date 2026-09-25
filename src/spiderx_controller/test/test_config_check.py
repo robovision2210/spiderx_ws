@@ -23,3 +23,20 @@ def test_detects_pose_outside_limits():
     poses['poses']['cad_neutral']['joints']['rf_hip'] = 1.0
     errors, _ = check(load_urdf(), legs, poses, ctrl)
     assert any('rf_hip=1.0 outside soft limits' in e for e in errors)
+
+
+def test_ros2_control_block_matches_urdf():
+    from spiderx_controller.config_check import (
+        check_ros2_control, load_control_urdf, load_passive_fortress_urdf)
+    legs = load_configs()[0]
+    errors, _ = check_ros2_control(load_control_urdf(), legs, load_passive_fortress_urdf())
+    assert errors == []
+
+
+def test_ros2_control_detects_missing_joint():
+    from spiderx_controller.config_check import check_ros2_control, load_control_urdf
+    root = load_control_urdf()
+    block = root.find('ros2_control')
+    block.remove([j for j in block.findall('joint') if j.get('name') == 'rr_foot_joint'][0])
+    errors, _ = check_ros2_control(root, load_configs()[0])
+    assert any('missing' in e and 'rr_foot_joint' in e for e in errors)
