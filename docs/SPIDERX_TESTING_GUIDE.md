@@ -17,7 +17,7 @@ source ~/spiderx_ws/install/setup.bash
 |---|---|---|---|
 | 1 | Build | `cd ~/spiderx_ws && colcon build --symlink-install` | `Summary: 8 packages finished` |
 | 2 | Static validation | `./scripts/validate_fortress.sh` | `All checks passed.` |
-| 3 | Unit tests (including M1 safety rejections) | `colcon test --packages-select spiderx_controller spiderx_scripts && colcon test-result --verbose` | 0 failures |
+| 3 | Unit tests (including M1 safety rejections and M2 config/metrics negative tests) | `colcon test --packages-select spiderx_controller spiderx_scripts && colcon test-result --verbose` | 0 failures |
 | 4 | Controller config vs URDF | `ros2 run spiderx_controller validate_controller_config` | `Controller configuration: valid` |
 | 5 | Runtime validation (starts Gazebo) | `./scripts/validate_fortress.sh --runtime` | `All checks passed.` (topics, `lidar_link`, 12 joints, no hardware node) |
 | 6 | Manual simulation | `ros2 launch spiderx_bringup fortress.launch.py` | SpiderX visible in the walled world |
@@ -28,6 +28,9 @@ source ~/spiderx_ws/install/setup.bash
 | 11 | M1 static | `./scripts/validate_m1_control.sh` | `All M1 checks passed.` |
 | 12 | M1 runtime (starts Gazebo with control) | `./scripts/validate_m1_control.sh --runtime` | Controllers active, one joint and neutral pose PASS |
 | 13 | M1 manual | `ros2 launch spiderx_bringup fortress_control.launch.py`, then `test_one_joint.py` / `test_neutral_pose.py` | See [M1 guide](M1_JOINT_POSITION_CONTROL_GUIDE.md) |
+| 14 | M2 static (simulation only) | `./scripts/validate_m2_posture.sh` | `All M2 checks passed.` |
+| 15 | M2 runtime (starts Gazebo with control and the ground-truth pose bridge) | `./scripts/validate_m2_posture.sh --runtime` | `Simulation posture hold verified.` and `All M2 checks passed.` |
+| 16 | M2 manual | `ros2 launch spiderx_bringup fortress_posture_hold.launch.py`, then `ros2 run spiderx_controller run_posture_hold_test.py` | See [M2 guide](M2_SIMULATION_POSTURE_GUIDE.md) |
 
 ## Blocked stacks (optional, expected to wait)
 
@@ -50,4 +53,4 @@ Toolbox and robot_localization from RoboStack, with no GPU, using Xvfb and Mesa:
 - **Layer 1 build:** checked with Ubuntu 22.04's setuptools 59.6. Newer setuptools (≥ 80) breaks `colcon build --symlink-install` for `ament_python` packages; that is a known upstream incompatibility, not a SpiderX issue.
 - **Layer 3 unit tests:** run with `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`, because that environment's pytest 9 cannot load Humble's `launch_testing` plugin. Ubuntu's pytest 6.2 does not have this problem.
 
-**Local verification:** the owner ran layers 1–5, 7–8 and 11–13 on Ubuntu 22.04 (M1 branch), and all passed.
+**Local verification:** the owner ran layers 1–5, 7–8 and 11–13 on Ubuntu 22.04 (M1 branch), and later layers 1–3 and 11–16 (M2 branch). All passed.

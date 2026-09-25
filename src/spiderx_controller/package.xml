@@ -3,7 +3,7 @@
 <package format="3">
   <name>spiderx_controller</name>
   <version>0.1.0</version>
-  <description>SpiderX quadruped leg/joint groups, named poses, soft limits, ros2_control controllers for Gazebo Fortress joint position control (M1), safe joint-position test tools and a URDF consistency checker. No standing, gait or locomotion.</description>
+  <description>SpiderX quadruped leg/joint groups, named poses, soft limits, ros2_control controllers for Gazebo Fortress joint position control (M1), safe joint-position test tools, a simulation-only CAD neutral posture-hold test (M2) and a URDF consistency checker. No balance control, gait or locomotion.</description>
   <maintainer email="jagadeswar@gmail.com">Jagadeswar</maintainer>
   <license>Apache-2.0</license>
 
@@ -24,6 +24,7 @@
   <exec_depend>controller_manager_msgs</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>tf2_msgs</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>

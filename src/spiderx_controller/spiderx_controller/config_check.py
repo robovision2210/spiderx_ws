@@ -269,3 +269,46 @@ def check_ros2_control(control_root, legs_cfg, passive_root=None):
         else:
             info.append('passive fortress description has no <ros2_control> (unchanged)')
     return errors, info
+
+
+FORBIDDEN_M2_WORDS = ('wheel', 'diff_drive', 'cmd_vel', 'odom')
+
+
+def check_m2_posture(legs_cfg, config_dir=None, config_path=None):
+    """Static checks of the M2 simulation-only posture config. Returns (errors, info).
+
+    Uses posture_config.load_posture (strict YAML, exactly the 12 joints, URDF limits minus the
+    M1 margin, equal to cad_neutral, numeric thresholds, simulation_only) and adds the leg/chain
+    membership of every joint. spiderx_legs.yaml itself is checked against the URDF by check().
+    """
+    from spiderx_controller.posture_config import (
+        CONFIG_FILE, DEFAULT_POSTURE, PostureConfigError, load_posture, load_yaml_strict)
+    config_dir = config_dir or os.path.join(_share('spiderx_controller'), 'config')
+    config_path = config_path or os.path.join(config_dir, CONFIG_FILE)
+    errors, info = [], []
+    try:
+        posture, _ = load_posture(DEFAULT_POSTURE, config_path, config_dir)
+    except PostureConfigError as e:
+        return [f'M2 posture config: {e}'], info
+    raw = load_yaml_strict(config_path)
+    if len(raw['postures']) != 1:
+        errors.append(f'M2 must define only the CAD neutral posture, found {sorted(raw["postures"])}')
+    text = yaml.safe_dump(raw).lower()
+    for word in FORBIDDEN_M2_WORDS:
+        if word in text:
+            errors.append(f'M2 posture config mentions "{word}" (not a SpiderX leg concept)')
+    membership = {}
+    for leg_name, leg in legs_cfg['legs'].items():
+        for role in legs_cfg['joint_order']:
+            membership[leg['joints'][role]['name']] = f'{leg_name}.{role}'
+    unknown = [j for j in posture['targets'] if j not in membership]
+    if unknown:
+        errors.append(f'M2 joints not in any leg chain: {unknown}')
+    if not errors:
+        th = posture['thresholds']
+        info.append(f'M2 posture {posture["name"]} (simulation_only): 12 leg joints '
+                    f'({len(set(v.split(".")[0] for v in membership.values()))} legs x '
+                    f'{len(legs_cfg["joint_order"])}), targets = cad_neutral, inside URDF limits '
+                    f'-/+ {posture["margin"]} rad; command {posture["command_duration_s"]} s, '
+                    f'hold {posture["hold_duration_s"]} s; thresholds {th}')
+    return errors, info

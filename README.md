@@ -43,7 +43,8 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | Joint states (`/joint_states`, 12 joints) | ✅ Verified |
 | Leg/joint groups, soft limits, config checker | ✅ Verified against the URDF |
 | Joint position control (`gz_ros2_control`, 12 joints) | ✅ Verified in simulation, locally and in the cloud (M1): one joint and all-joint neutral-pose trajectory |
-| Standing controller | ⚪ Planned (M2). M1 holds joint angles only, with no balance |
+| CAD neutral posture hold (simulation only) | ✅ Simulation posture hold verified, locally and in the cloud (M2): 10 s hold, body height, roll and pitch within the documented simulation thresholds. **Not** balance, walking or hardware validation |
+| Balance / standing controller | ⚪ Not implemented. M1 and M2 hold joint angles only, with no balance feedback |
 | Gait generation, IK, `/cmd_vel` bridge | ⚪ Planned |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
@@ -160,6 +161,9 @@ ros2 launch spiderx_bringup fortress.launch.py rviz:=true
 
 # M1: the same simulation with gz_ros2_control joint position control
 ros2 launch spiderx_bringup fortress_control.launch.py
+
+# M2: M1 plus the Gazebo ground-truth body pose for the simulation-only posture-hold test
+ros2 launch spiderx_bringup fortress_posture_hold.launch.py
 ```
 
 ## 🦾 Joint Position Control (M1)
@@ -175,6 +179,35 @@ ros2 run spiderx_controller test_neutral_pose.py      # all 12 joints -> cad_neu
 This is joint-position control only. It is **not** standing or walking. See the
 [M1 guide](docs/M1_JOINT_POSITION_CONTROL_GUIDE.md) and the [M1 results](docs/M1_TEST_RESULTS.md).
 ![M1: joints held at cad_neutral by position control (cloud capture)](media/cloud_validation/m1_joints_held_cad_neutral.png)
+
+## 🧍 Simulation-Only Posture Hold (M2)
+
+```text
+Simulation-only posture hold. Not dynamic balance control. Not walking or gait control.
+Not inverse kinematics. Not hardware validation. Not real-servo torque validation.
+Not battery/current validation. Not proof of real-world stability.
+```
+
+```bash
+# Terminal 2, with fortress_posture_hold.launch.py running
+ros2 run spiderx_controller run_posture_hold_test.py   # CAD neutral pose, 10 s hold, JSON report
+./scripts/validate_m2_posture.sh --runtime             # automated M2 checks
+```
+
+The test commands the existing `cad_neutral` pose, holds it for 10 s of simulation time, and measures:
+- joint tracking;
+- controller states;
+- body height, roll and pitch, from Gazebo ground truth.
+
+It then prints either "Simulation posture hold verified." or "Simulation posture hold not verified."
+
+The results are idealised by the placeholder 100 N·m actuator limits and other simulation
+assumptions. Foot contact is not measured. See the [M2 guide](docs/M2_SIMULATION_POSTURE_GUIDE.md),
+the [M2 results](docs/M2_TEST_RESULTS.md) and the [M2 limitations](docs/M2_SIMULATION_LIMITATIONS.md).
+
+![SpiderX CAD neutral posture hold in Gazebo Fortress — simulation only; not balance or walking.](media/cloud_validation/m2_cad_neutral_posture_hold.png)
+
+*SpiderX CAD neutral posture hold in Gazebo Fortress — simulation only; not balance or walking.*
 
 ## 🔍 Verification
 
@@ -212,6 +245,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 | `/joint_states` | `sensor_msgs/JointState` | Gazebo `JointStatePublisher` | ✅ (sim) |
 | `/clock` | `rosgraph_msgs/Clock` | Gazebo | ✅ (sim) |
 | `/tf`, `/tf_static`, `/robot_description` | — | `robot_state_publisher` | ✅ |
+| `/spiderx/sim/world_poses` | `tf2_msgs/TFMessage` | Gazebo ground truth (M2 test only; **not** `/tf`, not odometry) | ✅ (sim, `fortress_posture_hold.launch.py`) |
 | `/cmd_vel` | `geometry_msgs/Twist` | future Nav2 / teleop | ⛔ no consumer yet |
 | `/odom`, `/spiderx/leg_odometry`, `/imu/data` | — | future | ⚪ |
 
@@ -219,7 +253,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 
 ## ⚠️ Known Limitations
 
-- **No balance.** `fortress.launch.py` is passive, so the legs fold under gravity. `fortress_control.launch.py` (M1) holds the joint angles with stiff placeholder limits, but it has no balance or standing controller.
+- **No balance.** `fortress.launch.py` is passive, so the legs fold under gravity. `fortress_control.launch.py` (M1) holds the joint angles with stiff placeholder limits, and M2 only verifies that this simulated hold of the CAD neutral pose stays within thresholds. There is no balance or standing controller, and nothing here is validated on hardware.
 - **Nothing moves the robot.** Nothing consumes `/cmd_vel` and no odometry exists, so SLAM, AMCL and Nav2 cannot run usefully and are never auto-launched.
 - **Frame convention.** `base_link` faces **+y** (CAD convention, not REP-103). A REP-103 base frame is needed before Nav2.
 - **Mass properties.** CAD masses use the default steel density; the servo effort/velocity limits in the URDF are placeholders.
@@ -228,7 +262,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 
 ## 🗺️ Roadmap
 
-**joint control ✅ (M1) → standing controller → leg FK/IK → gait generator → `/cmd_vel` bridge →
+**joint control ✅ (M1) → simulation posture hold ✅ (M2, sim only) → leg FK/IK → gait generator → `/cmd_vel` bridge →
 odometry → SLAM → Nav2 → real-hardware validation**
 
 Nav2 comes last because it only decides where to go. It needs a robot that executes `/cmd_vel` and

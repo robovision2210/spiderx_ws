@@ -15,6 +15,7 @@ install(PROGRAMS
   scripts/validate_controller_config
   scripts/test_one_joint.py
   scripts/test_neutral_pose.py
+  scripts/run_posture_hold_test.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -22,6 +23,8 @@ if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_config_check test/test_config_check.py)
   ament_add_pytest_test(test_joint_safety test/test_joint_safety.py)
+  ament_add_pytest_test(test_posture_config test/test_posture_config.py)
+  ament_add_pytest_test(test_posture_metrics test/test_posture_metrics.py)
 endif()
 
 ament_package()

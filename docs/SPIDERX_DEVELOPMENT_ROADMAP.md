@@ -5,7 +5,7 @@ test that proves it works. Do not start Nav2 or SLAM work until M6 is done: they
 moves when commanded (`/cmd_vel`) and reports its motion (`/odom`).
 
 ```
-M0 model + sim  ─►  M1 joint control  ─►  M2 stand  ─►  M3 FK/IK  ─►  M4 gait
+M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 FK/IK  ─►  M4 gait
                                                                           │
       M9 hardware ◄─ M8 Nav2 ◄─ M7 SLAM/AMCL ◄─ M6 odometry ◄─ M5 /cmd_vel bridge
 ```
@@ -32,11 +32,21 @@ See [`M1_JOINT_POSITION_CONTROL_GUIDE.md`](M1_JOINT_POSITION_CONTROL_GUIDE.md) a
 - [ ] With the robot lifted (fixed base), every joint reaches both soft limits
 - [ ] Servo datasheet effort/velocity limits and joint damping (moved to M9: hardware evidence needed)
 
-## M2 – Standing controller
+## M2 – Simulation-only CAD neutral posture hold ✅ verified (cloud + local)
 
-- [ ] Command `cad_neutral` from the folded rest pose, with a smooth interpolation at ≤ `max_joint_velocity_rad_s`
-- [ ] Body height and roll/pitch stay within set tolerances for 60 s
-- [ ] Tune the stand height (a new named pose in `spiderx_poses.yaml`, only after testing)
+Simulation only. This is not balance control, walking, IK or hardware validation. See
+[`M2_SIMULATION_POSTURE_GUIDE.md`](M2_SIMULATION_POSTURE_GUIDE.md),
+[`M2_TEST_RESULTS.md`](M2_TEST_RESULTS.md) and
+[`M2_SIMULATION_LIMITATIONS.md`](M2_SIMULATION_LIMITATIONS.md).
+
+- [x] One canonical posture config (`m2_simulation_postures.yaml`), validated before sending: 12 joints, URDF limits −/+ 0.05 rad, equal to `cad_neutral`
+- [x] One slow 12-joint trajectory at ≤ `max_joint_velocity_rad_s`
+- [x] 10 s hold (simulation time): joint error, controller states, body height, roll and pitch within the documented thresholds; JSON report (cloud)
+- [x] Negative tests: invalid configs refused before sending; failed measured conditions report "not verified"
+- [x] The same checks on the owner's Ubuntu PC
+- [ ] Longer holds, disturbance tests and a tuned stand height: **not M2**. Only after real actuator limits exist (M9), and only as new, separately tested poses
+
+Balance / standing control (body feedback) is not scheduled yet; it needs an IMU and real actuator data.
 
 ## M3 – Leg forward and inverse kinematics
 

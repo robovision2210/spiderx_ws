@@ -23,6 +23,7 @@ class JointTestNode(Node):
     def __init__(self, name):
         super().__init__(name, parameter_overrides=[Parameter('use_sim_time', value=True)])
         self.positions = None
+        self.active_goal = None
         self.create_subscription(JointState, '/joint_states', self._on_state, 10)
         self.action = ActionClient(self, FollowJointTrajectory, ACTION)
         self.list_srv = self.create_client(ListControllers, '/controller_manager/list_controllers')
@@ -80,10 +81,21 @@ class JointTestNode(Node):
         handle = send.result()
         if handle is None or not handle.accepted:
             return False, None
+        self.active_goal = handle
         result = handle.get_result_async()
         # Wall-clock timeout generous enough for slow machines (real-time factor ~0.2).
         rclpy.spin_until_future_complete(
             self, result, timeout_sec=timeout if timeout is not None else 10.0 * duration_s + 30.0)
         if result.result() is None:
             return True, None
+        self.active_goal = None
         return True, result.result().result.error_code
+
+    def cancel_active_goal(self, timeout=5.0):
+        """Cancel the goal still running (for Ctrl-C). Returns True if a cancel was sent."""
+        if self.active_goal is None:
+            return False
+        future = self.active_goal.cancel_goal_async()
+        rclpy.spin_until_future_complete(self, future, timeout_sec=timeout)
+        self.active_goal = None
+        return True
