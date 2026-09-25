@@ -1,0 +1,31 @@
+# ros2_control controllers for the LEGACY Gazebo Classic path.
+#
+# Loaded by the gazebo_ros2_control plugin declared in urdf/spiderx.gazebo
+# (sim_backend:=classic). The joint names match the <ros2_control> block in
+# urdf/spiderx.trans. Not used by the Gazebo Fortress path, which spawns a
+# passive model. This configuration has not been validated in simulation.
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    leg_position_controller:
+      type: position_controllers/JointGroupPositionController
+
+leg_position_controller:
+  ros__parameters:
+    joints:
+      - rr_hip
+      - lr_hip
+      - rf_hip
+      - lf_hip
+      - rr_thigh_joint
+      - rf_thigh_joint
+      - lr_thigh_joint
+      - lf_thigh_joint
+      - rr_foot_joint
+      - rf_foot_joint
+      - lr_foot_joint
+      - lf_foot_joint

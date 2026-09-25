@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!--
+  Gazebo Fortress (Ignition Gazebo 6) extensions for SpiderX.
+
+  Included by spiderx.urdf.xacro only when sim_backend:=fortress. Everything here
+  is Fortress-native; no Gazebo Classic plugin is used.
+  The legacy Gazebo Classic tags remain in spiderx.gazebo and spiderx.trans.
+
+  Gazebo topics published by this file (bridged to ROS 2 by
+  config/fortress_bridge.yaml):
+    /spiderx/scan          gz.msgs.LaserScan  -> /scan          sensor_msgs/msg/LaserScan
+    /spiderx/joint_states  gz.msgs.Model      -> /joint_states  sensor_msgs/msg/JointState
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="gz_scan_topic" value="/spiderx/scan" />
+  <xacro:property name="gz_joint_state_topic" value="/spiderx/joint_states" />
+
+  <!-- 2D lidar on lidar_link (RPLidar A1-class parameters): 360 samples covering a
+       full turn at exactly 1 deg increments, 0.15-12 m, 10 Hz. gpu_lidar is the
+       lidar implementation available in Fortress; it needs the Sensors system
+       (ogre2) that spiderx_fortress.sdf loads. ignition_frame_id makes the
+       LaserScan header use the URDF/TF frame instead of a scoped Gazebo name. -->
+  <gazebo reference="lidar_link">
+    <sensor name="lidar" type="gpu_lidar">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <visualize>true</visualize>
+      <topic>${gz_scan_topic}</topic>
+      <ignition_frame_id>lidar_link</ignition_frame_id>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.14159265</min_angle>
+            <max_angle>3.12413936</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>
+            <max_angle>0</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.15</min>
+          <max>12.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+    </sensor>
+  </gazebo>
+
+  <!-- Publishes the state of every model joint as measured by the physics engine.
+       The launch file bridges this to /joint_states, which robot_state_publisher uses
+       for the leg TF. Nothing here commands the joints: the model is passive. -->
+  <gazebo>
+    <plugin filename="ignition-gazebo-joint-state-publisher-system"
+            name="ignition::gazebo::systems::JointStatePublisher">
+      <topic>${gz_joint_state_topic}</topic>
+    </plugin>
+  </gazebo>
+
+  <!-- Contact parameters kept identical to the legacy Classic file (spiderx.gazebo):
+       mu1 = mu2 = 0.2 and self_collide = false on the same 30 CAD links. These are the
+       fusion2urdf template defaults, not measured values (audit item P4). The Classic
+       "Gazebo/Silver" material scripts are omitted: Fortress uses the URDF colours. -->
+  <xacro:macro name="spiderx_fortress_surface" params="links">
+    <xacro:if value="${links}">
+      <gazebo reference="${links[0]}">
+        <mu1>0.2</mu1>
+        <mu2>0.2</mu2>
+        <self_collide>false</self_collide>
+      </gazebo>
+      <xacro:spiderx_fortress_surface links="${links[1:]}" />
+    </xacro:if>
+  </xacro:macro>
+
+  <xacro:spiderx_fortress_surface links="${[
+      'base_link', 'top_1',
+      'b_s1_1', 'b_s2_1', 'b_s3_1', 'b_s4_1',
+      'b_s1_c_horn_1', 'b_s2_c_horn_1', 'b_s3_c_horn_1', 'b_s4_c_horn_1',
+      'rr_holder_suppor1_1', 'rf_holder_suppor1_1', 'lr_holder_suppor1_1', 'lf_holder_suppor1_1',
+      'rr_holder_1', 'rf_holder_1', 'lr_holder_1', 'lf_holder_1',
+      'rr_c_horn_1', 'rf_c_horn_1', 'lr_c_horn_1', 'lf_c_horn_1',
+      'rr_thigh_1', 'rf_thigh_1', 'lr_thigh_1', 'lf_thigh_1',
+      'rr_foot_1', 'rf_foot_1', 'lr_foot_1', 'lf_foot_1']}" />
+
+</robot>

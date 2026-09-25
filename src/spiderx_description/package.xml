@@ -3,7 +3,7 @@
 <package format="3">
   <name>spiderx_description</name>
   <version>0.0.1</version>
-  <description>SpiderX Quadruped Robot - URDF, meshes and Gazebo config</description>
+  <description>SpiderX quadruped robot description: URDF/xacro, meshes, Gazebo Fortress world and launch, legacy Gazebo Classic config</description>
   <maintainer email="jagadeswar@gmail.com">Jagadeswar</maintainer>
   <license>Apache-2.0</license>
 
@@ -17,7 +17,16 @@
   <depend>rviz2</depend>
   <depend>ros2_control</depend>
   <depend>ros2_controllers</depend>
+  <!-- Legacy Gazebo Classic path (urdf/spiderx.gazebo, urdf/spiderx.trans). -->
   <depend>gazebo_ros2_control</depend>
+
+  <!-- Gazebo Fortress path (launch/fortress.launch.py). -->
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>ros_gz_interfaces</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
