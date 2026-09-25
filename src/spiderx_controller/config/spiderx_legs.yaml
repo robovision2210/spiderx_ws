@@ -1,0 +1,61 @@
+# SpiderX leg and joint-group definition.
+#
+# Source of truth: src/spiderx_description/urdf/spiderx.urdf.xacro. Every joint name, parent/child
+# link, axis and URDF limit below is copied from that file, and scripts/validate_controller_config
+# checks them against it.
+#
+# Leg naming (from docs/SPIDERX_URDF_AUDIT.md section 3): base_link +y is the robot's front and
+# +x is its right. The leg prefixes are lf / rf / lr / rr = left-front / right-front / left-rear /
+# right-rear.
+#
+# Chain order per leg (URDF parent -> child): hip (abduction about +-y)
+# -> thigh (flexion about +-x) -> foot (knee flexion about +-x).
+#
+# soft_lower / soft_upper: URDF limits pulled inward by soft_limit_margin_rad. This is a safety
+# margin chosen for future controllers, not a hardware value.
+
+soft_limit_margin_rad: 0.05
+
+# Conservative motion constraints for FUTURE controllers.
+#   SIMULATION_PLACEHOLDER: chosen to be slow, not measured.
+#   UNKNOWN: needs the servo datasheet. The URDF effort (100) and velocity (100) are
+#            exporter placeholders, see docs/SPIDERX_URDF_AUDIT.md K4.
+motion_constraints:
+  max_joint_velocity_rad_s: 0.5     # SIMULATION_PLACEHOLDER
+  max_joint_effort_nm: null         # UNKNOWN - requires servo datasheet
+
+joint_order: [hip, thigh, foot]
+
+legs:
+  front_left:
+    prefix: lf
+    hip_servo_body_link: b_s4_1
+    foot_link: lf_foot_1
+    joints:
+      hip:   {name: lf_hip,         parent: b_s4_1,      child: b_s4_c_horn_1, axis: [0, 1, 0],  lower: -0.610865, upper: 0.698132, soft_lower: -0.560865, soft_upper: 0.648132}
+      thigh: {name: lf_thigh_joint, parent: lf_holder_1, child: lf_c_horn_1,   axis: [-1, 0, 0], lower: -0.610865, upper: 0.785398, soft_lower: -0.560865, soft_upper: 0.735398}
+      foot:  {name: lf_foot_joint,  parent: lf_thigh_1,  child: lf_foot_1,     axis: [1, 0, 0],  lower: -0.698132, upper: 0.436332, soft_lower: -0.648132, soft_upper: 0.386332}
+  front_right:
+    prefix: rf
+    hip_servo_body_link: b_s2_1
+    foot_link: rf_foot_1
+    joints:
+      hip:   {name: rf_hip,         parent: b_s2_1,      child: b_s2_c_horn_1, axis: [0, 1, 0],  lower: -0.698132, upper: 0.610865, soft_lower: -0.648132, soft_upper: 0.560865}
+      thigh: {name: rf_thigh_joint, parent: rf_holder_1, child: rf_c_horn_1,   axis: [1, 0, 0],  lower: -0.785398, upper: 0.610865, soft_lower: -0.735398, soft_upper: 0.560865}
+      foot:  {name: rf_foot_joint,  parent: rf_thigh_1,  child: rf_foot_1,     axis: [-1, 0, 0], lower: -0.436332, upper: 0.698132, soft_lower: -0.386332, soft_upper: 0.648132}
+  rear_left:
+    prefix: lr
+    hip_servo_body_link: b_s3_1
+    foot_link: lr_foot_1
+    joints:
+      hip:   {name: lr_hip,         parent: b_s3_1,      child: b_s3_c_horn_1, axis: [0, -1, 0], lower: -0.698132, upper: 0.610865, soft_lower: -0.648132, soft_upper: 0.560865}
+      thigh: {name: lr_thigh_joint, parent: lr_holder_1, child: lr_c_horn_1,   axis: [-1, 0, 0], lower: -0.610865, upper: 0.785398, soft_lower: -0.560865, soft_upper: 0.735398}
+      foot:  {name: lr_foot_joint,  parent: lr_thigh_1,  child: lr_foot_1,     axis: [-1, 0, 0], lower: -0.436332, upper: 0.698132, soft_lower: -0.386332, soft_upper: 0.648132}
+  rear_right:
+    prefix: rr
+    hip_servo_body_link: b_s1_1
+    foot_link: rr_foot_1
+    joints:
+      hip:   {name: rr_hip,         parent: b_s1_1,      child: b_s1_c_horn_1, axis: [0, -1, 0], lower: -0.610865, upper: 0.698132, soft_lower: -0.560865, soft_upper: 0.648132}
+      thigh: {name: rr_thigh_joint, parent: rr_holder_1, child: rr_c_horn_1,   axis: [1, 0, 0],  lower: -0.785398, upper: 0.610865, soft_lower: -0.735398, soft_upper: 0.560865}
+      foot:  {name: rr_foot_joint,  parent: rr_thigh_1,  child: rr_foot_1,     axis: [-1, 0, 0], lower: -0.436332, upper: 0.698132, soft_lower: -0.386332, soft_upper: 0.648132}

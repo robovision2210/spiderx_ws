@@ -1,5 +1,15 @@
 # Media
 
+## Local validation captures (included)
+
+These were captured on the owner's Ubuntu 22.04 PC during the first local test, cropped to the
+Gazebo window.
+
+| File | What it shows |
+|---|---|
+| `local_validation/gazebo_fortress_ubuntu.png` | `ros2 launch spiderx_bringup fortress.launch.py`: SpiderX spawned from `<urdf-string>`, and the full entity tree |
+| `local_validation/gazebo_lidar_rays_collisions.png` | Close-up with Gazebo's collision view (magenta) and the lidar rays (green) |
+
 ## Cloud validation captures (included)
 
 Both images were captured during automated validation, on a cloud VM with **no GPU**. They
@@ -23,6 +33,8 @@ from the top-level `README.md`.
 | 3 | `spiderx_rviz_scan.png` | `ros2 launch spiderx_bringup fortress.launch.py rviz:=true`. RViz with RobotModel, TF and LaserScan visible, and the scan outlining the walls and obstacles. |
 | 4 | `spiderx_lidar_rays.gif` (5–10 s) | In Gazebo, open ⋮ → *Visualize Lidar*, choose topic `/spiderx/scan`, and record the rays around the robot, for example with Peek or SimpleScreenRecorder. |
 | 5 | `spiderx_terminal_checks.png` | A terminal showing `ros2 topic list`, `ros2 topic hz /scan` and `ros2 run tf2_ros tf2_echo base_link lidar_link`. |
+| 6 | `spiderx_tf_tree.png` | Run `ros2 run tf2_tools view_frames` while the simulation runs, then convert the resulting PDF (`frames_*.pdf`) to PNG. |
+| 7 | *(future)* `spiderx_standing.gif`, `spiderx_walking.gif` | **Only after** the standing controller and gait exist and pass their roadmap tests. |
 
 Keep individual files under about 2 MB. Scale the GIF to 800 px wide or less.
 

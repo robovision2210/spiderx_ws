@@ -32,7 +32,7 @@ ros2 launch spiderx_bringup fortress.launch.py
 |---|---|---|
 | `classic` (default) | `spiderx.trans`, `spiderx.gazebo` (legacy, unchanged) | `display.launch.py`, any legacy Classic launch |
 | `fortress` | `spiderx_fortress.gazebo.xacro` (gpu_lidar, JointStatePublisher, contact parameters) | `spiderx_description/launch/fortress.launch.py` |
-| `none` | no simulator tags | `spiderx_bringup/launch/hardware_lidar.launch.py` |
+| `none` | no simulator tags | `spiderx_bringup/launch/real_robot.launch.py` |
 
 For every value the CAD links, joints, inertias and meshes are identical. The default
 output was verified to be semantically identical to the pre-migration URDF, apart from the
@@ -47,7 +47,7 @@ new `lidar_link` and `lidar_joint`.
 | `src/spiderx_description/worlds/spiderx_fortress.sdf` | Fortress world: Physics, UserCommands, SceneBroadcaster and Sensors (ogre2) systems; ground, sun, walls, obstacles, GUI camera |
 | `src/spiderx_description/urdf/spiderx_fortress.gazebo.xacro` | Fortress-only sensor, system and contact tags |
 | `src/spiderx_description/config/fortress_bridge.yaml` | `ros_gz_bridge` configuration (all GZ → ROS) |
-| `src/spiderx_bringup/launch/hardware_lidar.launch.py` | Real RPLidar A1 driver, deliberately outside the simulation path |
+| `src/spiderx_bringup/launch/real_robot.launch.py` → `src/spiderx_firmware/launch/lidar.launch.py` | Real RPLidar A1 driver, deliberately outside the simulation path (originally `hardware_lidar.launch.py`) |
 | `scripts/validate_fortress.sh` | Static validation |
 | Legacy, unchanged: `urdf/spiderx.gazebo`, `urdf/spiderx.trans` | Gazebo Classic tags |
 | `src/spiderx_description/config/controllers.yaml` | Legacy Classic controller config. It was referenced but missing, which broke `colcon build` |
@@ -63,7 +63,7 @@ new `lidar_link` and `lidar_joint`.
 | Lidar floated 7.4 cm above the top plate, off centre, pointing right; scan frame not overridden | Mounted on the measured top-plate centre, yawed to face forward, `ignition_frame_id=lidar_link` |
 | Garden-style `gz-sim-*` plugin names (only accepted through aliasing in later 6.x releases) | Canonical `ignition-gazebo-*-system` names |
 | `GZ_SIM_RESOURCE_PATH` overwritten; `IGN_GAZEBO_RESOURCE_PATH` not set | Both appended |
-| The Classic bringup started the hardware RPLidar on `/dev/ttyUSB0` in simulation | The hardware driver lives only in `hardware_lidar.launch.py` |
+| The Classic bringup started the hardware RPLidar on `/dev/ttyUSB0` in simulation | The hardware driver lives only in the real-robot path (`real_robot.launch.py`) |
 
 ## 5. Validation record
 
@@ -87,7 +87,7 @@ llvmpipe.
   - Passive physics is stable: the root settles at z ≈ 0.012 m, with roll and pitch below 2e-4 rad.
   - Real-time factor was about 0.3–0.45, limited by software rendering on the VM.
 - `rviz:=true`: RViz loads the config (Global Status OK) and shows the robot model, TF and scan.
-- `hardware_lidar.launch.py`: robot_state_publisher starts; the driver fails only because no serial device exists.
+- `hardware_lidar.launch.py` (now `real_robot.launch.py`): robot_state_publisher starts; the driver fails only because no serial device exists.
 
 ### Needs local verification (GPU machine)
 
@@ -104,7 +104,7 @@ llvmpipe.
    - Humble 0.7.x also keeps `ign_ros2_control/IgnitionSystem` and `ign_ros2_control-system` as compatibility aliases.
    - Reuse `config/controllers.yaml`.
    - Replace the effort/velocity placeholders (100 N·m, 100 rad/s) with the servo specifications, and add joint damping.
-2. **Gait.** Stand-up posture, leg IK using the per-joint sign conventions in `docs/SPIDERX_URDF_AUDIT.md` §5, a gait generator, and a `/cmd_vel` → gait interface.
+2. **Gait.** Stand-up posture, leg IK using the per-joint sign conventions in `SPIDERX_URDF_AUDIT.md` §5, a gait generator, and a `/cmd_vel` → gait interface.
 3. **State estimation.** Leg odometry and/or IMU → `/odom` and `odom → base_link`. Add a REP-103 `base_footprint`, because `base_link` faces +y.
 4. **Navigation.** Then add a simulation mapping/localization/Nav2 launch, with the footprint expressed in the real `base_link` coordinates.
 

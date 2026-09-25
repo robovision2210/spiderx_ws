@@ -3,7 +3,7 @@
 <package format="3">
   <name>spiderx_bringup</name>
   <version>0.1.0</version>
-  <description>SpiderX top-level launch files: Gazebo Fortress simulation and hardware lidar bring-up</description>
+  <description>SpiderX top-level launch files: Gazebo Fortress simulation (fortress.launch.py) and real-robot bring-up (real_robot.launch.py)</description>
   <maintainer email="jagadeswar@gmail.com">Jagadeswar</maintainer>
   <license>Apache-2.0</license>
 
@@ -21,8 +21,8 @@
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>rviz2</exec_depend>
 
-  <!-- launch/hardware_lidar.launch.py (real robot only, never started in simulation) -->
-  <exec_depend>rplidar_ros</exec_depend>
+  <!-- launch/real_robot.launch.py (real robot only, never started in simulation) -->
+  <exec_depend>spiderx_firmware</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

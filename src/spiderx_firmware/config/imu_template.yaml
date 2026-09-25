@@ -1,0 +1,16 @@
+# TEMPLATE - SpiderX IMU integration. NOT used by any code yet.
+#
+# The URDF has no IMU link today. Before use:
+#   1. measure the IMU mounting pose on the robot;
+#   2. add an imu_link + fixed joint to spiderx_description (with CAD or measured evidence);
+#   3. choose a driver and publish sensor_msgs/Imu on the topic below.
+# robot_localization (spiderx_localization/config/ekf.yaml) expects this topic and frame.
+
+imu:
+  model: null            # PLACEHOLDER
+  driver_package: null   # PLACEHOLDER
+  port: null             # PLACEHOLDER (hardware launch only)
+  topic: /imu/data
+  frame_id: imu_link     # does not exist in the URDF yet
+  mount_xyz: null        # PLACEHOLDER [x, y, z] in base_link, metres
+  mount_rpy: null        # PLACEHOLDER [roll, pitch, yaw] in base_link, radians

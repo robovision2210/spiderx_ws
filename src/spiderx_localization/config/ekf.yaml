@@ -1,0 +1,36 @@
+# robot_localization EKF for SpiderX. CONFIGURED BUT BLOCKED (see STATUS.md).
+#
+# Neither input exists yet. This file defines the interface that future components must provide:
+#   odom0: /spiderx/leg_odometry  nav_msgs/Odometry  from the future gait/leg-odometry node
+#   imu0:  /imu/data              sensor_msgs/Imu    from a future IMU (spiderx_firmware/config/imu_template.yaml)
+# Nothing in this repository publishes these, and nothing may fake them.
+#
+# base_link_frame is dummy_link, the root of the URDF TF tree (it coincides with base_link).
+# The EKF publishes odom -> dummy_link. Publishing odom -> base_link instead would give base_link
+# two parents and break TF.
+ekf_filter_node:
+  ros__parameters:
+    frequency: 30.0
+    two_d_mode: true
+    publish_tf: true
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: dummy_link
+    world_frame: odom
+
+    odom0: /spiderx/leg_odometry
+    # x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  true,  false,
+                   false, false, true,
+                   false, false, false]
+    odom0_differential: false
+
+    imu0: /imu/data
+    imu0_config: [false, false, false,
+                  false, false, true,
+                  false, false, false,
+                  false, false, true,
+                  true,  false, false]
+    imu0_remove_gravitational_acceleration: true

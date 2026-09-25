@@ -1,0 +1,18 @@
+# CONFIGURED BUT BLOCKED (see STATUS.md): Nav2 needs a /cmd_vel consumer (gait controller)
+# and odom -> dummy_link from real odometry. Neither exists yet.
+# Frames: base_link from the URDF. NOTE: base_link +y is the robot front (CAD convention, audit
+# item T1). Nav2 controllers assume +x forward, so a REP-103 base frame must be added before the
+# controller can be used (docs/SPIDERX_DEVELOPMENT_ROADMAP.md).
+# Footprint: measured mesh extents in base_link (x -0.043..0.145, y -0.259..0.104) + 0.02 m margin.
+# Every velocity/acceleration below is a SIMULATION_PLACEHOLDER (slow on purpose), not a measured
+# SpiderX capability.
+waypoint_follower:
+  ros__parameters:
+    use_sim_time: true
+    loop_rate: 20
+    stop_on_failure: false
+    waypoint_task_executor_plugin: "wait_at_waypoint"
+    wait_at_waypoint:
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      enabled: true
+      waypoint_pause_duration: 1000

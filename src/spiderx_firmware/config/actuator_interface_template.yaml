@@ -1,0 +1,32 @@
+# TEMPLATE - SpiderX actuator (servo) interface map. NOT used by any code yet.
+#
+# The physical servo controller, bus and protocol are not defined in this repository. Fill every
+# PLACEHOLDER (null) from the real hardware before writing a ros2_control hardware interface
+# (see docs/SPIDERX_HARDWARE_INTERFACE.md).
+#
+# direction_sign: +1 if a positive servo command rotates the joint in the positive direction of
+#   its URDF axis, else -1. It must be measured on the robot: the URDF axis signs differ per
+#   joint (for example lr_foot_joint -x and lf_foot_joint +x), see docs/SPIDERX_URDF_AUDIT.md
+#   section 5.
+# zero_offset_rad: servo reading when the joint is at the URDF zero (CAD pose).
+# Limits are taken from spiderx_controller/config/spiderx_legs.yaml, not repeated here.
+
+hardware:
+  controller_type: null   # PLACEHOLDER e.g. PWM driver board, serial bus-servo controller
+  port: null              # PLACEHOLDER e.g. /dev/ttyACM0 (hardware launch only)
+  baudrate: null          # PLACEHOLDER
+  update_rate_hz: null    # PLACEHOLDER
+
+joints:
+  lf_hip:         {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  lf_thigh_joint: {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  lf_foot_joint:  {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  rf_hip:         {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  rf_thigh_joint: {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  rf_foot_joint:  {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  lr_hip:         {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  lr_thigh_joint: {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  lr_foot_joint:  {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  rr_hip:         {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  rr_thigh_joint: {servo_id: null, direction_sign: null, zero_offset_rad: null}
+  rr_foot_joint:  {servo_id: null, direction_sign: null, zero_offset_rad: null}

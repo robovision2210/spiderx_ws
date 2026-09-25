@@ -1,159 +1,267 @@
-# SpiderX – ROS 2 Quadruped (Humble · Gazebo Fortress)
+# 🕷️ SpiderX — 12-DOF Quadruped Robot (ROS 2 Humble + Gazebo Fortress)
 
-SpiderX is a 12-DOF quadruped robot: four legs, each with hip abduction, hip flexion and
-knee. This workspace provides:
+[![ROS2](https://img.shields.io/badge/ROS2-Humble-blue?logo=ros)](https://docs.ros.org/en/humble/)
+[![Gazebo](https://img.shields.io/badge/Gazebo-Fortress%20(Ignition%206)-orange)](https://gazebosim.org/docs/fortress)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu)](https://releases.ubuntu.com/22.04/)
+[![Status](https://img.shields.io/badge/Locomotion-not%20yet%20implemented-lightgrey)](STATUS.md)
+[![License](https://img.shields.io/badge/License-Apache--2.0-green)](src/spiderx_description/package.xml)
+[![GitHub](https://img.shields.io/badge/GitHub-robovision2210-black?logo=github)](https://github.com/robovision2210/spiderx_ws)
 
-- its CAD-exported robot description (URDF/xacro and STL meshes);
-- a **Gazebo Fortress (Ignition Gazebo 6)** simulation with a simulated 2D lidar bridged to ROS 2 `/scan`;
-- a real-robot lidar bring-up.
+> SpiderX is a 12-DOF quadruped robot (4 legs × hip / thigh / knee) built from a Fusion 360 CAD
+> model. It is organised as a professional multi-package ROS 2 workspace. The audited CAD model
+> runs in **Gazebo Fortress** with a simulated 360° lidar on `/scan`, real joint states and a
+> complete TF tree, and has been verified on Ubuntu 22.04.
+>
+> The controller, mapping, localization and navigation packages are laid out and configured, but
+> locomotion is not implemented yet. **The robot does not stand, walk or navigate yet.**
+> See [STATUS.md](STATUS.md).
 
-> **Status: passive simulation.** SpiderX spawns, settles under gravity and publishes
-> `/scan`, `/joint_states`, `/clock` and TF. No gait, IK or joint controller exists yet, so
-> the simulated robot does **not** stand actively, walk or navigate. See
-> [Limitations and roadmap](#limitations-and-roadmap).
+---
 
-![SpiderX in Gazebo Fortress (cloud validation capture, software rendering)](media/cloud_validation/gazebo_fortress_gui.png)
+## 📸 Screenshots
 
-## Architecture
-
-```
-                      spiderx_description/urdf/spiderx.urdf.xacro   (single source of truth)
-                                   │  xacro sim_backend:=fortress
-                                   ▼
-              ┌──────────── robot_state_publisher ─────────────┐
-              │  /robot_description          /tf, /tf_static   │
-              └──────┬─────────────────────────────▲───────────┘
-                     │ ros_gz_sim create            │ /joint_states
-                     ▼ (-topic robot_description)   │
-  ┌──────────────────────────────────────┐    ┌─────┴───────────────────────────────┐
-  │ Gazebo Fortress (ign gazebo, via     │    │ ros_gz_bridge (parameter_bridge)    │
-  │ ros_gz_sim gz_sim.launch.py)         │    │ config/fortress_bridge.yaml         │
-  │  world: spiderx_fortress.sdf         │    │  /clock          gz → ROS           │
-  │  • Physics (DART), SceneBroadcaster, │───▶│  /spiderx/scan → /scan              │
-  │    UserCommands, Sensors (ogre2)     │ gz │  /spiderx/joint_states → /joint_states│
-  │  model: spiderx                      │    └─────────────────────────────────────┘
-  │  • gpu_lidar on lidar_link           │
-  │  • JointStatePublisher system        │    optional: RViz (rviz:=true)
-  └──────────────────────────────────────┘
-```
-
-| Package | Contents |
+| Gazebo Fortress on Ubuntu 22.04 (local test) | Lidar rays + collision view (local test) |
 |---|---|
-| `spiderx_description` | URDF/xacro, meshes, Fortress world, `fortress.launch.py`, bridge config, legacy Gazebo Classic config |
-| `spiderx_bringup` | `fortress.launch.py` (recommended entry point), `hardware_lidar.launch.py`, RViz config |
+| ![SpiderX in Gazebo Fortress](media/local_validation/gazebo_fortress_ubuntu.png) | ![Lidar rays and collisions](media/local_validation/gazebo_lidar_rays_collisions.png) |
 
-## Prerequisites
+| RViz: robot model, TF, `/scan` (cloud validation) | Close-up (cloud validation, software rendering) |
+|---|---|
+| ![RViz](media/cloud_validation/rviz_scan_tf.png) | ![Gazebo close-up](media/cloud_validation/gazebo_fortress_gui.png) |
+
+Demo GIFs of standing and walking will be added only once those capabilities exist
+([media/README.md](media/README.md)).
+
+---
+
+## ✅ Feature Status
+
+| Feature | Status |
+|---|---|
+| Gazebo Fortress simulation | ✅ Verified (Ubuntu 22.04, locally) |
+| URDF / TF (audited CAD model) | ✅ Verified |
+| Simulated lidar → `/scan` (`lidar_link`) | ✅ Verified |
+| Joint states (`/joint_states`, 12 joints) | ✅ Verified |
+| Leg/joint groups, soft limits, config checker | ✅ Verified against the URDF |
+| Standing controller | 🟡 Planned. Neutral pose and ros2_control scaffold prepared |
+| Gait generation, IK, `/cmd_vel` bridge | ⚪ Planned |
+| Odometry | ⚪ Planned (never faked) |
+| SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
+| Autonomous navigation | ⛔ Blocked until locomotion and odometry exist |
+| Real hardware | 🟡 Lidar launch configured; actuators and IMU are future integration |
+
+Full breakdown with evidence: **[STATUS.md](STATUS.md)**
+
+---
+
+## 🏗️ Architecture
+
+```
+                 spiderx_description/urdf/spiderx.urdf.xacro   (single source of truth)
+                               │
+       ┌───────────────────────┴───────────────────────┐
+  sim_backend:=fortress                            sim_backend:=none
+       │                                               │
+ spiderx_bringup/fortress.launch.py               spiderx_bringup/real_robot.launch.py
+       │                                               │
+ ┌─────┴────────────────────────┐                 ┌────┴───────────────────────────┐
+ │ Gazebo Fortress (ros_gz_sim) │                 │ robot_state_publisher          │
+ │ robot_state_publisher        │                 │ spiderx_firmware/lidar.launch  │
+ │ ros_gz_bridge                │                 │   (RPLidar A1 → /scan)         │
+ └─────┬────────────────────────┘                 └────────────────────────────────┘
+       │ /scan  /joint_states  /clock  /tf
+       ▼
+ spiderx_scripts (diagnostics) · RViz (optional)
+
+ Future layers (configured, not running):
+ /cmd_vel → [gait + IK] → spiderx_controller (ros2_control) → joints
+ /joint_states + IMU → leg odometry → spiderx_localization (EKF) → odom → dummy_link
+ spiderx_mapping (SLAM) · spiderx_localization (AMCL) · spiderx_navigation (Nav2)
+```
+
+Details: [docs/SPIDERX_SYSTEM_ARCHITECTURE.md](docs/SPIDERX_SYSTEM_ARCHITECTURE.md)
+
+---
+
+## 🦿 Robot Specifications
+
+| Parameter | Value |
+|---|---|
+| Type | Quadruped, 12 revolute joints (per leg: hip abduction, thigh flexion, knee) |
+| Size (CAD pose) | ≈ 0.19 m × 0.36 m × 0.17 m |
+| CAD mass | 7.29 kg. **Fusion 360 default steel**, not the real robot ([inertia audit](docs/URDF_INERTIA_AUDIT.md)) |
+| Joint ranges (URDF) | Hip span 1.31 rad, thigh span 1.40 rad, knee span 1.13 rad. Signs differ per joint, see [audit §5](docs/SPIDERX_URDF_AUDIT.md) |
+| Frames | `dummy_link` (root) → `base_link` (**+y = front**, CAD convention) → legs, `lidar_link` |
+
+### Sensors
+
+| Sensor | Simulation | Topic / frame | Rate |
+|---|---|---|---|
+| 2D lidar (RPLidar A1-class) | Fortress `gpu_lidar`, 360 × 1°, 0.15–12 m, σ = 1 cm | `/scan` / `lidar_link` | 10 Hz (sim time) |
+| IMU | — (future) | `/imu/data` (planned) | — |
+
+---
+
+## 📦 Package Structure
+
+```
+spiderx_ws/
+├── README.md · STATUS.md
+├── docs/                    # architecture, roadmap, hardware, sim-vs-hw, testing, URDF/inertia audits
+├── media/                   # local + cloud validation captures, capture list
+├── scripts/validate_fortress.sh   # static + runtime validation
+└── src/
+    ├── spiderx_description/   # CAD URDF/xacro, meshes, Fortress world, bridge config, Classic legacy
+    ├── spiderx_bringup/       # fortress.launch.py (simulation) · real_robot.launch.py (hardware) · RViz
+    ├── spiderx_controller/    # leg/joint groups, neutral pose, soft limits, ros2_control scaffold, checker
+    ├── spiderx_localization/  # EKF + AMCL (configured, blocked)
+    ├── spiderx_mapping/       # SLAM Toolbox (configured, blocked)
+    ├── spiderx_navigation/    # Nav2 per-server configs + BT (configured, blocked)
+    ├── spiderx_firmware/      # RPLidar launch + actuator/IMU interface templates (hardware only)
+    └── spiderx_scripts/       # read_lidar, read_joint_states
+```
+
+The structure follows [mechaprime_ws](https://github.com/robovision2210/mechaprime_ws), adapted for
+a legged robot: [docs/MECHAPRIME_TO_SPIDERX_ARCHITECTURE_PLAN.md](docs/MECHAPRIME_TO_SPIDERX_ARCHITECTURE_PLAN.md).
+
+---
+
+## 🔧 Requirements
 
 - Ubuntu 22.04
-- [ROS 2 Humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html), desktop install
-- Gazebo Fortress, which `ros-humble-ros-gz-*` installs automatically
-- A GPU with a working OpenGL driver is recommended, because the lidar is rendered with ogre2
+- ROS 2 Humble (desktop)
+- Gazebo Fortress, via `ros-humble-ros-gz-*`
+- A GPU with a working OpenGL driver is recommended
 
-## Install
-
-```bash
-sudo apt update && sudo apt install ros-humble-ros-gz-sim ros-humble-ros-gz-bridge ros-humble-ros-gz-interfaces
-```
-
-Then resolve the remaining dependencies declared in `package.xml`:
-
-- Required: `xacro` and `robot_state_publisher`.
-- Optional: `rviz2`, `rplidar_ros`, and the legacy Classic packages.
+## 🚀 Installation
 
 ```bash
+git clone https://github.com/robovision2210/spiderx_ws.git ~/spiderx_ws
 cd ~/spiderx_ws
-sudo rosdep init 2>/dev/null; rosdep update
-rosdep install --from-paths src --ignore-src -r -y
-```
-
-`gazebo_ros2_control` belongs to the legacy Classic path and pulls in Gazebo Classic. If you only need Fortress, add `--skip-keys gazebo_ros2_control`.
-
-## Build
-
-```bash
+sudo apt update && sudo apt install ros-humble-ros-gz-sim ros-humble-ros-gz-bridge ros-humble-ros-gz-interfaces
 source /opt/ros/humble/setup.bash
-cd ~/spiderx_ws && colcon build --symlink-install && source install/setup.bash
+rosdep install --from-paths src --ignore-src -r -y --skip-keys gazebo_ros2_control
+colcon build --symlink-install
+source install/setup.bash
 ```
 
-## Launch
+`--skip-keys gazebo_ros2_control` skips the legacy Gazebo Classic dependency.
+
+---
+
+## ▶️ Running the Simulation
 
 ```bash
+# Terminal 1 — Gazebo Fortress + SpiderX + lidar + bridge
 ros2 launch spiderx_bringup fortress.launch.py
+
+# optional: with RViz
+ros2 launch spiderx_bringup fortress.launch.py rviz:=true
 ```
 
-| Argument | Default | Meaning |
-|---|---|---|
-| `rviz` | `false` | Also open RViz (robot model, TF, `/scan`) |
-| `headless` | `false` | Server only, no GUI. The lidar is rendered through EGL (`--headless-rendering`) |
-| `world` | `spiderx_fortress.sdf` | Absolute path to another Fortress world |
-| `spawn_x`, `spawn_y`, `spawn_z`, `spawn_yaw` | `0`, `0`, `0.075`, `0` | Spawn pose of the root link. The feet sit 0.0545 m below it, so keep `spawn_z` above that |
-| `gz_verbosity` | `2` | Gazebo console verbosity |
-
-Close the Gazebo window, or press Ctrl-C, to stop everything.
-
-## Verify
-
-Run these in a second terminal after `source ~/spiderx_ws/install/setup.bash`:
+## 🔍 Verification
 
 ```bash
-ros2 topic list                     # expect /clock /scan /joint_states /tf /tf_static /robot_description
-ros2 topic echo /scan --once        # frame_id: lidar_link, 360 ranges, range_min 0.15, range_max 12.0
-ros2 topic echo /clock --once       # simulation time advances
-ros2 topic hz /scan                 # ~10 Hz at real-time factor 1
-ros2 run tf2_ros tf2_echo base_link lidar_link   # translation 0.051 -0.045 0.141
-ros2 run tf2_ros tf2_echo base_link rr_foot_1    # leg TF, driven by Gazebo /joint_states
-./scripts/validate_fortress.sh      # static checks: xacro, URDF, SDF, launch files, no Classic tokens
+# Terminal 2 (source ROS 2 and the workspace first)
+ros2 topic list                                   # /clock /joint_states /scan /tf /tf_static ...
+ros2 topic echo /scan --once | grep -E "frame_id|range_min|range_max"   # lidar_link, 0.15, 12.0
+ros2 run tf2_ros tf2_echo base_link lidar_link    # [0.051, -0.045, 0.141]
+ros2 run spiderx_scripts read_lidar               # front / left / rear / right distances
+ros2 run spiderx_scripts read_joint_states        # 12 joint angles grouped by leg
+ros2 run spiderx_controller validate_controller_config
+./scripts/validate_fortress.sh                    # static checks
+./scripts/validate_fortress.sh --runtime          # launches the sim and checks live topics
 ```
 
-### Simulation interface
+Step-by-step beginner guide: [docs/SPIDERX_FORTRESS_UBUNTU_TEST_GUIDE.md](docs/SPIDERX_FORTRESS_UBUNTU_TEST_GUIDE.md) ·
+all test layers: [docs/SPIDERX_TESTING_GUIDE.md](docs/SPIDERX_TESTING_GUIDE.md)
 
-| ROS 2 topic | Type | Source |
-|---|---|---|
-| `/scan` | `sensor_msgs/msg/LaserScan` | Gazebo `gpu_lidar` on `lidar_link`: 360 samples at 1° steps, 0.15–12 m, 10 Hz, σ = 1 cm noise |
-| `/joint_states` | `sensor_msgs/msg/JointState` | Gazebo `JointStatePublisher`, 12 revolute joints |
-| `/clock` | `rosgraph_msgs/msg/Clock` | Gazebo simulation time; every node runs with `use_sim_time` |
-| `/tf`, `/tf_static` | `tf2_msgs/msg/TFMessage` | `robot_state_publisher` |
+## 🔌 Real Robot (hardware only)
 
-TF root: `dummy_link` → `base_link` → legs, `top_1`, `lidar_link`. There is no `odom` or
-`map` frame; see the limitations below.
+```bash
+ros2 launch spiderx_bringup real_robot.launch.py serial_port:=/dev/ttyUSB0   # RPLidar A1 + TF
+```
 
-## Other launch files
+Never run this for simulation. Servo and IMU integration are templates for now:
+[docs/SPIDERX_HARDWARE_INTERFACE.md](docs/SPIDERX_HARDWARE_INTERFACE.md).
 
-| Command | Purpose |
+---
+
+## 📡 Key ROS 2 Topics
+
+| Topic | Type | Source | Status |
+|---|---|---|---|
+| `/scan` | `sensor_msgs/LaserScan` | Gazebo lidar / RPLidar | ✅ |
+| `/joint_states` | `sensor_msgs/JointState` | Gazebo `JointStatePublisher` | ✅ (sim) |
+| `/clock` | `rosgraph_msgs/Clock` | Gazebo | ✅ (sim) |
+| `/tf`, `/tf_static`, `/robot_description` | — | `robot_state_publisher` | ✅ |
+| `/cmd_vel` | `geometry_msgs/Twist` | future Nav2 / teleop | ⛔ no consumer yet |
+| `/odom`, `/spiderx/leg_odometry`, `/imu/data` | — | future | ⚪ |
+
+---
+
+## ⚠️ Known Limitations
+
+- **Passive model.** No joint is actuated, so the legs fold under gravity until the knees reach their limits.
+- **Nothing moves the robot.** Nothing consumes `/cmd_vel` and no odometry exists, so SLAM, AMCL and Nav2 cannot run usefully and are never auto-launched.
+- **Frame convention.** `base_link` faces **+y** (CAD convention, not REP-103). A REP-103 base frame is needed before Nav2.
+- **Mass properties.** CAD masses use the default steel density; the servo effort/velocity limits in the URDF are placeholders.
+- **Speed.** The real-time factor was about 21–25 % on the first local test PC. Check the GPU driver.
+- **Headless mode.** `headless:=true` (EGL) has not been tested yet.
+
+## 🗺️ Roadmap
+
+**joint control → standing controller → leg FK/IK → gait generator → `/cmd_vel` bridge →
+odometry → SLAM → Nav2 → real-hardware validation**
+
+Nav2 comes last because it only decides where to go. It needs a robot that executes `/cmd_vel` and
+reports `/odom`. Milestones and acceptance tests:
+[docs/SPIDERX_DEVELOPMENT_ROADMAP.md](docs/SPIDERX_DEVELOPMENT_ROADMAP.md)
+
+---
+
+## 🎬 Media to Capture
+
+These are listed in [media/README.md](media/README.md):
+
+- Gazebo Fortress overview
+- SpiderX close-up
+- `/scan` in RViz
+- TF tree (`ros2 run tf2_tools view_frames`)
+- Future: standing and walking clips, once implemented
+
+---
+
+## 📚 Documentation
+
+| Document | Content |
 |---|---|
-| `ros2 launch spiderx_description display.launch.py` | View the model in RViz with joint sliders, without simulation |
-| `ros2 launch spiderx_bringup hardware_lidar.launch.py serial_port:=/dev/ttyUSB0` | **Real robot only.** Starts the RPLidar A1 driver in `lidar_link`, plus `robot_state_publisher`. Never started by the simulation launch |
+| [STATUS.md](STATUS.md) | Verified / configured but blocked / future work |
+| [docs/SPIDERX_SYSTEM_ARCHITECTURE.md](docs/SPIDERX_SYSTEM_ARCHITECTURE.md) | Packages, data flow, TF, topics |
+| [docs/SPIDERX_DEVELOPMENT_ROADMAP.md](docs/SPIDERX_DEVELOPMENT_ROADMAP.md) | Milestones M0–M9 with acceptance tests |
+| [docs/SPIDERX_HARDWARE_INTERFACE.md](docs/SPIDERX_HARDWARE_INTERFACE.md) | Lidar, actuators, IMU, embedded computer |
+| [docs/SPIDERX_SIMULATION_VS_HARDWARE.md](docs/SPIDERX_SIMULATION_VS_HARDWARE.md) | What differs, and the rules |
+| [docs/SPIDERX_TESTING_GUIDE.md](docs/SPIDERX_TESTING_GUIDE.md) | All test layers |
+| [docs/SPIDERX_URDF_AUDIT.md](docs/SPIDERX_URDF_AUDIT.md), [docs/URDF_INERTIA_AUDIT.md](docs/URDF_INERTIA_AUDIT.md) | Model audits |
+| [docs/MIGRATION_FORTRESS.md](docs/MIGRATION_FORTRESS.md) | Gazebo Classic → Fortress migration (Classic kept as legacy) |
+| [docs/MECHAPRIME_TO_SPIDERX_ARCHITECTURE_PLAN.md](docs/MECHAPRIME_TO_SPIDERX_ARCHITECTURE_PLAN.md) | How the Mechaprime layout was adapted |
 
-## Gazebo Classic (legacy)
+---
 
-Gazebo Classic support is kept for reference only. The Classic tags in
-`urdf/spiderx.gazebo` and `urdf/spiderx.trans`, together with `config/controllers.yaml`, are
-still produced by the default `xacro spiderx.urdf.xacro` (`sim_backend:=classic`). They are
-**not** used by the Fortress path, and this workspace ships no Classic launch file. See
-[MIGRATION_FORTRESS.md](MIGRATION_FORTRESS.md).
+## 🙏 Acknowledgements
 
-## Limitations and roadmap
+- **ROS 2 Humble**: [ROS 2](https://docs.ros.org/en/humble/), `robot_state_publisher`, `xacro`, `rviz2`
+- **Gazebo Fortress** and `ros_gz` (`ros_gz_sim`, `ros_gz_bridge`): [gazebosim.org](https://gazebosim.org/)
+- **Nav2**, **SLAM Toolbox** and **robot_localization**, used by the (blocked) navigation stack
+- **Slamtec `rplidar_ros`**: RPLidar A1 driver (BSD license), used as a binary dependency (`ros-humble-rplidar-ros`)
+- **fusion2urdf**: CAD → URDF export of the SpiderX model
+- Workspace layout adapted from [mechaprime_ws](https://github.com/robovision2210/mechaprime_ws)
 
-- **Passive model.** No joint is actuated. After spawning, the legs fold under gravity until the feet reach their joint limits (about ±0.44 rad). The root link settles at z ≈ 0.012 m, about 4 cm lower than the CAD standing pose (0.0545 m). This was observed on Fortress 6.16.
-- **No locomotion.** Nothing converts `/cmd_vel` into leg motion, and no `/odom` or `odom → base_link` source exists. Nav2, AMCL and SLAM are therefore **not** runnable in simulation, and no such launch is provided.
-- **Frames.** `base_link` follows the CAD export: +y is the robot's front, which is not REP-103. `lidar_link` is yawed so that its +x points forward.
-- **Mass properties.** They come from CAD but use the default steel material, giving 7.3 kg in total. See [docs/URDF_INERTIA_AUDIT.md](docs/URDF_INERTIA_AUDIT.md).
+## 👨‍💻 Author
 
-Work required before the quadruped can move in simulation:
+**Sesha Sai Jagadeswar Patnala**
+Robotics & Mechatronics Engineer
+[![GitHub](https://img.shields.io/badge/GitHub-robovision2210-black?logo=github)](https://github.com/robovision2210)
 
-1. Replace the effort/velocity placeholders with servo specifications, and add joint damping.
-2. Integrate `gz_ros2_control` (`ros-humble-gz-ros2-control`, hardware plugin `gz_ros2_control/GazeboSimSystem`) and validate it with the existing controller configuration.
-3. Add a gait generator with leg IK and a `cmd_vel` → gait interface.
-4. Add odometry (leg odometry or IMU fusion) and a REP-103 `base_footprint` frame.
-5. Tune the Nav2 configuration against the real footprint.
+## 📄 License
 
-## Documentation
-
-- [docs/SPIDERX_URDF_AUDIT.md](docs/SPIDERX_URDF_AUDIT.md): model audit covering the kinematic tree, link and joint tables, and the repair plan
-- [docs/URDF_INERTIA_AUDIT.md](docs/URDF_INERTIA_AUDIT.md): inertial values and their provenance
-- [MIGRATION_FORTRESS.md](MIGRATION_FORTRESS.md): the Classic → Fortress mapping, validation record and troubleshooting
-- [media/README.md](media/README.md): the showcase screenshots and GIF to capture
-
-## License
-
-Apache-2.0 (see the `package.xml` files).
+Apache-2.0, as declared in each package's `package.xml`.
