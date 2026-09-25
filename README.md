@@ -42,7 +42,7 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | Simulated lidar → `/scan` (`lidar_link`) | ✅ Verified |
 | Joint states (`/joint_states`, 12 joints) | ✅ Verified |
 | Leg/joint groups, soft limits, config checker | ✅ Verified against the URDF |
-| Joint position control (`gz_ros2_control`, 12 joints) | ✅ Verified in cloud simulation (M1): one joint and all-joint neutral-pose trajectory |
+| Joint position control (`gz_ros2_control`, 12 joints) | ✅ Verified in simulation, locally and in the cloud (M1): one joint and all-joint neutral-pose trajectory |
 | Standing controller | ⚪ Planned (M2). M1 holds joint angles only, with no balance |
 | Gait generation, IK, `/cmd_vel` bridge | ⚪ Planned |
 | Odometry | ⚪ Planned (never faked) |
@@ -228,7 +228,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 
 ## 🗺️ Roadmap
 
-**joint control ✅ (M1, cloud) → standing controller → leg FK/IK → gait generator → `/cmd_vel` bridge →
+**joint control ✅ (M1) → standing controller → leg FK/IK → gait generator → `/cmd_vel` bridge →
 odometry → SLAM → Nav2 → real-hardware validation**
 
 Nav2 comes last because it only decides where to go. It needs a robot that executes `/cmd_vel` and

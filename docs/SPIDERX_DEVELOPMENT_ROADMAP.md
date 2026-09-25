@@ -17,7 +17,7 @@ M0 model + sim  ─►  M1 joint control  ─►  M2 stand  ─►  M3 FK/IK  �
 - [x] Leg and joint groups validated against the URDF (`spiderx_controller`)
 - [x] Validated locally on Ubuntu 22.04
 
-## M1 – Joint position control in simulation ✅ done in the cloud (local run pending)
+## M1 – Joint position control in simulation ✅ done (cloud + local)
 
 See [`M1_JOINT_POSITION_CONTROL_GUIDE.md`](M1_JOINT_POSITION_CONTROL_GUIDE.md) and [`M1_TEST_RESULTS.md`](M1_TEST_RESULTS.md).
 
@@ -28,7 +28,7 @@ See [`M1_JOINT_POSITION_CONTROL_GUIDE.md`](M1_JOINT_POSITION_CONTROL_GUIDE.md) a
 - [x] `ros2 control list_controllers` shows both controllers active (cloud)
 - [x] A 0.2 rad step on one joint is tracked; steady-state error recorded: 0.0000 rad, idealised by the placeholder effort limit (cloud)
 - [x] All 12 joints follow one trajectory to `cad_neutral` (cloud)
-- [ ] The same checks on the owner's Ubuntu PC
+- [x] The same checks on the owner's Ubuntu PC
 - [ ] With the robot lifted (fixed base), every joint reaches both soft limits
 - [ ] Servo datasheet effort/velocity limits and joint damping (moved to M9: hardware evidence needed)
 

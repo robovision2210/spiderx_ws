@@ -1,4 +1,4 @@
-# M1 Test Results – Joint Position Control (cloud validation)
+# M1 Test Results – Joint Position Control
 
 **Scope:** joint-position control only. None of these results show standing, balance or walking.
 
@@ -16,7 +16,18 @@
 | Build | `colcon build --symlink-install`, 8 packages, with Ubuntu 22.04's setuptools 59.6 |
 
 The packages are RoboStack builds of the same Humble packages that Ubuntu apt ships.
-**Local Ubuntu verification is still required.**
+## Local verification (owner's Ubuntu 22.04 PC)
+
+The owner ran the full 26-step sequence from the M1 test instructions and reported that **every step passed**:
+- build (8 packages);
+- `validate_m1_control.sh`, `validate_controller_config` and `colcon test`;
+- `fortress_control.launch.py` with both controllers active and one `/joint_states` publisher;
+- `test_one_joint.py` on `lf_hip`, including the return;
+- both refusals: `lf_foot_joint` at 0.6 and `left_wheel_joint`;
+- displacing `rr_hip`, then `test_neutral_pose.py`;
+- `validate_m1_control.sh --runtime` and `validate_fortress.sh --runtime`.
+
+Numeric values from the local run were not recorded in this file. The detailed numbers below are from the cloud run.
 
 ## Results
 
