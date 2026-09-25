@@ -1,0 +1,74 @@
+# M2 - SIMULATION-ONLY posture hold configuration for SpiderX (Gazebo Fortress).
+#
+# Simulation-only posture hold. Not dynamic balance control. Not walking or gait control.
+# Not inverse kinematics. Not hardware validation. Not real-servo torque validation.
+# Not battery/current validation. Not proof of real-world stability.
+#
+# This file is the single source of truth for the M2 posture-hold test
+# (run_posture_hold_test.py, validate_m2_posture.sh, validate_controller_config).
+# Owner decision: the ONLY M2 posture is the existing CAD neutral pose. Its targets must equal
+# spiderx_poses.yaml poses.cad_neutral exactly (checked); they are not tuned.
+#
+# Value categories (docs/M2_SIMULATION_POSTURE_PLAN.md section 6):
+#   URDF / EXISTING_CONFIG / SIMULATION_ONLY / PLACEHOLDER. Measured values live in the report only.
+# Thresholds were fixed before the first M2 runtime run and must not be changed to make a run pass.
+
+config_version: 1
+date: "2026-09-25"
+simulation_only: true
+
+postures:
+  cad_neutral_simulation_hold:
+    simulation_only: true
+    description: >-
+      CAD zero configuration (all 12 joints 0 rad), held by the M1 joint-position controllers
+      in Gazebo Fortress. Joint-position hold only; no balance feedback.
+    source_pose: cad_neutral          # spiderx_poses.yaml; targets below must match it exactly
+    # EXISTING_CONFIG: spiderx_poses.yaml poses.cad_neutral (CAD zero configuration; audit
+    # docs/SPIDERX_URDF_AUDIT.md section 3: feet at z = -0.0545 m in base_link, COM inside the
+    # support polygon). Units: radians.
+    targets_rad:
+      lf_hip: 0.0
+      lf_thigh_joint: 0.0
+      lf_foot_joint: 0.0
+      rf_hip: 0.0
+      rf_thigh_joint: 0.0
+      rf_foot_joint: 0.0
+      lr_hip: 0.0
+      lr_thigh_joint: 0.0
+      lr_foot_joint: 0.0
+      rr_hip: 0.0
+      rr_thigh_joint: 0.0
+      rr_foot_joint: 0.0
+    target_source: "spiderx_poses.yaml poses.cad_neutral (CAD zero configuration)"
+
+    # EXISTING_CONFIG: must equal spiderx_legs.yaml soft_limit_margin_rad (checked).
+    validation_margin_rad: 0.05
+
+    # EXISTING_CONFIG: M1 test_neutral_pose.py default, verified locally and in the cloud.
+    # Peak joint speed max|target - start| / duration must also stay <= spiderx_legs.yaml
+    # motion_constraints.max_joint_velocity_rad_s (0.5, SIMULATION_PLACEHOLDER).
+    command_duration_s: 6.0
+    # SIMULATION_ONLY: owner's initial target, measured in SIMULATION time (/clock).
+    hold_duration_s: 10.0
+
+    thresholds:
+      # EXISTING_CONFIG: M1 tracking tolerance. Max |target - measured| over all 12 joints and
+      # all joint-state samples during the hold.
+      max_joint_error_rad: 0.05
+      # SIMULATION_ONLY: RMS of |target - measured| over all 12 joints and all hold samples.
+      rms_joint_error_rad: 0.02
+      # SIMULATION_ONLY: minimum z of the base_link origin above the ground plane (world z = 0)
+      # during the hold. CAD foot plane is 0.0545 m below base_link (URDF-derived); passive
+      # folded height is ~0.012 m.
+      min_body_height_m: 0.045
+      # SIMULATION_ONLY: max - min base_link height during the hold (sag / bounce detector).
+      max_body_height_range_m: 0.005
+      # SIMULATION_ONLY: |roll| and |pitch| of base_link in the world frame (ZYX Euler).
+      # roll = about base_link x (robot right) = nose up/down; pitch = about base_link y
+      # (robot front) = side tilt. base_link is not REP-103 (see audit).
+      max_abs_roll_rad: 0.10
+      max_abs_pitch_rad: 0.10
+      # SIMULATION_ONLY: minimum samples during the hold so an empty hold cannot pass.
+      min_pose_samples: 20
+      min_joint_state_samples: 20
