@@ -1,15 +1,15 @@
-"""Real-robot lidar bring-up: robot_state_publisher + Slamtec RPLidar A1 driver.
+"""SpiderX real-robot entry point (hardware only; never used in simulation).
 
-    ros2 launch spiderx_bringup hardware_lidar.launch.py serial_port:=/dev/ttyUSB0
+    ros2 launch spiderx_bringup real_robot.launch.py serial_port:=/dev/ttyUSB0
 
-For the physical robot only. It opens the serial port, so it must never be
-included in a simulation launch. Scans are published on /scan in the lidar_link
-frame defined in the URDF.
+Starts today:
+  * robot_state_publisher with the description expanded for sim_backend:=none
+  * the RPLidar A1 driver (spiderx_firmware/launch/lidar.launch.py) publishing /scan in lidar_link
 
-Limitation: the servos have no ROS driver yet, so nothing publishes /joint_states
-on hardware. robot_state_publisher therefore only provides the fixed transforms
-(dummy_link -> base_link -> lidar_link, top_1, hip servo bodies). The leg frames
-are unavailable until a servo driver exists.
+Not started, because it does not exist yet: the servo/actuator interface. Nothing publishes
+/joint_states on hardware, so robot_state_publisher provides only the fixed transforms
+(dummy_link -> base_link -> lidar_link, top_1, hip servo bodies). Leg frames are unavailable
+until the actuator interface exists (docs/SPIDERX_HARDWARE_INTERFACE.md).
 """
 
 import os
@@ -43,14 +43,11 @@ def generate_launch_description():
         }],
     )
 
-    rplidar = IncludeLaunchDescription(
+    lidar = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('rplidar_ros'),
-                         'launch', 'rplidar_a1_launch.py')),
-        launch_arguments={
-            'serial_port': LaunchConfiguration('serial_port'),
-            'frame_id': 'lidar_link',
-        }.items(),
+            os.path.join(get_package_share_directory('spiderx_firmware'),
+                         'launch', 'lidar.launch.py')),
+        launch_arguments={'serial_port': LaunchConfiguration('serial_port')}.items(),
     )
 
-    return LaunchDescription([serial_port_arg, robot_state_publisher, rplidar])
+    return LaunchDescription([serial_port_arg, robot_state_publisher, lidar])
