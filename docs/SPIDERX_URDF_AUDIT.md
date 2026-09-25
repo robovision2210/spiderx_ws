@@ -230,7 +230,7 @@ exactly at q = 0.
 - `spiderx.trans` contains **no `<transmission>` elements**. It holds one `<ros2_control name="GazeboSystem" type="system">` block with the hardware plugin **`gazebo_ros2_control/GazeboSystem`**, which is **Gazebo Classic only**.
 - That block covers all 12 revolute joints, each with a `position` command interface and `position` + `velocity` state interfaces.
 - `spiderx.gazebo` loads **`libgazebo_ros2_control.so`**, also Classic only, with parameters from `$(find spiderx_description)/config/controllers.yaml`. **That file does not exist on `main`.** PR #1 adds it, with a `joint_state_broadcaster` and a `forward_command_controller` over the 12 joints.
-- No Fortress control integration exists. The Fortress equivalent would be `gz_ros2_control` (`ign_ros2_control/IgnitionSystem` on Humble), which is not installed or validated.
+- No Fortress control integration exists. The Fortress equivalent would be `gz_ros2_control` (hardware plugin `gz_ros2_control/GazeboSimSystem` in Humble 0.7.x), which is not integrated or validated.
 
 ## 7. Sensors
 
@@ -361,7 +361,7 @@ Severity levels: **C** critical, **H** high, **M** medium, **L** low, **I** info
 These repairs need no CAD evidence and leave the geometry and existing kinematics unchanged:
 
 1. **Fix the build.** Provide `config/controllers.yaml` for the legacy Classic ros2_control path. The model does not change.
-2. **Make simulator-specific content selectable with a xacro argument.** The Fortress description must not carry `libgazebo_ros2_control.so`, and the legacy Classic output must stay byte-for-byte equivalent.
+2. **Make simulator-specific content selectable with a xacro argument.** The Fortress description must not carry `libgazebo_ros2_control.so`, and the default (Classic) output must stay semantically identical to `main`, apart from any added sensor frame.
 3. **Add `lidar_link` and a fixed `lidar_joint` to `base_link`.**
    - Place it at the measured top-plate centre (0.051, −0.045) on the measured top surface (z = 0.111).
    - Label its mass and inertia `SIMULATION_ESTIMATE`.
