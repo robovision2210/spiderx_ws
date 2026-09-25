@@ -17,7 +17,7 @@ source ~/spiderx_ws/install/setup.bash
 |---|---|---|---|
 | 1 | Build | `cd ~/spiderx_ws && colcon build --symlink-install` | `Summary: 8 packages finished` |
 | 2 | Static validation | `./scripts/validate_fortress.sh` | `All checks passed.` |
-| 3 | Unit tests | `colcon test --packages-select spiderx_controller spiderx_scripts && colcon test-result --verbose` | 0 failures |
+| 3 | Unit tests (including M1 safety rejections) | `colcon test --packages-select spiderx_controller spiderx_scripts && colcon test-result --verbose` | 0 failures |
 | 4 | Controller config vs URDF | `ros2 run spiderx_controller validate_controller_config` | `Controller configuration: valid` |
 | 5 | Runtime validation (starts Gazebo) | `./scripts/validate_fortress.sh --runtime` | `All checks passed.` (topics, `lidar_link`, 12 joints, no hardware node) |
 | 6 | Manual simulation | `ros2 launch spiderx_bringup fortress.launch.py` | SpiderX visible in the walled world |
@@ -25,6 +25,9 @@ source ~/spiderx_ws/install/setup.bash
 | 8 | Joint diagnostics (sim running) | `ros2 run spiderx_scripts read_joint_states` | 12 angles. The feet settle at ±25° (their limits) because the model is passive |
 | 9 | RViz | `ros2 launch spiderx_bringup fortress.launch.py rviz:=true` | Global Status OK; the scan outlines the walls |
 | 10 | TF | `ros2 run tf2_ros tf2_echo base_link lidar_link` | Translation `[0.051, -0.045, 0.141]` |
+| 11 | M1 static | `./scripts/validate_m1_control.sh` | `All M1 checks passed.` |
+| 12 | M1 runtime (starts Gazebo with control) | `./scripts/validate_m1_control.sh --runtime` | Controllers active, one joint and neutral pose PASS |
+| 13 | M1 manual | `ros2 launch spiderx_bringup fortress_control.launch.py`, then `test_one_joint.py` / `test_neutral_pose.py` | See [M1 guide](M1_JOINT_POSITION_CONTROL_GUIDE.md) |
 
 ## Blocked stacks (optional, expected to wait)
 
