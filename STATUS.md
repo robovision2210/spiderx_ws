@@ -1,6 +1,6 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/spiderx-m1-joint-control` (M1).
+Last updated on branch `claude/spiderx-m2-posture-hold` (M2, stacked on M1 / PR #6).
 
 **M1 was verified locally** by the owner on Ubuntu 22.04: all 26 steps of the M1 test sequence passed, including `validate_m1_control.sh --runtime` and `validate_fortress.sh --runtime`.
 
@@ -38,9 +38,10 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 |---|---|---|
 | Leg / joint groups, chain order, soft limits | ✅ Verified against the URDF | `spiderx_controller/config/spiderx_legs.yaml` |
 | Named pose `cad_neutral` | ✅ Reached by joint position control (local + cloud) | 12-joint trajectory, max error 0.0000 rad (`test_neutral_pose.py`). **Not** a standing controller |
+| M2 CAD neutral posture hold (simulation only) | ✅ **Simulation posture hold verified** (cloud). Local run pending | `run_posture_hold_test.py`: 10 s hold (simulation time); body height 0.0545 m; roll/pitch ≤ 0.0002 rad; max joint error 0.0002 rad. Idealised by the 100 N·m placeholder effort; foot contact **not measured**. [M2 results](docs/M2_TEST_RESULTS.md), [limitations](docs/M2_SIMULATION_LIMITATIONS.md). **Not** balance, walking, IK or hardware validation |
 | ros2_control controllers (`joint_state_broadcaster`, `leg_trajectory_controller`) | ✅ Verified active (local + cloud) | `fortress_control.launch.py`; [M1 results](docs/M1_TEST_RESULTS.md) |
 | Joint position control in Fortress (`gz_ros2_control` 0.7.x, 12 joints) | ✅ Verified (local + cloud) | `lf_hip` → +0.2 rad and back, error 0.0000; invalid joints and out-of-limit targets refused. Tracking is idealised by the 100 N·m placeholder effort limit |
-| Standing controller | ⚪ Future work | M2. M1 only holds joint angles; there is no balance feedback |
+| Balance / standing controller (body feedback) | ⚪ Future work | Not scheduled. M1/M2 only hold joint angles; there is no balance feedback, IMU or disturbance test |
 | Forward / inverse kinematics | ⚪ Future work | M3 |
 | Gait generator | ⚪ Future work | M4 |
 | `/cmd_vel` → gait bridge | ⚪ Future work | M5. Nothing consumes `/cmd_vel` today |

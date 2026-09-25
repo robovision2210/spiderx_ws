@@ -12,7 +12,7 @@ Gazebo window.
 
 ## Cloud validation captures (included)
 
-Both images were captured during automated validation, on a cloud VM with **no GPU**. They
+These images were captured during automated validation, on a cloud VM with **no GPU**. They
 used Xvfb and Mesa software rendering, which is why the real-time factor was about 0.3.
 They are genuine, but they are not showcase quality.
 
@@ -20,6 +20,7 @@ They are genuine, but they are not showcase quality.
 |---|---|
 | `cloud_validation/gazebo_fortress_gui.png` | Output of `ros2 launch spiderx_bringup fortress.launch.py`: the Fortress GUI with SpiderX spawned in the test world. The lidar cylinder sits on the top plate and the legs are passively folded. |
 | `cloud_validation/m1_joints_held_cad_neutral.png` | M1: after `test_neutral_pose.py`, all 12 joints are held at `cad_neutral` by gz_ros2_control position control. **Not** a standing controller |
+| `cloud_validation/m2_cad_neutral_posture_hold.png` | M2: SpiderX CAD neutral posture hold in Gazebo Fortress — simulation only; not balance or walking. Captured after `run_posture_hold_test.py` reported "Simulation posture hold verified." (Gazebo window only) |
 | `cloud_validation/rviz_scan_tf.png` | Output of `rviz:=true`: the RobotModel driven by Gazebo `/joint_states`, TF, and `/scan` outlining the walls, boxes and pillar, with Global Status OK. |
 
 ## Showcase media to capture locally (placeholder)
