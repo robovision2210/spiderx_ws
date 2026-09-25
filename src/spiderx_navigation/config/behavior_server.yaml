@@ -1,0 +1,28 @@
+# CONFIGURED BUT BLOCKED (see STATUS.md): Nav2 needs a /cmd_vel consumer (gait controller)
+# and odom -> dummy_link from real odometry. Neither exists yet.
+# Frames: base_link from the URDF. NOTE: base_link +y is the robot front (CAD convention, audit
+# item T1). Nav2 controllers assume +x forward, so a REP-103 base frame must be added before the
+# controller can be used (docs/SPIDERX_DEVELOPMENT_ROADMAP.md).
+# Footprint: measured mesh extents in base_link (x -0.043..0.145, y -0.259..0.104) + 0.02 m margin.
+# Every velocity/acceleration below is a SIMULATION_PLACEHOLDER (slow on purpose), not a measured
+# SpiderX capability.
+behavior_server:
+  ros__parameters:
+    use_sim_time: true
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    behavior_plugins: ["spin", "backup", "wait"]
+    spin:
+      plugin: "nav2_behaviors/Spin"
+    backup:
+      plugin: "nav2_behaviors/BackUp"
+    wait:
+      plugin: "nav2_behaviors/Wait"
+    global_frame: odom
+    robot_base_frame: base_link
+    transform_tolerance: 0.2
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 0.2        # SIMULATION_PLACEHOLDER
+    min_rotational_vel: 0.05       # SIMULATION_PLACEHOLDER
+    rotational_acc_lim: 0.3        # SIMULATION_PLACEHOLDER

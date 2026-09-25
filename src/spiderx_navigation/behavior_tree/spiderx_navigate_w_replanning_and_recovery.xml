@@ -1,0 +1,19 @@
+<!-- Navigate with 1 Hz replanning; on failure wait, back up slowly, spin. Recovery speeds are
+     set in config/behavior_server.yaml (placeholders). CONFIGURED BUT BLOCKED, see STATUS.md. -->
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <RecoveryNode number_of_retries="3" name="NavigateRecovery">
+      <PipelineSequence name="NavigateWithReplanning">
+        <RateController hz="1.0">
+          <ComputePathToPose goal="{goal}" path="{path}" planner_id="GridBased"/>
+        </RateController>
+        <FollowPath path="{path}" controller_id="FollowPath"/>
+      </PipelineSequence>
+      <Sequence name="RecoveryActions">
+        <Wait wait_duration="3"/>
+        <BackUp backup_dist="0.10" backup_speed="0.03"/>
+        <Spin spin_dist="1.57"/>
+      </Sequence>
+    </RecoveryNode>
+  </BehaviorTree>
+</root>
