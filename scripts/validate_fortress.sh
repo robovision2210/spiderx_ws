@@ -103,8 +103,23 @@ else
   bad "spiderx_controller validation failed:"; echo "$out" | grep FAIL
 fi
 
+echo "== Passive vs controlled description (M1)"
+if xacro "$xacro_file" sim_backend:=fortress | grep -q '<ros2_control'; then
+  bad "passive Fortress description contains <ros2_control> (must stay passive by default)"
+else
+  pass "passive Fortress description (default) has no <ros2_control>"
+fi
+ctrl_yaml="$(ros2 pkg prefix spiderx_controller)/share/spiderx_controller/config/spiderx_ros2_controllers.yaml"
+if xacro "$xacro_file" sim_backend:=fortress enable_control:=true controllers_file:="$ctrl_yaml" \
+     | grep -q 'gz_ros2_control/GazeboSimSystem'; then
+  pass "enable_control:=true adds gz_ros2_control (activity is checked by validate_m1_control.sh)"
+else
+  bad "enable_control:=true does not add gz_ros2_control"
+fi
+
 echo "== No hardware driver in the simulation launch path"
-sim_launches=(src/spiderx_bringup/launch/fortress.launch.py src/spiderx_description/launch/fortress.launch.py)
+sim_launches=(src/spiderx_bringup/launch/fortress.launch.py src/spiderx_bringup/launch/fortress_control.launch.py
+              src/spiderx_description/launch/fortress.launch.py src/spiderx_controller/launch/controller.launch.py)
 if hits=$(grep -nE 'rplidar|spiderx_firmware|real_robot|/dev/tty|serial_port' "${sim_launches[@]}"); then
   bad "simulation launch files reference hardware:"; echo "$hits"
 else
