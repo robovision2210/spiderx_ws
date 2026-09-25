@@ -43,7 +43,7 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | Joint states (`/joint_states`, 12 joints) | ✅ Verified |
 | Leg/joint groups, soft limits, config checker | ✅ Verified against the URDF |
 | Joint position control (`gz_ros2_control`, 12 joints) | ✅ Verified in simulation, locally and in the cloud (M1): one joint and all-joint neutral-pose trajectory |
-| CAD neutral posture hold (simulation only) | ✅ Simulation posture hold verified in the cloud (M2): 10 s hold, body height, roll and pitch within the documented simulation thresholds. **Not** balance, walking or hardware validation |
+| CAD neutral posture hold (simulation only) | ✅ Simulation posture hold verified, locally and in the cloud (M2): 10 s hold, body height, roll and pitch within the documented simulation thresholds. **Not** balance, walking or hardware validation |
 | Balance / standing controller | ⚪ Not implemented. M1 and M2 hold joint angles only, with no balance feedback |
 | Gait generation, IK, `/cmd_vel` bridge | ⚪ Planned |
 | Odometry | ⚪ Planned (never faked) |

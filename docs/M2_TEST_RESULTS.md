@@ -13,7 +13,7 @@ Not proof of real-world stability.
 
 ## Outcome
 
-**Simulation posture hold verified.** (cloud; local run pending)
+**Simulation posture hold verified.** (local + cloud)
 
 The existing `cad_neutral` pose was reached and held for 10 s of simulation time within every
 documented threshold, in three separate runs. The posture was **not** tuned or changed. The
@@ -22,6 +22,23 @@ thresholds were fixed in `m2_simulation_postures.yaml` before the first run.
 This result is **idealised**. Every joint may use the 100 N·m placeholder effort, so the
 simulated joints are almost rigid, and foot contact was **not measured**. See
 [M2_SIMULATION_LIMITATIONS.md](M2_SIMULATION_LIMITATIONS.md).
+
+## Local verification (owner's Ubuntu 22.04 PC)
+
+The owner ran the 27-step M2 test sequence and reported that **all checks passed**:
+- build (8 packages);
+- `colcon test` (86 tests);
+- `validate_controller_config`;
+- `validate_m2_posture.sh` and `validate_m1_control.sh`, static;
+- `fortress_posture_hold.launch.py`, with both controllers active and `/spiderx/sim/world_poses` present;
+- `rr_hip` displaced, then `run_posture_hold_test.py`, which reported "Simulation posture hold verified.";
+- the report JSON;
+- refusal of an invalid posture;
+- `validate_m2_posture.sh --runtime`;
+- `validate_m1_control.sh --runtime`;
+- `validate_fortress.sh --runtime`.
+
+The local numeric values were not recorded in this file. The detailed numbers below are from the cloud runs.
 
 ## Environment
 
@@ -110,4 +127,3 @@ The negative tests include:
 - **Idealised:** placeholder 100 N·m effort and 100 rad/s velocity; µ = 0.2; no joint damping; steel-density masses; DART with a 1 ms step. See [limitations](M2_SIMULATION_LIMITATIONS.md).
 - **Not measured:** foot contact; disturbance rejection; balance.
 - **Not tested:** holds longer than 10 s; `headless:=true`.
-- **Local Ubuntu verification of M2 is still required.**
