@@ -56,4 +56,4 @@ Toolbox and robot_localization from RoboStack, with no GPU, using Xvfb and Mesa:
 - **Layer 1 build:** checked with Ubuntu 22.04's setuptools 59.6. Newer setuptools (≥ 80) breaks `colcon build --symlink-install` for `ament_python` packages; that is a known upstream incompatibility, not a SpiderX issue.
 - **Layer 3 unit tests:** run with `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`, because that environment's pytest 9 cannot load Humble's `launch_testing` plugin. Ubuntu's pytest 6.2 does not have this problem.
 
-**Local verification:** the owner ran layers 1–5, 7–8 and 11–13 on Ubuntu 22.04 (M1 branch), and later layers 1–3 and 11–16 (M2 branch). All passed.
+**Local verification:** the owner ran layers 1–5, 7–8 and 11–13 on Ubuntu 22.04 (M1 branch), later layers 1–3 and 11–16 (M2 branch). On the M3 branch they ran layers 1–3, 17 and 18, and the M2, M1 and Fortress regression scripts. All passed.

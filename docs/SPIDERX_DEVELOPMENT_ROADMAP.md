@@ -48,7 +48,7 @@ Simulation only. This is not balance control, walking, IK or hardware validation
 
 Balance / standing control (body feedback) is not scheduled yet; it needs an IMU and real actuator data.
 
-## M3 – Single-leg forward and inverse kinematics ✅ front-left verified in the cloud (local run pending)
+## M3 – Single-leg forward and inverse kinematics ✅ front-left verified (cloud + local)
 
 Simulation only. This is not walking, a gait, balance, locomotion or hardware validation. See the
 [plan](M3_LEG_KINEMATICS_PLAN.md), [frames](M3_FRAME_CONVENTIONS.md),
@@ -60,7 +60,7 @@ Simulation only. This is not walking, a gait, balance, locomotion or hardware va
 - [x] Analytic IK round-trips FK over 500 random joint-safe configurations; out-of-limit and unreachable targets refused, not clamped
 - [x] 5 lifted safe targets reached in simulation and returned; the 2 negative targets were not commanded
 - [x] Per-joint sign table for LF (`lf_foot_joint` +x) validated
-- [ ] The same checks on the owner's Ubuntu PC
+- [x] The same checks on the owner's Ubuntu PC
 - [ ] RF, LR and RR legs (including `lr_foot_joint` −x); a 4-leg kinematics API for the gait
 
 ## M4 – Gait generator

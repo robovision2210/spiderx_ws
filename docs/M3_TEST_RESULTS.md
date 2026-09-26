@@ -6,7 +6,7 @@ Not walking or a gait. Not balance or standing control. Not locomotion.
 Not real-world leg control. Not hardware validation.
 ```
 
-## Outcome (cloud; local run pending)
+## Outcome (local + cloud)
 
 - **Single-leg FK verified against the current URDF/TF/Gazebo model.**
 - **Single-leg IK verified for documented reachable, joint-safe simulation targets.**
@@ -17,7 +17,30 @@ Two caveats bound these results:
 
 See [M3_SIMULATION_LIMITATIONS.md](M3_SIMULATION_LIMITATIONS.md).
 
-## Environment
+## Local verification (owner's Ubuntu PC)
+
+The owner ran M3 locally and reported the following. The numbers below are copied from that report.
+
+| Item | Local result |
+|---|---|
+| Environment | ROS 2 Humble, Ubuntu (local PC); branch `claude/spiderx-m3-leg-kinematics` @ `f1928f0`; working tree clean (no commits, pushes or merges) |
+| Build | `colcon build --symlink-install`: 8 packages finished, exit 0 |
+| Tests | `colcon test` + `colcon test-result`: **172 tests, 0 failures** (166 pytest + 6 CTest wrappers) |
+| `validate_m3_kinematics.sh` (static) | ✅ All M3 checks passed |
+| `validate_m3_kinematics.sh --runtime` | ✅ All M3 checks passed |
+| FK vs TF | ≤ 5.4e-11 m |
+| FK vs Gazebo | ≤ 6.2e-12 m |
+| Negative targets | `unreachable_300mm_below` → `unreachable_knee`; `outside_joint_limits` → `joint_limits`; 0 goals sent |
+| IK | All 5 lift targets reached; observed tip error ≈ 0 mm; returned to the start configuration |
+| Body tilt, max (informational) | 1.7e-5 rad |
+| Shutdown | Clean: no leftover simulation or controller processes |
+| Regressions | `validate_m2_posture.sh`: All M2 checks passed. `validate_m1_control.sh`: All M1 checks passed. `validate_fortress.sh`: All checks passed |
+| JSON report | `log/m3_kinematics/latest_report.json` (44 KB, git-ignored): `simulation_only: true`, `passed: true`, `fk_verified: true`, `ik_verified: true`, `failures: []` |
+| Other | No hardware drivers started; the M1 spawner start-up race did not occur in these runs (this branch does not contain a fix for it) |
+
+The detailed per-configuration tables below come from the cloud run.
+
+## Cloud environment
 
 | Item | Value |
 |---|---|
