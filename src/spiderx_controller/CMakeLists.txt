@@ -29,6 +29,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_leg_kinematics test/test_leg_kinematics.py)
   ament_add_pytest_test(test_kinematics_targets test/test_kinematics_targets.py)
   ament_add_pytest_test(test_all_leg_kinematics test/test_all_leg_kinematics.py)
+  ament_add_pytest_test(test_m4_pose_targets test/test_m4_pose_targets.py)
 endif()
 
 ament_package()
