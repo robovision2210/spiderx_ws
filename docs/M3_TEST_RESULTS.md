@@ -107,7 +107,19 @@ See [frame conventions](M3_FRAME_CONVENTIONS.md).
 
 ## Regression (M0/M1/M2)
 
-REGRESSION_TABLE
+| Check | Result |
+|---|---|
+| `validate_fortress.sh` (static) and `--runtime` (passive M0 path) | ✅ All checks passed |
+| `validate_m1_control.sh` (static) and `--runtime` | ✅ All M1 checks passed (`lf_hip` +0.2 rad and back, error 0.0000; `cad_neutral` trajectory moved 3 joints) |
+| `validate_m2_posture.sh` (static) | ✅ All M2 checks passed |
+| `validate_m2_posture.sh --runtime`, isolated run | ✅ All M2 checks passed: "Simulation posture hold verified.", publishers [1, 1], clean shutdown |
+| Protected M0/M1/M2 files unchanged vs `origin/main` (all of `spiderx_description` and `spiderx_bringup`, controller/leg/pose/M2 configs, M1/M2 tools, `trajectory_client.py`, the M0/M1/M2 scripts) | ✅ `git diff` empty |
+| Fresh clone of the pushed branch: clean build, `colcon test`, static M3/M2/M1/Fortress validation | ✅ 8 packages; 172 tests, 0 failures; all static checks passed |
+| Leftover simulation/controller processes after all runs | ✅ none |
+
+**Two M2 runtime artifacts in an earlier combined run.** Neither was an M2 regression; the isolated rerun above passed.
+1. The leftover-process check matched **my own calling shell**, whose command line contained the searched words. The M2 script is unchanged.
+2. `/joint_states publisher count = 2` appeared when M2 started seconds after M3's simulation had been killed. The DDS graph still listed the dead publisher; the M2 tool itself measured [1, 1] during the run.
 
 ## Problems found and fixed during M3
 
