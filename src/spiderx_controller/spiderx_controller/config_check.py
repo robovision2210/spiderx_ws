@@ -312,3 +312,53 @@ def check_m2_posture(legs_cfg, config_dir=None, config_path=None):
                     f'-/+ {posture["margin"]} rad; command {posture["command_duration_s"]} s, '
                     f'hold {posture["hold_duration_s"]} s; thresholds {th}')
     return errors, info
+
+
+def check_m3_kinematics(legs_cfg, config_dir=None, config_path=None):
+    """Static checks of the M3 single-leg kinematics (simulation only). Returns (errors, info).
+
+    * geometry extracted from the expanded URDF satisfies the analytic-IK preconditions;
+    * the extracted chain is identical in the plain and the Fortress-control descriptions;
+    * the foot-link origin at q = 0 equals the independent zero-pose walk of check();
+    * the target config is valid, every safe target is IK-solvable inside the URDF limits minus
+      the M1 margin, away from singularities, and every negative target is rejected.
+    """
+    from spiderx_controller import leg_kinematics as lk
+    from spiderx_controller.kinematics_targets import (
+        CONFIG_FILE, TargetConfigError, load_and_evaluate)
+    config_dir = config_dir or os.path.join(_share('spiderx_controller'), 'config')
+    config_path = config_path or os.path.join(config_dir, CONFIG_FILE)
+    errors, info = [], []
+    urdf = load_urdf()
+    try:
+        cfg, geom, errs, plan = load_and_evaluate(config_path, config_dir, urdf)
+    except TargetConfigError as e:
+        return [f'M3 kinematics config: {e}'], info
+    errors += [f'M3: {e}' for e in errs]
+    if geom.structure_problems:
+        errors.append(f'M3 analytic IK preconditions fail: {geom.structure_problems}')
+    control = lk.LegGeometry.from_urdf(load_control_urdf(), legs_cfg, geom.leg)
+    if control.summary()['chain'] != geom.summary()['chain'] or control.tip0 != geom.tip0:
+        errors.append('M3: leg chain differs between the plain and Fortress-control URDF')
+    by_child = {}
+    for j in urdf.findall('joint'):
+        o = j.find('origin')
+        by_child[j.find('child').get('link')] = {
+            'parent': j.find('parent').get('link'),
+            'xyz': _vec(o.get('xyz')) if o is not None else [0.0] * 3,
+            'rpy': _vec(o.get('rpy')) if o is not None else [0.0] * 3}
+    roots = [l.get('name') for l in urdf.findall('link') if l.get('name') not in by_child]
+    walk = _zero_pose_positions(by_child, roots[0])[geom.foot_link]
+    if max(abs(a - b) for a, b in zip(walk, geom.foot_pose0.p)) > TOL:
+        errors.append(f'M3: foot-link origin {geom.foot_pose0.p} != independent walk {walk}')
+    if not errors:
+        s = geom.summary()
+        info.append(f'M3 {geom.leg} ({", ".join(geom.joint_names)}): chain base_link -> '
+                    f'{geom.foot_link} from the URDF; axes {s["axes_base_q0"]}; analytic IK '
+                    f'preconditions hold; tip at q=0 {[round(v, 6) for v in geom.tip0]} m '
+                    '(derived from the foot collision mesh)')
+        info.append(f'M3 targets (simulation_only): {len(plan["safe"])} safe targets solvable '
+                    f'inside URDF limits -/+ {cfg["margin"]} rad; {len(plan["negative"])} '
+                    'negative targets rejected')
+    return errors, info
+

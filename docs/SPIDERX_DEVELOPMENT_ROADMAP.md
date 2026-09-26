@@ -5,7 +5,7 @@ test that proves it works. Do not start Nav2 or SLAM work until M6 is done: they
 moves when commanded (`/cmd_vel`) and reports its motion (`/odom`).
 
 ```
-M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 FK/IK  ─►  M4 gait
+M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 gait
                                                                           │
       M9 hardware ◄─ M8 Nav2 ◄─ M7 SLAM/AMCL ◄─ M6 odometry ◄─ M5 /cmd_vel bridge
 ```
@@ -48,11 +48,20 @@ Simulation only. This is not balance control, walking, IK or hardware validation
 
 Balance / standing control (body feedback) is not scheduled yet; it needs an IMU and real actuator data.
 
-## M3 – Leg forward and inverse kinematics
+## M3 – Single-leg forward and inverse kinematics ✅ front-left verified (cloud + local)
 
-- [ ] FK matches TF (`base_link → *_foot_1`) within 1 mm for random joint samples
-- [ ] IK round-trips FK within tolerance over the reachable workspace
-- [ ] Per-joint sign table validated, including `lr_foot_joint` −x and `lf_foot_joint` +x
+Simulation only. This is not walking, a gait, balance, locomotion or hardware validation. See the
+[plan](M3_LEG_KINEMATICS_PLAN.md), [frames](M3_FRAME_CONVENTIONS.md),
+[FK guide](M3_FORWARD_KINEMATICS_GUIDE.md), [IK guide](M3_INVERSE_KINEMATICS_GUIDE.md),
+[results](M3_TEST_RESULTS.md) and [limitations](M3_SIMULATION_LIMITATIONS.md).
+
+- [x] Front-left geometry extracted from the URDF (no typed link lengths); derived foot tip from the collision mesh
+- [x] FK matches an independent URDF walk (unit), and TF + Gazebo `lf_foot_1` at 6 configurations (runtime, ≤ 5.4e-11 m)
+- [x] Analytic IK round-trips FK over 500 random joint-safe configurations; out-of-limit and unreachable targets refused, not clamped
+- [x] 5 lifted safe targets reached in simulation and returned; the 2 negative targets were not commanded
+- [x] Per-joint sign table for LF (`lf_foot_joint` +x) validated
+- [x] The same checks on the owner's Ubuntu PC
+- [ ] RF, LR and RR legs (including `lr_foot_joint` −x); a 4-leg kinematics API for the gait
 
 ## M4 – Gait generator
 

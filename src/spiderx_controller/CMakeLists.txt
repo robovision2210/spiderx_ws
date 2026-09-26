@@ -16,6 +16,7 @@ install(PROGRAMS
   scripts/test_one_joint.py
   scripts/test_neutral_pose.py
   scripts/run_posture_hold_test.py
+  scripts/validate_leg_kinematics
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -25,6 +26,8 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_joint_safety test/test_joint_safety.py)
   ament_add_pytest_test(test_posture_config test/test_posture_config.py)
   ament_add_pytest_test(test_posture_metrics test/test_posture_metrics.py)
+  ament_add_pytest_test(test_leg_kinematics test/test_leg_kinematics.py)
+  ament_add_pytest_test(test_kinematics_targets test/test_kinematics_targets.py)
 endif()
 
 ament_package()

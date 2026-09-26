@@ -1,0 +1,340 @@
+#!/usr/bin/env python3
+"""M3 SIMULATION-ONLY single-leg (front_left) forward/inverse kinematics validation in Gazebo Fortress.
+
+    ros2 launch spiderx_bringup fortress_posture_hold.launch.py      # terminal 1 (M1 + ground truth)
+    ros2 run spiderx_controller validate_leg_kinematics              # terminal 2
+
+1. Preconditions: both M1 controllers active, exactly one /joint_states publisher, /clock, TF
+   base_link -> lf_foot_1, Gazebo ground-truth pose of lf_foot_1, all 12 joints at CAD neutral.
+2. FK check: FK(measured LF angles) vs TF (at the same /joint_states stamp) and vs Gazebo.
+3. Negative targets (config/m3_kinematics_targets.yaml): IK must reject them; nothing is sent.
+4. Only if 2 passes: each safe target -> IK -> validate all 12 commands (M1 limits - margin) ->
+   ONE trajectory (3 LF joints to the IK angles, the other 9 held at their measured positions) ->
+   settle -> observed tip vs target + FK check -> return to the start configuration.
+5. JSON report + summary.
+
+Single-leg simulation kinematics validation. Not walking, not a gait, not balance control, not
+locomotion, not real-world leg control, not hardware validation. It never talks to hardware.
+
+Exit code: 0 = FK and IK verified; 1 = "M3 kinematics validation not verified." (report written);
+           2 = refused: invalid target/geometry configuration, nothing was sent.
+"""
+
+import argparse
+import json
+import os
+import sys
+import time
+
+import rclpy
+from rclpy.time import Time
+import tf2_ros
+from tf2_msgs.msg import TFMessage
+
+from spiderx_controller import kinematics_validation as kv
+from spiderx_controller import leg_kinematics as lk
+from spiderx_controller.joint_safety import UnsafeCommandError, check_pose, load_limits
+from spiderx_controller.kinematics_targets import (
+    EXPECT, TargetConfigError, load_and_evaluate, target_point)
+from spiderx_controller.posture_metrics import POSE_TOPIC, quat_to_rpy
+from spiderx_controller.trajectory_client import JointTestNode
+
+CONTROLLERS = ('joint_state_broadcaster', 'leg_trajectory_controller')
+START_POSE_TOL_RAD = 0.05       # all 12 joints must start within this of CAD neutral (0 rad)
+RETURN_TOL_RAD = 0.01
+
+
+def default_output():
+    ros_home = os.environ.get('ROS_HOME', os.path.join(os.path.expanduser('~'), '.ros'))
+    return os.path.join(ros_home, 'spiderx_m3', 'leg_kinematics_report.json')
+
+
+class KinematicsNode(JointTestNode):
+    """M1 JointTestNode + /joint_states stamp + TF + Gazebo ground-truth foot-link pose."""
+
+    def __init__(self, foot_link):
+        super().__init__('spiderx_leg_kinematics_validation')
+        self.foot_link = foot_link
+        self.js_msg = None
+        self.gz_link = None
+        self.gz_model = None
+        self.goals_sent = 0
+        self.start_positions = None     # for the Ctrl-C return
+        self.tf_buffer = tf2_ros.Buffer()
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
+        self.create_subscription(TFMessage, POSE_TOPIC, self._on_pose, 10)
+
+    def _on_state(self, msg):
+        super()._on_state(msg)
+        self.js_msg = msg
+
+    def _on_pose(self, msg):
+        for t in msg.transforms:
+            tr, q = t.transform.translation, t.transform.rotation
+            pose = ((tr.x, tr.y, tr.z), (q.x, q.y, q.z, q.w))
+            if t.child_frame_id == self.foot_link:
+                self.gz_link = pose
+            elif t.child_frame_id == 'spiderx':
+                self.gz_model = pose
+
+    def wait_for(self, predicate, timeout):
+        end = time.monotonic() + timeout
+        while not predicate() and time.monotonic() < end:
+            rclpy.spin_once(self, timeout_sec=0.05)
+        return predicate()
+
+    def send_positions(self, joint_names, targets, duration_s, timeout=None):
+        self.goals_sent += 1
+        return super().send_positions(joint_names, targets, duration_s, timeout)
+
+    def controller_check(self, phase):
+        states = self.controller_states()
+        st = {n: s for n, _, s in states} if states is not None else {}
+        return {'phase': phase, 'states': {c: st.get(c, 'missing') for c in CONTROLLERS}}
+
+    def observe(self, leg_joints, settle_s=0.3):
+        """Fresh (q_leg, all positions, TF (pos, quat), Gazebo (pos, quat)) after settle_s."""
+        self.spin_for(settle_s)
+        self.js_msg, self.gz_link = None, None
+        if not self.wait_for(lambda: self.js_msg is not None and self.gz_link is not None, 20.0):
+            return None, None, None, None
+        msg = self.js_msg
+        pos = dict(zip(msg.name, msg.position))
+        if any(j not in pos for j in leg_joints):
+            return None, pos, None, None
+        q = [pos[j] for j in leg_joints]
+        tf_obs = None
+        stamp = Time.from_msg(msg.header.stamp)
+        for _ in range(200):         # robot_state_publisher publishes this stamp shortly after
+            try:
+                t = self.tf_buffer.lookup_transform('base_link', self.foot_link, stamp)
+                tr, rq = t.transform.translation, t.transform.rotation
+                tf_obs = ((tr.x, tr.y, tr.z), (rq.x, rq.y, rq.z, rq.w))
+                break
+            except (tf2_ros.LookupException, tf2_ros.ExtrapolationException,
+                    tf2_ros.ConnectivityException):
+                rclpy.spin_once(self, timeout_sec=0.05)
+        return q, pos, tf_obs, self.gz_link
+
+    def wait_for_tf(self, timeout):
+        """True once base_link -> foot link is available (static + dynamic TF received)."""
+        return self.wait_for(lambda: self.tf_buffer.can_transform(
+            'base_link', self.foot_link, Time()), timeout)
+
+    def tilt(self):
+        if self.gz_model is None:
+            return None
+        r, p, _ = quat_to_rpy(*self.gz_model[1])
+        return max(abs(r), abs(p))
+
+
+def move(node, order, positions, duration):
+    accepted, code = node.send_positions(order, [positions[j] for j in order], duration)
+    return {'accepted': accepted, 'error_code': code, 'duration_s': duration}
+
+
+def duration_for(cfg, v_max, q_from, q_to):
+    dq = max(abs(a - b) for a, b in zip(q_from, q_to))
+    return max(cfg['motion']['min_duration_s'], cfg['motion']['speed_factor'] * dq / v_max)
+
+
+def run(node, geom, cfg, plan, order, limits, v_max, args):
+    leg = list(geom.joint_names)
+    run = {'precondition_failures': [], 'controller_checks': [], 'fk_checks': [],
+           'negative_tests': [], 'ik_targets': [], 'expected_safe_targets': len(plan['safe']),
+           'final_return_ok': False}
+    pre = run['precondition_failures']
+    if not node.wait_for(lambda: node.get_clock().now().nanoseconds > 0, args.ready_timeout):
+        pre.append('no /clock received: is the simulation running?')
+        return run
+    cc = node.controller_check('start')
+    run['controller_checks'].append(cc)
+    if any(s != 'active' for s in cc['states'].values()):
+        pre.append(f'M1 controllers not all active: {cc["states"]}')
+        return run
+    if not node.wait_for(lambda: node.positions is not None and node.gz_link is not None,
+                         args.ready_timeout):
+        pre.append('no /joint_states or no Gazebo pose of the foot link on '
+                   f'{POSE_TOPIC} (start fortress_posture_hold.launch.py)')
+        return run
+    if not node.wait_for_tf(args.ready_timeout):
+        pre.append(f'TF base_link -> {geom.foot_link} never became available '
+                   '(robot_state_publisher running?)')
+        return run
+    run['joint_state_publishers'] = [node.count_publishers('/joint_states')]
+    if run['joint_state_publishers'][0] != 1:
+        pre.append(f'/joint_states has {run["joint_state_publishers"][0]} publishers, expected 1')
+        return run
+    q0, start, tf_obs, gz_obs = node.observe(leg, settle_s=0.5)
+    if q0 is None or start is None or any(j not in start for j in order):
+        pre.append('/joint_states does not contain all 12 joints')
+        return run
+    run['start_positions'] = {j: start[j] for j in order}
+    node.start_positions = run['start_positions']
+    far = {j: v for j, v in run['start_positions'].items() if abs(v) > START_POSE_TOL_RAD}
+    if far:
+        pre.append(f'start pose is not CAD neutral (|q| > {START_POSE_TOL_RAD} rad: {far}); run '
+                   'ros2 run spiderx_controller test_neutral_pose.py first')
+        return run
+    if tf_obs is None:
+        pre.append(f'TF base_link -> {geom.foot_link} unavailable at the /joint_states stamp')
+    run['fk_checks'].append(kv.fk_check(geom, q0, tf_obs, gz_obs, cfg['tolerances'],
+                                        'start (CAD neutral)'))
+    if not run['fk_checks'][-1]['passed']:
+        return run            # IK moves only after FK is verified
+
+    # negative targets: must be rejected, nothing may be sent, nothing may move
+    for name, rec in plan['negative'].items():
+        goals_before = node.goals_sent
+        before = node.fresh_positions()
+        ik = lk.inverse(geom, rec['target_m'], reference=q0, margin=cfg['margin'])
+        after = node.fresh_positions()      # nothing is ever commanded for a negative target
+        motion = (max(abs(after[j] - before[j]) for j in order)
+                  if before is not None and after is not None else None)
+        run['negative_tests'].append(kv.negative_check(
+            name, EXPECT[rec['expect']], ik, goals_before, node.goals_sent, motion))
+
+    tilts = []
+    for name, rec in plan['safe'].items():
+        target = target_point(geom, cfg['safe_targets'][name])
+        ik = lk.inverse(geom, target, reference=q0, margin=cfg['margin'])
+        action, q_meas, fk_rec, gz_after, returned = {'error_code': None}, None, None, None, False
+        if ik['ok']:
+            cmd = dict(run['start_positions'])
+            cmd.update(dict(zip(leg, ik['solution'])))
+            try:
+                check_pose(cmd, limits, cfg['margin'])          # all 12, M1 rule, before sending
+            except UnsafeCommandError as e:
+                ik = dict(ik, ok=False, reason='refused_by_m1_safety', message=str(e))
+            if ik['ok']:
+                dur = duration_for(cfg, v_max, q0, ik['solution'])
+                print(f'  {name}: IK q = {[round(v, 4) for v in ik["solution"]]} rad, '
+                      f'{dur:.1f} s trajectory ...')
+                action = move(node, order, cmd, dur)
+                node.spin_for(cfg['motion']['settle_s'])
+                q_meas, _, tf_obs, gz_after = node.observe(leg)
+                tilts.append(node.tilt())
+                if q_meas is not None:
+                    fk_rec = kv.fk_check(geom, q_meas, tf_obs, gz_after, cfg['tolerances'], name)
+                    run['fk_checks'].append(fk_rec)
+                back = move(node, order, run['start_positions'], dur)
+                node.spin_for(cfg['motion']['settle_s'])
+                now = node.fresh_positions()
+                returned = (back.get('error_code') == 0 and now is not None and
+                            max(abs(now[j] - run['start_positions'][j]) for j in order)
+                            <= RETURN_TOL_RAD)
+        run['ik_targets'].append(kv.ik_target_check(
+            geom, name, target, ik, q_meas, gz_after, fk_rec, action, returned, cfg['tolerances']))
+    final = node.fresh_positions()
+    run['final_return_ok'] = final is not None and max(
+        abs(final[j] - run['start_positions'][j]) for j in order) <= RETURN_TOL_RAD
+    run['controller_checks'].append(node.controller_check('end'))
+    if any(s != 'active' for s in run['controller_checks'][-1]['states'].values()):
+        pre.append(f'controllers not active at the end: {run["controller_checks"][-1]["states"]}')
+    run['joint_state_publishers'].append(node.count_publishers('/joint_states'))
+    if run['joint_state_publishers'][-1] != 1:
+        pre.append(f'/joint_states publishers at the end: {run["joint_state_publishers"][-1]}')
+    valid_tilts = [t for t in tilts if t is not None]
+    run['body_tilt_rad_max'] = max(valid_tilts) if valid_tilts else None
+    run['goals_sent'] = node.goals_sent
+    return run
+
+
+def print_summary(report):
+    print('-' * 76)
+    print('SpiderX M3 single-leg kinematics - SIMULATION ONLY (Gazebo Fortress), leg '
+          f'{report["leg"]}, frame {report["frame"]}')
+    print(f'Reference tip (FK of CAD neutral): {[round(v, 6) for v in report["reference_tip_m"]]} m')
+    for c in report['controller_checks']:
+        print(f'  controllers @ {c["phase"]}: {c["states"]}')
+    print(f'/joint_states publishers (start, end): {report["joint_state_publishers"]}')
+    for c in report['fk_checks']:
+        tf, gz = c['vs_tf'], c['vs_gazebo']
+        print(f'FK check [{c["label"]}] q = {[round(v, 4) for v in c["q_measured_rad"]]}')
+        for rec in (tf, gz):
+            if 'link_origin_error_m' in rec:
+                print(f'    vs {rec["source"]:<6}: link origin |e| = '
+                      f'{rec["link_origin_error_m"]["euclidean"]:.2e} m, orientation '
+                      f'{rec["orientation_error_rad"]:.2e} rad, tip |e| = '
+                      f'{rec["tip_error_m"]["euclidean"]:.2e} m -> '
+                      f'{"PASS" if rec["passed"] else "FAIL"}')
+            else:
+                print(f'    vs {rec["source"]}: {rec["failures"]}')
+    for n in report['negative_tests']:
+        print(f'Negative [{n["name"]}]: rejected as {n["ik_reason"]}, goals sent '
+              f'{n["goals_sent"]}, joint motion {n["max_joint_motion_rad"]} -> '
+              f'{"PASS" if n["passed"] else "FAIL"}')
+    for t in report['ik_targets']:
+        err = t.get('target_error_m', {}).get('euclidean')
+        detail = (f'q_cmd {[round(v, 4) for v in t["q_commanded_rad"]]}, observed tip error '
+                  f'{err * 1000:.3f} mm' if err is not None else f'IK {t["ik_reason"]}')
+        print(f'IK target [{t["name"]}]: {detail}, returned {t["returned_to_start"]} -> '
+              f'{"PASS" if t["passed"] else "FAIL"}')
+    if report['body_tilt_rad_max'] is not None:
+        print(f'Body tilt max during lifted-foot holds: {report["body_tilt_rad_max"]:.4f} rad '
+              '(informational; comparisons are in base_link)')
+    for f in report['failures']:
+        print(f'FAILED: {f}')
+    for line in report['outcome']:
+        print(line)
+    print('Single-leg simulation kinematics validation only. Not walking, balance or hardware.')
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(description='SpiderX M3 simulation-only single-leg FK/IK check')
+    p.add_argument('--config', default=None,
+                   help='target YAML (default: installed config/m3_kinematics_targets.yaml)')
+    p.add_argument('--output', default=default_output(), help='report JSON path')
+    p.add_argument('--ready-timeout', type=float, default=60.0,
+                   help='wall-clock wait for clock/controllers/topics [s] (default 60)')
+    args = p.parse_args(rclpy.utilities.remove_ros_args(sys.argv if argv is None else argv)[1:])
+
+    print('SIMULATION ONLY - single-leg kinematics validation. Not walking, balance or hardware.')
+    try:
+        cfg, geom, errors, plan = load_and_evaluate(args.config)
+    except TargetConfigError as e:
+        print(f'REFUSED: invalid M3 configuration: {e}')
+        print('Nothing was sent.')
+        return 2
+    if errors:
+        for e in errors:
+            print(f'REFUSED: {e}')
+        print('Nothing was sent.')
+        return 2
+    limits, order = load_limits()
+    import yaml
+    from ament_index_python.packages import get_package_share_directory
+    with open(os.path.join(get_package_share_directory('spiderx_controller'), 'config',
+                           'spiderx_legs.yaml')) as f:
+        v_max = float(yaml.safe_load(f)['motion_constraints']['max_joint_velocity_rad_s'])
+    print(f'Leg {geom.leg} {list(geom.joint_names)}: geometry from the URDF, '
+          f'{len(plan["safe"])} safe targets and {len(plan["negative"])} negative targets '
+          'validated before any command.')
+
+    rclpy.init()
+    node = KinematicsNode(geom.foot_link)
+    try:
+        data = run(node, geom, cfg, plan, order, limits, v_max, args)
+    except KeyboardInterrupt:
+        print('Interrupted: cancelling the active goal and returning the leg to the start.')
+        node.cancel_active_goal()
+        if node.start_positions is not None:
+            node.send_positions(order, [node.start_positions[j] for j in order], 4.0)
+        raise
+    except Exception as e:           # report the failure instead of losing it
+        data = {'precondition_failures': [f'runtime error: {type(e).__name__}: {e}']}
+    finally:
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+    report = kv.build_report(geom, cfg, data)
+    os.makedirs(os.path.dirname(os.path.abspath(args.output)), exist_ok=True)
+    with open(args.output, 'w') as f:
+        json.dump(report, f, indent=2)
+    print_summary(report)
+    print(f'Report: {args.output}')
+    return 0 if report['passed'] else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())
