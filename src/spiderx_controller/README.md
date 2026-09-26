@@ -10,7 +10,7 @@ gait, IK or hardware support (see `../../STATUS.md`).
 | `config/spiderx_poses.yaml` | Named poses. `cad_neutral` (all 0 rad) is the CAD zero configuration (the audit shows all four feet on one plane). Reached by M1 joint-position control; for the M2 simulation hold, see `docs/M2_TEST_RESULTS.md` |
 | `config/m2_simulation_postures.yaml` | **M2, simulation only.** The single source of the posture-hold test: `cad_neutral_simulation_hold` (targets must equal `cad_neutral`), command and hold durations, pass/fail thresholds with their provenance |
 | `config/spiderx_ros2_controllers.yaml` | `joint_state_broadcaster` + `leg_trajectory_controller` (12 joints, position). Loaded by `fortress_control.launch.py` |
-| `launch/controller.launch.py` | Spawns the two controllers in order (event handler, no sleeps) |
+| `launch/controller.launch.py` | Spawns the two controllers in order (event handler, no sleeps). The second spawner starts only if the first exits with code 0; a failed spawner logs an error and nothing further is started. Generous switch timeouts for slow simulations |
 | `scripts/test_one_joint.py`, `scripts/test_neutral_pose.py` | Safe M1 test tools: refuse unknown joints and out-of-limit targets; one slow trajectory; report errors |
 | `scripts/run_posture_hold_test.py` | **M2.** Validates the posture and refuses before sending if it is invalid. Sends one slow 12-joint trajectory, then records joints, controllers and the Gazebo ground-truth body pose for 10 s of simulation time. Writes a JSON report; exit 0 = "Simulation posture hold verified." |
 | `spiderx_controller/posture_config.py`, `posture_metrics.py` | M2 strict config loader and validator; metrics, thresholds and report (unit-tested) |

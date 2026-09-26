@@ -25,6 +25,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_joint_safety test/test_joint_safety.py)
   ament_add_pytest_test(test_posture_config test/test_posture_config.py)
   ament_add_pytest_test(test_posture_metrics test/test_posture_metrics.py)
+  ament_add_pytest_test(test_controller_launch test/test_controller_launch.py)
 endif()
 
 ament_package()
