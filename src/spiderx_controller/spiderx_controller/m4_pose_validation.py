@@ -199,7 +199,7 @@ def build_report(geoms, cfg, run):
                           'min_samples': MIN_HOLD_SAMPLES},
         'reference_tips_m': {leg: list(geoms[leg].tip0) for leg in lk.ALL_LEGS},
         'controller_checks': run.get('controller_checks', []),
-        'joint_state_publishers': run.get('joint_state_publishers'),
+        'joint_state_publishers': run.get('joint_state_publishers', []),   # [] if stopped early
         'start_positions_rad': run.get('start_positions'),
         'start_fk': run.get('start_fk', []), 'poses': run.get('poses', {}),
         'negative_poses': run.get('negative_poses', {}), 'goals_sent': run.get('goals_sent'),

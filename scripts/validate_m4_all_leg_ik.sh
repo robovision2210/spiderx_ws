@@ -193,6 +193,11 @@ PY
          | grep -vxF "$anc" || true)
   [ -z "$left" ] && pass "clean shutdown: no leftover simulation/controller processes" \
     || { bad "leftover processes after shutdown:"; ps -o pid,cmd -p $left; }
+  if [ "$fail" != 0 ]; then       # keep the launch log for debugging (e.g. spawner timeouts)
+    mkdir -p log/m4_all_leg_ik
+    kept="log/m4_all_leg_ik/launch_log_$(date +%Y%m%d_%H%M%S).txt"
+    cp "$tmp/launch.log" "$kept" && echo "  launch log preserved: $kept"
+  fi
 fi
 
 echo

@@ -188,3 +188,11 @@ def test_check_only_validates_without_ros(monkeypatch, capsys):
     assert v.main(['m4_pose_validation', '--check-only']) == 0
     assert "Poses ['neutral_stance', 'crouch_10mm', 'lift_lf_15mm'] validated" in \
         capsys.readouterr().out
+
+
+def test_report_is_complete_when_the_tool_stops_early(shipped):
+    """An early refusal (e.g. controllers inactive) still yields every report field."""
+    cfg, geoms, _, _ = shipped
+    r = v.build_report(geoms, cfg, {'precondition_failures': ['M1 controllers not all active']})
+    assert r['joint_state_publishers'] == [] and r['passed'] is False
+    assert r['outcome'] == [v.NOT_VERIFIED]
