@@ -80,7 +80,16 @@ The race itself is **not fixed in M4**, because that would change the M1 launch 
 
 ## Regression (runtime, cloud)
 
-Runtime regressions (`validate_m3_kinematics.sh`, `validate_m2_posture.sh`, `validate_m1_control.sh`, `validate_fortress.sh` with `--runtime`) are in progress; results will be added here.
+| Check | Result |
+|---|---|
+| `validate_m3_kinematics.sh --runtime` | ✅ All M3 checks passed: single-leg FK and IK verified, clean shutdown |
+| `validate_m2_posture.sh --runtime` | ✅ All M2 checks passed: "Simulation posture hold verified.", clean shutdown |
+| `validate_m1_control.sh --runtime` | ✅ All M1 checks passed |
+| `validate_fortress.sh --runtime` (passive M0 path) | ✅ All checks passed |
+| Leftover simulation/controller processes after all runs | ✅ none |
+
+Each regression ran in its own simulation, with a 30 s pause in between so DDS could discard the
+previous run's participants. The controller start-up race did not recur in these runs.
 
 ## Local verification
 
