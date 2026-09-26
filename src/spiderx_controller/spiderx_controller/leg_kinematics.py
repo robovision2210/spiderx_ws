@@ -31,8 +31,12 @@ import os
 import struct
 
 FRAME = 'base_link'
-SUPPORTED_LEGS = ('front_left',)
+SUPPORTED_LEGS = ('front_left',)        # M3 default: the only leg validated in M3
 LEG_ALIASES = {'front_left': 'front_left', 'lf': 'front_left'}
+# M4 opt-in (allow_all_legs=True). Order = spiderx_legs.yaml / controller YAML order.
+ALL_LEGS = ('front_left', 'front_right', 'rear_left', 'rear_right')
+ALL_LEG_ALIASES = {**{leg: leg for leg in ALL_LEGS},
+                   'lf': 'front_left', 'rf': 'front_right', 'lr': 'rear_left', 'rr': 'rear_right'}
 IK_POSITION_TOL_M = 1e-6        # FK(IK(p)) must reproduce p within this (math residual)
 TIP_VERTEX_TOL_M = 1e-4         # foot-tip definition: mesh vertices within 0.1 mm of min z
 ACOS_EPS = 1e-12                # acos arguments beyond +-1 by more than this are unreachable
@@ -180,7 +184,13 @@ def validate_point(p, what='target'):
     return tuple(_finite(v, f'{what} {c}') for v, c in zip(p, 'xyz'))
 
 
-def resolve_leg(leg):
+def resolve_leg(leg, allow_all_legs=False):
+    """Canonical leg name. Default (M3): only front_left. allow_all_legs=True (M4): all four."""
+    if allow_all_legs:
+        if leg not in ALL_LEG_ALIASES:
+            raise KinematicsError(f'unknown leg "{leg}": expected one of {list(ALL_LEGS)} '
+                                  f'(aliases {sorted(ALL_LEG_ALIASES)})')
+        return ALL_LEG_ALIASES[leg]
     if leg not in LEG_ALIASES:
         raise KinematicsError(f'unknown or unsupported leg "{leg}": M3 validates only '
                               f'{list(SUPPORTED_LEGS)} (aliases {sorted(LEG_ALIASES)})')
@@ -317,8 +327,9 @@ class LegGeometry:
         self._check_structure()
 
     @classmethod
-    def from_urdf(cls, urdf_root, legs_cfg, leg='front_left', tip_vertex_tol=TIP_VERTEX_TOL_M):
-        leg = resolve_leg(leg)
+    def from_urdf(cls, urdf_root, legs_cfg, leg='front_left', tip_vertex_tol=TIP_VERTEX_TOL_M,
+                  allow_all_legs=False):
+        leg = resolve_leg(leg, allow_all_legs)
         if leg not in legs_cfg.get('legs', {}):
             raise KinematicsError(f'leg {leg} not in spiderx_legs.yaml')
         lc = legs_cfg['legs'][leg]
@@ -567,8 +578,7 @@ def inverse(geom, target, frame=FRAME, reference=None, margin=DEFAULT_MARGIN_RAD
     return result
 
 
-def load_geometry(leg='front_left', urdf_root=None, legs_cfg=None, config_dir=None):
-    """Convenience loader: expanded installed URDF + installed spiderx_legs.yaml."""
+def _default_inputs(urdf_root, legs_cfg, config_dir):
     if urdf_root is None:
         from spiderx_controller.config_check import load_urdf
         urdf_root = load_urdf()
@@ -579,10 +589,84 @@ def load_geometry(leg='front_left', urdf_root=None, legs_cfg=None, config_dir=No
             config_dir = os.path.join(get_package_share_directory('spiderx_controller'), 'config')
         with open(os.path.join(config_dir, 'spiderx_legs.yaml')) as f:
             legs_cfg = yaml.safe_load(f)
-    return LegGeometry.from_urdf(urdf_root, legs_cfg, leg)
+    return urdf_root, legs_cfg
+
+
+def load_geometry(leg='front_left', urdf_root=None, legs_cfg=None, config_dir=None,
+                  allow_all_legs=False):
+    """Convenience loader: expanded installed URDF + installed spiderx_legs.yaml."""
+    urdf_root, legs_cfg = _default_inputs(urdf_root, legs_cfg, config_dir)
+    return LegGeometry.from_urdf(urdf_root, legs_cfg, leg, allow_all_legs=allow_all_legs)
+
+
+# ---------------------------------------------------------------- all legs (M4, opt-in)
+def load_all_geometries(urdf_root=None, legs_cfg=None, config_dir=None):
+    """{leg: LegGeometry} for all four legs (ALL_LEGS order), from ONE expanded URDF.
+
+    Each leg is extracted from its own URDF chain; nothing is mirrored or assumed symmetric.
+    """
+    urdf_root, legs_cfg = _default_inputs(urdf_root, legs_cfg, config_dir)
+    return {leg: LegGeometry.from_urdf(urdf_root, legs_cfg, leg, allow_all_legs=True)
+            for leg in ALL_LEGS}
+
+
+def all_joint_names(geoms):
+    """The 12 joint names in controller order: each leg of ALL_LEGS, [hip, thigh, foot]."""
+    return [name for leg in ALL_LEGS for name in geoms[leg].joint_names]
+
+
+def _split12(geoms, q12):
+    names = all_joint_names(geoms)
+    q = validate_joint_vector(q12, names)
+    return {leg: q[3 * i:3 * i + 3] for i, leg in enumerate(ALL_LEGS)}
+
+
+def forward_all(geoms, q12):
+    """FK of all four legs. q12: 12 angles in all_joint_names() order. Returns {leg: forward()}."""
+    return {leg: forward(geoms[leg], q) for leg, q in _split12(geoms, q12).items()}
+
+
+def inverse_all(geoms, targets, frame=FRAME, reference=None, margin=DEFAULT_MARGIN_RAD):
+    """IK of all four legs (position-only, analytic, per leg).
+
+    targets: {leg: [x, y, z]} for EXACTLY the four legs (aliases accepted), in base_link.
+    reference: optional 12-vector (all_joint_names() order) used for solution selection.
+    Returns dict: ok, reason ('ok' | 'invalid_input' | 'leg_failed'), message, legs {leg: inverse()},
+    joint_names (12), solution (12 list or None; None unless EVERY leg succeeded - never partial).
+    """
+    out = {'ok': False, 'reason': 'invalid_input', 'solution': None, 'legs': {},
+           'joint_names': all_joint_names(geoms), 'frame': FRAME}
+    try:
+        if not isinstance(targets, dict):
+            raise KinematicsError(f'targets must be a mapping {{leg: [x, y, z]}}, got {targets!r}')
+        resolved = {}
+        for key, value in targets.items():
+            leg = resolve_leg(key, allow_all_legs=True)
+            if leg in resolved:
+                raise KinematicsError(f'leg {leg} given twice (aliases)')
+            resolved[leg] = value
+        missing = [leg for leg in ALL_LEGS if leg not in resolved]
+        if missing:
+            raise KinematicsError(f'targets missing legs {missing}')
+        refs = (_split12(geoms, reference) if reference is not None
+                else {leg: None for leg in ALL_LEGS})
+    except KinematicsError as e:
+        out['message'] = str(e)
+        return out
+    for leg in ALL_LEGS:
+        out['legs'][leg] = inverse(geoms[leg], resolved[leg], frame=frame,
+                                   reference=refs[leg], margin=margin)
+    failed = {leg: r['reason'] for leg, r in out['legs'].items() if not r['ok']}
+    if failed:
+        out.update(reason='leg_failed', message=f'IK failed for {failed}')
+        return out
+    out.update(ok=True, reason='ok', message='all four legs solved',
+               solution=[v for leg in ALL_LEGS for v in out['legs'][leg]['solution']])
+    return out
 
 
 __all__ = ['FRAME', 'KinematicsError', 'LegGeometry', 'forward', 'forward_tip_poe', 'inverse',
-           'check_limits', 'load_geometry', 'validate_joint_vector', 'validate_point',
+           'check_limits', 'load_geometry', 'ALL_LEGS', 'load_all_geometries', 'all_joint_names',
+           'forward_all', 'inverse_all', 'validate_joint_vector', 'validate_point',
            'quaternion_from_matrix', 'matrix_from_quaternion', 'rotation_angle_between',
            'IK_POSITION_TOL_M', 'TIP_VERTEX_TOL_M']
