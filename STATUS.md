@@ -1,6 +1,6 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/spiderx-m2-posture-hold` (M2, stacked on M1 / PR #6).
+Last updated on branch `claude/spiderx-m3-leg-kinematics` (M3, from `main` with PR #4–#7 merged).
 
 **M2 was verified locally** by the owner on Ubuntu 22.04: every step of the M2 test sequence passed, including `run_posture_hold_test.py`, `validate_m2_posture.sh --runtime` and the M1 and passive runtime regressions.
 
@@ -44,7 +44,9 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | ros2_control controllers (`joint_state_broadcaster`, `leg_trajectory_controller`) | ✅ Verified active (local + cloud) | `fortress_control.launch.py`; [M1 results](docs/M1_TEST_RESULTS.md) |
 | Joint position control in Fortress (`gz_ros2_control` 0.7.x, 12 joints) | ✅ Verified (local + cloud) | `lf_hip` → +0.2 rad and back, error 0.0000; invalid joints and out-of-limit targets refused. Tracking is idealised by the 100 N·m placeholder effort limit |
 | Balance / standing controller (body feedback) | ⚪ Future work | Not scheduled. M1/M2 only hold joint angles; there is no balance feedback, IMU or disturbance test |
-| Forward / inverse kinematics | ⚪ Future work | M3 |
+| Single-leg forward kinematics (front-left, simulation only) | ✅ **Single-leg FK verified against the current URDF/TF/Gazebo model** (cloud). Local run pending | `leg_kinematics.py` (URDF-derived chain; derived foot tip). FK vs TF ≤ 5.4e-11 m / 3.5e-10 rad and vs Gazebo ≤ 3.0e-11 m / 1.0e-10 rad, at CAD neutral and 5 IK configurations. [M3 results](docs/M3_TEST_RESULTS.md) |
+| Single-leg inverse kinematics (front-left, simulation only) | ✅ **Single-leg IK verified for documented reachable, joint-safe simulation targets** (cloud). Local run pending | Analytic IK. 5 lifted targets reached within ≤ 1.1e-10 m and returned; unreachable and out-of-limit targets refused with 0 goals sent. Idealised by the 100 N·m placeholder joints. **Not** walking, balance or hardware validation. [Limitations](docs/M3_SIMULATION_LIMITATIONS.md) |
+| Kinematics for RF, LR, RR legs | ⚪ Future work | M3 validated front-left only; the knee-axis signs differ per leg (LF +x, others −x) |
 | Gait generator | ⚪ Future work | M4 |
 | `/cmd_vel` → gait bridge | ⚪ Future work | M5. Nothing consumes `/cmd_vel` today |
 | Odometry (`/spiderx/leg_odometry`, `/odom`) | ⚪ Future work | M6. **Not faked** |

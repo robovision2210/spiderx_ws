@@ -45,7 +45,8 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | Joint position control (`gz_ros2_control`, 12 joints) | ✅ Verified in simulation, locally and in the cloud (M1): one joint and all-joint neutral-pose trajectory |
 | CAD neutral posture hold (simulation only) | ✅ Simulation posture hold verified, locally and in the cloud (M2): 10 s hold, body height, roll and pitch within the documented simulation thresholds. **Not** balance, walking or hardware validation |
 | Balance / standing controller | ⚪ Not implemented. M1 and M2 hold joint angles only, with no balance feedback |
-| Gait generation, IK, `/cmd_vel` bridge | ⚪ Planned |
+| Single-leg FK/IK (front-left, simulation only) | ✅ Verified in the cloud (M3): FK matches the URDF, TF and Gazebo; IK reaches 5 small lifted targets and refuses unreachable or out-of-limit targets. **Not** walking, a gait or hardware validation |
+| Gait generation, 4-leg IK, `/cmd_vel` bridge | ⚪ Planned |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
 | Autonomous navigation | ⛔ Blocked until locomotion and odometry exist |
@@ -209,6 +210,27 @@ the [M2 results](docs/M2_TEST_RESULTS.md) and the [M2 limitations](docs/M2_SIMUL
 
 *SpiderX CAD neutral posture hold in Gazebo Fortress — simulation only; not balance or walking.*
 
+## 🦵 Single-Leg Kinematics (M3, simulation only)
+
+```text
+Single-leg simulation kinematics validation. Not walking, a gait, balance, locomotion,
+real-world leg control or hardware validation.
+```
+
+```bash
+# Terminal 1: M1 controllers + Gazebo ground-truth pose bridge
+ros2 launch spiderx_bringup fortress_posture_hold.launch.py
+# Terminal 2
+ros2 run spiderx_controller validate_leg_kinematics     # FK vs TF/Gazebo, IK targets, JSON report
+./scripts/validate_m3_kinematics.sh --runtime           # automated M3 checks
+```
+
+`spiderx_controller/leg_kinematics.py` computes the front-left leg's forward and inverse kinematics
+from the **URDF itself**. The foot tip is a derived point, the lowest point of the foot collision
+mesh. See the [FK guide](docs/M3_FORWARD_KINEMATICS_GUIDE.md), the
+[IK guide](docs/M3_INVERSE_KINEMATICS_GUIDE.md), the [frame conventions](docs/M3_FRAME_CONVENTIONS.md),
+the [results](docs/M3_TEST_RESULTS.md) and the [limitations](docs/M3_SIMULATION_LIMITATIONS.md).
+
 ## 🔍 Verification
 
 ```bash
@@ -262,7 +284,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 
 ## 🗺️ Roadmap
 
-**joint control ✅ (M1) → simulation posture hold ✅ (M2, sim only) → leg FK/IK → gait generator → `/cmd_vel` bridge →
+**joint control ✅ (M1) → simulation posture hold ✅ (M2, sim only) → single-leg FK/IK ✅ (M3, sim only, front-left) → gait generator → `/cmd_vel` bridge →
 odometry → SLAM → Nav2 → real-hardware validation**
 
 Nav2 comes last because it only decides where to go. It needs a robot that executes `/cmd_vel` and
