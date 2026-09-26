@@ -34,6 +34,8 @@ source ~/spiderx_ws/install/setup.bash
 | 17 | M3 static (single-leg kinematics, simulation only) | `./scripts/validate_m3_kinematics.sh` | `All M3 checks passed.` (geometry from URDF, FK/IK unit tests, refusals) |
 | 18 | M3 runtime (starts Gazebo with control and the ground-truth pose bridge) | `./scripts/validate_m3_kinematics.sh --runtime` | `Single-leg FK verified ...`, `Single-leg IK verified ...`, `All M3 checks passed.` |
 | 19 | M3 manual | `ros2 launch spiderx_bringup fortress_posture_hold.launch.py`, then `ros2 run spiderx_controller validate_leg_kinematics` | See [FK guide](M3_FORWARD_KINEMATICS_GUIDE.md) and [IK guide](M3_INVERSE_KINEMATICS_GUIDE.md) |
+| 20 | M4 static (all-leg kinematics, simulation only) | `./scripts/validate_m4_all_leg_ik.sh` | `All M4 checks passed.` |
+| 21 | M4 runtime (Gazebo, 3 static poses) | `./scripts/validate_m4_all_leg_ik.sh --runtime` | The three M4 outcome lines, then `All M4 checks passed.` |
 
 ## Blocked stacks (optional, expected to wait)
 

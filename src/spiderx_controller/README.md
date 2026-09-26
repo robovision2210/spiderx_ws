@@ -38,6 +38,17 @@ ros2 launch spiderx_bringup fortress_posture_hold.launch.py
 ros2 run spiderx_controller run_posture_hold_test.py
 ```
 
+M4 (simulation only; all four legs; static poses; not walking, gait or hardware validation):
+
+```bash
+ros2 launch spiderx_bringup fortress_posture_hold.launch.py
+ros2 run spiderx_controller m4_pose_validation            # --check-only validates without ROS
+```
+
+- `leg_kinematics.py`: `allow_all_legs=True` enables all four legs; the default stays front-left only (M3).
+- `config/m4_pose_targets.yaml` with `m4_pose_targets.py`: three static poses and an atomic, never-clamping evaluator.
+- `m4_pose_validation.py`: the runtime tool.
+
 M3 (simulation only; one leg; not walking, balance or hardware validation):
 
 ```bash
