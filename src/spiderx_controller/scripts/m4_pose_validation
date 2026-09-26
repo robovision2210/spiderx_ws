@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""M4 simulation-only four-leg static pose validation (see spiderx_controller/m4_pose_validation.py).
+
+    ros2 run spiderx_controller m4_pose_validation [--check-only] [--output FILE]
+"""
+import sys
+
+from spiderx_controller.m4_pose_validation import main
+
+if __name__ == '__main__':
+    sys.exit(main())
