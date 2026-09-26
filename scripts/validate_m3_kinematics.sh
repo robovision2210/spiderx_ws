@@ -175,7 +175,10 @@ PY
   for _ in $(seq 1 20); do kill -0 -- -"$lpid" 2>/dev/null || break; sleep 1; done
   kill -KILL -- -"$lpid" 2>/dev/null
   sleep 2
-  left=$(pgrep -f 'ign gazebo|gz sim|parameter_bridge|robot_state_publisher|controller_manager/spawner|ros2 launch spiderx_bringup' || true)
+  # exclude this script's own ancestors (a calling shell may contain these words in its command line)
+  anc=$(p=$$; while [ "${p:-1}" -gt 1 ]; do echo "$p"; p=$(ps -o ppid= -p "$p" | tr -d ' '); done)
+  left=$(pgrep -f 'ign gazebo|gz sim|parameter_bridge|robot_state_publisher|controller_manager/spawner|ros2 launch spiderx_bringup' \
+         | grep -vxF "$anc" || true)
   [ -z "$left" ] && pass "clean shutdown: no leftover simulation/controller processes" \
     || { bad "leftover processes after shutdown:"; ps -o pid,cmd -p $left; }
 fi

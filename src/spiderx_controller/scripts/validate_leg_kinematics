@@ -105,7 +105,7 @@ class KinematicsNode(JointTestNode):
         q = [pos[j] for j in leg_joints]
         tf_obs = None
         stamp = Time.from_msg(msg.header.stamp)
-        for _ in range(40):          # robot_state_publisher publishes this stamp shortly after
+        for _ in range(200):         # robot_state_publisher publishes this stamp shortly after
             try:
                 t = self.tf_buffer.lookup_transform('base_link', self.foot_link, stamp)
                 tr, rq = t.transform.translation, t.transform.rotation
@@ -115,6 +115,11 @@ class KinematicsNode(JointTestNode):
                     tf2_ros.ConnectivityException):
                 rclpy.spin_once(self, timeout_sec=0.05)
         return q, pos, tf_obs, self.gz_link
+
+    def wait_for_tf(self, timeout):
+        """True once base_link -> foot link is available (static + dynamic TF received)."""
+        return self.wait_for(lambda: self.tf_buffer.can_transform(
+            'base_link', self.foot_link, Time()), timeout)
 
     def tilt(self):
         if self.gz_model is None:
@@ -151,6 +156,10 @@ def run(node, geom, cfg, plan, order, limits, v_max, args):
                          args.ready_timeout):
         pre.append('no /joint_states or no Gazebo pose of the foot link on '
                    f'{POSE_TOPIC} (start fortress_posture_hold.launch.py)')
+        return run
+    if not node.wait_for_tf(args.ready_timeout):
+        pre.append(f'TF base_link -> {geom.foot_link} never became available '
+                   '(robot_state_publisher running?)')
         return run
     run['joint_state_publishers'] = [node.count_publishers('/joint_states')]
     if run['joint_state_publishers'][0] != 1:
