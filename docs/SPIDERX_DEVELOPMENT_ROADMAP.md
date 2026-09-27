@@ -63,7 +63,7 @@ Simulation only. This is not walking, a gait, balance, locomotion or hardware va
 - [x] The same checks on the owner's Ubuntu PC
 - [ ] RF, LR and RR legs (including `lr_foot_joint` −x); a 4-leg kinematics API for the gait
 
-## M4 – All-leg kinematics and static pose hold via IK ✅ verified in the cloud (local run pending)
+## M4 – All-leg kinematics and static pose hold via IK ✅ verified (cloud + local)
 
 Simulation only. This is not walking, a gait, balance control or hardware validation. See the
 [plan](M4_PLAN.md) and [results](M4_TEST_RESULTS.md).
@@ -72,8 +72,8 @@ Simulation only. This is not walking, a gait, balance control or hardware valida
 - [x] Opt-in all-leg FK/IK (M3 default unchanged); unit tests against an independent URDF walk
 - [x] Three static poses validated before sending (atomic 12-joint commands, no clamping)
 - [x] Gazebo: FK vs TF and Gazebo on all four legs; 3 poses reached and held for 5 s; body height and tilt within the thresholds (cloud)
-- [ ] The same checks on the owner's Ubuntu PC
-- [ ] Fix the intermittent M1 controller start-up race (separate task)
+- [x] The same checks on the owner's Ubuntu PC (`fd777fe`; all passed)
+- [ ] Fix the intermittent M1 controller start-up race (separate maintenance task; still unfixed)
 
 ## M4.5 – Gait generator (formerly M4)
 

@@ -38,7 +38,7 @@ ros2 launch spiderx_bringup fortress_posture_hold.launch.py
 ros2 run spiderx_controller run_posture_hold_test.py
 ```
 
-M4 (simulation only; all four legs; static poses; not walking, gait or hardware validation):
+M4 (simulation only; all four legs; static poses; verified in the cloud and locally; not walking, gait or hardware validation):
 
 ```bash
 ros2 launch spiderx_bringup fortress_posture_hold.launch.py
