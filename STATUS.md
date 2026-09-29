@@ -1,8 +1,20 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/spiderx-m4-all-leg-ik` (M4, from `main` @ `ce5c27e` with M3 merged).
+Last updated on branch `claude/spiderx-controller-spawn-race-v2` (M4.1, from `main` @ `2f03b3c` with M4 merged).
 
-**M4 was verified locally** by the owner on Ubuntu (`fd777fe`): clean build (8 packages), 311 tests with 0 failures, and `validate_m4_all_leg_ik.sh` static and `--runtime` passed. All three M4 outcome lines were verified. The M3, M2, M1 and Fortress runtime regressions passed. The controller-spawner start-up race is still unfixed; it did not occur in 5 local launches.
+**M4.1 (controller start-up robustness) was verified in the cloud. Local verification is pending**, and M4.1 is not complete until it passes.
+- **Ordering.** `leg_trajectory_controller` now starts only after the `joint_state_broadcaster` spawner exited with code 0.
+- **Failure.** A failed broadcaster spawner logs one error line (`joint_state_broadcaster startup failed; leg_trajectory_controller was not started; press Ctrl+C and relaunch.`) and nothing else is started.
+- **Shutdown.** Nothing is started during Ctrl+C.
+- **Cloud results.**
+  - 385 tests, 0 failures;
+  - a forced broadcaster failure never loaded the trajectory controller;
+  - Ctrl+C during start-up left nothing behind;
+  - the M4, M3, M2, M1 and Fortress runtime regressions passed.
+
+  See the [M4.1 results](docs/M4_1_TEST_RESULTS.md). This fixes start-up ordering and robustness only; it adds no gait or walking.
+
+**M4 was verified locally** by the owner on Ubuntu (`fd777fe`): clean build (8 packages), 311 tests with 0 failures, and `validate_m4_all_leg_ik.sh` static and `--runtime` passed. All three M4 outcome lines were verified. The M3, M2, M1 and Fortress runtime regressions passed. At that time the controller-spawner start-up race was unfixed; it did not occur in 5 local launches. M4.1 (above) addresses it.
 
 **M3 was verified locally** by the owner on Ubuntu: build (8 packages), 172 tests with 0 failures, and `validate_m3_kinematics.sh` static and `--runtime` all passed. FK matched TF (≤ 5.4e-11 m) and Gazebo (≤ 6.2e-12 m); all 5 IK targets were reached and returned; both negative targets were rejected with 0 goals sent. The M2, M1 and Fortress regressions passed.
 
@@ -46,6 +58,7 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | Named pose `cad_neutral` | ✅ Reached by joint position control (local + cloud) | 12-joint trajectory, max error 0.0000 rad (`test_neutral_pose.py`). **Not** a standing controller |
 | M2 CAD neutral posture hold (simulation only) | ✅ **Simulation posture hold verified** (local + cloud) | `run_posture_hold_test.py`: 10 s hold (simulation time); 3 runs; body height min 0.05448 m; \|roll\|, \|pitch\| ≤ 0.00022 rad; max joint error ≤ 0.00028 rad. Idealised by the 100 N·m placeholder effort; foot contact **not measured**. [M2 results](docs/M2_TEST_RESULTS.md), [limitations](docs/M2_SIMULATION_LIMITATIONS.md). **Not** balance, walking, IK or hardware validation |
 | ros2_control controllers (`joint_state_broadcaster`, `leg_trajectory_controller`) | ✅ Verified active (local + cloud) | `fortress_control.launch.py`; [M1 results](docs/M1_TEST_RESULTS.md) |
+| Controller start-up order and failure handling (M4.1, simulation only) | ✅ Verified (cloud); local verification pending | `controller.launch.py`: the trajectory spawner starts only after the broadcaster spawner exits 0; one error line on failure; nothing starts during Ctrl+C; `--switch-timeout 60`, `--service-call-timeout 75`. A forced broadcaster failure (0.001 s switch timeout) never loaded the trajectory controller. [M4.1 results](docs/M4_1_TEST_RESULTS.md) |
 | Joint position control in Fortress (`gz_ros2_control` 0.7.x, 12 joints) | ✅ Verified (local + cloud) | `lf_hip` → +0.2 rad and back, error 0.0000; invalid joints and out-of-limit targets refused. Tracking is idealised by the 100 N·m placeholder effort limit |
 | Balance / standing controller (body feedback) | ⚪ Future work | Not scheduled. M1/M2 only hold joint angles; there is no balance feedback, IMU or disturbance test |
 | Single-leg forward kinematics (front-left, simulation only) | ✅ **Single-leg FK verified against the current URDF/TF/Gazebo model** (local + cloud) | `leg_kinematics.py` (URDF-derived chain; derived foot tip). FK vs TF ≤ 5.4e-11 m / 3.5e-10 rad and vs Gazebo ≤ 3.0e-11 m / 1.0e-10 rad, at CAD neutral and 5 IK configurations. [M3 results](docs/M3_TEST_RESULTS.md) |

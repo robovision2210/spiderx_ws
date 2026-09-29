@@ -17,7 +17,7 @@ source ~/spiderx_ws/install/setup.bash
 |---|---|---|---|
 | 1 | Build | `cd ~/spiderx_ws && colcon build --symlink-install` | `Summary: 8 packages finished` |
 | 2 | Static validation | `./scripts/validate_fortress.sh` | `All checks passed.` |
-| 3 | Unit tests (including M1 safety rejections, M2 config/metrics and M3 FK/IK negative tests) | `colcon test --packages-select spiderx_controller spiderx_scripts && colcon test-result --verbose` | 0 failures |
+| 3 | Unit tests (including M1 safety rejections, M2 config/metrics, M3 FK/IK negative tests, and M4.1 controller start-up ordering and validator state checks) | `colcon test --packages-select spiderx_controller spiderx_scripts && colcon test-result --verbose` | 0 failures |
 | 4 | Controller config vs URDF | `ros2 run spiderx_controller validate_controller_config` | `Controller configuration: valid` |
 | 5 | Runtime validation (starts Gazebo) | `./scripts/validate_fortress.sh --runtime` | `All checks passed.` (topics, `lidar_link`, 12 joints, no hardware node) |
 | 6 | Manual simulation | `ros2 launch spiderx_bringup fortress.launch.py` | SpiderX visible in the walled world |
@@ -36,6 +36,7 @@ source ~/spiderx_ws/install/setup.bash
 | 19 | M3 manual | `ros2 launch spiderx_bringup fortress_posture_hold.launch.py`, then `ros2 run spiderx_controller validate_leg_kinematics` | See [FK guide](M3_FORWARD_KINEMATICS_GUIDE.md) and [IK guide](M3_INVERSE_KINEMATICS_GUIDE.md) |
 | 20 | M4 static (all-leg kinematics, simulation only) | `./scripts/validate_m4_all_leg_ik.sh` | `All M4 checks passed.` |
 | 21 | M4 runtime (Gazebo, 3 static poses) | `./scripts/validate_m4_all_leg_ik.sh --runtime` | The three M4 outcome lines, then `All M4 checks passed.` |
+| 22 | M4.1 controller start-up (manual) | `ros2 launch spiderx_bringup fortress_control.launch.py`, then Ctrl+C in the same terminal | `Configured and activated joint_state_broadcaster` appears before the `leg_trajectory_controller` spawner starts. If the broadcaster fails, you see exactly one `[ERROR] [spiderx_controller]: joint_state_broadcaster startup failed; leg_trajectory_controller was not started; press Ctrl+C and relaunch.` and no trajectory controller. Stop with Ctrl+C in the launch terminal: signalling only the `ros2 launch` process can leave `ign gazebo server`/`gui` running (see [M4.1 results](M4_1_TEST_RESULTS.md)) |
 
 ## Blocked stacks (optional, expected to wait)
 
@@ -58,4 +59,4 @@ Toolbox and robot_localization from RoboStack, with no GPU, using Xvfb and Mesa:
 - **Layer 1 build:** checked with Ubuntu 22.04's setuptools 59.6. Newer setuptools (≥ 80) breaks `colcon build --symlink-install` for `ament_python` packages; that is a known upstream incompatibility, not a SpiderX issue.
 - **Layer 3 unit tests:** run with `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`, because that environment's pytest 9 cannot load Humble's `launch_testing` plugin. Ubuntu's pytest 6.2 does not have this problem.
 
-**Local verification:** the owner ran layers 1–5, 7–8 and 11–13 on Ubuntu 22.04 (M1 branch), later layers 1–3 and 11–16 (M2 branch). On the M3 branch they ran layers 1–3, 17 and 18, and the M2, M1 and Fortress regression scripts. On the M4 branch they ran layers 1–3, 20 and 21, plus the M3, M2, M1 and Fortress runtime regressions. All passed.
+**Local verification:** the owner ran layers 1–5, 7–8 and 11–13 on Ubuntu 22.04 (M1 branch), later layers 1–3 and 11–16 (M2 branch). On the M3 branch they ran layers 1–3, 17 and 18, and the M2, M1 and Fortress regression scripts. On the M4 branch they ran layers 1–3, 20 and 21, plus the M3, M2, M1 and Fortress runtime regressions. All passed. On the M4.1 branch, layers 1–5, 11–12, 14–15, 17–18 and 20–22 passed in the cloud; local verification is pending.

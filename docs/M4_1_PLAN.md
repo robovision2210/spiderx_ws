@@ -1,9 +1,18 @@
 # M4.1 Plan – Controller Start-up Robustness (Gazebo Fortress, simulation only)
 
-> This plan was written and committed **before** any M4.1 implementation. No code, test, launch
-> file or configuration has been changed yet.
+> This plan was written and committed **before** any M4.1 implementation (`3e1596e`).
 > Branch `claude/spiderx-controller-spawn-race-v2`, created from `main` @ `2f03b3c` (PR #9, M4,
 > merged). The owner's local branch of the same name starts at the same commit.
+>
+> **Status (2026-09-29): implemented and cloud-verified; local verification pending.** See
+> [M4_1_TEST_RESULTS.md](M4_1_TEST_RESULTS.md). The owner's review approved this design with these
+> decisions:
+> - The error text is exactly `joint_state_broadcaster startup failed; leg_trajectory_controller
+>   was not started; press Ctrl+C and relaunch.` The spawner exit code is appended.
+> - The optional M1/M2 validator fix in §8 is **included**, as the check-line pattern only, with
+>   regression tests in `test_validator_state_checks.py`.
+> - The forced failure uses an untracked scratch launch. No public timeout override is added.
+> - Implementation and documentation are committed separately.
 
 **Goal.** `leg_trajectory_controller` must never be started unless `joint_state_broadcaster` was
 spawned and activated successfully. A failure must be reported clearly, the success path must stay
