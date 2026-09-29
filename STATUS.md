@@ -1,6 +1,8 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/spiderx-m3-leg-kinematics` (M3, from `main` with PR #4–#7 merged).
+Last updated on branch `claude/spiderx-m4-all-leg-ik` (M4, from `main` @ `ce5c27e` with M3 merged).
+
+**M4 was verified locally** by the owner on Ubuntu (`fd777fe`): clean build (8 packages), 311 tests with 0 failures, and `validate_m4_all_leg_ik.sh` static and `--runtime` passed. All three M4 outcome lines were verified. The M3, M2, M1 and Fortress runtime regressions passed. The controller-spawner start-up race is still unfixed; it did not occur in 5 local launches.
 
 **M3 was verified locally** by the owner on Ubuntu: build (8 packages), 172 tests with 0 failures, and `validate_m3_kinematics.sh` static and `--runtime` all passed. FK matched TF (≤ 5.4e-11 m) and Gazebo (≤ 6.2e-12 m); all 5 IK targets were reached and returned; both negative targets were rejected with 0 goals sent. The M2, M1 and Fortress regressions passed.
 
@@ -48,8 +50,10 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | Balance / standing controller (body feedback) | ⚪ Future work | Not scheduled. M1/M2 only hold joint angles; there is no balance feedback, IMU or disturbance test |
 | Single-leg forward kinematics (front-left, simulation only) | ✅ **Single-leg FK verified against the current URDF/TF/Gazebo model** (local + cloud) | `leg_kinematics.py` (URDF-derived chain; derived foot tip). FK vs TF ≤ 5.4e-11 m / 3.5e-10 rad and vs Gazebo ≤ 3.0e-11 m / 1.0e-10 rad, at CAD neutral and 5 IK configurations. [M3 results](docs/M3_TEST_RESULTS.md) |
 | Single-leg inverse kinematics (front-left, simulation only) | ✅ **Single-leg IK verified for documented reachable, joint-safe simulation targets** (local + cloud) | Analytic IK. 5 lifted targets reached within ≤ 1.1e-10 m and returned; unreachable and out-of-limit targets refused with 0 goals sent. Idealised by the 100 N·m placeholder joints. **Not** walking, balance or hardware validation. [Limitations](docs/M3_SIMULATION_LIMITATIONS.md) |
-| Kinematics for RF, LR, RR legs | ⚪ Future work | M3 validated front-left only; the knee-axis signs differ per leg (LF +x, others −x) |
-| Gait generator | ⚪ Future work | M4 |
+| All-leg forward kinematics (simulation only) | ✅ **All-leg forward kinematics verified for the current URDF/TF/Gazebo model** (cloud + local) | Opt-in `allow_all_legs` in `leg_kinematics.py` (M3 default unchanged). FK vs TF ≤ 3.4e-11 m and vs Gazebo ≤ 1.2e-7 m on all four feet. [M4 results](docs/M4_TEST_RESULTS.md) |
+| All-leg inverse kinematics (simulation only) | ✅ **All-leg inverse kinematics verified for documented, joint-safe, simulation-only static poses** (cloud + local) | 3 poses: `neutral_stance`, `crouch_10mm`, `lift_lf_15mm`. Foot tips ≤ 1.2e-10 m from target; negative poses refused and never commanded |
+| Static multi-leg pose hold via IK (simulation only) | ✅ **Static multi-leg pose hold via IK validated in Gazebo** (cloud + local) | 5 s holds; \|roll\|, \|pitch\| ≤ 2.8e-5 rad; body height within 0.05 mm of the geometric expectation. **Not** walking, gait, balance or hardware validation; contact not measured |
+| Gait generator | ⚪ Future work | Next after M4 (roadmap "M4.5") |
 | `/cmd_vel` → gait bridge | ⚪ Future work | M5. Nothing consumes `/cmd_vel` today |
 | Odometry (`/spiderx/leg_odometry`, `/odom`) | ⚪ Future work | M6. **Not faked** |
 

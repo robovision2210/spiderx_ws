@@ -17,6 +17,7 @@ install(PROGRAMS
   scripts/test_neutral_pose.py
   scripts/run_posture_hold_test.py
   scripts/validate_leg_kinematics
+  scripts/m4_pose_validation
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -28,6 +29,9 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_posture_metrics test/test_posture_metrics.py)
   ament_add_pytest_test(test_leg_kinematics test/test_leg_kinematics.py)
   ament_add_pytest_test(test_kinematics_targets test/test_kinematics_targets.py)
+  ament_add_pytest_test(test_all_leg_kinematics test/test_all_leg_kinematics.py)
+  ament_add_pytest_test(test_m4_pose_targets test/test_m4_pose_targets.py)
+  ament_add_pytest_test(test_m4_pose_validation test/test_m4_pose_validation.py)
 endif()
 
 ament_package()

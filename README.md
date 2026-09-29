@@ -46,7 +46,8 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | CAD neutral posture hold (simulation only) | ✅ Simulation posture hold verified, locally and in the cloud (M2): 10 s hold, body height, roll and pitch within the documented simulation thresholds. **Not** balance, walking or hardware validation |
 | Balance / standing controller | ⚪ Not implemented. M1 and M2 hold joint angles only, with no balance feedback |
 | Single-leg FK/IK (front-left, simulation only) | ✅ Verified locally and in the cloud (M3): FK matches the URDF, TF and Gazebo; IK reaches 5 small lifted targets and refuses unreachable or out-of-limit targets. **Not** walking, a gait or hardware validation |
-| Gait generation, 4-leg IK, `/cmd_vel` bridge | ⚪ Planned |
+| All-leg FK/IK and static pose hold (simulation only) | ✅ Verified locally and in the cloud (M4): 3 static four-leg poses via IK held in Gazebo. **Not** walking, gait or hardware validation |
+| Gait generation, `/cmd_vel` bridge | ⚪ Planned |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
 | Autonomous navigation | ⛔ Blocked until locomotion and odometry exist |
@@ -231,6 +232,27 @@ mesh. See the [FK guide](docs/M3_FORWARD_KINEMATICS_GUIDE.md), the
 [IK guide](docs/M3_INVERSE_KINEMATICS_GUIDE.md), the [frame conventions](docs/M3_FRAME_CONVENTIONS.md),
 the [results](docs/M3_TEST_RESULTS.md) and the [limitations](docs/M3_SIMULATION_LIMITATIONS.md).
 
+## 🐾 All-Leg Kinematics and Static Pose Hold (M4, simulation only)
+
+```text
+Four-leg static poses in simulation only. Not walking, a gait, balance control, locomotion or
+hardware validation.
+```
+
+```bash
+ros2 launch spiderx_bringup fortress_posture_hold.launch.py      # terminal 1
+ros2 run spiderx_controller m4_pose_validation                   # terminal 2: 3 poses, JSON report
+./scripts/validate_m4_all_leg_ik.sh --runtime                    # automated M4 checks
+```
+
+M4 extends the M3 kinematics to all four legs. This is opt-in; the M3 default is unchanged. It holds three
+static poses from `config/m4_pose_targets.yaml` in Gazebo:
+- `neutral_stance`;
+- `crouch_10mm`: all feet 10 mm up, so the body lowers;
+- `lift_lf_15mm`: the front-left foot is lifted and the robot stands on three feet.
+
+See the [M4 plan](docs/M4_PLAN.md) and the [M4 results](docs/M4_TEST_RESULTS.md).
+
 ## 🔍 Verification
 
 ```bash
@@ -284,7 +306,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 
 ## 🗺️ Roadmap
 
-**joint control ✅ (M1) → simulation posture hold ✅ (M2, sim only) → single-leg FK/IK ✅ (M3, sim only, front-left) → gait generator → `/cmd_vel` bridge →
+**joint control ✅ (M1) → simulation posture hold ✅ (M2, sim only) → single-leg FK/IK ✅ (M3, sim only, front-left) → all-leg IK + static pose hold ✅ (M4, sim only) → gait generator → `/cmd_vel` bridge →
 odometry → SLAM → Nav2 → real-hardware validation**
 
 Nav2 comes last because it only decides where to go. It needs a robot that executes `/cmd_vel` and

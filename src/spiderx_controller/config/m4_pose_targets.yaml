@@ -1,0 +1,82 @@
+# M4 - SIMULATION-ONLY four-leg static foot-target poses for SpiderX (Gazebo Fortress).
+#
+# Static poses only. Not walking, not a gait, not balance control, not hardware validation.
+# These targets are PROPOSED; their Gazebo behaviour is verified only in M4 Phase 4.
+#
+# Single source of truth for spiderx_controller/m4_pose_targets.py. No geometry is stored here:
+# every foot target is an OFFSET from that leg's CAD-neutral foot tip, and the tips, axes and
+# limits come from the expanded URDF (leg_kinematics.load_all_geometries). The derived foot tip is
+# the M3 rule (lowest point of each foot's collision mesh at q = 0).
+#
+# Frame base_link (not REP-103): +x robot right, +y robot front, +z up. Units: metres, radians.
+# +z offset = foot moves UP toward the body; with planted feet this LOWERS the body ("crouch").
+#
+# support_legs declares the INTENDED stance feet. The loader checks only necessary geometric
+# conditions (support targets coplanar, >= 3 support legs, other feet lifted >= min_lift). It does
+# NOT prove contact, support or balance - Phase 4 must observe that in Gazebo.
+
+config_version: 1
+date: "2026-09-26"
+simulation_only: true
+frame: base_link
+units: {length: m, angle: rad}
+reference:
+  pose: cad_neutral          # spiderx_poses.yaml (all joints 0 rad)
+  point: derived_foot_tip    # per leg, from the URDF collision mesh (M3 rule)
+
+validation_margin_rad: 0.05  # EXISTING_CONFIG: spiderx_legs.yaml soft_limit_margin_rad (checked)
+ik_position_tol_m: 1.0e-6    # must equal leg_kinematics.IK_POSITION_TOL_M (checked)
+
+safety:                      # SIMULATION_ONLY bounds, fixed before any runtime run
+  max_offset_m: 0.02                 # per-axis offset from the neutral tip, every leg
+  min_singularity_margin_rad: 0.2    # hip and knee margins of every selected IK solution
+  max_joint_change_rad: 0.35         # |q| from CAD neutral (all zeros), every joint
+  min_lift_above_support_m: 0.005    # non-support feet must be this far above the support plane
+  support_plane_tol_m: 1.0e-9        # support-foot target z values must agree within this
+
+poses:
+  neutral_stance:
+    description: all four feet at their CAD-neutral tips (expected IK result ~ all zeros)
+    support_legs: [front_left, front_right, rear_left, rear_right]
+    offsets_m:
+      front_left: [0.0, 0.0, 0.0]
+      front_right: [0.0, 0.0, 0.0]
+      rear_left: [0.0, 0.0, 0.0]
+      rear_right: [0.0, 0.0, 0.0]
+  crouch_10mm:
+    description: all four feet 10 mm up toward the body (+z); with planted feet the body lowers
+    support_legs: [front_left, front_right, rear_left, rear_right]
+    offsets_m:
+      front_left: [0.0, 0.0, 0.010]
+      front_right: [0.0, 0.0, 0.010]
+      rear_left: [0.0, 0.0, 0.010]
+      rear_right: [0.0, 0.0, 0.010]
+  lift_lf_15mm:
+    description: front-left foot 15 mm up; three-foot support (NOT a four-foot support pose)
+    support_legs: [front_right, rear_left, rear_right]
+    offsets_m:
+      front_left: [0.0, 0.0, 0.015]
+      front_right: [0.0, 0.0, 0.0]
+      rear_left: [0.0, 0.0, 0.0]
+      rear_right: [0.0, 0.0, 0.0]
+
+# Negative-test-only poses: the evaluator must REJECT them, naming the expected leg and reason.
+# A leg value is either an offset list or {from_joint_config_rad: [hip, thigh, foot]}, whose
+# target is FK of that (deliberately out-of-limit) configuration.
+negative_tests:
+  rr_unreachable_300mm_below:
+    negative_test_only: true
+    expect: {leg: rear_right, reason: unreachable}
+    offsets_m:
+      front_left: [0.0, 0.0, 0.0]
+      front_right: [0.0, 0.0, 0.0]
+      rear_left: [0.0, 0.0, 0.0]
+      rear_right: [0.0, 0.0, -0.30]
+  lr_thigh_outside_limits:
+    negative_test_only: true
+    expect: {leg: rear_left, reason: joint_limits}
+    offsets_m:
+      front_left: [0.0, 0.0, 0.0]
+      front_right: [0.0, 0.0, 0.0]
+      rear_left: {from_joint_config_rad: [0.0, 1.2, 0.0]}   # lr_thigh_joint 1.2 > 0.785398
+      rear_right: [0.0, 0.0, 0.0]
