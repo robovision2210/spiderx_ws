@@ -33,6 +33,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m4_pose_targets test/test_m4_pose_targets.py)
   ament_add_pytest_test(test_m4_pose_validation test/test_m4_pose_validation.py)
   ament_add_pytest_test(test_controller_launch test/test_controller_launch.py)
+  ament_add_pytest_test(test_validator_state_checks test/test_validator_state_checks.py)
 endif()
 
 ament_package()
