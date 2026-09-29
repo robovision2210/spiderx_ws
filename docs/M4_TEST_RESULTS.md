@@ -75,7 +75,7 @@ The race itself is **not fixed in M4**, because that would change the M1 launch 
 | `colcon test` + `colcon test-result` | ✅ **311 tests, 0 failures**: 302 pytest cases + 9 CTest wrappers |
 | M4 test files | `test_all_leg_kinematics` 70, `test_m4_pose_targets` 48, `test_m4_pose_validation` 18 |
 | M3 test files (unchanged) | `test_leg_kinematics` 55, `test_kinematics_targets` 29 |
-| `validate_m4_all_leg_ik.sh` (static) | ✅ All M4 checks passed: `--check-only`; 135 M4 unit tests; refusals of `simulation_only: false`, frame `odom`, a missing leg and an unreachable leg, each for its expected reason |
+| `validate_m4_all_leg_ik.sh` (static) | ✅ All M4 checks passed: `--check-only`; 136 M4 unit tests; refusals of `simulation_only: false`, frame `odom`, a missing leg and an unreachable leg, each for its expected reason |
 | `validate_m3_kinematics.sh`, `validate_m2_posture.sh`, `validate_m1_control.sh`, `validate_fortress.sh` (static) | ✅ all passed |
 
 ## Regression (runtime, cloud)
