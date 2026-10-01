@@ -40,6 +40,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_gait_kinematics test/test_gait_kinematics.py)
   ament_add_pytest_test(test_gait_metrics test/test_gait_metrics.py)
   ament_add_pytest_test(test_gait_report test/test_gait_report.py)
+  ament_add_pytest_test(test_gait_regression test/test_gait_regression.py)
 endif()
 
 ament_package()

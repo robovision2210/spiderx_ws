@@ -148,6 +148,7 @@ def test_cli_run_writes_tables_and_strict_reflects_failures(tmp_path, capsys):
     out = tmp_path / 'out'
     assert _run('--gait', 'trot', '--no-plots', '--strict', '--out', str(out)) == 0
     assert sorted(os.listdir(out / 'trot')) == ['report.json', 'samples.csv']
+    assert sorted(os.listdir(out / 'comparison')) == ['report.json', 'summary.csv']
     info = json.loads(_read(out / 'run_info.json'))
     assert info['gaits'] == ['trot'] and info['verdicts'] == {'trot': 'PASS'}
     assert info['plots'] == 'skipped'
@@ -160,3 +161,39 @@ def test_cli_run_writes_tables_and_strict_reflects_failures(tmp_path, capsys):
     report = json.loads(_read(out / 'tripod_crawl' / 'report.json'))
     assert report['verdict'] == 'FAIL' and 'static_stability' in report['failed_checks']
     assert 'FAILED' in capsys.readouterr().out
+
+
+# ------------------------------------------------------------ cross-gait comparison
+@pytest.fixture(scope='module')
+def two(inputs):
+    # configured resolution: joint_continuity bounds the per-SAMPLE step, so a coarse N_FAST
+    # sampling of trot (0.0504 rad at n=40) would fail it while n=200 gives 0.0101 rad
+    cfg, geoms, mass = inputs
+    return [gm.evaluate_gait(cfg.gait(n), cfg, geoms, mass) for n in ('tripod_crawl', 'trot')]
+
+
+def test_comparison_tables(two, inputs, tmp_path):
+    cfg = inputs[0]
+    rows = gr.comparison_rows(two)
+    assert rows[0][:4] == ['gait', 'verdict', 'failed_checks', 'requires_static_stability']
+    assert [r[0] for r in rows[1:]] == ['tripod_crawl', 'trot']          # configuration order
+    by = {r[0]: dict(zip(rows[0], r)) for r in rows[1:]}
+    assert by['tripod_crawl']['verdict'] == 'FAIL'
+    assert 'static_stability' in by['tripod_crawl']['failed_checks'].split('|')
+    assert by['trot']['verdict'] == 'PASS' and by['trot']['failed_checks'] == ''
+    assert by['trot']['min_static_margin_m'] == ''                       # no polygon -> empty
+    a = gr.write_comparison(cfg, two, str(tmp_path / 'a'), plots=False)
+    b = gr.write_comparison(cfg, two, str(tmp_path / 'b'), plots=False)
+    assert set(a) == {'summary', 'report'}
+    for key in a:
+        assert _read(a[key]) == _read(b[key])
+    report = json.loads(_read(a['report']))
+    assert 'NOT energy' in report['scope'] and 'not walking' in report['scope']
+    assert report['verdicts'] == {'tripod_crawl': 'FAIL', 'trot': 'PASS'}
+    assert report['metrics']['trot']['min_static_margin_m'] is None
+
+
+@pytest.mark.skipif(not gr.plotting_available(), reason='matplotlib not installed')
+def test_comparison_figure(two, inputs, tmp_path):
+    paths = gr.write_comparison(inputs[0], two, str(tmp_path), plots=True)
+    assert _read(paths['metrics'])[:8] == b'\x89PNG\r\n\x1a\n'

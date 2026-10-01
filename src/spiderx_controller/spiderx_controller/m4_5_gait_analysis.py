@@ -77,6 +77,7 @@ def main(argv=None):
         ev = gm.evaluate_gait(spec, cfg, geoms, mass)
         gr.write_gait_report(ev, cfg, args.out, plots=plots)
         evaluations.append(ev)
+    gr.write_comparison(cfg, evaluations, args.out, plots=plots)
     gr.write_run_info(cfg, evaluations, args.out, plots)
     print('Results (offline):')
     for ev in evaluations:
