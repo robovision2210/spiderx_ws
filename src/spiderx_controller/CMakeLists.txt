@@ -35,6 +35,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_controller_launch test/test_controller_launch.py)
   ament_add_pytest_test(test_validator_state_checks test/test_validator_state_checks.py)
   ament_add_pytest_test(test_gait_config test/test_gait_config.py)
+  ament_add_pytest_test(test_gait_trajectory test/test_gait_trajectory.py)
 endif()
 
 ament_package()
