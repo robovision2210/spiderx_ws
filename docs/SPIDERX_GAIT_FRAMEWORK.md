@@ -53,6 +53,26 @@ Worked example (trot, β = 0.5, L = 40 mm, v = 5 mm/s):
 - each foot is down for 8 s, sliding back 40 mm under the body, then swings 80 mm forward over
   the ground (40 mm relative to the body) in 8 s.
 
+### 2.1 Gait-name terminology mapping
+
+The owner decided to keep these names for M4.5. Some are borrowed from **hexapod** usage, so their
+**four-legged** meaning in this repository is defined here.
+- **Footfall order.** The one-leg-at-a-time gaits use the lateral sequence LR → LF → RR → RF,
+  with phase offsets LF 0.25, RF 0.75, LR 0.00, RR 0.50.
+- **Where the names live.** The names are YAML data; no code depends on them.
+
+| YAML name | β | Quadruped meaning here | Usual source of the term | Static stability required? |
+|---|---|---|---|---|
+| `wave` | 0.85 | One leg swings at a time with a long four-foot overlap | Hexapod "wave gait" (one leg at a time, highest duty factor) | yes |
+| `tripod_crawl` | 0.75 | One leg swings at a time, so the robot always stands on a **support tripod** of three feet. This is the β = 0.75 boundary | Hexapod "tripod" means 3 legs swinging at once, which is impossible for a quadruped. Here "tripod" names the three-foot support, not the swing group | yes |
+| `ripple` | 0.65 | Successive swings overlap, alternating three- and two-foot support | Hexapod "ripple gait" (overlapping swings) | no |
+| `amble` | 0.55 | Four-beat lateral-sequence gait, mostly on two feet | Quadruped term (four-beat, faster than a walk) | no |
+| `pace` | 0.50 | Lateral pairs (LF+LR, RF+RR) swing together | Quadruped term | no |
+| `trot` | 0.50 | Diagonal pairs (LF+RR, RF+LR) swing together; the reference gait | Quadruped term | no |
+
+"Static stability required? no" means the static margin is reported only as information. It
+does **not** mean the gait is dynamically stable; that is never claimed.
+
 ## 3. Stage by stage
 
 ### 3.1 `gait_config` – the YAML is the only source of gait parameters
@@ -202,7 +222,7 @@ files only. Without matplotlib, the tables are still written.
   | −12 | −3.63 | 81.0 % | still fails; it overshoots and another triangle becomes the limit |
 
   **Lesson:** a body shift helps one support triangle and hurts the opposite one. That is why body
-  sway (open question Q3), not a fixed offset, is the usual remedy. These are *reported* model
+  sway (future work only, per the owner's decision), not a fixed offset, is the usual remedy. These are *reported* model
   numbers, not a claim about the robot.
 
 **Shipped gaits.** If you change the shipped `m4_5_gaits.yaml`, `test_gait_regression.py` fails on
@@ -224,7 +244,7 @@ purpose. Update the pins **and** explain the change in `M4_5_TEST_RESULTS.md`.
 
 | Not done | Needed first |
 |---|---|
-| Walking in Gazebo | A trajectory streamer for `leg_trajectory_controller`, contact sensing, a fall criterion and a video, as a future milestone (open question Q2) |
+| Walking in Gazebo | A trajectory streamer for `leg_trajectory_controller`, contact sensing, a fall criterion and a video, as the unscheduled "Future — gait playback" item |
 | Dynamic stability (ZMP or CoP), balance | Dynamics, real masses, IMU feedback |
 | Energy or power | Servo models and measured current. The proxies only rank geometry |
 | Turning, sideways motion, `/cmd_vel` | Roadmap M5 |

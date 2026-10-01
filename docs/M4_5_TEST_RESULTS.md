@@ -6,7 +6,7 @@ Not walking, not a validated gait, not balance control, not navigation, not hard
 Stability values are quasi-static APPROXIMATIONS; "energy" values are heuristic PROXIES.
 ```
 
-## Outcome (cloud only; local verification pending)
+## Outcome (cloud + local verified)
 
 - **Offline gait configuration and trajectory validation framework implemented.**
 - **Six gait configurations are kinematically evaluated** against the URDF-derived M3/M4 IK, the
@@ -21,8 +21,12 @@ What this does **not** show:
 
 Nothing was played back in Gazebo or sent to a controller.
 
+The owner repeated the checks on their Ubuntu PC and they passed, with identical results. See
+[Local verification](#local-verification-owners-ubuntu-pc--passed).
+
 Statements are labelled as follows:
-- **[MEASURED]**: produced by a command in this environment.
+- **[MEASURED]**: produced by a command in the cloud environment. The owner's local results are
+  in their own section.
 - **[REPORTED]**: a result the tool computes from the model. It is true *of the model*, not of the robot.
 - **[ASSUMPTION]**: believed, not proven.
 - **[OPEN]**: the owner must decide.
@@ -147,10 +151,11 @@ cycloid and is reported as information.
      feet 5 mm back (`stance_center_offset_m: [0, -0.005]`) improved the margin to −0.89 mm
      (94.5 % stable). It still fails the 5 mm requirement, and a 12 mm shift overshoots to
      −3.63 mm.
-   - Remedies (future work): body sway or better mass data. See Q3.
+   - Remedies (future work): body sway or better mass data. See the owner decisions below.
 2. **`wave` exceeds the joint-speed placeholder.**
-   - Measured: 0.541 rad/s on `lf_thigh_joint` (16 samples above 0.5 rad/s) during its short swing
-     (1 − β = 0.15 of the cycle).
+   - Measured: 16 samples exceed 0.5 rad/s during the short swing (1 − β = 0.15 of the cycle).
+     They are spread across all four thigh joints, four samples each (`lf_`, `rf_`, `lr_` and
+     `rr_thigh_joint`). The maximum, 0.541 rad/s, was on `lf_thigh_joint`.
    - The threshold, 0.5 rad/s, is the `SIMULATION_PLACEHOLDER` in `spiderx_legs.yaml`. It is
      **not** a servo specification.
    - Deviation from the plan: plan §5.2 proposed choosing T so the placeholder is met. Batch A
@@ -192,33 +197,115 @@ them fails the tests and has to be explained here.
 **Runtime regressions not re-run.** The Gazebo runtime regressions (`--runtime`) were **not**
 re-run, because M4.5 changes no runtime file. Plan §9 lists them as optional.
 
-## Local verification (owner's Ubuntu PC) – pending
+## Local verification (owner's Ubuntu PC) – passed
 
-Suggested steps. All of them are offline, and none starts Gazebo or touches hardware.
+The owner ran these checks on their Ubuntu PC and reported the results below. Everything was
+offline: no Gazebo was started and no hardware was touched.
+
+**Starting state**
+- Branch `claude/spiderx-m45-offline-gait-framework` at
+  `4a6553cbb5cedd48de81658fb227f701bc58e5a8`, tracking `origin`.
+- The tree was clean at the start and at the finish.
+- `log/` was confirmed git-ignored at `.gitignore:3`.
+
+**Build**
+- `colcon build --symlink-install`: 8 packages finished in 11.2 s.
+- Exit 0, with no warnings or errors.
+
+**Automated tests**
+- 556 tests: 0 errors, 0 failures, 0 skipped.
+- New M4.5 coverage is 165 tests in six groups:
+
+| Test file | Tests |
+|---|---|
+| `test_gait_config` | 52 |
+| `test_gait_trajectory` | 41 |
+| `test_gait_kinematics` | 12 |
+| `test_gait_metrics` | 21 |
+| `test_gait_report` | 19 |
+| `test_gait_regression` | 20 |
+
+**Offline analysis**
+- The owner read the real CLI help first and used `--out`; there is no `--output-dir` option.
+- `--check-only` passed with exit 0.
+- There were two full runs:
+
+  ```bash
+  ros2 run spiderx_controller m4_5_gait_analysis --out log/m4_5_local_a
+  ros2 run spiderx_controller m4_5_gait_analysis --out log/m4_5_local_b
+  ```
+
+  - **Exit code.** Each run exited 0 after about 25 s. That is expected without `--strict`, even
+    though some gait verdicts are FAIL.
+  - **Files.** Each run produced 40 files: 8 JSON, 7 CSV and 25 PNG.
+- **Determinism.**
+  - Sorted SHA-256 manifests (relative path plus hash) matched for all 40 files, and `diff -rq`
+    agreed.
+  - The PNGs and `run_info.json` were byte-identical.
+- **Plots.** matplotlib 3.5.1 was available and the plots were generated; the `--no-plots`
+  fallback was not needed.
+- **Location.** The generated files stayed under the git-ignored `log/` directory.
+
+**Results, cross-checked from the machine-readable reports**
+
+These match the cloud results above exactly.
+
+| Gait | Verdict | Min static margin | Statically stable | Max joint speed | Notes |
+|---|---|---|---|---|---|
+| `wave` | **FAIL**: `static_stability`, `joint_speed` | −2.58 mm | 84.5 % (61 of 200 samples fail) | 0.541 rad/s vs the 0.5 rad/s reference | 16 joint-speed threshold breaches |
+| `tripod_crawl` | **FAIL**: `static_stability` | −4.07 mm | 77.0 % (108 of 200 samples fail) | 0.305 rad/s | |
+| `ripple` | PASS | −2.10 mm (information) | 50.5 % | 0.203 rad/s | |
+| `amble` | PASS | +0.84 mm (information) | 20.0 % | 0.146 rad/s | |
+| `pace` | PASS | n/a: never three or more stance feet | 0 % | 0.127 rad/s | |
+| `trot` | PASS | n/a: never three or more stance feet | 0 % | 0.127 rad/s | |
+
+- **Feasibility.** All six gaits are feasible under sampled IK:
+  - worst FK residual 9.0e-17 m;
+  - singularity margin 1.21 rad;
+  - joint-limit margin 0.205 rad;
+  - no IK branch flips;
+  - largest transition velocity jump 1.4e-9 m/s.
+- **Stability failures.** Every listed stability failure used the FL–FR–RR support triangle.
+
+**Static regressions** (no arguments, no simulator)
+
+| Validator | Result |
+|---|---|
+| `validate_m1_control.sh` | `All M1 checks passed.` |
+| `validate_m2_posture.sh` | `All M2 checks passed.` |
+| `validate_m3_kinematics.sh` | `All M3 checks passed.` (84 unit tests) |
+| `validate_m4_all_leg_ik.sh` | `All M4 checks passed.` (136 unit tests) |
+
+**Environment and safety**
+- No Gazebo was started and no hardware was touched.
+- A process check found only unrelated system processes and the checking shell.
+- No tracked file changed locally. No commits, pushes or PR updates were made locally.
+
+**Commands, for repeating the check**
 
 ```bash
 cd ~/spiderx_ws && colcon build --symlink-install && source install/setup.bash
 colcon test --packages-select spiderx_controller && colcon test-result --verbose   # 0 failures
+ros2 run spiderx_controller m4_5_gait_analysis --help
 ros2 run spiderx_controller m4_5_gait_analysis --check-only                       # exit 0
-ros2 run spiderx_controller m4_5_gait_analysis                                    # exit 0, 6 gaits
-cat log/m4_5_gait_analysis/comparison/summary.csv
+ros2 run spiderx_controller m4_5_gait_analysis --out log/m4_5_local_a             # exit 0, 6 gaits
+ros2 run spiderx_controller m4_5_gait_analysis --out log/m4_5_local_b
+diff -rq log/m4_5_local_a log/m4_5_local_b                                        # no output
 ./scripts/validate_m4_all_leg_ik.sh && ./scripts/validate_m3_kinematics.sh
 ```
 
-Expected: the verdict table above.
-- If `python3-matplotlib` is missing, install it with
-  `sudo apt install python3-matplotlib`, or use `--no-plots`. Tables are still written.
-- `colcon test-result --all` totals depend on the machine's earlier test runs. Compare the
-  per-file counts instead.
+`colcon test-result --all` totals depend on the machine's earlier test runs, so compare the
+per-file counts.
 
-## Open questions [OPEN]
+## Owner decisions
 
-- **Q1. Gait naming.** The duty-factor mapping of the hexapod terms tripod, ripple and wave onto a
-  quadruped is unconfirmed. Plan §5.2 defines it. The names are YAML data and can be changed without
-  code changes.
-- **Q2. Roadmap.** The old M4.5 goals ("static walk, then trot; walks 1 m in simulation") are now
-  listed as a separate, unscheduled future item. The owner should place them: before M5, inside
-  M5, or in a new milestone.
-- **Q3. Body sway.** Lateral and longitudinal body sway would likely widen the crawl gaits' static
-  margins [ASSUMPTION]. It is not modelled.
-- **Q4. matplotlib.** matplotlib is now an `exec_depend`. Figures are optional (`--no-plots`).
+These replace the earlier open questions.
+
+- **Q1. Gait naming.** Keep the current YAML names for M4.5. The quadruped meaning of each name
+  is in the terminology mapping in
+  [SPIDERX_GAIT_FRAMEWORK.md §2.1](SPIDERX_GAIT_FRAMEWORK.md#21-gait-name-terminology-mapping).
+- **Q2. Roadmap.** The old walking goals stay as an unscheduled "Future — gait playback" item.
+- **Q3. Body sway.** Body sway is documented future work only and is not modelled. That sway would
+  widen the crawl gaits' static margins is still an [ASSUMPTION].
+- **Q4. matplotlib.** Approved as an `exec_depend`. `--no-plots` is kept for headless,
+  tables-only output.

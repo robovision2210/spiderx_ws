@@ -4,8 +4,11 @@
 > Branch `claude/spiderx-m45-offline-gait-framework`, created from `main` @ `c4a993c` (PR #10, M4.1,
 > merged). `main`'s tree is identical to the M4.1 head verified in the cloud and locally (`b979b03`).
 >
-> **Status:** implemented (offline) in Batches A–F and checked in the cloud: 556 tests, 0 failures.
-> Local verification and the open questions in §8 are pending. Results are in
+> **Status:** implemented (offline) in Batches A–F and **verified in the cloud and locally**:
+> 556 tests, 0 failures in both environments, with identical results. §8 has been answered by the
+> owner: keep the gait names, gait playback stays unscheduled future work, body sway stays future
+> work only, and matplotlib is approved with `--no-plots` kept. The decisions are recorded in
+> [M4_5_TEST_RESULTS.md](M4_5_TEST_RESULTS.md#owner-decisions). Results are in
 > [M4_5_TEST_RESULTS.md](M4_5_TEST_RESULTS.md); the design walkthrough is in
 > [SPIDERX_GAIT_FRAMEWORK.md](SPIDERX_GAIT_FRAMEWORK.md). One deviation from §5.2: T is not
 > chosen to meet the joint-speed placeholder. All gaits share one body speed (5 mm/s) for a fair

@@ -2,7 +2,7 @@
 
 Last updated on branch `claude/spiderx-m45-offline-gait-framework` (M4.5, from `main` @ `c4a993c` with M4.1 merged).
 
-**M4.5 (offline multi-gait configuration and trajectory validation) is implemented and was checked in the cloud only.** Local verification is pending, and it is a draft PR, not merged.
+**M4.5 (offline multi-gait configuration and trajectory validation) was verified in the cloud and locally** by the owner on Ubuntu (`4a6553c`). It is still a draft PR and not merged.
 - **What it is.** OFFLINE kinematic analysis: no Gazebo gait playback, no walking, no hardware.
 - **Six YAML gaits** are evaluated through the unchanged M3/M4 IK: wave, tripod_crawl, ripple, amble, pace and trot.
 - **Checks.** IK feasibility, joint-limit, singularity and continuity margins, a quasi-static stability **approximation**, joint speed against the 0.5 rad/s **placeholder**, and heuristic energy **proxies**.
@@ -12,6 +12,13 @@ Last updated on branch `claude/spiderx-m45-offline-gait-framework` (M4.5, from `
   - wave also exceeds the joint-speed placeholder (0.541 rad/s).
   - ripple, amble, pace and trot PASS their kinematic checks. That is **not** a stability or walking claim.
 - **Cloud test results.** 556 tests, 0 failures; the M1–M4 static validators pass; no URDF, launch, controller or simulation file changed.
+- **Local test results.**
+  - build: 8 packages in 11.2 s, no warnings;
+  - 556 tests, 0 errors, 0 failures, 0 skipped;
+  - two full analysis runs, each exit 0, gave 40 byte-identical files with the same verdicts and metrics as the cloud;
+  - the M1–M4 static validators passed;
+  - no Gazebo was started and no hardware was touched.
+- **Limits.** Offline only. Stability is a quasi-static approximation, energy values are heuristic proxies and the joint-speed reference is a placeholder. Masses are CAD placeholders.
 - See the [M4.5 results](docs/M4_5_TEST_RESULTS.md) and the [gait framework guide](docs/SPIDERX_GAIT_FRAMEWORK.md).
 
 **M4.1 (controller start-up robustness) was verified in the cloud and locally** by the owner on Ubuntu (`35b83b5`) and merged into `main` (`c4a993c`).
@@ -86,8 +93,8 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | All-leg forward kinematics (simulation only) | ✅ **All-leg forward kinematics verified for the current URDF/TF/Gazebo model** (cloud + local) | Opt-in `allow_all_legs` in `leg_kinematics.py` (M3 default unchanged). FK vs TF ≤ 3.4e-11 m and vs Gazebo ≤ 1.2e-7 m on all four feet. [M4 results](docs/M4_TEST_RESULTS.md) |
 | All-leg inverse kinematics (simulation only) | ✅ **All-leg inverse kinematics verified for documented, joint-safe, simulation-only static poses** (cloud + local) | 3 poses: `neutral_stance`, `crouch_10mm`, `lift_lf_15mm`. Foot tips ≤ 1.2e-10 m from target; negative poses refused and never commanded |
 | Static multi-leg pose hold via IK (simulation only) | ✅ **Static multi-leg pose hold via IK validated in Gazebo** (cloud + local) | 5 s holds; \|roll\|, \|pitch\| ≤ 2.8e-5 rad; body height within 0.05 mm of the geometric expectation. **Not** walking, gait, balance or hardware validation; contact not measured |
-| Offline gait configuration and trajectory validation (M4.5) | ✅ Implemented (offline, cloud); local verification pending | `m4_5_gait_analysis`: 6 YAML gaits checked against the URDF-derived IK, joint limits, a static-stability **approximation** and the joint-speed **placeholder**. wave and tripod_crawl FAIL static stability (reported, not tuned). [M4.5 results](docs/M4_5_TEST_RESULTS.md). **Not** walking, not a validated gait, not hardware |
-| Gait playback / walking in simulation | ⚪ Future work | Unscheduled (open question Q2 in `docs/M4_5_PLAN.md`). Nothing streams gait trajectories to the controllers |
+| Offline gait configuration and trajectory validation (M4.5) | ✅ Verified (offline; cloud + local) | `m4_5_gait_analysis`: 6 YAML gaits checked against the URDF-derived IK, joint limits, a static-stability **approximation** and the joint-speed **placeholder**. wave and tripod_crawl FAIL static stability (reported, not tuned). [M4.5 results](docs/M4_5_TEST_RESULTS.md). **Not** walking, not a validated gait, not hardware |
+| Gait playback / walking in simulation | ⚪ Future work | Unscheduled "Future — gait playback" item (owner decision). Nothing streams gait trajectories to the controllers |
 | `/cmd_vel` → gait bridge | ⚪ Future work | M5. Nothing consumes `/cmd_vel` today |
 | Odometry (`/spiderx/leg_odometry`, `/odom`) | ⚪ Future work | M6. **Not faked** |
 

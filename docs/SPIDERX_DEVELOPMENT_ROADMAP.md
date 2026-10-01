@@ -5,7 +5,7 @@ test that proves it works. Do not start Nav2 or SLAM work until M6 is done: they
 moves when commanded (`/cmd_vel`) and reports its motion (`/odom`).
 
 ```
-M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 offline gait analysis  ─►  (gait playback, Q2)
+M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 offline gait analysis  ─►  (future: gait playback)
                                                                           │
       M9 hardware ◄─ M8 Nav2 ◄─ M7 SLAM/AMCL ◄─ M6 odometry ◄─ M5 /cmd_vel bridge
 ```
@@ -88,7 +88,7 @@ is no gait, walking or hardware work. See the [plan](M4_1_PLAN.md) and
 - [x] Launch tests with a mutation check; a forced broadcaster failure; Ctrl+C during start-up; the M0–M4 runtime regressions (cloud)
 - [x] The same checks on the owner's Ubuntu PC (`35b83b5`; all passed)
 
-## M4.5 – Offline multi-gait configuration and trajectory validation – implemented (offline) — paper-evaluation pending
+## M4.5 – Offline multi-gait configuration and trajectory validation ✅ implemented (offline), verified (cloud + local) — paper-evaluation pending
 
 OFFLINE kinematic analysis only. There is no Gazebo gait playback, no walking and no hardware. See the
 [plan](M4_5_PLAN.md), [results](M4_5_TEST_RESULTS.md) and [framework guide](SPIDERX_GAIT_FRAMEWORK.md).
@@ -99,12 +99,13 @@ OFFLINE kinematic analysis only. There is no Gazebo gait playback, no walking an
 - [x] Static-stability margin (an approximation), joint speed against the placeholder, energy proxies (heuristic)
 - [x] Per-gait PASS/FAIL with the exact failed checks; deterministic CSV, JSON and PNG; cross-gait comparison (cloud)
 - [x] Reported result: wave and tripod_crawl FAIL static stability (the COM is ≈ 5.8 mm behind the foot centre); the other four pass their kinematic checks
-- [ ] The same checks on the owner's Ubuntu PC
-- [ ] Paper evaluation: confirm the gait names (Q1), body sway (Q3) and better mass data
+- [x] The same checks on the owner's Ubuntu PC (`4a6553c`; all passed, 40 byte-identical artifacts, same verdicts)
+- [x] Owner decisions: keep the YAML gait names (terminology mapping in the framework guide); matplotlib approved, with `--no-plots` kept
+- [ ] Paper evaluation: better mass data and comparison against published gait results; body sway stays future work only
 
-## Future – Gait playback and walking in simulation (unscheduled; formerly the M4.5 goal)
+## Future — Gait playback and walking in simulation (unscheduled; formerly the M4.5 goal)
 
-Placement is open question Q2 in [M4_5_PLAN.md](M4_5_PLAN.md): before M5, inside M5, or a new milestone.
+By the owner's decision, this stays an unscheduled future item. It is not part of M4.5.
 
 - [ ] Static walk (3 feet down), then trot, with the stance COM kept inside the support polygon
 - [ ] Walks forward 1 m in simulation without falling (a video is required before claiming it)

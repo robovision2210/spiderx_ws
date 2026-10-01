@@ -47,7 +47,7 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | Balance / standing controller | ⚪ Not implemented. M1 and M2 hold joint angles only, with no balance feedback |
 | Single-leg FK/IK (front-left, simulation only) | ✅ Verified locally and in the cloud (M3): FK matches the URDF, TF and Gazebo; IK reaches 5 small lifted targets and refuses unreachable or out-of-limit targets. **Not** walking, a gait or hardware validation |
 | All-leg FK/IK and static pose hold (simulation only) | ✅ Verified locally and in the cloud (M4): 3 static four-leg poses via IK held in Gazebo. **Not** walking, gait or hardware validation |
-| Offline gait configuration and trajectory validation (M4.5) | ✅ Implemented (offline, cloud; local pending): 6 YAML gaits checked against the URDF-derived IK, joint limits and a static-stability **approximation**. **Not** walking or hardware validation |
+| Offline gait configuration and trajectory validation (M4.5) | ✅ Verified offline (cloud + local, M4.5): 6 YAML gaits checked against the URDF-derived IK, joint limits and a static-stability **approximation**. **Not** walking or hardware validation |
 | Gait playback / walking, `/cmd_vel` bridge | ⚪ Planned |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
@@ -333,7 +333,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 
 ## 🗺️ Roadmap
 
-**joint control ✅ (M1) → simulation posture hold ✅ (M2, sim only) → single-leg FK/IK ✅ (M3, sim only, front-left) → all-leg IK + static pose hold ✅ (M4, sim only) → offline gait analysis ✅ (M4.5, offline, cloud) → gait playback in simulation → `/cmd_vel` bridge →
+**joint control ✅ (M1) → simulation posture hold ✅ (M2, sim only) → single-leg FK/IK ✅ (M3, sim only, front-left) → all-leg IK + static pose hold ✅ (M4, sim only) → offline gait analysis ✅ (M4.5, offline) → gait playback in simulation → `/cmd_vel` bridge →
 odometry → SLAM → Nav2 → real-hardware validation**
 
 Nav2 comes last because it only decides where to go. It needs a robot that executes `/cmd_vel` and
