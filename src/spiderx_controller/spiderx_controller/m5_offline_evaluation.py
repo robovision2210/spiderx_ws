@@ -3,6 +3,11 @@
     ros2 run spiderx_controller m5_offline_evaluation --check-only   # validate study + accounting
     ros2 run spiderx_controller m5_offline_evaluation --dry-run      # list every planned evaluation
     ros2 run spiderx_controller m5_offline_evaluation                # run the staged study
+    ros2 run spiderx_controller m5_offline_evaluation --out /tmp/m5  # into another root
+
+Results go to <out>/<study_id>/ (default out: log/m5_offline_evaluation, git-ignored). An
+existing study directory is never overwritten. A dirty git tree is refused unless --allow-dirty
+(recorded in the manifest).
 
 Exit codes: 0 = study completed (gate passed; failing, infeasible and N/A outcomes are RESULTS,
 not errors); 2 = invalid study specification or configuration (nothing evaluated);
@@ -11,8 +16,10 @@ not errors); 2 = invalid study specification or configuration (nothing evaluated
 
 import argparse
 import json
+import os
 import sys
 
+from spiderx_controller import eval_records as rec
 from spiderx_controller import eval_runner as er
 from spiderx_controller import eval_study as es
 from spiderx_controller import gait_config as gc
@@ -29,6 +36,10 @@ def parse_args(argv):
     p.add_argument('--study', default=None, help='study YAML (default: installed m5_study.yaml)')
     p.add_argument('--config-dir', default=None,
                    help='directory with m4_5_gaits.yaml and spiderx_legs.yaml (default: installed)')
+    p.add_argument('--out', default=rec.DEFAULT_OUT,
+                   help=f'output root (default: {rec.DEFAULT_OUT}); results in <out>/<study_id>/')
+    p.add_argument('--allow-dirty', action='store_true',
+                   help='run from a git tree with uncommitted changes (recorded in the manifest)')
     mode = p.add_mutually_exclusive_group()
     mode.add_argument('--check-only', action='store_true',
                       help='validate the study and its accounting; evaluate nothing')
@@ -56,8 +67,9 @@ def print_plan(plan):
         print(f'{e.stage:5s} {e.label:44s} eval {e.eval_id} config {e.config_id} n={e.n}{dup}')
 
 
-def main(argv=None, evaluate=None, out_writer=None):
-    _, args = parse_args((argv if argv is not None else sys.argv)[1:])
+def main(argv=None, evaluate=None, extra_writers=()):
+    argv = list(argv if argv is not None else sys.argv)
+    _, args = parse_args(argv[1:])
     print('SpiderX M5 offline evaluation study')
     print(SCOPE)
     try:
@@ -78,6 +90,18 @@ def main(argv=None, evaluate=None, out_writer=None):
               f'{len(plan.speed_entries)} speed checks listed; nothing evaluated, nothing written.')
         return EXIT_OK
 
+    target = rec.study_dir(args.out, study)
+    try:
+        if os.path.exists(target):
+            raise es.StudyError(f'{target} already exists; choose another --out (earlier '
+                                'results are never overwritten)')
+        provenance = rec.collect_provenance(args.study or es.default_study_path(args.config_dir),
+                                            context, allow_dirty=args.allow_dirty)
+    except gc.GaitConfigError as e:
+        print(f'REFUSED: {e}')
+        print('Nothing was evaluated.')
+        return EXIT_INVALID
+    print(f'Provenance: commit {provenance["git_commit"]}, dirty {provenance["git_dirty"]}')
     inputs = er.load_inputs(config_dir=args.config_dir) if evaluate is None else None
     result = er.run_study(plan, inputs, evaluate=evaluate or er.evaluate_variant,
                           progress=lambda i, n, label: print(f'  [{i:3d}/{n}] {label}',
@@ -91,8 +115,9 @@ def main(argv=None, evaluate=None, out_writer=None):
         print(f'  {"PASS" if g.passed else "FAIL"}  {g.check_id}: {g.detail}')
     print(json.dumps({'study_id': study.study_id, 'status': result.status,
                       'counts': er.category_counts(result)}, indent=1, sort_keys=True))
-    if out_writer is not None:
-        out_writer(result)
+    d, manifest = rec.write_study(result, args.out, provenance, argv, extra_writers)
+    print(f'Results: {os.path.abspath(d)} ({len(manifest["files_sha256"])} compared files + '
+          'manifest.json; environment.json is excluded from comparison)')
     if result.status == 'blocked':
         print('BLOCKED: the Stage 0/1 gate failed; Stages 2-4 were not evaluated.')
         return EXIT_BLOCKED

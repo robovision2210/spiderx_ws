@@ -239,14 +239,14 @@ def test_cli_forced_gate_failure_exits_3(tmp_path, capsys, evaluator):
     raw['baseline']['expected']['tripod_crawl']['failed_checks'] = ['static_stability',
                                                                     'joint_speed']
     path = fx.write_yaml(tmp_path / 'blocked.yaml', raw)
-    assert cli.main(['m5', '--study', path, '--config-dir', fx.SRC_CONFIG],
-                    evaluate=evaluator) == cli.EXIT_BLOCKED
+    assert cli.main(['m5', '--study', path, '--config-dir', fx.SRC_CONFIG, '--allow-dirty',
+                     '--out', str(tmp_path / 'out')], evaluate=evaluator) == cli.EXIT_BLOCKED
     out = capsys.readouterr().out
     assert 'BLOCKED' in out and '"blocked_gate_failed": 3' in out
 
 
 def test_cli_completed_mini_study_exits_0(tmp_path, capsys, evaluator):
     path = fx.write_yaml(tmp_path / 'mini.yaml', fx.mini_raw())
-    assert cli.main(['m5', '--study', path, '--config-dir', fx.SRC_CONFIG],
-                    evaluate=evaluator) == cli.EXIT_OK
+    assert cli.main(['m5', '--study', path, '--config-dir', fx.SRC_CONFIG, '--allow-dirty',
+                     '--out', str(tmp_path / 'out')], evaluate=evaluator) == cli.EXIT_OK
     assert 'Study completed' in capsys.readouterr().out
