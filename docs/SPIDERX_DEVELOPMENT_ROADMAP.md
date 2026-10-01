@@ -73,9 +73,9 @@ Simulation only. This is not walking, a gait, balance control or hardware valida
 - [x] Three static poses validated before sending (atomic 12-joint commands, no clamping)
 - [x] Gazebo: FK vs TF and Gazebo on all four legs; 3 poses reached and held for 5 s; body height and tilt within the thresholds (cloud)
 - [x] The same checks on the owner's Ubuntu PC (`fd777fe`; all passed)
-- [ ] Fix the intermittent M1 controller start-up race → **M4.1** below (cloud-verified; local verification pending)
+- [x] Fix the intermittent M1 controller start-up race → done in **M4.1** below (cloud + local verified)
 
-## M4.1 – Controller start-up robustness 🟡 cloud-verified, local verification pending
+## M4.1 – Controller start-up robustness ✅ verified (cloud + local)
 
 Simulation only. This covers start-up ordering and failure handling of the M1 controllers. There
 is no gait, walking or hardware work. See the [plan](M4_1_PLAN.md) and
@@ -86,7 +86,7 @@ is no gait, walking or hardware work. See the [plan](M4_1_PLAN.md) and
 - [x] Simulation-only spawner options `--switch-timeout 60` and `--service-call-timeout 75`
 - [x] The M1/M2 validators report a controller as active only if it is exactly `active`
 - [x] Launch tests with a mutation check; a forced broadcaster failure; Ctrl+C during start-up; the M0–M4 runtime regressions (cloud)
-- [ ] The same checks on the owner's Ubuntu PC
+- [x] The same checks on the owner's Ubuntu PC (`35b83b5`; all passed)
 
 ## M4.5 – Gait generator (formerly M4)
 

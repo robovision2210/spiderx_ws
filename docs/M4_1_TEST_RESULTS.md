@@ -5,7 +5,7 @@ Controller start-up ordering and robustness only, in simulation.
 No gait, walking, balance control, navigation or hardware change.
 ```
 
-## Outcome (cloud verified; local verification pending)
+## Outcome (cloud + local verified)
 
 - **Ordering.** `leg_trajectory_controller` is started only after the `joint_state_broadcaster`
   spawner exited with code 0, which means the broadcaster was configured and activated.
@@ -18,7 +18,8 @@ No gait, walking, balance control, navigation or hardware change.
   - Ctrl+C during start-up;
   - the success-path order;
   - the M4, M3, M2, M1 and Fortress runtime regressions.
-- **Local verification on the owner's Ubuntu PC is pending.** M4.1 is not complete until it passes.
+- **Verified in the cloud and on the owner's Ubuntu PC** (`35b83b5`). See
+  [Local verification](#local-verification-owners-ubuntu-pc--passed).
 
 ## Environment
 
@@ -28,7 +29,8 @@ No gait, walking, balance control, navigation or hardware change.
 | Implementation commits | `82178a0`: launch gate, spawner options and launch tests. `fbd2d2d`: M1/M2 validator state check and tests |
 | controller_manager | **2.51.0**, together with controller_manager_msgs 2.51.0 and ros2controlcli 2.51.0 (RoboStack `ros-humble-*`) |
 | Other packages | launch 1.0.9, launch_ros 0.19.10, rclpy 3.3.16, gz_ros2_control 0.7.15, ros_gz 0.244.20, joint_state_broadcaster and joint_trajectory_controller 2.48.0, Ignition Gazebo 6.16.0 |
-| Machine | Cloud VM, no GPU, Xvfb and Mesa software rendering |
+| Machine (cloud) | Cloud VM, no GPU, Xvfb and Mesa software rendering |
+| Machine (local) | The owner's Ubuntu PC. See [Local verification](#local-verification-owners-ubuntu-pc--passed) |
 
 ## What changed
 
@@ -330,8 +332,8 @@ matters, and M4.1 does not touch it. In all three cases the M4.1 gate behaved as
 A process-group SIGINT then stopped everything, with no leftovers. The Ruby launcher SIGKILLs a
 server that does not react to SIGINT within 5 s.
 
-**Earlier runs.** The earlier M1–M4 results do not report this hang. Its rate here may be specific
-to this cloud VM. The logs are `r1_attempt_cm_never_available.log` and
+**Earlier runs.** The earlier M1–M4 results do not report this hang, and the owner's local M4.1
+runs had none either (zero retries). Its rate here may be specific to this cloud VM. The logs are `r1_attempt_cm_never_available.log` and
 `regression/m4_runtime_first_run_launch_log.txt`.
 
 ### Excluded run
@@ -367,7 +369,8 @@ stopped, with no leftovers, and nothing from that window is used in this report.
      wait 3 s before their strict check; M1 and M2 check at once.
    - **Residual risk of the stricter M1/M2 check.** A false `[FAIL] leg_trajectory_controller not
      active` needs both the wait loop's call and the check's call, about 1 s apart, to be answered
-     inside that gap. That is possible, but unlikely, and M1 and M2 passed here.
+     inside that gap. That is possible, but unlikely. M1 and M2 passed in the cloud and locally,
+     both printing the strict `[PASS] … active` lines.
    - **Not done here.** Removing the risk entirely would mean making the wait loops use `.* active`,
      or adding M3/M4's 3 s pause. That is outside the approved change.
 3. **A shutdown driven by `launch` alone can orphan the Gazebo server and GUI.** This is pre-existing
@@ -391,6 +394,8 @@ stopped, with no leftovers, and nothing from that window is used in this report.
      spawner that would also wait and fail.
    - Server-only mode (`-s`, used by `headless:=true`) does not wait for the GUI. Headless rendering
      is still untested on this VM (`STATUS.md`).
+   - On the owner's Ubuntu PC no such hang occurred, and no retries were needed. This remains a
+     follow-up item outside M4.1.
 5. **Harness note: SIGINT inherited as ignored.**
    - **Cause.** A launch started as a background job of a non-interactive shell inherits SIGINT as
      ignored, and Python then keeps it ignored. The validators start their launch exactly this way,
@@ -405,9 +410,84 @@ stopped, with no leftovers, and nothing from that window is used in this report.
    nor the validators can produce this, because both also signal `ros2 launch`. The downstream tools
    still refuse unless both controllers are `active`.
 
-## Local verification (owner's Ubuntu PC) – pending
+## Local verification (owner's Ubuntu PC) – passed
 
-M4.1 is **not complete** until these pass locally:
+The owner reported these facts; they are recorded here exactly as given. All numbers in this
+section are **local**.
+
+| Item | Local result |
+|---|---|
+| Branch and commit | `claude/spiderx-controller-spawn-race-v2` @ `35b83b5`, identical to `origin` |
+| Working tree | Clean at start and finish; no tracked files modified |
+| Hardware | None started |
+| Build | Clean build: 8 packages finished in 9.45 s; no warnings or errors |
+| Tests | **385 tests, 0 errors, 0 failures, 0 skipped**, including the 28 `test_controller_launch` and 44 `test_validator_state_checks` tests |
+| Environment hangs | None; zero retries needed |
+| Leftover processes | None after any run |
+
+### R1 – success path (local)
+
+- The broadcaster spawner exited 0 at **+3.637 s**, and the trajectory spawner started at
+  **+3.641 s**, 4 ms later.
+- Both controllers were `active`, with exactly one `/joint_states` publisher.
+- The broadcaster activation took **0.59 s**, well under the old 5 s default.
+- After Ctrl+C, the group exited in 1 s, with no leftovers.
+
+### R2 – forced broadcaster failure (local)
+
+This used the 0.001 s switch timeout and the untracked scratch launch. The scratch launch was
+byte-identical to the [documented source](#how-to-rerun-these-checks), lived only outside the
+repository, and was deleted afterwards.
+
+- `Switch controller timed out after 0.001000 seconds!`
+- The broadcaster spawner exited with code 1.
+- Exactly one error line was logged: `joint_state_broadcaster startup failed; leg_trajectory_controller
+  was not started; press Ctrl+C and relaunch. (spawner exit code 1; …)`.
+- 30 s later, only `joint_state_broadcaster inactive` was listed; `leg_trajectory_controller` was
+  never loaded.
+- After Ctrl+C, the launch exited cleanly in 1 s, with no leftovers.
+
+### R3 – Ctrl+C during start-up (local)
+
+- The broadcaster spawner was still waiting for `/controller_manager`.
+- No `startup failed` line was logged, and no trajectory spawner was started.
+- `launch` escalated to SIGTERM after its 5 s grace. The group exited in 12 s, and no Gazebo server
+  or GUI was orphaned.
+
+This is pre-existing shutdown behaviour. Its timing differs from the cloud's interactive-equivalent
+run (2 s), but it is not a defect. The cloud's validator-mode run showed the same SIGTERM escalation
+after the 5 s grace (7 s).
+
+### Regressions (local, final lines)
+
+| Validator | Final line (local) |
+|---|---|
+| `validate_m4_all_leg_ik.sh` | `All M4 checks passed.` |
+| `validate_m3_kinematics.sh` | `All M3 checks passed.` |
+| `validate_m2_posture.sh` | `All M2 checks passed.` (29 PASS, 0 FAIL) |
+| `validate_m1_control.sh` | `All M1 checks passed.` (24 PASS, 0 FAIL) |
+| `validate_fortress.sh` | `All checks passed.` (67 PASS, 0 FAIL) |
+
+M1 and M2 printed the strict `[PASS] … active` lines from the new grep pattern.
+
+### Cloud and local side by side
+
+| Item | Cloud | Local |
+|---|---|---|
+| Clean build | 8 packages, 18.7 s | 8 packages, 9.45 s |
+| Tests | 385, 0 failures | 385, 0 failures |
+| R1: broadcaster spawner exit → trajectory spawner start | 10 ms | 4 ms |
+| R1: broadcaster activation | 1.94 s (8.94 s in the validator-mode run) | 0.59 s |
+| R1: group exit after Ctrl+C | 2 s | 1 s |
+| R2: forced failure | 1 error line, trajectory controller never loaded, exit in 2 s | 1 error line, trajectory controller never loaded, exit in 1 s |
+| R3: group exit after Ctrl+C during start-up | 2 s (7 s in validator mode) | 12 s (SIGTERM after the 5 s grace) |
+| Gazebo start-up hangs | 3 of 13 launches | none |
+| Regressions M4/M3/M2/M1/Fortress | all passed (M4 on rerun) | all passed |
+| Leftover processes | none | none |
+
+### How to rerun these checks
+
+These are the commands the local verification followed:
 
 ```bash
 cd ~/spiderx_ws && git fetch origin && git checkout claude/spiderx-controller-spawn-race-v2 && git pull

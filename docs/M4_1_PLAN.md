@@ -4,7 +4,8 @@
 > Branch `claude/spiderx-controller-spawn-race-v2`, created from `main` @ `2f03b3c` (PR #9, M4,
 > merged). The owner's local branch of the same name starts at the same commit.
 >
-> **Status (2026-09-29): implemented and cloud-verified; local verification pending.** See
+> **Status (2026-10-01): implemented; verified in the cloud and locally** (the owner's Ubuntu PC,
+> `35b83b5`). See
 > [M4_1_TEST_RESULTS.md](M4_1_TEST_RESULTS.md). The owner's review approved this design with these
 > decisions:
 > - The error text is exactly `joint_state_broadcaster startup failed; leg_trajectory_controller
