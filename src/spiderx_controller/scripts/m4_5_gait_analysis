@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""M4.5 OFFLINE gait analysis (see spiderx_controller/m4_5_gait_analysis.py).
+
+    ros2 run spiderx_controller m4_5_gait_analysis [--gait NAME] [--no-plots] [--check-only] [--out DIR]
+"""
+import sys
+
+from spiderx_controller.m4_5_gait_analysis import main
+
+if __name__ == '__main__':
+    sys.exit(main())

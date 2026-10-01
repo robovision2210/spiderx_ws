@@ -18,6 +18,7 @@ install(PROGRAMS
   scripts/run_posture_hold_test.py
   scripts/validate_leg_kinematics
   scripts/m4_pose_validation
+  scripts/m4_5_gait_analysis
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -34,6 +35,12 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m4_pose_validation test/test_m4_pose_validation.py)
   ament_add_pytest_test(test_controller_launch test/test_controller_launch.py)
   ament_add_pytest_test(test_validator_state_checks test/test_validator_state_checks.py)
+  ament_add_pytest_test(test_gait_config test/test_gait_config.py)
+  ament_add_pytest_test(test_gait_trajectory test/test_gait_trajectory.py)
+  ament_add_pytest_test(test_gait_kinematics test/test_gait_kinematics.py)
+  ament_add_pytest_test(test_gait_metrics test/test_gait_metrics.py)
+  ament_add_pytest_test(test_gait_report test/test_gait_report.py)
+  ament_add_pytest_test(test_gait_regression test/test_gait_regression.py)
 endif()
 
 ament_package()
