@@ -22,6 +22,7 @@ import sys
 from spiderx_controller import eval_records as rec
 from spiderx_controller import eval_runner as er
 from spiderx_controller import eval_study as es
+from spiderx_controller import eval_tables as et
 from spiderx_controller import gait_config as gc
 
 EXIT_OK, EXIT_INVALID, EXIT_BLOCKED = 0, 2, 3
@@ -67,7 +68,7 @@ def print_plan(plan):
         print(f'{e.stage:5s} {e.label:44s} eval {e.eval_id} config {e.config_id} n={e.n}{dup}')
 
 
-def main(argv=None, evaluate=None, extra_writers=()):
+def main(argv=None, evaluate=None, extra_writers=(et.write_derived,)):
     argv = list(argv if argv is not None else sys.argv)
     _, args = parse_args(argv[1:])
     print('SpiderX M5 offline evaluation study')

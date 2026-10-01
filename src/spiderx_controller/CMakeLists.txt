@@ -45,6 +45,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_eval_study test/test_eval_study.py)
   ament_add_pytest_test(test_eval_runner test/test_eval_runner.py)
   ament_add_pytest_test(test_eval_records test/test_eval_records.py)
+  ament_add_pytest_test(test_eval_tables test/test_eval_tables.py)
 endif()
 
 ament_package()
