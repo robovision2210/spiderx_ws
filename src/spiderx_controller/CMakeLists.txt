@@ -41,6 +41,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_gait_metrics test/test_gait_metrics.py)
   ament_add_pytest_test(test_gait_report test/test_gait_report.py)
   ament_add_pytest_test(test_gait_regression test/test_gait_regression.py)
+  ament_add_pytest_test(test_eval_study test/test_eval_study.py)
 endif()
 
 ament_package()
