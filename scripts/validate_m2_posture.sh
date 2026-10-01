@@ -110,7 +110,7 @@ if [ "$runtime" = 1 ]; then
         | grep -q "leg_trajectory_controller.*active"; do sleep 3; done'; then
     ctrls=$(ros2 control list_controllers 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g')
     for c in joint_state_broadcaster leg_trajectory_controller; do
-      grep -qE "^$c .*active" <<< "$ctrls" && pass "$c active" || bad "$c not active"
+      grep -qE "^$c .* active" <<< "$ctrls" && pass "$c active" || bad "$c not active"
     done
     n_pub=$(ros2 topic info /joint_states 2>/dev/null | awk '/Publisher count/ {print $3}')
     [ "$n_pub" = 1 ] && pass "/joint_states has exactly 1 publisher" \

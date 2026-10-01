@@ -78,6 +78,7 @@ No CAD geometry, joint axis, origin, limit, mass or inertia is changed.
    - Arguments: `enable_control` (default `true`), `headless`, `rviz`.
    - It includes the Fortress launch with control, then `spiderx_controller/launch/controller.launch.py`.
    - That file spawns `joint_state_broadcaster` first, and starts `leg_trajectory_controller` only when the first spawner **exits**, using an `OnProcessExit` event handler.
+     *M4.1 note: this started the second spawner on any exit. It now starts only after exit code 0, and a failed spawner logs one error line. See [M4_1_PLAN.md](M4_1_PLAN.md).*
    - Each spawner waits for the `controller_manager` services itself (`--controller-manager-timeout`), so no fixed sleeps are needed.
    - It never includes `spiderx_firmware`.
 6. **`ros2 launch spiderx_bringup fortress.launch.py` stays passive** and unchanged.
