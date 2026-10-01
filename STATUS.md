@@ -2,7 +2,7 @@
 
 Last updated on branch `claude/spiderx-m5-offline-evaluation-plan` (M5 Phase 1, from `main` @ `3db1aec` with M4.5 merged).
 
-**M5 offline evaluation implemented and cloud-verified; local verification pending.** It is a draft PR and not merged.
+**Cloud + local offline verification passed for the M5 offline evaluation study.** It is a draft PR and not merged. The local check ran two full studies on the owner's Ubuntu PC (exit 0, byte-identical between those two runs; not compared with the cloud outputs), with 700 tests passing. Offline model results only: no Gazebo or contact-dynamics, runtime, real-time or hardware validation.
 - **What it is.** An offline, staged evaluation of gait configuration classes with the unchanged M4.5 evaluator. No Gazebo, no gait playback, no walking, no hardware.
 - **Cloud results.**
   - 700 tests, 0 failures;
@@ -110,7 +110,7 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | Static multi-leg pose hold via IK (simulation only) | ✅ **Static multi-leg pose hold via IK validated in Gazebo** (cloud + local) | 5 s holds; \|roll\|, \|pitch\| ≤ 2.8e-5 rad; body height within 0.05 mm of the geometric expectation. **Not** walking, gait, balance or hardware validation; contact not measured |
 | Offline gait configuration and trajectory validation (M4.5) | ✅ Verified (offline; cloud + local) | `m4_5_gait_analysis`: 6 YAML gaits checked against the URDF-derived IK, joint limits, a static-stability **approximation** and the joint-speed **placeholder**. wave and tripod_crawl FAIL static stability (reported, not tuned). [M4.5 results](docs/M4_5_TEST_RESULTS.md). **Not** walking, not a validated gait, not hardware |
 | Gait playback / walking in simulation | ⚪ Future work | Unscheduled "Future — gait playback" item (owner decision). Nothing streams gait trajectories to the controllers |
-| Offline evaluation study (M5) | ✅ Implemented and cloud-verified; local verification pending | `m5_offline_evaluation`: staged study, Stage 0/1 gate, deterministic provenance-rich records. [M5 results](docs/M5_TEST_RESULTS.md), [guide](docs/SPIDERX_M5_EVALUATION_GUIDE.md). Offline model analysis only; **not** walking, dynamic stability, energy or hardware |
+| Offline evaluation study (M5) | ✅ Cloud + local offline verification passed | `m5_offline_evaluation`: staged study, Stage 0/1 gate, deterministic provenance-rich records. [M5 results](docs/M5_TEST_RESULTS.md), [guide](docs/SPIDERX_M5_EVALUATION_GUIDE.md). Offline model analysis only; **not** walking, dynamic stability, energy or hardware |
 | `/cmd_vel` → gait bridge | ⚪ Future work | M5.5: Command-velocity bridge (renamed from M5). Not implemented. Nothing consumes `/cmd_vel` today |
 | Odometry (`/spiderx/leg_odometry`, `/odom`) | ⚪ Future work | M6. **Not faked** |
 

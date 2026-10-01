@@ -103,7 +103,7 @@ OFFLINE kinematic analysis only. There is no Gazebo gait playback, no walking an
 - [x] Owner decisions: keep the YAML gait names (terminology mapping in the framework guide); matplotlib approved, with `--no-plots` kept
 - [ ] Paper evaluation: better mass data and comparison against published gait results; body sway stays future work only
 
-## M5 – Offline evaluation study — implemented and cloud-verified; local verification pending
+## M5 – Offline evaluation study — cloud + local offline verification passed
 
 OFFLINE model analysis only: a staged, reproducible evaluation of gait configuration classes on the
 SpiderX URDF model, using the unchanged M4.5 evaluator. There is no Gazebo, no gait playback, no
@@ -112,7 +112,7 @@ walking and no hardware. See the [plan](M5_EVALUATION_PLAN.md) and its owner-dec
 - [x] Phase 0: read-only audit and evaluation protocol (`4c1bd1d`), approved by the owner in principle; decisions D1–D5 recorded
 - [x] Phase 1: study specification, runner with Stage 0/1 gate, provenance-rich records, derived tables, regression pins (cloud; 700 tests)
 - [x] Study run (cloud): two complete, byte-identical runs; gate passed; H1–H3 supported (model predictions) — [results](M5_TEST_RESULTS.md)
-- [ ] The same checks on the owner's Ubuntu PC (local verification pending)
+- [x] The same checks on the owner's Ubuntu PC: offline only; two full local runs exit 0 and byte-identical with each other; 700 tests passing
 - [ ] Citations-only review step: original-source-verified candidate references for owner approval (not started)
 
 ## Future — Gait playback and walking in simulation (unscheduled; formerly the M4.5 goal)

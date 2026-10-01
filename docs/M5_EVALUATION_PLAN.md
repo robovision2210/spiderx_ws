@@ -5,7 +5,7 @@
 > (the merge of PR #11, M4.5). The tree of `3db1aec` is identical to the M4.5 head `c24c4c0` that
 > was verified in the cloud and locally (`git diff c24c4c0 3db1aec` is empty).
 >
-> **Status: M5 offline evaluation implemented and cloud-verified; local verification pending.**
+> **Status: Cloud-validated and locally verified offline evaluation.** Offline model results only; no Gazebo, runtime, real-time or hardware validation.
 > - **Phase 0.** The owner approved the audit and plan (`4c1bd1d`) and decided D1–D5; see
 >   [§16](#16-owner-decision-addendum).
 > - **Phase 1.** Implemented in Batches A–E (`1f8e323`, `5450ab0`, `39c0f6d`, `1aa33d5`,
@@ -14,7 +14,7 @@
 > - **Cloud validation.** 700 tests with 0 failures, and two byte-identical complete study runs.
 >   See [M5_TEST_RESULTS.md](M5_TEST_RESULTS.md) and
 >   [SPIDERX_M5_EVALUATION_GUIDE.md](SPIDERX_M5_EVALUATION_GUIDE.md).
-> - **Not complete.** The study is not complete until local verification passes and the owner
+> - **Not complete.** Local verification passed. The study is not complete until the owner
 >   merges the PR.
 
 ```text

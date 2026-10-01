@@ -8,9 +8,9 @@ Static support is an approximation; K is a model-derived indicator; motion "ener
 heuristic proxies; 0.5 rad/s is a provisional screening flag only.
 ```
 
-## Outcome (cloud-verified; local verification pending)
+## Outcome (cloud + local offline verification passed)
 
-- **M5 offline evaluation implemented and cloud-verified; local verification pending.**
+- **Cloud + local offline verification passed.** Offline model and evaluation results only: no Gazebo, physics or contact-dynamics validation; no runtime or real-time validation; no hardware. The local byte-identical runs were two runs on the same Ubuntu PC, not a cloud-versus-local comparison.
 - **The staged study ran completely, twice, with byte-identical artifacts.** It made 293 stage
   evaluations (270 unique) plus 6 separate speed checks.
 - **The Stage 0/1 gate passed** after one real finding was fixed at its source: a phase-boundary
@@ -18,7 +18,7 @@ heuristic proxies; 0.5 rad/s is a provisional screening flag only.
 - **All three pre-registered hypotheses (H1–H3) are supported**, with the limits stated below.
   These are model predictions, not robot results.
 
-The study is **not complete**. That needs local verification and the owner's review and merge.
+The study is **not complete** until the owner reviews and merges the PR.
 
 Statements are labelled as follows:
 - **[MEASURED]**: a command run in this cloud environment.
@@ -251,9 +251,40 @@ Static support is not required for that pattern, so this is not a statically sta
 - Hardware readiness, terrain performance, navigation or real-time execution.
 - Byte identity across machines. It was verified only between two runs on the same machine.
 
-## Local verification (owner's Ubuntu PC) – pending
+## Local verification (owner's Ubuntu PC) – passed
 
-All of these steps are offline; none starts Gazebo or touches hardware.
+The owner ran these checks on the M5 branch on their Ubuntu PC and reported the results below.
+Everything was offline.
+
+| Check | Result |
+|---|---|
+| Git working tree | Clean before and after verification |
+| Clean build | 8 packages finished in 12.7 s; no warnings or errors |
+| Full test suite | **700 tests, 0 errors, 0 failures, 0 skipped**; `colcon test` exit 0 and `colcon test-result` exit 0 |
+| New M5 tests | `test_eval_study` 41, `test_eval_runner` 22, `test_eval_records` 14, `test_eval_tables` 14, `test_eval_regression` 11 |
+| M4.5 trajectory tests | `test_gait_trajectory` 78, including the phase-boundary regression tests |
+| `--check-only`, `--dry-run` | Both passed and wrote no files |
+| Full study run A, `--out log/m5_local_a` | Exit 0 in 937 s; 276 records, 23 files |
+| Full study run B, `--out log/m5_local_b` | Exit 0 in 925 s; 276 records, 23 files |
+| Determinism | The two local output directories were **byte-identical across all 23 files**, including `environment.json` and `manifest.json` (same machine) |
+| Stage 0/1 gate | All seven gate checks passed in both runs |
+| Static regressions (no simulator) | M1, M2, M3 and M4 validators all passed |
+
+**Scope of the verification itself.** None of the following happened:
+- Gazebo, ROS launch, runtime validation or hardware activity;
+- edits to tracked files outside documentation;
+- dynamic-walking claims;
+- commits, pushes or PR updates.
+
+**One background process** was found: a stale Bash wait loop. It was stopped safely after the test
+output had already shown 700/700 passing.
+
+As in the cloud, these are offline model results. They show that the study runs, passes its
+gate and reproduces byte-for-byte between two runs on the owner's machine. Local outputs were not
+byte-compared with the cloud outputs. They do not show walking, dynamic stability, real-time
+behaviour, hardware validity, energy or power performance, or navigation.
+
+These are the commands, all offline; none starts Gazebo or touches hardware.
 
 ```bash
 cd ~/spiderx_ws && colcon build --symlink-install && source install/setup.bash
