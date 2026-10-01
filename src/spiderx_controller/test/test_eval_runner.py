@@ -158,17 +158,18 @@ def test_perturbed_speed_evidence_fails_the_speed_gate(context, evaluator):
     assert result.status == 'blocked'
 
 
-def test_real_wave_phase_boundary_artifact_fails_the_support_invariance_check(context, evaluator):
-    """FINDING (M5 Batch B): in M4.5's gait_phase.leg_phase, wave's rear-left touch-down sample
-    (u = 0.15) has theta = 0.15 < 1 - 0.85 = 0.15000000000000002 and is labelled swing. Wave's
-    three-foot fraction is therefore 0.6 + 1/n, not 0.6, so the pre-registered resolution-
-    invariance check of the support fractions (plan section 6.3) fails and the gate blocks."""
+def test_real_wave_mini_study_passes_the_support_invariance_check(context, evaluator):
+    """Regression of the M4.5 phase-boundary fix (found by this gate): before it, wave's rear-left
+    touch-down sample (u = 0.15, theta = 0.15 vs 1 - 0.85 = 0.15000000000000002) was labelled
+    swing, wave's three-foot fraction was 0.6 + 1/n and pattern_separation blocked the study."""
     raw = fx.mini_raw(gaits=('wave', 'pace', 'trot'), negative=('wave',))
     result = er.run_study(fx.plan_of(raw, context), None, evaluate=evaluator)
-    g = next(c for c in result.gate if c.check_id == 'pattern_separation')
-    assert not g.passed and 'wave: fraction_three_feet varies with n: [0.625, 0.605]' in g.detail
-    assert [c.check_id for c in result.gate if not c.passed] == ['pattern_separation']
-    assert result.status == 'blocked'
+    assert result.gate_passed and result.status == 'completed', \
+        [c.detail for c in result.gate if not c.passed]
+    for n in (40, 200):
+        rec = _rec(result, f'S01-wave-n{n}')
+        assert rec['m45_fraction_three_feet'] == 0.6 and rec['m45_fraction_four_feet'] == 0.4
+        assert rec['static_support_status'] == 'fail' and rec['binding_support'] == 'LF|RF|RR'
 
 
 # ------------------------------------------------------------ mutation tests

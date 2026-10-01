@@ -41,6 +41,45 @@ def test_each_leg_swings_one_minus_beta_of_the_cycle(name):
         assert frac == pytest.approx(1.0 - spec.duty_factor, abs=1.0 / N), leg
 
 
+RESOLUTIONS = (40, 100, 200, 400, 800)
+
+
+@pytest.mark.parametrize('n', RESOLUTIONS)
+@pytest.mark.parametrize('name', [g.name for g in CFG.gaits])
+def test_each_leg_swings_exactly_one_minus_beta_on_aligned_grids(name, n):
+    """Exact sample counts (no +-1/n tolerance): every shipped transition lies on these grids."""
+    spec = _spec(name)
+    us = gp.sample_us(n)
+    want = round((1.0 - spec.duty_factor) * n)
+    for leg in lk.ALL_LEGS:
+        assert sum(gp.leg_phase(spec, leg, u).phase == gp.SWING for u in us) == want, leg
+
+
+@pytest.mark.parametrize('n', RESOLUTIONS)
+def test_wave_support_fractions_are_exact_at_every_resolution(n):
+    """Regression (found by the M5 gate): four non-overlapping 15 % swings give exactly 60 %
+    three-foot and 40 % four-foot support, not 0.6 + 1/n."""
+    frac = gp.support_summary(_spec('wave'), n)['fraction_by_count']
+    assert frac == {3: 0.6, 4: 0.4}
+
+
+def test_wave_rear_left_touch_down_sample_is_stance():
+    spec = _spec('wave')                     # beta 0.85, rear_left offset 0.0
+    assert (1.0 - spec.duty_factor) != 0.15 and (0.15 - 0.0) % 1.0 == 0.15   # the round-off
+    assert gp.leg_phase(spec, 'rear_left', 0.15) == gp.LegPhase(gp.STANCE, 0.0,
+                                                                1.0 - spec.duty_factor)
+
+
+def test_boundary_snap_only_moves_values_on_a_boundary():
+    spec = _spec('wave')
+    sf = 1.0 - spec.duty_factor
+    assert gp.leg_phase(spec, 'rear_left', sf - 1e-9).phase == gp.SWING    # just before touch-down
+    assert gp.leg_phase(spec, 'rear_left', 1.0 - 1e-9).phase == gp.STANCE  # just before lift-off
+    lift = gp.leg_phase(spec, 'rear_left', -1e-17)       # (u - phi) mod 1 rounds to 1.0
+    assert lift.phase == gp.SWING and lift.progress == 0.0
+    assert gp.PHASE_SNAP < 1e-9 / 100
+
+
 def test_phase_boundaries_are_half_open():
     spec = _spec('trot')                     # beta 0.5; front_left offset 0.0
     assert gp.leg_phase(spec, 'front_left', 0.0) == gp.LegPhase(gp.SWING, 0.0, 0.0)

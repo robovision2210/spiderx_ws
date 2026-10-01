@@ -17,6 +17,10 @@ from dataclasses import dataclass
 from spiderx_controller import leg_kinematics as lk
 
 SWING, STANCE = 'swing', 'stance'
+# Floating-point round-off tolerance at the lift-off / touch-down boundaries. Far below any sample
+# spacing (1/n, n <= 4000) and below the 1e-9 offsets used to probe transitions, so it only moves
+# values that lie on a boundary mathematically onto that boundary.
+PHASE_SNAP = 1e-12
 
 
 @dataclass(frozen=True)
@@ -35,6 +39,15 @@ def leg_phase(spec, leg, u):
     """SWING/STANCE of one leg at normalised time u, with the progress s through that phase."""
     theta = local_phase(spec, leg, u)
     swing_fraction = 1.0 - spec.duty_factor
+    # Snap round-off onto the boundaries so that the half-open definition decides, not the last bit
+    # of (u - phi) mod 1 or of 1 - beta: lift-off (theta = 0, also reached as 1 - tiny) is swing,
+    # touch-down (theta = 1 - beta) is stance. Found by the M5 Stage 0/1 gate: for wave
+    # (beta 0.85) 1 - 0.85 = 0.15000000000000002 while (0.15 - 0) mod 1 = 0.15, which labelled the
+    # rear-left touch-down sample as swing at every sample count.
+    if theta >= 1.0 - PHASE_SNAP:
+        theta = 0.0
+    if abs(theta - swing_fraction) <= PHASE_SNAP:
+        theta = swing_fraction
     if theta < swing_fraction:
         return LegPhase(SWING, theta / swing_fraction, theta)
     return LegPhase(STANCE, (theta - swing_fraction) / spec.duty_factor, theta)
@@ -67,5 +80,5 @@ def support_summary(spec, n):
             'fraction_by_count': fraction, 'swing_fraction': swing}
 
 
-__all__ = ['SWING', 'STANCE', 'LegPhase', 'local_phase', 'leg_phase', 'support_set', 'sample_us',
+__all__ = ['SWING', 'STANCE', 'PHASE_SNAP', 'LegPhase', 'local_phase', 'leg_phase', 'support_set', 'sample_us',
            'support_summary']
