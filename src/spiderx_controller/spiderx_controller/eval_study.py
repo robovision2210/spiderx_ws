@@ -168,6 +168,7 @@ class Plan:
     variants: dict                # eval_id -> Variant (unique, first-planned order)
     speed_base: dict              # speed-check eval_id -> baseline eval_id it is compared with
     accounting: dict
+    shipped_flags: dict           # baseline gait -> shipped requires_static_stability
 
     def stage_entries(self, stage):
         return [e for e in self.entries if e.stage == stage]
@@ -597,7 +598,10 @@ def build_plan(study, context):
 
     accounting = compute_accounting(entries, speed_entries, variants)
     check_accounting(accounting, raw['expected_counts'])
-    return Plan(study, tuple(entries), tuple(speed_entries), variants, speed_base, accounting)
+    flags = {g: context.gait_config.gait(g).requires_static_stability
+             for g in raw['baseline']['gaits']}
+    return Plan(study, tuple(entries), tuple(speed_entries), variants, speed_base, accounting,
+                flags)
 
 
 def compute_accounting(entries, speed_entries, variants):
