@@ -1,0 +1,97 @@
+# M4.5 - OFFLINE gait configurations for SpiderX (kinematic analysis only).
+#
+# Offline analysis only: these gaits are NEVER played back in Gazebo or on hardware by M4.5. They
+# are evaluated by spiderx_controller/gait_*.py against the URDF-derived IK (M3/M4), the URDF joint
+# limits and a quasi-static stability approximation. Not walking, not a validated gait, not balance
+# control, not hardware validation.
+#
+# Single source of every gait parameter (docs/M4_5_PLAN.md section 4). No robot geometry is stored
+# here: foot positions are offsets from each leg's CAD-neutral derived foot tip (M3/M4 rule), and the
+# tips, axes, limits and masses come from the expanded URDF.
+#
+# Frame base_link (NOT REP-103): +x robot right, +y robot front, +z up. Units m, rad, s.
+# The body travels along +y at constant speed, level, without lateral sway.
+#
+# Definitions (docs/M4_5_PLAN.md section 5.1):
+#   duty_factor (beta)  fraction of the cycle a foot is in stance
+#   phase_offsets       per leg, in [0, 1): a leg swings while (u - offset) mod 1 < 1 - beta,
+#                       u = t / T the normalised cycle time
+#   swing_order         legs (or groups of legs with one shared offset) in phase order; it must
+#                       agree with phase_offsets (checked)
+#   step_length_m (L)   foot travel RELATIVE TO THE BODY during stance (the stance stroke)
+#   body_speed_m_s (v)  body speed; the cycle period is derived as T = L / (beta v)
+#   stride length S     body travel per cycle = v T = L / beta (derived, reported)
+#   step_height_m (h)   swing lift above the stance plane (cycloid swing in the world frame)
+#   stance_height_offset_m  +z of every foot from its neutral tip (+z LOWERS the body, as M4)
+#
+# Gait names: the duty-factor ("wave-gait") family. Tripod and ripple are hexapod terms; their
+# four-legged meaning is defined here (docs/M4_5_PLAN.md section 5.2, open question Q1). The names
+# are data and can be renamed without code changes.
+
+config_version: 1
+date: "2026-10-01"
+simulation_only: true
+offline_only: true
+frame: base_link
+units: {length: m, angle: rad, time: s}
+direction_of_travel: "+y"
+reference:
+  pose: cad_neutral          # spiderx_poses.yaml (all joints 0 rad)
+  point: derived_foot_tip    # per leg, from the URDF collision mesh (M3 rule)
+
+validation_margin_rad: 0.05  # EXISTING_CONFIG: spiderx_legs.yaml soft_limit_margin_rad (checked)
+ik_position_tol_m: 1.0e-6    # must equal leg_kinematics.IK_POSITION_TOL_M (checked)
+
+analysis:                    # OFFLINE evaluation thresholds, fixed before any gait was evaluated
+  samples_per_cycle: 200             # uniform samples of u in [0, 1)
+  min_static_margin_m: 0.005         # required COM-to-support-edge distance where stability is required
+  min_singularity_margin_rad: 0.2    # same value as the M4 safety bound
+  max_joint_step_rad: 0.05           # largest joint change between consecutive samples (branch flips)
+  joint_speed_reference_rad_s: 0.5   # = spiderx_legs.yaml max_joint_velocity_rad_s (SIMULATION_PLACEHOLDER, checked)
+  velocity_jump_tol_m_s: 1.0e-3      # foot velocity jump allowed at stance/swing transitions
+
+defaults:                    # shared by every gait so that comparisons isolate the footfall pattern
+  step_length_m: 0.04
+  step_height_m: 0.015
+  stance_height_offset_m: 0.0
+  stance_center_offset_m: [0.0, 0.0]
+  body_speed_m_s: 0.005      # equal body speed for all gaits; T = L / (beta v) differs per gait
+  swing_profile: cycloid
+
+gaits:
+  wave:
+    description: one leg swings at a time with a long four-foot overlap (beta 0.85); lateral sequence
+    duty_factor: 0.85
+    phase_offsets: {front_left: 0.25, front_right: 0.75, rear_left: 0.0, rear_right: 0.5}
+    swing_order: [rear_left, front_left, rear_right, front_right]
+    requires_static_stability: true
+  tripod_crawl:
+    description: tripod-support boundary - always >= 3 feet down, one swinging (beta 0.75); lateral sequence
+    duty_factor: 0.75
+    phase_offsets: {front_left: 0.25, front_right: 0.75, rear_left: 0.0, rear_right: 0.5}
+    swing_order: [rear_left, front_left, rear_right, front_right]
+    requires_static_stability: true
+  ripple:
+    description: overlapping swings (beta 0.65) - alternates three- and two-foot support; lateral sequence
+    duty_factor: 0.65
+    phase_offsets: {front_left: 0.25, front_right: 0.75, rear_left: 0.0, rear_right: 0.5}
+    swing_order: [rear_left, front_left, rear_right, front_right]
+    requires_static_stability: false
+  amble:
+    description: four-beat lateral-sequence gait (beta 0.55), mostly two-foot support
+    duty_factor: 0.55
+    phase_offsets: {front_left: 0.25, front_right: 0.75, rear_left: 0.0, rear_right: 0.5}
+    swing_order: [rear_left, front_left, rear_right, front_right]
+    requires_static_stability: false
+  pace:
+    description: lateral pairs swing together (beta 0.5)
+    duty_factor: 0.5
+    phase_offsets: {front_left: 0.0, front_right: 0.5, rear_left: 0.0, rear_right: 0.5}
+    swing_order: [[front_left, rear_left], [front_right, rear_right]]
+    requires_static_stability: false
+  trot:
+    description: diagonal pairs swing together (beta 0.5); reference gait
+    duty_factor: 0.5
+    phase_offsets: {front_left: 0.0, front_right: 0.5, rear_left: 0.5, rear_right: 0.0}
+    swing_order: [[front_left, rear_right], [front_right, rear_left]]
+    requires_static_stability: false
