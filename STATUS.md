@@ -8,7 +8,7 @@ Last updated on branch `claude/spiderx-m5-offline-evaluation-plan` (M5 Phase 0, 
 - **Naming.** The former "M5 `/cmd_vel` bridge" is now **M5.5: Command-velocity bridge**. It is future work: not implemented and not scheduled.
 - See the [M5 evaluation plan](docs/M5_EVALUATION_PLAN.md).
 
-**M4.5 (offline multi-gait configuration and trajectory validation) was verified in the cloud and locally** by the owner on Ubuntu (`4a6553c`). It is still a draft PR and not merged.
+**M4.5 (offline multi-gait configuration and trajectory validation) was verified in the cloud and locally** by the owner on Ubuntu (`4a6553c`). M4.5 is merged into main at merge commit `3db1aec` and is cloud + locally verified.
 - **What it is.** OFFLINE kinematic analysis: no Gazebo gait playback, no walking, no hardware.
 - **Six YAML gaits** are evaluated through the unchanged M3/M4 IK: wave, tripod_crawl, ripple, amble, pace and trot.
 - **Checks.** IK feasibility, joint-limit, singularity and continuity margins, a quasi-static stability **approximation**, joint speed against the 0.5 rad/s **placeholder**, and heuristic energy **proxies**.
