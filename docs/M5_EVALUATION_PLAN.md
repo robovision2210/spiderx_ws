@@ -5,10 +5,17 @@
 > (the merge of PR #11, M4.5). The tree of `3db1aec` is identical to the M4.5 head `c24c4c0` that
 > was verified in the cloud and locally (`git diff c24c4c0 3db1aec` is empty).
 >
-> **Status: planned. The Phase 0 evaluation protocol is approved; implementation has not started.**
-> The owner approved the Phase 0 audit and plan (`4c1bd1d`) in principle and decided D1–D5. The
-> decisions are recorded in [§16](#16-owner-decision-addendum) and govern wherever they refine an
-> earlier section. Phase 1 starts only on the owner's instruction.
+> **Status: M5 offline evaluation implemented and cloud-verified; local verification pending.**
+> - **Phase 0.** The owner approved the audit and plan (`4c1bd1d`) and decided D1–D5; see
+>   [§16](#16-owner-decision-addendum).
+> - **Phase 1.** Implemented in Batches A–E (`1f8e323`, `5450ab0`, `39c0f6d`, `1aa33d5`,
+>   `d2c32f5`), plus the owner-approved M4.5 phase-boundary fix (`ece1e23`) that the Stage 0/1
+>   gate found.
+> - **Cloud validation.** 700 tests with 0 failures, and two byte-identical complete study runs.
+>   See [M5_TEST_RESULTS.md](M5_TEST_RESULTS.md) and
+>   [SPIDERX_M5_EVALUATION_GUIDE.md](SPIDERX_M5_EVALUATION_GUIDE.md).
+> - **Not complete.** The study is not complete until local verification passes and the owner
+>   merges the PR.
 
 ```text
 OFFLINE model analysis only. M5 evaluates gait CONFIGURATION CLASSES on the SpiderX URDF
@@ -306,9 +313,11 @@ The runner deduplicates by configuration hash, so 270 evaluations actually run.
 | 4 | 2 β × 4 y = 8 | 2: y = 0 at β 0.75 and 0.85 are the shipped tripod_crawl and wave | 6 |
 | **Sum** | **285 (Stages 0–3) / 293** | **21 / 23** | **264 / 270** |
 
-**Counting n.** "Unique" counts (configuration, n) pairs. Ignoring n, the study contains
-6 + 206 + 28 + 6 = **240** distinct configurations, because Stage 1 evaluates each of the 6
-shipped configurations at 5 sample counts.
+**Counting n.** "Unique" counts (configuration, n) pairs. Ignoring n, Stages 0–3 contain
+6 + 206 + 28 = **240** distinct configurations and Stages 0–4 contain 240 + 6 = **246**, because
+Stage 1 evaluates each of the 6 shipped configurations at 5 sample counts. *(Corrected in Phase 1:
+the original sentence summed to 246 but printed 240. The generated matrix and
+`m5_study.yaml` `expected_counts` give 240 / 246.)*
 
 **Equality rule.** Two points are "equal" when their canonical configuration JSON is equal: β,
 offsets, L, h, v, stance offsets, swing profile and n. `requires_static_stability` is excluded
