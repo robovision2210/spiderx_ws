@@ -4,6 +4,11 @@
 > Branch `claude/spiderx-m5-offline-evaluation-plan`, created from `origin/main` @ `3db1aec`
 > (the merge of PR #11, M4.5). The tree of `3db1aec` is identical to the M4.5 head `c24c4c0` that
 > was verified in the cloud and locally (`git diff c24c4c0 3db1aec` is empty).
+>
+> **Status: planned. The Phase 0 evaluation protocol is approved; implementation has not started.**
+> The owner approved the Phase 0 audit and plan (`4c1bd1d`) in principle and decided D1–D5. The
+> decisions are recorded in [§16](#16-owner-decision-addendum) and govern wherever they refine an
+> earlier section. Phase 1 starts only on the owner's instruction.
 
 ```text
 OFFLINE model analysis only. M5 evaluates gait CONFIGURATION CLASSES on the SpiderX URDF
@@ -40,6 +45,7 @@ walking, no hardware. Nothing in SpiderX is verified as walking, navigating or r
 13. [Test strategy](#13-test-strategy)
 14. [Paper-safe reporting language](#14-paper-safe-reporting-language)
 15. [Risks, limitations and owner decisions](#15-risks-limitations-and-owner-decisions)
+16. [Owner-decision addendum](#16-owner-decision-addendum)
 
 ---
 
@@ -281,13 +287,32 @@ wrote no files.
 | **0 + 1** Baseline and resolution | Reproduce the M4.5 pins exactly at n = 200; quantify discretisation | 6 shipped configs × n ∈ {40, 100, 200, 400, 800} | **30** | 30 |
 | **2** Kinematic block | H2, H3: feasibility boundary, margins, K; descriptive proxies | LS pattern × β ∈ {0.50, 0.55, 0.65, 0.75, 0.85} × L ∈ {0.02, 0.04, 0.06, 0.08, 0.10, 0.12} m × h ∈ {0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035} m | **210** | 206 (4 equal the baseline wave, tripod_crawl, ripple, amble) |
 | **3** Support block | H1: support margin and its binding triangle vs pattern and β | {LS, trot pairs, pace pairs} × β ∈ {0.50, 0.55, 0.65, 0.75, 0.85} × L ∈ {0.02, 0.04, 0.06} m, h = 0.015 m | **45** | 28 (15 LS equal Stage 2 points; trot and pace at β 0.5, L 0.04 equal the baseline) |
-| **4** (optional, D4) Constant support shift | Mechanism check for H1, **not** body sway | LS × β ∈ {0.75, 0.85} × stance-centre y ∈ {−10, −5, 0, +5} mm, L = 0.04 m, h = 0.015 m | 8 | 6 |
+| **4** (approved, D4) Stance-centre translation sensitivity | Mechanism check for H1: a fixed, constant translation, **not** body sway (§16 D4) | LS × β ∈ {0.75, 0.85} × stance-centre y ∈ {−10, −5, 0, +5} mm, L = 0.04 m, h = 0.015 m | 8 | 6 |
 
 **Totals:**
-- **285 evaluations, 264 unique (configuration, n) pairs** (Stages 0–3);
-- with Stage 4: 293 evaluations, 270 unique.
+- **Core staged design (Stages 0–3): 285 evaluations, 264 unique (configuration, n)
+  evaluations.**
+- **With the approved Stage 4: 293 evaluations, 270 unique.**
 
-The runner deduplicates by configuration hash, so 264 (or 270) evaluations actually run.
+The runner deduplicates by configuration hash, so 270 evaluations actually run.
+
+**Overlap accounting (exact):**
+
+| Stage | Planned | Already evaluated in an earlier stage | New unique (configuration, n) |
+|---|---|---|---|
+| 0 + 1 | 6 configs × 5 n = 30. Stage 0 (the baseline at n = 200) *is* the n = 200 subset of Stage 1, so it is counted once | – | 30 |
+| 2 | 5 β × 6 L × 7 h = 210 | 4: the LS points at L = 0.04 m, h = 0.015 m with β ∈ {0.55, 0.65, 0.75, 0.85} are amble, ripple, tripod_crawl and wave at n = 200 | 206 |
+| 3 | 3 patterns × 5 β × 3 L = 45 | 17: all 15 LS points (h = 0.015 m, L ∈ {0.02, 0.04, 0.06} m) are Stage 2 points; trot and pace at β = 0.5, L = 0.04 m are the shipped trot and pace | 28 |
+| 4 | 2 β × 4 y = 8 | 2: y = 0 at β 0.75 and 0.85 are the shipped tripod_crawl and wave | 6 |
+| **Sum** | **285 (Stages 0–3) / 293** | **21 / 23** | **264 / 270** |
+
+**Counting n.** "Unique" counts (configuration, n) pairs. Ignoring n, the study contains
+6 + 206 + 28 + 6 = **240** distinct configurations, because Stage 1 evaluates each of the 6
+shipped configurations at 5 sample counts.
+
+**Equality rule.** Two points are "equal" when their canonical configuration JSON is equal: β,
+offsets, L, h, v, stance offsets, swing profile and n. `requires_static_stability` is excluded
+from the comparison because it is derived (§10.3).
 
 **Runtime estimate [RESULT-based estimate].** The audit probe measured ≈ 2.3 s per evaluation at
 n = 200 in the cloud, and the cost grows linearly with n. So:
@@ -310,6 +335,30 @@ Total ≈ **11 minutes** single-threaded (± 50 %; infeasible configurations fin
   region is not a box.
 
 ### 6.3 Invariance checks inside the matrix [PLAN]
+
+**Stages 0 and 1 are the gate for the staged design (§16 D3).** Their checks verify the two
+assumptions that justify separating the blocks:
+1. time scaling (speed effects), and
+2. phase-pattern-dependent support effects.
+
+**Stages 2–4 are interpreted only if these checks pass.** If any check fails, the staged results
+are not reported as findings; the failure is reported, and the design is escalated (§16 D3).
+
+**Assumption-verification runs.** These 6 evaluations re-run the Stage 0 configurations at 2v₀.
+They are counted **separately** from the 285 and 293 above, and they are recorded in
+`derived/invariance.csv`. They check that:
+- the joint series are identical;
+- K is identical;
+- max joint speed is ×2;
+- the acceleration jump is ×4;
+- every geometric metric is unchanged.
+
+**Pattern-separation checks.** These use only Stage 1 evaluations, with no extra runs. At every
+n, pace and trot (equal β, L and h, different patterns) must give identical per-leg metrics.
+Support fractions must be equal across all aligned n. Stage 3 extends the per-leg pattern check
+to β > 0.5.
+
+**The invariance checks themselves:**
 
 These are reported, not assumed.
 - **Pattern invariance.** Stage 3 LS vs trot vs pace at equal (β, L, h) must give identical
@@ -480,6 +529,18 @@ are reported separately (all values in [0, 1]):
 This replaces reading `fraction_statically_stable` (§8) on its own. No owner decision is needed: it
 is a reporting clarification, and the M4.5 field is kept unchanged for continuity.
 
+**N/A rule (owner requirement, §16).**
+- **Margin-based outputs.** For configurations with no sample of three or more stance feet (pace
+  and trot at β = 0.5), every margin-based output is reported as **N/A (not applicable: no
+  three-contact support)**. This covers the minimum margin, the two `given_ge3` fractions and the
+  static-support status. It is never reported as zero stability or as a stability failure.
+- **Not-applicable checks.** M4.5's raw `static_stability` check stores `passed = false,
+  applicable = false` for these configurations (`gait_metrics.py:190-210`). The raw table keeps
+  that verbatim and adds an explicit `status` column ∈ {pass, fail, n/a}. Every derived table and
+  figure shows `n/a`.
+- **The legacy field.** The legacy M4.5 field `fraction_statically_stable = 0` appears only in the
+  baseline-reproduction table. It is footnoted "0 = no applicable samples, not instability".
+
 ### 10.5 Null and negative results [PLAN]
 
 - **Every hypothesis is reported.** H1–H3 are reported with the outcome *supported*, *falsified*
@@ -626,8 +687,10 @@ committed separately from code. The M4.5 modules and YAML stay **unchanged** thr
 | "sampled-IK feasible (n = 200)" | "feasible gait", "achievable on the robot" |
 | "quasi-static support-margin approximation (point feet, CAD masses, level body)" | "stable gait", "dynamically stable", "balance" |
 | "speed-normalised peak joint-speed demand K (rad/m)" | "servo requirement", "actuator limit" |
-| "exceeds the 0.5 rad/s simulation placeholder" | "too fast for the servos" |
-| "heuristic proxies (foot path, joint travel, lift of leg masses) per metre" | "energy", "power", "efficiency", "cost of transport" |
+| "exceeds the 0.5 rad/s provisional screening flag (simulation placeholder)" | "too fast for the servos", "actuator limit", "hardware limit" |
+| "K: model-derived joint-rate-per-distance indicator (rad/m)" | "motor capability", "measured joint speed" |
+| "N/A: no three-contact support" | "0 % stable", "unstable" (for pace or trot) |
+| "heuristic proxies (foot path, joint travel, lift of leg masses) per metre" | "energy", "energy consumption", "electrical power", "actuator work", "efficiency", "torque cost", "battery or runtime estimate", "cost of transport" |
 | "configuration class (pattern × duty factor)" | "best gait", "optimal gait" |
 | "model prediction / offline result" | "experimental result", "measured", "validated" |
 | "not evaluated: dynamics, contact, terrain, tracking, hardware" | silence about these |
@@ -654,6 +717,9 @@ committed separately from code. The M4.5 modules and YAML stay **unchanged** thr
 | Scope creep (sway, playback, Gazebo) | Violates the boundary | Excluded in §10.2; tests forbid runtime imports |
 
 ### 15.2 Owner decisions [OWNER DECISION]
+
+**Decided.** All five decisions were made by the owner, choosing D1 (a), D2 (A), D3 (A), D4
+include and D5 (B). See §16. The alternatives below are kept as the decision record.
 
 Only choices that change the science or the project structure are listed. Everything else above
 is a [PLAN] default.
@@ -705,7 +771,7 @@ is a [PLAN] default.
 - **Default if unanswered:** (A).
 - **Consequence:** this fixes `m5_study.yaml` and the run budget.
 
-**D4. Optional Stage 4: constant support-polygon shift.**
+**D4. Optional Stage 4: constant support-polygon shift.** (Decided: included and renamed "stance-centre translation sensitivity"; see §16.)
 - **Options:**
   - **(A) Include** 8 configurations: a stance-centre y shift that is constant over the cycle.
     It uses an existing YAML parameter and is labelled "constant shift, **not body sway**". It
@@ -746,5 +812,147 @@ is a [PLAN] default.
 
 ---
 
-*Phase 0 ends with this document. No M5 code, YAML, data or figures exist yet. The next step is
-owner review of §15.2, then Phase 1 Batch A.*
+## 16. Owner-decision addendum
+
+The owner reviewed Phase 0 and approved the audit and the plan commit `4c1bd1d` in principle. The
+owner then decided D1–D5 as follows. Where this addendum refines an earlier section, it governs.
+The alternatives in §15.2 stay in place as the record of what was considered. **[OWNER
+DECISION]**
+
+### D1 — Milestone naming: option (a)
+
+**Names.**
+- This work is **M5: Offline evaluation study**.
+- The former roadmap item "M5 – `/cmd_vel` → gait bridge" is renamed **M5.5: Command-velocity
+  bridge**.
+
+**M5.5.** It remains **future work**. It is not implemented and not scheduled, and it must not
+be described as available or complete.
+
+**Docs.** The roadmap and `STATUS.md` were updated only to remove the naming conflict. They mark
+M5 as "planned; Phase 0 evaluation protocol approved; implementation not started". Historical
+records keep their original wording, for example `docs/M4_5_PLAN.md:268` and
+`docs/M4_PLAN.md:362`.
+
+### D2 — Joint-speed treatment: option (A)
+
+**Primary quantity.** Joint-speed demand is reported **continuously**. The primary quantity is
+the peak demand per metre of travel:
+
+  K = (max joint speed) / v, in rad/m, with the derived v_adm(ω) = ω / K.
+
+**What K is.** In the current clock-driven trajectory model, body speed only **rescales time**:
+the sampled geometric path, and with it the joint-angle series, does not change (§3, §6.1). K
+is therefore a **model-derived joint-rate-per-distance indicator** of the reference trajectory.
+
+**What K is not.** It is **not** a measured motor, servo or hardware capability. It does not
+include tracking, load, torque or actuator dynamics.
+
+**The 0.5 rad/s value.** It is kept **only** as a clearly labelled **secondary, provisional
+screening flag**. It is the `SIMULATION_PLACEHOLDER` from `spiderx_legs.yaml:24`. It must never
+be described as:
+- a physical actuator limit;
+- a validated hardware limit;
+- a primary scientific conclusion.
+
+**Screening failures.** Cases that exceed the flag remain in every table as results. They are
+never discarded.
+
+### D3 — Study design: option (A), staged
+
+**The design.** As in §6.2: **285 evaluations, 264 unique** for Stages 0–3, and 293 / 270 with
+Stage 4. The exact overlaps are in §6.2.
+
+**The gate.** Stages 0 and 1, with the assumption-verification runs of §6.3, verify the two
+assumptions behind separating the blocks:
+1. time scaling / speed effects;
+2. phase-pattern-dependent support effects.
+
+Stages 2–4 are interpreted only if these checks pass.
+
+**Escalation.** A full factorial (§15.2 D3 (B)) is a **future escalation only**. It is triggered
+if the staged results expose an interaction that this design cannot explain, for example:
+- a failed invariance check;
+- a pattern × (L, h) effect on per-leg metrics;
+- a support result that Stage 3's L levels cannot resolve.
+
+Escalation needs a new `study_id` and a recorded reason.
+
+### D4 — Stage 4 included: "stance-centre translation sensitivity"
+
+**What it is.** A fixed, **constant** forward/back translation of the nominal foot/stance centre
+(`stance_center_offset_m` y ∈ {−10, −5, 0, +5} mm). It is applied for β ∈ {0.75, 0.85}, with
+L = 0.04 m and h = 0.015 m. It is used to examine the **static-support-margin mechanism** behind
+the observed crawl-gait support failures (H1: the COM sits behind the foot centre).
+
+**Size.** Exactly the **eight** planned evaluations (6 unique).
+
+**What it is not.** It is **not**:
+- body sway;
+- time-varying body motion;
+- dynamic balance;
+- gait playback;
+- walking.
+
+**What it claims.** It tests the mechanism without claiming to solve the crawl-gait failures.
+Any margin change it shows is a model observation for a static translation, not a remedy.
+
+### D5 — References: option (B), with a citation acquisition protocol
+
+**Status.** No external citation, bibliography entry or paper claim is added in Phase 0 or in
+this update.
+
+**Concepts that need literature grounding:**
+1. static stability and support polygons (stability-margin definition, quasi-static assumptions);
+2. quadruped gait terminology (wave, crawl, amble, pace, trot; lateral vs diagonal sequence);
+3. duty-factor and phase-offset conventions;
+4. kinematic trajectory evaluation (swing-trajectory shape, workspace and IK feasibility
+   assessment, discretisation);
+5. the limits of proxy energy metrics (why path, joint-travel and lift proxies are not energy or
+   cost of transport).
+
+**Acquisition protocol [PLAN]:**
+- **Separate step.** A later **citations-only review step** produces candidate references, one
+  set per concept.
+- **Verified against the original.** Each candidate must be checked against the **original
+  source** (the publisher or DOI record, or the original text), never a secondary citation. It
+  must record:
+  - the full bibliographic data;
+  - the exact statement it supports;
+  - the page, section or equation where available;
+  - how it was verified.
+- **Owner approval first.** The candidates go to the owner for approval **before** any of them
+  enters tracked documentation. Rejected or unverifiable candidates are dropped, not paraphrased.
+- **Until then,** M5 documents use only repository-defined terms (§3) and make no
+  literature-comparison claims.
+
+### Scientific-precision rules (owner requirements, binding for Phase 1)
+
+- **Negative controls.** `wave` and `tripod_crawl` are explicit negative controls in **every**
+  baseline and reproduction analysis. Failed configurations are **never filtered** from tables or
+  figures.
+- **Separate claim levels.** IK feasibility is kept separate from:
+  - the static-support approximation;
+  - dynamic stability;
+  - real energy efficiency;
+  - walking, navigation and hardware capability.
+
+  No output combines them into one "feasible gait" claim.
+- **N/A, not zero.** Pace and trot (and any configuration with no three-contact support) report
+  **N/A** for static support, never zero stability or a stability failure (§10.4).
+- **Resolution.** Sample-count sensitivity stays explicit (§9). The **200-sample result is a
+  defined numerical resolution, not ground truth.**
+- **Energy proxies.** The heuristic energy metrics stay **descriptive secondary proxies** only.
+  They must not be called:
+  - energy consumption;
+  - electrical power;
+  - actuator work;
+  - efficiency;
+  - torque cost;
+  - battery or runtime estimates.
+- **K.** K is explained as in D2 wherever it appears.
+
+---
+
+*Phase 0 ends with this document and its decision addendum. No M5 code, YAML, data, artifacts or
+figures exist. Phase 1 Batch A starts only on the owner's instruction.*

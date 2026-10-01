@@ -5,9 +5,9 @@ test that proves it works. Do not start Nav2 or SLAM work until M6 is done: they
 moves when commanded (`/cmd_vel`) and reports its motion (`/odom`).
 
 ```
-M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 offline gait analysis  ─►  (future: gait playback)
+M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 offline gait analysis  ─►  M5 offline evaluation study  ─►  (future: gait playback)
                                                                           │
-      M9 hardware ◄─ M8 Nav2 ◄─ M7 SLAM/AMCL ◄─ M6 odometry ◄─ M5 /cmd_vel bridge
+      M9 hardware ◄─ M8 Nav2 ◄─ M7 SLAM/AMCL ◄─ M6 odometry ◄─ M5.5 command-velocity bridge
 ```
 
 ## M0 – Model and simulation ✅ done
@@ -103,6 +103,17 @@ OFFLINE kinematic analysis only. There is no Gazebo gait playback, no walking an
 - [x] Owner decisions: keep the YAML gait names (terminology mapping in the framework guide); matplotlib approved, with `--no-plots` kept
 - [ ] Paper evaluation: better mass data and comparison against published gait results; body sway stays future work only
 
+## M5 – Offline evaluation study — planned; Phase 0 evaluation protocol approved; implementation not started
+
+OFFLINE model analysis only: a staged, reproducible evaluation of gait configuration classes on the
+SpiderX URDF model, using the unchanged M4.5 evaluator. There is no Gazebo, no gait playback, no
+walking and no hardware. See the [plan](M5_EVALUATION_PLAN.md) and its owner-decision addendum (§16).
+
+- [x] Phase 0: read-only audit and evaluation protocol (`4c1bd1d`), approved by the owner in principle; decisions D1–D5 recorded
+- [ ] Phase 1: study definition, generator, runner, derived tables (not started)
+- [ ] Study run (cloud), results document, local verification (not started)
+- [ ] Citations-only review step: original-source-verified candidate references for owner approval (not started)
+
 ## Future — Gait playback and walking in simulation (unscheduled; formerly the M4.5 goal)
 
 By the owner's decision, this stays an unscheduled future item. It is not part of M4.5.
@@ -110,7 +121,10 @@ By the owner's decision, this stays an unscheduled future item. It is not part o
 - [ ] Static walk (3 feet down), then trot, with the stance COM kept inside the support polygon
 - [ ] Walks forward 1 m in simulation without falling (a video is required before claiming it)
 
-## M5 – `/cmd_vel` → gait bridge
+## M5.5 – Command-velocity bridge (future work)
+
+Renamed from "M5 – `/cmd_vel` → gait bridge" by owner decision D1 (see [M5 plan §16](M5_EVALUATION_PLAN.md#16-owner-decision-addendum)). Not implemented and not scheduled.
+
 
 - [ ] Stepping velocity follows `/cmd_vel` (vx, vy, ωz) within limits
 - [ ] A timeout stops the robot safely

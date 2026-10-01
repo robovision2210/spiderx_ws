@@ -1,6 +1,12 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/spiderx-m45-offline-gait-framework` (M4.5, from `main` @ `c4a993c` with M4.1 merged).
+Last updated on branch `claude/spiderx-m5-offline-evaluation-plan` (M5 Phase 0, from `main` @ `3db1aec` with M4.5 merged).
+
+**M5 (Offline evaluation study) is planned. The Phase 0 evaluation protocol is approved; implementation has not started.**
+- **What it is.** An offline, staged evaluation of gait configuration classes with the unchanged M4.5 evaluator. No Gazebo, no gait playback, no walking, no hardware.
+- **No results yet.** No M5 code, data or results exist.
+- **Naming.** The former "M5 `/cmd_vel` bridge" is now **M5.5: Command-velocity bridge**. It is future work: not implemented and not scheduled.
+- See the [M5 evaluation plan](docs/M5_EVALUATION_PLAN.md).
 
 **M4.5 (offline multi-gait configuration and trajectory validation) was verified in the cloud and locally** by the owner on Ubuntu (`4a6553c`). It is still a draft PR and not merged.
 - **What it is.** OFFLINE kinematic analysis: no Gazebo gait playback, no walking, no hardware.
@@ -95,7 +101,8 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | Static multi-leg pose hold via IK (simulation only) | ✅ **Static multi-leg pose hold via IK validated in Gazebo** (cloud + local) | 5 s holds; \|roll\|, \|pitch\| ≤ 2.8e-5 rad; body height within 0.05 mm of the geometric expectation. **Not** walking, gait, balance or hardware validation; contact not measured |
 | Offline gait configuration and trajectory validation (M4.5) | ✅ Verified (offline; cloud + local) | `m4_5_gait_analysis`: 6 YAML gaits checked against the URDF-derived IK, joint limits, a static-stability **approximation** and the joint-speed **placeholder**. wave and tripod_crawl FAIL static stability (reported, not tuned). [M4.5 results](docs/M4_5_TEST_RESULTS.md). **Not** walking, not a validated gait, not hardware |
 | Gait playback / walking in simulation | ⚪ Future work | Unscheduled "Future — gait playback" item (owner decision). Nothing streams gait trajectories to the controllers |
-| `/cmd_vel` → gait bridge | ⚪ Future work | M5. Nothing consumes `/cmd_vel` today |
+| Offline evaluation study (M5) | ⚪ Planned: Phase 0 evaluation protocol approved; implementation not started | [M5 evaluation plan](docs/M5_EVALUATION_PLAN.md). Offline model analysis only; no results yet |
+| `/cmd_vel` → gait bridge | ⚪ Future work | M5.5: Command-velocity bridge (renamed from M5). Not implemented. Nothing consumes `/cmd_vel` today |
 | Odometry (`/spiderx/leg_odometry`, `/odom`) | ⚪ Future work | M6. **Not faked** |
 
 ## Mapping, localization, navigation
