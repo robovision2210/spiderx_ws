@@ -3,6 +3,13 @@
 > This plan was written and committed **before** any M4.5 implementation.
 > Branch `claude/spiderx-m45-offline-gait-framework`, created from `main` @ `c4a993c` (PR #10, M4.1,
 > merged). `main`'s tree is identical to the M4.1 head verified in the cloud and locally (`b979b03`).
+>
+> **Status:** implemented (offline) in Batches A–F and checked in the cloud: 556 tests, 0 failures.
+> Local verification and the open questions in §8 are pending. Results are in
+> [M4_5_TEST_RESULTS.md](M4_5_TEST_RESULTS.md); the design walkthrough is in
+> [SPIDERX_GAIT_FRAMEWORK.md](SPIDERX_GAIT_FRAMEWORK.md). One deviation from §5.2: T is not
+> chosen to meet the joint-speed placeholder. All gaits share one body speed (5 mm/s) for a fair
+> comparison, and wave's placeholder exceedance is reported as a failure.
 
 ```text
 OFFLINE analysis only: pure-Python kinematic and geometric evaluation of gait configurations.

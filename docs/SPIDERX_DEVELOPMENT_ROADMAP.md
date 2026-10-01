@@ -5,7 +5,7 @@ test that proves it works. Do not start Nav2 or SLAM work until M6 is done: they
 moves when commanded (`/cmd_vel`) and reports its motion (`/odom`).
 
 ```
-M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 gait
+M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 offline gait analysis  ─►  (gait playback, Q2)
                                                                           │
       M9 hardware ◄─ M8 Nav2 ◄─ M7 SLAM/AMCL ◄─ M6 odometry ◄─ M5 /cmd_vel bridge
 ```
@@ -88,7 +88,23 @@ is no gait, walking or hardware work. See the [plan](M4_1_PLAN.md) and
 - [x] Launch tests with a mutation check; a forced broadcaster failure; Ctrl+C during start-up; the M0–M4 runtime regressions (cloud)
 - [x] The same checks on the owner's Ubuntu PC (`35b83b5`; all passed)
 
-## M4.5 – Gait generator (formerly M4)
+## M4.5 – Offline multi-gait configuration and trajectory validation – implemented (offline) — paper-evaluation pending
+
+OFFLINE kinematic analysis only. There is no Gazebo gait playback, no walking and no hardware. See the
+[plan](M4_5_PLAN.md), [results](M4_5_TEST_RESULTS.md) and [framework guide](SPIDERX_GAIT_FRAMEWORK.md).
+
+- [x] Six YAML gait configurations: wave, tripod_crawl, ripple, amble, pace, trot. Duty factor, phase offsets, swing order, stroke, step height, stance offsets and speed/period are all checked by a strict loader
+- [x] Clock-driven foot trajectories: cycloid swing, velocity-continuous transitions
+- [x] Sampled IK feasibility through the unchanged M3/M4 IK, plus joint-limit, singularity and continuity margins
+- [x] Static-stability margin (an approximation), joint speed against the placeholder, energy proxies (heuristic)
+- [x] Per-gait PASS/FAIL with the exact failed checks; deterministic CSV, JSON and PNG; cross-gait comparison (cloud)
+- [x] Reported result: wave and tripod_crawl FAIL static stability (the COM is ≈ 5.8 mm behind the foot centre); the other four pass their kinematic checks
+- [ ] The same checks on the owner's Ubuntu PC
+- [ ] Paper evaluation: confirm the gait names (Q1), body sway (Q3) and better mass data
+
+## Future – Gait playback and walking in simulation (unscheduled; formerly the M4.5 goal)
+
+Placement is open question Q2 in [M4_5_PLAN.md](M4_5_PLAN.md): before M5, inside M5, or a new milestone.
 
 - [ ] Static walk (3 feet down), then trot, with the stance COM kept inside the support polygon
 - [ ] Walks forward 1 m in simulation without falling (a video is required before claiming it)

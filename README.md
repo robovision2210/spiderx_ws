@@ -47,7 +47,8 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | Balance / standing controller | ⚪ Not implemented. M1 and M2 hold joint angles only, with no balance feedback |
 | Single-leg FK/IK (front-left, simulation only) | ✅ Verified locally and in the cloud (M3): FK matches the URDF, TF and Gazebo; IK reaches 5 small lifted targets and refuses unreachable or out-of-limit targets. **Not** walking, a gait or hardware validation |
 | All-leg FK/IK and static pose hold (simulation only) | ✅ Verified locally and in the cloud (M4): 3 static four-leg poses via IK held in Gazebo. **Not** walking, gait or hardware validation |
-| Gait generation, `/cmd_vel` bridge | ⚪ Planned |
+| Offline gait configuration and trajectory validation (M4.5) | ✅ Implemented (offline, cloud; local pending): 6 YAML gaits checked against the URDF-derived IK, joint limits and a static-stability **approximation**. **Not** walking or hardware validation |
+| Gait playback / walking, `/cmd_vel` bridge | ⚪ Planned |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
 | Autonomous navigation | ⛔ Blocked until locomotion and odometry exist |
@@ -253,6 +254,32 @@ static poses from `config/m4_pose_targets.yaml` in Gazebo:
 
 See the [M4 plan](docs/M4_PLAN.md) and the [M4 results](docs/M4_TEST_RESULTS.md).
 
+## 📈 Offline Gait Analysis (M4.5, no simulator)
+
+```text
+OFFLINE kinematic analysis only. No Gazebo gait playback, no walking, no hardware.
+```
+
+```bash
+ros2 run spiderx_controller m4_5_gait_analysis --check-only   # validate config/m4_5_gaits.yaml
+ros2 run spiderx_controller m4_5_gait_analysis                # 6 gaits -> log/m4_5_gait_analysis/
+```
+
+Each gait in `config/m4_5_gaits.yaml` (wave, tripod_crawl, ripple, amble, pace, trot) is sampled
+over one cycle and checked against:
+- the unchanged M3/M4 IK, joint limits and singularity margins;
+- a quasi-static stability **approximation**;
+- the joint-speed **placeholder**.
+
+**Output.** Each gait gets a PASS/FAIL verdict naming the exact failed checks, plus CSV, JSON and
+PNG files and a cross-gait comparison. Energy figures are heuristic **proxies**.
+
+**Reported result.** wave and tripod_crawl fail static stability, because the URDF COM is
+≈ 5.8 mm behind the foot centre.
+
+See the [M4.5 results](docs/M4_5_TEST_RESULTS.md) and the
+[gait framework guide](docs/SPIDERX_GAIT_FRAMEWORK.md).
+
 ## 🔍 Verification
 
 ```bash
@@ -306,7 +333,7 @@ Never run this for simulation. Servo and IMU integration are templates for now:
 
 ## 🗺️ Roadmap
 
-**joint control ✅ (M1) → simulation posture hold ✅ (M2, sim only) → single-leg FK/IK ✅ (M3, sim only, front-left) → all-leg IK + static pose hold ✅ (M4, sim only) → gait generator → `/cmd_vel` bridge →
+**joint control ✅ (M1) → simulation posture hold ✅ (M2, sim only) → single-leg FK/IK ✅ (M3, sim only, front-left) → all-leg IK + static pose hold ✅ (M4, sim only) → offline gait analysis ✅ (M4.5, offline, cloud) → gait playback in simulation → `/cmd_vel` bridge →
 odometry → SLAM → Nav2 → real-hardware validation**
 
 Nav2 comes last because it only decides where to go. It needs a robot that executes `/cmd_vel` and
@@ -337,6 +364,7 @@ These are listed in [media/README.md](media/README.md):
 | [docs/SPIDERX_HARDWARE_INTERFACE.md](docs/SPIDERX_HARDWARE_INTERFACE.md) | Lidar, actuators, IMU, embedded computer |
 | [docs/SPIDERX_SIMULATION_VS_HARDWARE.md](docs/SPIDERX_SIMULATION_VS_HARDWARE.md) | What differs, and the rules |
 | [docs/SPIDERX_TESTING_GUIDE.md](docs/SPIDERX_TESTING_GUIDE.md) | All test layers |
+| [docs/SPIDERX_GAIT_FRAMEWORK.md](docs/SPIDERX_GAIT_FRAMEWORK.md) | M4.5 offline gait framework: data flow, design, debugging, exercises |
 | [docs/SPIDERX_URDF_AUDIT.md](docs/SPIDERX_URDF_AUDIT.md), [docs/URDF_INERTIA_AUDIT.md](docs/URDF_INERTIA_AUDIT.md) | Model audits |
 | [docs/MIGRATION_FORTRESS.md](docs/MIGRATION_FORTRESS.md) | Gazebo Classic → Fortress migration (Classic kept as legacy) |
 | [docs/MECHAPRIME_TO_SPIDERX_ARCHITECTURE_PLAN.md](docs/MECHAPRIME_TO_SPIDERX_ARCHITECTURE_PLAN.md) | How the Mechaprime layout was adapted |

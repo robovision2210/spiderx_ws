@@ -17,7 +17,7 @@ source ~/spiderx_ws/install/setup.bash
 |---|---|---|---|
 | 1 | Build | `cd ~/spiderx_ws && colcon build --symlink-install` | `Summary: 8 packages finished` |
 | 2 | Static validation | `./scripts/validate_fortress.sh` | `All checks passed.` |
-| 3 | Unit tests (including M1 safety rejections, M2 config/metrics, M3 FK/IK negative tests, and M4.1 controller start-up ordering and validator state checks) | `colcon test --packages-select spiderx_controller spiderx_scripts && colcon test-result --verbose` | 0 failures |
+| 3 | Unit tests (including M1 safety rejections, M2 config/metrics, M3 FK/IK negative tests, M4.1 controller start-up ordering and validator state checks, and the M4.5 gait framework and regression pins) | `colcon test --packages-select spiderx_controller spiderx_scripts && colcon test-result --verbose` | 0 failures |
 | 4 | Controller config vs URDF | `ros2 run spiderx_controller validate_controller_config` | `Controller configuration: valid` |
 | 5 | Runtime validation (starts Gazebo) | `./scripts/validate_fortress.sh --runtime` | `All checks passed.` (topics, `lidar_link`, 12 joints, no hardware node) |
 | 6 | Manual simulation | `ros2 launch spiderx_bringup fortress.launch.py` | SpiderX visible in the walled world |
@@ -37,6 +37,7 @@ source ~/spiderx_ws/install/setup.bash
 | 20 | M4 static (all-leg kinematics, simulation only) | `./scripts/validate_m4_all_leg_ik.sh` | `All M4 checks passed.` |
 | 21 | M4 runtime (Gazebo, 3 static poses) | `./scripts/validate_m4_all_leg_ik.sh --runtime` | The three M4 outcome lines, then `All M4 checks passed.` |
 | 22 | M4.1 controller start-up (manual) | `ros2 launch spiderx_bringup fortress_control.launch.py`, then Ctrl+C in the same terminal | `Configured and activated joint_state_broadcaster` appears before the `leg_trajectory_controller` spawner starts. If the broadcaster fails, you see exactly one `[ERROR] [spiderx_controller]: joint_state_broadcaster startup failed; leg_trajectory_controller was not started; press Ctrl+C and relaunch.` and no trajectory controller. Stop with Ctrl+C in the launch terminal: signalling only the `ros2 launch` process can leave `ign gazebo server`/`gui` running (see [M4.1 results](M4_1_TEST_RESULTS.md)) |
+| 23 | M4.5 offline gait analysis (no simulator) | `ros2 run spiderx_controller m4_5_gait_analysis` (`--check-only` validates the YAML only) | Exit 0; 6 gaits evaluated; reports in `log/m4_5_gait_analysis/`. Expected verdicts: wave and tripod_crawl FAIL (`static_stability`; wave also `joint_speed`), the other four PASS. A FAIL verdict is a reported result, not a test failure. See [M4.5 results](M4_5_TEST_RESULTS.md) and [framework guide](SPIDERX_GAIT_FRAMEWORK.md) |
 
 ## Blocked stacks (optional, expected to wait)
 
