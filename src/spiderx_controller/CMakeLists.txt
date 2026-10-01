@@ -19,6 +19,7 @@ install(PROGRAMS
   scripts/validate_leg_kinematics
   scripts/m4_pose_validation
   scripts/m4_5_gait_analysis
+  scripts/m5_offline_evaluation
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -41,6 +42,11 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_gait_metrics test/test_gait_metrics.py)
   ament_add_pytest_test(test_gait_report test/test_gait_report.py)
   ament_add_pytest_test(test_gait_regression test/test_gait_regression.py)
+  ament_add_pytest_test(test_eval_study test/test_eval_study.py)
+  ament_add_pytest_test(test_eval_runner test/test_eval_runner.py)
+  ament_add_pytest_test(test_eval_records test/test_eval_records.py)
+  ament_add_pytest_test(test_eval_tables test/test_eval_tables.py)
+  ament_add_pytest_test(test_eval_regression test/test_eval_regression.py)
 endif()
 
 ament_package()

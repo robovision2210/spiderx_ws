@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""M5 OFFLINE evaluation study (see spiderx_controller/m5_offline_evaluation.py).
+
+    ros2 run spiderx_controller m5_offline_evaluation [--check-only | --dry-run] [--study FILE] [--out DIR]
+"""
+import sys
+
+from spiderx_controller.m5_offline_evaluation import main
+
+if __name__ == '__main__':
+    sys.exit(main())

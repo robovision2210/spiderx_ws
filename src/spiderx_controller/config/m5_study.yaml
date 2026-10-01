@@ -1,0 +1,108 @@
+# M5 - OFFLINE evaluation study of the M4.5 gait configurations (declarative study specification).
+#
+# Offline model analysis only: every evaluation reuses the unchanged M4.5 evaluator
+# (gait_metrics.evaluate_gait) on the SpiderX URDF kinematic model. Nothing here moves the robot,
+# starts Gazebo or touches hardware. Not walking, not dynamic stability, not energy measurement.
+#
+# Design: docs/M5_EVALUATION_PLAN.md (sections 6, 9, 10, 16). The staged study, its levels, the
+# Stage 0/1 gate and the expected accounting are fixed here BEFORE any study run; a change needs
+# a new study (the study_id is a hash of this file's canonical content).
+#
+# Every variant is built as a YAML-equivalent M4.5 gait and passes the SAME validator as
+# config/m4_5_gaits.yaml (gait_config.validate_config). This file never changes m4_5_gaits.yaml.
+#
+# Frame base_link (NOT REP-103): +x right, +y front, +z up. Units m, rad, s.
+
+schema: spiderx_m5_study/v1
+study_name: m5_offline_evaluation
+offline_only: true
+simulation_only: true
+source_config: m4_5_gaits.yaml          # the shipped M4.5 gait file (read only)
+
+# Fixed controls of Stages 2-4; they must equal the M4.5 shipped defaults (checked), so that the
+# baseline is a point inside the study grid.
+fixed:
+  samples_per_cycle: 200                # a defined numerical resolution, not ground truth
+  body_speed_m_s: 0.005                 # time scale only; K = max joint speed / v is reported
+  stance_height_offset_m: 0.0
+  stance_center_offset_m: [0.0, 0.0]
+  swing_profile: cycloid
+
+# Footfall patterns, taken from shipped gaits (phase offsets + swing order; nothing else).
+patterns:
+  lateral_sequence: {source_gait: wave}     # LR -> LF -> RR -> RF singles (wave, tripod_crawl, ripple, amble)
+  diagonal_pairs: {source_gait: trot}
+  lateral_pairs: {source_gait: pace}
+
+# Stage 0/1: baseline reproduction (Stage 0 = the reference resolution) and resolution study.
+baseline:
+  gaits: [wave, tripod_crawl, ripple, amble, pace, trot]
+  negative_controls: [wave, tripod_crawl]   # must FAIL static support at every resolution
+  reference_samples_per_cycle: 200
+  resolutions: [40, 100, 200, 400, 800]
+  # M4.5 reported results at n = 200 (test_gait_regression.py pins; docs/M4_5_TEST_RESULTS.md).
+  # min_static_margin_m: null = not applicable (never three stance feet), NOT zero.
+  expected:
+    wave: {failed_checks: [static_stability, joint_speed], min_static_margin_m: -0.002582, fraction_statically_stable: 0.845, max_joint_speed_rad_s: 0.5405, lift_work_proxy_j_per_m: 5.124, joint_travel_rad_per_m: 90.72}
+    tripod_crawl: {failed_checks: [static_stability], min_static_margin_m: -0.004073, fraction_statically_stable: 0.770, max_joint_speed_rad_s: 0.3048, lift_work_proxy_j_per_m: 4.642, joint_travel_rad_per_m: 81.38}
+    ripple: {failed_checks: [], min_static_margin_m: -0.002098, fraction_statically_stable: 0.505, max_joint_speed_rad_s: 0.2029, lift_work_proxy_j_per_m: 4.174, joint_travel_rad_per_m: 72.25}
+    amble: {failed_checks: [], min_static_margin_m: 0.000842, fraction_statically_stable: 0.200, max_joint_speed_rad_s: 0.1465, lift_work_proxy_j_per_m: 3.719, joint_travel_rad_per_m: 63.37}
+    pace: {failed_checks: [], min_static_margin_m: null, fraction_statically_stable: 0.0, max_joint_speed_rad_s: 0.1269, lift_work_proxy_j_per_m: 3.498, joint_travel_rad_per_m: 59.01}
+    trot: {failed_checks: [], min_static_margin_m: null, fraction_statically_stable: 0.0, max_joint_speed_rad_s: 0.1269, lift_work_proxy_j_per_m: 3.498, joint_travel_rad_per_m: 59.01}
+  tolerances:                            # absolute; the same as test_gait_regression.py
+    min_static_margin_m: 2.0e-6
+    fraction_statically_stable: 1.0e-9
+    max_joint_speed_rad_s: 1.0e-4
+    lift_work_proxy_j_per_m: 1.0e-3
+    joint_travel_rad_per_m: 1.0e-2
+
+# Stage 0/1 gate: assumption checks that must pass before Stages 2-4 are evaluated.
+gate:
+  speed_scale:                           # assumption (a): speed rescales time only
+    factor: 2.0                          # 6 extra evaluations (baseline gaits at 2 v), counted separately
+    joint_series_abs_tol_rad: 1.0e-12
+    metric_rel_tol: 1.0e-9
+  pattern_separation:                    # assumption (b): per-leg path metrics vs support metrics
+    equal_per_leg_metrics: [[pace, trot]]   # different patterns, equal beta/L/h: per-leg metrics equal
+    metric_rel_tol: 1.0e-9
+    support_fraction_abs_tol: 1.0e-12    # support fractions equal at every aligned resolution
+
+# Provisional SECONDARY screening flag only (owner decision D2). It equals the spiderx_legs.yaml
+# SIMULATION_PLACEHOLDER (checked). Not an actuator limit, not a validity criterion.
+screening:
+  joint_speed_reference_rad_s: 0.5
+
+stages:
+  S2:                                    # kinematic block (per-leg metrics are pattern-independent)
+    title: kinematic block
+    pattern: lateral_sequence
+    duty_factors: [0.50, 0.55, 0.65, 0.75, 0.85]
+    step_lengths_m: [0.02, 0.04, 0.06, 0.08, 0.10, 0.12]
+    step_heights_m: [0.005, 0.010, 0.015, 0.020, 0.025, 0.030, 0.035]
+  S3:                                    # support block (support metrics depend on the pattern)
+    title: support block
+    patterns: [lateral_sequence, diagonal_pairs, lateral_pairs]
+    duty_factors: [0.50, 0.55, 0.65, 0.75, 0.85]
+    step_lengths_m: [0.02, 0.04, 0.06]
+    step_height_m: 0.015
+  S4:                                    # owner decision D4
+    title: stance-centre translation sensitivity
+    note: >-
+      A fixed, constant forward/back translation of the nominal stance centre, used to examine the
+      static-support-margin mechanism of the crawl-gait failures. NOT body sway, NOT time-varying
+      motion, NOT balance control, NOT gait playback, NOT walking; it does not claim to solve the
+      failures.
+    pattern: lateral_sequence
+    duty_factors: [0.75, 0.85]
+    stance_center_y_offsets_m: [-0.010, -0.005, 0.0, 0.005]
+    step_length_m: 0.04
+    step_height_m: 0.015
+
+# Accounting, fixed in advance (docs/M5_EVALUATION_PLAN.md section 6.2); the generator refuses the
+# study if the generated matrix does not reproduce it exactly.
+expected_counts:
+  planned: {S01: 30, S2: 210, S3: 45, S4: 8}
+  new_unique: {S01: 30, S2: 206, S3: 28, S4: 6}
+  stages_0_3: {planned: 285, unique: 264, distinct_configurations: 240}
+  all_stages: {planned: 293, unique: 270, distinct_configurations: 246}
+  speed_checks: 6

@@ -309,3 +309,38 @@ These replace the earlier open questions.
   widen the crawl gaits' static margins is still an [ASSUMPTION].
 - **Q4. matplotlib.** Approved as an `exec_depend`. `--no-plots` is kept for headless,
   tables-only output.
+
+## Erratum (2026-10-01): phase-boundary round-off in `gait_phase` (found by M5, fixed in `ece1e23`)
+
+The results above are kept as originally recorded. This section corrects them.
+
+**What was wrong.**
+- `gait_phase.leg_phase` labelled a leg as swing while `(u − φ) mod 1 < 1 − β`.
+- For `wave` (β = 0.85), `1 − 0.85` evaluates to `0.15000000000000002` in floating point.
+- The rear-left touch-down sample (u = 0.15, φ = 0) gives exactly `0.15`, so that one sample was
+  labelled swing instead of stance at every sample count.
+
+**How it was found.** The M5 Stage 0/1 gate check `pattern_separation` found it. Wave's
+three-foot support fraction varied with the sample count (0.6 + 1/n instead of 0.6). The owner
+approved fixing it at the source.
+
+**The fix.** `leg_phase` now snaps round-off within 1e-12 onto the phase boundary, so lift-off is
+swing and touch-down is stance. Regression tests check exact swing counts and exact wave support
+fractions at n ∈ {40, 100, 200, 400, 800}.
+
+**Corrected values (n = 200).** Only `wave` changes.
+
+| Quantity | Recorded above | Corrected |
+|---|---|---|
+| wave three-foot / four-foot support fraction | 0.605 / 0.395 | **0.600 / 0.400** |
+| wave samples failing `static_stability` | 61 of 200 | **60 of 200** |
+
+**Unchanged (re-verified by the unchanged `test_gait_regression.py` pins).**
+- every verdict and failed-check list;
+- every minimum static margin;
+- `fraction_statically_stable` (wave 84.5 %);
+- every joint speed, including wave's 16 placeholder breaches;
+- every energy proxy and kinematic margin;
+- all values of the other five gaits.
+
+The M4.5 conclusions are unaffected. See [M5_TEST_RESULTS.md](M5_TEST_RESULTS.md).
