@@ -1,5 +1,14 @@
 # M6.0-D Plan – Single Valid Live Playback Safety Plan
 
+> **Status (2026-10-02): implementation cloud-verified in offline/mock/isolated-domain tests;
+> live dispatch disabled and local live playback pending.** Batches A–D (`28b72a4`, `e87c81a`,
+> `d7fb6a2`, `7fd0152`) implement this plan with `LIVE_DISPATCH_ENABLED = False`; `--live` refuses
+> with exit 3. No trajectory goal was sent to a live controller. Evidence:
+> [M6D_LIVE_PLAYBACK_RESULTS.md](M6D_LIVE_PLAYBACK_RESULTS.md); usage:
+> [SPIDERX_M6D_LIVE_PLAYBACK_GUIDE.md](SPIDERX_M6D_LIVE_PLAYBACK_GUIDE.md). D16 was implemented by
+> composition (`m6_goal_fingerprint.build_live_goal`), so `m6_action_client.py` and its tests are
+> unchanged.
+
 > **Adopted plan (2026-10-02).** The Phase 0 audit was written on
 > `claude/spiderx-m6d-live-playback-plan` (`c55421b`, from `f5a7252`). It is adopted here on the
 > implementation branch `claude/spiderx-m6d-live-playback`, created from `origin/main` @ `9885057`
