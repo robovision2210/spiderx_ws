@@ -17,6 +17,10 @@ Nothing in SpiderX is verified as walking, dynamically stable, navigating, or ru
 - **[PLAN]**: a proposed M6 rule or implementation.
 - **[OWNER DECISION]**: a choice for the owner (§12).
 
+> **Owner decision addendum (2026-10-02).** The owner approved decisions D1–D7 and revised
+> M6.0-C; see [§14](#14-owner-decision-addendum-2026-10-02). Where §1–§13 disagree with §14, **§14 governs**. Superseded passages are
+> marked inline.
+
 ## Contents
 
 1. [Status and scope boundary](#1-status-and-scope-boundary)
@@ -32,6 +36,7 @@ Nothing in SpiderX is verified as walking, dynamically stable, navigating, or ru
 11. [Planned implementation batches](#11-planned-implementation-batches)
 12. [Risk register and owner decisions](#12-risk-register-and-owner-decisions)
 13. [Out of scope](#13-out-of-scope)
+14. [Owner decision addendum (2026-10-02)](#14-owner-decision-addendum-2026-10-02)
 
 ---
 
@@ -42,7 +47,8 @@ Nothing in SpiderX is verified as walking, dynamically stable, navigating, or ru
 - **What M6.0 may eventually show:**
   - a validated trajectory can be converted, preflighted and **refused** without sending anything;
   - the controller's action interface is available and its controllers are active;
-  - an invalid goal is rejected with no motion;
+  - ~~an invalid goal is rejected with no motion~~ (superseded by [§14](#14-owner-decision-addendum-2026-10-02): invalid-goal handling is
+    proven against a **mock** action server only; no invalid goal is sent to the live controller);
   - **one** bounded, non-cyclic, neutral-to-neutral, all-joint trajectory is executed in Gazebo,
     and the commanded and observed joint positions are logged and compared.
 - **What M6.0 never shows:** walking, gait execution on the robot, body support, translation,
@@ -302,7 +308,10 @@ mirroring M4 (`m4_pose_validation.py:297-336`):
 
 The same controller and publisher checks are repeated **after** the run.
 
-**Server-side rejection (M6.0-C) [PLAN].** One deliberately invalid goal is sent and must be
+> **Superseded by [§14](#14-owner-decision-addendum-2026-10-02).** No invalid goal is sent to the live controller. M6.0-C is now a
+> mock-only test step; the paragraph below is kept for audit history only.
+
+**Server-side rejection (M6.0-C) [PLAN, SUPERSEDED].** One deliberately invalid goal is sent and must be
 rejected **without motion**:
 - **Primary probe:** non-monotonic `time_from_start`, which the controller refuses as "not strictly
   increasing".
@@ -364,7 +373,7 @@ Each step requires the previous one, and each needs owner approval before it run
 |---|---|---|---|---|---|
 | **M6.0-A** Offline conversion + preflight (no ROS) | A neutral-to-neutral waypoint spec and one M5 record (conversion only) | Deterministic trajectory files and ID; every §6 offline check passes for valid input; every mutation is refused with exit 2 and **0 send calls** | Refuse; nothing is sent | "Offline trajectory conversion and preflight implemented and tested" | Any motion, controller or Gazebo claim |
 | **M6.0-B** Runtime preflight (`--dry-run`), no goal | Running `fortress_control.launch.py` | Both controllers `active`; action server available; one `/joint_states` publisher; start within 0.05 rad; **0 goals sent** (log); clean SIGINT shutdown and no leftovers | Exit 2, NOT READY; no goal | "The controller action interface and preflight were observed in Gazebo without sending a goal" | Motion, tracking, replay |
-| **M6.0-C** Deliberately invalid goal | One invalid goal (non-monotonic time; all positions = start) | Goal **rejected**; result/rejection logged; joint positions unchanged within 0.05 rad over the settle; no leftovers | Unexpected acceptance: cancel, FAIL, report | "An invalid trajectory goal is rejected by the controller without motion" | Validity of any valid trajectory |
+| ~~**M6.0-C** Deliberately invalid goal~~ **Superseded: see [§14](#14-owner-decision-addendum-2026-10-02) (mock-only)** | One invalid goal (non-monotonic time; all positions = start) | Goal **rejected**; result/rejection logged; joint positions unchanged within 0.05 rad over the settle; no leftovers | Unexpected acceptance: cancel, FAIL, report | "An invalid trajectory goal is rejected by the controller without motion" | Validity of any valid trajectory |
 | **M6.0-D** One bounded neutral-to-neutral playback | One multi-point, non-cyclic, all-12-joint trajectory within the §5 envelope (content: D1) | Accepted; feedback logged; result code and string; per-joint commanded vs observed error at each waypoint and after the settle; returned to neutral within tolerance; controllers still `active`; one `/joint_states` publisher at the end; no leftovers (normal, rejection, timeout and Ctrl+C runs) | Watchdog or abort: cancel per D5, FAIL, logs kept | "One bounded multi-point joint trajectory was executed in Gazebo through the existing controller stack; observed joint positions tracked commanded ones within X rad (simulation, placeholder actuators)" | Walking, gait, stability, contact, body support, hardware, real-time |
 | **M6.1** Protected replay (after M6.0-D) | One M5-derived gait cycle with lead-in and lead-out, on the base constraint chosen in D2 | Joint tracking statistics per joint; trajectory ID and M5 provenance; no contact or body claims | As in M6.0-D | "An offline-validated gait joint trajectory was replayed in Gazebo on a [fixed/raised] base; joint-space tracking within X" | Locomotion, translation, stability, contact, energy, hardware |
 | **Future** Free-base, contact, dynamic experiments | Separate plan | – | – | – | Everything above, until planned |
@@ -412,7 +421,7 @@ separately; docs are committed separately. **[PLAN]**
 |---|---|---|
 | **A** | Trajectory model, offline preflight, deterministic conversion (neutral waypoints; M5 record regeneration), `--validate-only` | New modules in `spiderx_controller` (D7) + unit tests. No ROS |
 | **B** | Action client: multi-point goals, mock-server tests, `--dry-run` runtime preflight, logging schema, watchdog, cancel policy (D5) | New client module (does not modify `trajectory_client.py`, so M1–M4 tools are unchanged) + mock tests |
-| **C** | Validator script for M6.0-B and M6.0-C, with cleanup checks | New script; Gazebo runs need owner approval |
+| **C** | Validator script for M6.0-B (M6.0-C is mock-only per [§14](#14-owner-decision-addendum-2026-10-02)), with cleanup checks | New script; Gazebo runs need owner approval |
 | **D** | M6.0-D playback run and results docs | Owner approval required before running |
 | **M6.1** | Separate plan after M6.0-D (base constraint D2) | – |
 
@@ -433,6 +442,9 @@ separately; docs are committed separately. **[PLAN]**
 | Spline behaviour for position + velocity points is not re-read from source | Observe feedback `desired` in M6.0-D; [HYPOTHESIS] until then |
 
 ### 12.2 Owner decisions [OWNER DECISION]
+
+> **Decided 2026-10-02.** The options below are kept for audit history. The decisions taken are
+> recorded in [§14](#14-owner-decision-addendum-2026-10-02).
 
 **D1. Content of the first valid playback (M6.0-D).**
 
@@ -524,3 +536,114 @@ from neutral, the maximum total duration, and the maximum point count.
 - Changes to the URDF/xacro, meshes, worlds, controller YAML, launch files or package metadata
   (any later fixed-base variant for M6.1 needs its own approved plan).
 - Paper figures; PRs or merges during Phase 0.
+
+## 14. Owner decision addendum (2026-10-02)
+
+```text
+Docs-only decision record. No M6 code exists. During this update, nothing was started:
+no Gazebo, launch, controller manager, action client, goal (valid or invalid), playback,
+/cmd_vel, M5.5, contact, fixed-base or free-base work, and no hardware.
+The owner approved the Phase 0 audit commit cc6974d. M6 implementation still needs owner approval.
+```
+
+### 14.1 Decisions [OWNER DECISION]
+
+| ID | Decision | Binding consequences |
+|---|---|---|
+| **D1** | **(b)** One bounded, non-repeating neutral → `crouch_10mm` → neutral playback | Reuses the **exact** M4-validated `crouch_10mm` pose (`config/m4_pose_targets.yaml:46-53`) and the M4 joint conventions. It is a **trajectory-execution and observability check only**. It does not validate gait playback, contact, body support, balance, locomotion or walking. **Blocked: see §14.2** |
+| **D2** | **Defer M6.1 entirely** | Nothing for M6.1 in this branch: no fixed-base model, launch variant, raised base, free base, contact analysis or M6.1 runtime work. M6.1 needs a separate future plan and owner approval, and only after M6.0-D passes locally |
+| **D3** | **(c)** Three evidence channels, **all required** | (1) The goal is accepted **and** the result is successful. (2) An independent `/joint_states` tracking check at **0.05 rad**. (3) Explicit `path_tolerance` / `goal_tolerance` in the FollowJointTrajectory **goal**, with **no controller-YAML change**. Each channel is recorded separately as `passed`, `failed`, `timed_out` or `unavailable`. **Action success alone is not tracking evidence** |
+| **D4** | **(a)** Conservative envelope (§14.3) | If the pose exceeds the envelope: **stop and report; never widen the envelope automatically** |
+| **D5** | **(a)** Cancel only; the controller holds | **No automatic return-to-neutral** after cancellation, rejection, timeout, tracking failure or error. Any later neutral-return mechanism needs its own preflight and owner approval |
+| **D6** | **(b)** Cloud **and** owner Ubuntu PC | Installed versions are recorded in every run report. The §3 interface-compatibility checks are repeated on the owner's stack **before any valid local playback**. A version mismatch is a visible preflight outcome, never silently ignored |
+| **D7** | **(a)** New M6-specific modules and scripts in `spiderx_controller` | `trajectory_client.py` and the M1–M4 tools stay **unchanged** |
+
+### 14.2 Blocking finding: D1 pose exceeds the D4 per-joint limit [FINDING]
+
+**[RESULT]** This was computed read-only and in memory with the shipped loader:
+`m4_pose_targets.load_and_evaluate()` followed by `pose_command(plan, …)`. Nothing was written and
+no ROS node was created. It agrees with `docs/M4_PLAN.md:189`.
+
+| Pose | Joint commands in canonical order [hip, thigh, foot] × lf, rf, lr, rr (rad) |
+|---|---|
+| `neutral_stance` | all 0.0 |
+| `crouch_10mm` | lf [0, +0.0555, +0.1223], rf [0, −0.0555, −0.1223], lr [0, +0.0555, −0.1223], rr [0, −0.0555, −0.1223] |
+| **Δ (crouch − neutral)** | **max \|Δ\| = 0.1223 rad (foot joints)**; thigh joints 0.0555 rad; hips 0 |
+
+**Conflict.**
+- D4 requires every per-joint delta to be **≤ the exact `crouch_10mm` delta and ≤ 0.05 rad**.
+- The exact `crouch_10mm` delta is 0.0555 rad (thigh) and 0.1223 rad (foot). Both exceed 0.05 rad.
+- So **8 of the 12 joints** violate the 0.05 rad cap, and D1 and D4 cannot both be met.
+
+**Handling, per D4.** Stop and report; do not widen.
+- The envelope stays at 0.05 rad.
+- The pose is **not** scaled, clipped or replaced.
+- **M6.0-D is BLOCKED** until the owner resolves the conflict with a new decision.
+- M6.0-A, M6.0-B and M6.0-C do not depend on the pose content and are not blocked by this
+  finding. Each still needs its own approval.
+
+When the implementation exists, the M6.0-A offline preflight must reproduce this finding: with the
+shipped config, the D1 trajectory must be **refused** with exit 2, a named reason
+(`per_joint_delta_exceeds_envelope`), and 0 send calls.
+
+**Owner options for a later decision** (nothing is chosen here):
+- (i) Raise the per-joint cap explicitly to the exact `crouch_10mm` delta (0.1223 rad), keeping
+  every other D4 rule.
+- (ii) Keep 0.05 rad and approve different waypoints. These would not be the M4-validated pose, and
+  so would contradict D1 as written.
+- (iii) Change D1 to the zero-motion option (a).
+
+### 14.3 Approved D4 envelope for M6.0-D [OWNER DECISION]
+
+Rules that §14 does not restate keep their §5 values: the 0.5 rad/s speed rule, the
+max(3.0 s, 2·|Δq|/0.5) segment duration, the 1.0 s settle, the 0.02 s minimum spacing, zero velocity
+at every waypoint, and refusal without clamping.
+
+| Rule | Value |
+|---|---|
+| Per-joint delta from neutral | ≤ the exact M4 `crouch_10mm` delta **and** ≤ **0.05 rad** (currently unsatisfiable; §14.2) |
+| Maximum total duration | **30 s** |
+| Maximum points | **5** |
+| Start delay | **Required**: the first moving point is never at `time_from_start` = 0 |
+| Time | Strictly increasing `time_from_start` |
+| Goals | **One goal only**: no cyclic or repeating mode, no retry, no concatenation |
+| Point validity | Every value finite; all **12 joints in canonical controller order**; client-side soft-limit check at URDF limits − **0.05 rad** margin |
+| Preflight order | Every check runs **before goal construction**. A goal object is never built for a refused trajectory |
+| Envelope breach | Stop and report. **Never widen automatically** |
+| Goal tolerances (D3 channel 3) | Explicit per-joint `path_tolerance` and `goal_tolerance`, plus `goal_time_tolerance`, set in the goal message only. **[PLAN]** The proposal is 0.05 rad position (the M1 tolerance). The values are fixed in the implementation plan for owner approval |
+| Abort | Cancel only (D5) |
+
+### 14.4 Revised verification ladder
+
+Each step requires the previous step and its own owner approval. **M6.0-B is the earliest live
+interaction.**
+
+| Step | Kind | Content | Evidence | Allowed claim | Non-claims |
+|---|---|---|---|---|---|
+| **M6.0-A** | Offline, no ROS | Conversion and offline preflight of the D1 waypoint spec; `--validate-only` | Deterministic trajectory and ID; all §6 and §14.3 checks; every mutation refused with exit 2 and **0 send calls**; reproduces the §14.2 refusal | "Offline conversion and preflight are implemented and tested" | No motion, controller, Gazebo, tracking or playback claim |
+| **M6.0-B** | **Live, read-only; no goal** | Preflight against the running controller stack: action-server availability, controller states, `/joint_states` source and publisher count, exact 12-joint name contract, installed-version collection (D6) | Run report with each check's outcome; **0 goals sent** (logged and asserted); clean process-group shutdown with no leftovers | "The controller action interface was observed read-only, and the preflight ran without sending any goal" | No motion, tracking, rejection-behaviour or playback claim |
+| **M6.0-C** | **Mock-only** (deterministic test double; no live controller) | A mock FollowJointTrajectory action server or test double | (1) Malformed, non-monotonic, out-of-limit, NaN and incomplete trajectories are **rejected before any valid-goal dispatch**. (2) A rejected status or result is surfaced as a structured `failed` outcome. (3) **No retry** occurs. (4) **No automatic neutral-return goal** is generated. (5) **No later valid goal** follows a rejection | "The M6 client's rejection and failure paths are proven against a deterministic mock" | Nothing about the live controller's rejection behaviour. **No invalid goal is sent to the live controller.** A live invalid-goal test is out of scope unless separately approved |
+| **M6.0-D** | Live, one valid goal — **BLOCKED (§14.2)** | One neutral → `crouch_10mm` → neutral goal within §14.3, after the D6 checks on the target machine | The three D3 channels, recorded separately; controllers still active; one `/joint_states` publisher; no leftovers | "One bounded multi-point joint trajectory was executed in Gazebo through the existing controller stack, and joint-space tracking was observed within 0.05 rad (simulation, placeholder actuators)" | No gait playback, walking, locomotion, contact, body support, balance, stability, real-time, actuator or hardware claim |
+| M6.1 | Deferred (D2) | — | — | — | Needs a separate plan and approval after M6.0-D passes locally |
+
+### 14.5 Implementation boundary
+
+| Area | Allowed in M6 implementation (after approval) | Never in M6.0 |
+|---|---|---|
+| Code location | **New** M6-specific modules, tests and scripts in `spiderx_controller` (D7) | Changes to `trajectory_client.py` or any M1–M5 module, tool or script |
+| Config | New M6-specific config files, if the implementation plan names them | Changes to controller YAML, `spiderx_legs.yaml`, M4 or M5 configs |
+| Robot model and launch | Use the existing launch unchanged, for M6.0-B/D only | URDF/xacro, mesh, world or launch changes; fixed-base or raised-base variants (D2) |
+| Goals to the live controller | M6.0-B: **none**. M6.0-D: exactly **one** valid goal, after approval | Invalid goals, retries, repeats, concatenation, cyclic playback, automatic neutral return |
+| Testing of rejection paths | Mock action server or test double (M6.0-C) | Live invalid-goal tests unless separately approved |
+| Interfaces | FollowJointTrajectory on `/leg_trajectory_controller/follow_joint_trajectory`; read-only `/joint_states` and controller queries | `/cmd_vel`, M5.5, odometry, navigation |
+| Physical scope | Joint-space observation in simulation | Contact, free-base, body support, hardware, servos, firmware |
+| Process | Docs and code committed separately on this branch | PRs, merges or pushes to `main` |
+
+### 14.6 Activity statement for this update [FACT]
+
+- Only `docs/M6_GAIT_PLAYBACK_SAFETY_PLAN.md` changed.
+- No code, test, config, URDF, launch or package file was touched.
+- Nothing was run except one read-only, in-memory offline computation (§14.2).
+- No Gazebo, launch, controller manager, action client, goal, playback, `/cmd_vel`, M5.5, contact,
+  fixed-base or free-base work, and no hardware.
+- No PR was created.
