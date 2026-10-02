@@ -1,5 +1,10 @@
 # M6.0 Plan – Gazebo Gait-Playback Safety Plan
 
+> **Status (2026-10-02): implementation complete; cloud offline/mock verified; live playback and
+> local verification pending.** See [§14.8](#148-implementation-status-2026-10-02), [M6 test results](M6_TEST_RESULTS.md) and the
+> [M6 playback guide](SPIDERX_M6_PLAYBACK_GUIDE.md). No valid trajectory has been sent to a live
+> controller.
+>
 > **Phase 0 (read-only audit and plan only).** Written before any M6 code. Branch
 > `claude/spiderx-m6-gait-playback-safety-plan`, created from `origin/main` @ `99c835a` (M5 merged;
 > the tree of `99c835a` is identical to the cloud + locally verified M5 head `c344a2a`).
@@ -44,6 +49,8 @@ Nothing in SpiderX is verified as walking, dynamically stable, navigating, or ru
 
 - **Status [PLAN].** M6.0 Phase 0 is complete when this document is committed. M6.0 Phase 1
   starts only after the owner reviews §12.
+- **Status (2026-10-02).** Implementation complete; cloud offline/mock verified; live playback and
+  local verification pending ([§14.8](#148-implementation-status-2026-10-02)).
 - **What M6.0 may eventually show:**
   - a validated trajectory can be converted, preflighted and **refused** without sending anything;
   - the controller's action interface is available and its controllers are active;
@@ -677,3 +684,28 @@ the reports.
 - No Gazebo, launch, controller manager, action client, goal, playback, `/cmd_vel`, M5.5, contact,
   fixed-base or free-base work, and no hardware.
 - No PR was created.
+
+### 14.8 Implementation status (2026-10-02)
+
+**[RESULT]** **Implementation complete; cloud offline/mock verified; live playback and local
+verification pending.** The evidence is in [M6_TEST_RESULTS.md](M6_TEST_RESULTS.md) and the usage in
+[SPIDERX_M6_PLAYBACK_GUIDE.md](SPIDERX_M6_PLAYBACK_GUIDE.md).
+
+| Step | Implementation (`spiderx_controller/`) | Commit | Cloud status |
+|---|---|---|---|
+| M6.0-A offline conversion and preflight | `m6_envelope.py`, `m6_trajectory.py`, `m6_offline_preflight.py` | `0a9d2db` | Verified offline: deterministic, 32 failure codes, exit 2 on refusal |
+| M6.0-C mock-only safety tests | `m6_action_client.py` (adapter-based), `test/m6_mock_action.py` | `d6ebaad` | Verified against a test double only, including mutation tests |
+| M6.0-B live read-only preflight tool | `m6_live_preflight.py` | `e9b1565` | Mock-tested. Cloud ran `--interface-only` only (no node). **Graph mode pending locally** |
+| M6.0-D one valid playback | No live adapter exists | – | **Not run. Needs separate owner approval** |
+
+**Implementation choices for owner review:**
+- **`goal_time_tolerance` = 1.0 s**, the existing M3/M4 `settle_s`. In the installed controller,
+  0 would mean "unchecked".
+- **Version differences** from the §2.2 cloud reference are reported visibly by the live preflight
+  and are not a failure. The interface-contract check must pass (D6).
+- **Start-pose tolerance.** The live preflight also requires the observed start pose to be within
+  the existing 0.05 rad start-pose tolerance. This is a fourth, separate quantity, distinct from
+  the three in §14.7.
+- **Naming.** The [development roadmap](SPIDERX_DEVELOPMENT_ROADMAP.md) still lists
+  "M6 – Odometry", which predates this plan. Renumbering is an owner decision and has not been
+  made here.

@@ -5,7 +5,7 @@ test that proves it works. Do not start Nav2 or SLAM work until M6 is done: they
 moves when commanded (`/cmd_vel`) and reports its motion (`/odom`).
 
 ```
-M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 offline gait analysis  ─►  M5 offline evaluation study  ─►  (future: gait playback)
+M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 offline gait analysis  ─►  M5 offline evaluation study  ─►  M6.0 playback safety layers  ─►  (future: gait playback)
                                                                           │
       M9 hardware ◄─ M8 Nav2 ◄─ M7 SLAM/AMCL ◄─ M6 odometry ◄─ M5.5 command-velocity bridge
 ```
@@ -114,6 +114,25 @@ walking and no hardware. See the [plan](M5_EVALUATION_PLAN.md) and its owner-dec
 - [x] Study run (cloud): two complete, byte-identical runs; gate passed; H1–H3 supported (model predictions) — [results](M5_TEST_RESULTS.md)
 - [x] The same checks on the owner's Ubuntu PC: offline only; two full local runs exit 0 and byte-identical with each other; 700 tests passing
 - [ ] Citations-only review step: original-source-verified candidate references for owner approval (not started)
+
+## M6.0 – Gazebo gait-playback safety layers — implementation complete; cloud offline/mock verified; live and local pending
+
+A trajectory-execution and observability check only. It replays **one** bounded neutral →
+`crouch_10mm` → neutral trajectory, after approval. It is not gait playback and not walking. See
+the [plan](M6_GAIT_PLAYBACK_SAFETY_PLAN.md) (§14 owner decisions D1–D7 and option (i)), the
+[results](M6_TEST_RESULTS.md) and the [guide](SPIDERX_M6_PLAYBACK_GUIDE.md).
+
+**Naming.** This M6.0 is the gait-playback safety milestone. The "M6 – Odometry" entry below
+predates it, and renumbering is an owner decision.
+
+- [x] Phase 0: read-only audit and safety plan (`cc6974d`); decisions D1–D7 (`3536575`); crouch envelope option (i), 0.1223 rad for M6.0-D only (`bef3c25`)
+- [x] M6.0-A: offline conversion and preflight (`0a9d2db`)
+- [x] M6.0-C: single-goal action client, mock-only safety and mutation tests (`d6ebaad`)
+- [x] M6.0-B tool: live read-only preflight, mock-tested; cloud ran `--interface-only` only (`e9b1565`)
+- [x] Cloud validation: 912 tests, 0 failures; M1–M4 static validators pass
+- [ ] Local verification on the owner's Ubuntu PC, including the live read-only preflight against a running stack
+- [ ] M6.0-D: one valid neutral → `crouch_10mm` → neutral goal (needs separate owner approval and a live adapter)
+- [ ] M6.1: protected replay of an offline-validated gait cycle (deferred, D2; separate plan)
 
 ## Future — Gait playback and walking in simulation (unscheduled; formerly the M4.5 goal)
 
