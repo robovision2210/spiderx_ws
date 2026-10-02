@@ -58,6 +58,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m6d_session test/test_m6d_session.py)
   ament_add_pytest_test(test_m6d_adapter_isolated test/test_m6d_adapter_isolated.py)
   ament_add_pytest_test(test_m6d_cli_readiness test/test_m6d_cli_readiness.py)
+  ament_add_pytest_test(test_m6d_live_enabling test/test_m6d_live_enabling.py)
 endif()
 
 ament_package()

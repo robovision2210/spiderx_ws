@@ -29,6 +29,25 @@ def _secs(t):
     return t.sec + t.nanosec * 1e-9
 
 
+class _OwnExecutorRosApi:
+    """m6_live_preflight.RosApi over the transport's own executor (never the global context)."""
+
+    def __init__(self, transport):
+        from controller_manager_msgs.srv import ListControllers
+        from rclpy.action import get_action_server_names_and_types_by_node
+        from sensor_msgs.msg import JointState
+        self.transport = transport
+        self.get_action_server_names_and_types_by_node = get_action_server_names_and_types_by_node
+        self.ListControllers = ListControllers
+        self.JointState = JointState
+
+    def spin_once(self, node, timeout_sec):
+        self.transport.executor.spin_once(timeout_sec=timeout_sec)
+
+    def spin_until_future_complete(self, node, future, timeout_sec):
+        self.transport.executor.spin_until_future_complete(future, timeout_sec=timeout_sec)
+
+
 class RclpyLiveTransport:
     """LiveTransport over rclpy. Construct, then open(); always close()."""
 
@@ -149,6 +168,25 @@ class RclpyLiveTransport:
             self.executor.spin_once(timeout_sec=remaining)
         events, self._events = self._events, []
         return events
+
+    def graph_collector(self, timeout_s=10.0, window_s=2.0, discovery_s=2.0):
+        """A same-process, READ-ONLY readiness collector on this transport's own node (D3).
+
+        It is the M6.0-B GraphProbe (action servers, list_controllers, /joint_states publishers
+        and a sample window), spun on this transport's executor and context. It sends no goal and
+        publishes nothing. /joint_states samples received during collection are readiness
+        evidence only and are dropped afterwards, so tracking starts from the dispatch.
+        """
+        from spiderx_controller import m6_live_preflight as lpf
+        api = _OwnExecutorRosApi(self)
+
+        def collect():
+            self._require_open()
+            obs = lpf.GraphProbe(self.node, api, timeout_s=timeout_s, window_s=window_s,
+                                 discovery_s=discovery_s).collect()
+            self._events = [e for e in self._events if e[0] != 'joint_state']
+            return obs
+        return collect
 
     def graph_status(self):
         self._require_open()

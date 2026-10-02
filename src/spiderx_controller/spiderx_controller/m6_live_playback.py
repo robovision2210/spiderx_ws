@@ -518,14 +518,20 @@ __all__ = ['LiveSession', 'LiveTransport', 'InterruptLatch', 'StreamMonitor', 'g
 # ==================================================================== CLI (Batch D)
 # ros2 run spiderx_controller m6_live_playback --dry-run       offline goal contract, no ROS graph
 # ros2 run spiderx_controller m6_live_playback --mock [...]    full state machine, in-memory mock
-# ros2 run spiderx_controller m6_live_playback --live          HARD-DISABLED in this build
+# ros2 run spiderx_controller m6_live_playback --live --domain-id N
+#                                                    one goal; refused (exit 3) while the single
+#                                                    gate m6_live_contract.LIVE_DISPATCH_ENABLED
+#                                                    is False, which it is in this build
 #
-# There is no option to supply a trajectory, skip the confirmation, retry, repeat or force.
+# There is no option to supply a trajectory, skip the confirmation, retry, repeat or force, and
+# no option or environment variable that changes the gate.
 # Exit codes: 0 succeeded / dry-run PASS; 1 terminal failure; 2 refused; 3 live dispatch disabled.
 
 EXIT_OK, EXIT_FAILED, EXIT_REFUSED, EXIT_DISABLED = 0, 1, 2, 3
 DEFAULT_OUT = 'log/m6d_playback'
-CLI_SCOPE = ('M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run '
+LIVE_STATE = ('ENABLED for exactly one goal' if lc.LIVE_DISPATCH_ENABLED
+              else 'HARD-DISABLED in this build')
+CLI_SCOPE = (f'M6.0-D live-playback tool. Live dispatch is {LIVE_STATE}; --dry-run '
              'and --mock never touch a ROS graph. Nothing here shows motion, tracking, contact, '
              'balance or walking.')
 
@@ -540,13 +546,16 @@ def parse_args(argv):
                       help='run the full state machine against the in-memory mock transport; '
                            'reads the confirmation word from stdin')
     mode.add_argument('--live', action='store_true',
-                      help='live dispatch (HARD-DISABLED in this build)')
+                      help=f'one live goal to the running simulation ({LIVE_STATE})')
     p.add_argument('--scenario', default='success',
                    help='--mock scenario: success, interrupt, tracking_error, '
                         'stale_joint_states, controller_lost, rejected')
     p.add_argument('--out', default=DEFAULT_OUT,
                    help=f'report root under the git-ignored log/ (default: {DEFAULT_OUT})')
     p.add_argument('--no-write', action='store_true', help='print only')
+    p.add_argument('--domain-id', type=int, default=None,
+                   help='--live only: the ROS domain id of the running simulation, typed '
+                        'explicitly by the operator (never read from the environment)')
     return p.parse_args(argv)
 
 
@@ -620,6 +629,64 @@ def _run_live(sources, transport_factory, collect_factory, reader, latch, domain
         transport.close()
 
 
+MAX_DOMAIN_ID = 232                                  # largest valid ROS 2 domain id
+
+
+def _exit_code(state):
+    return EXIT_OK if state == SUCCEEDED else EXIT_REFUSED if state == REFUSED else EXIT_FAILED
+
+
+def _default_transport_factory(fp, domain_id):
+    from spiderx_controller import m6_live_adapter as la
+    return la.RclpyLiveTransport(fp, domain_id).open()
+
+
+def _default_collect_factory(transport):
+    return transport.graph_collector()
+
+
+def _live_main(args, sources, reader, transport_factory=None, collect_factory=None,
+               latch=None, utc_stamp=None):
+    """--live after the gate: one goal through _run_live, one report, never an overwrite.
+
+    Reached only when LIVE_DISPATCH_ENABLED is True. Dependencies are injectable so this wiring is
+    tested without ROS; the defaults are the rclpy transport and its read-only graph collector.
+    """
+    import datetime
+    import sys
+    if args.domain_id is None or not 0 <= args.domain_id <= MAX_DOMAIN_ID:
+        print(f'REFUSED: --live needs an explicit --domain-id in 0..{MAX_DOMAIN_ID}')
+        return EXIT_REFUSED
+    if utc_stamp is None:
+        utc_stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+    target = f'{args.out}/live/{utc_stamp}/live_outcome.json'
+    import os
+    if not args.no_write and os.path.exists(target):
+        print(f'REFUSED: {target} already exists (reports are never overwritten)')
+        return EXIT_REFUSED
+    if sources is None:
+        sources = m6t.load_sources()
+    if reader is None:
+        print(f'Type {lc.CONFIRMATION_WORD} to send ONE goal (neutral -> crouch_10mm -> neutral) '
+              f'to the running simulation on ROS domain {args.domain_id}; anything else refuses:')
+        reader = sys.stdin.readline
+    latch = latch or InterruptLatch()
+    latch.install()
+    try:
+        data = _run_live(sources, transport_factory or _default_transport_factory,
+                         collect_factory or _default_collect_factory, reader, latch,
+                         args.domain_id)
+    finally:
+        latch.uninstall()
+    data['mode'] = 'live'
+    data['domain_id'] = args.domain_id
+    print(f'Live: final state {data["state"]}, reason {data["reason"]}, goals sent '
+          f'{data["goals_sent"]}, cancels sent {data["cancels_sent"]}; no retry, no second goal')
+    if not args.no_write:
+        print(f'Report: {_write(target, data)}')
+    return _exit_code(data['state'])
+
+
 def main(argv=None, sources=None, reader=None):
     import sys
     argv = list(argv if argv is not None else sys.argv)
@@ -627,9 +694,14 @@ def main(argv=None, sources=None, reader=None):
     print('SpiderX M6.0-D live-playback tool')
     print(CLI_SCOPE)
     if args.live:
-        # hard gate, checked before any configuration, ROS import or input
-        print(f'REFUSED: {lc.LIVE_DISPATCH_DISABLED_MESSAGE}')
-        return EXIT_DISABLED
+        # the single gate, checked before any configuration, ROS import or input
+        if not lc.LIVE_DISPATCH_ENABLED:
+            print(f'REFUSED: {lc.LIVE_DISPATCH_DISABLED_MESSAGE}')
+            return EXIT_DISABLED
+        return _live_main(args, sources, reader)
+    if args.domain_id is not None:
+        print('REFUSED: --domain-id is only valid with --live')
+        return EXIT_REFUSED
     if sources is None:
         sources = m6t.load_sources()
     if args.dry_run:
@@ -657,8 +729,7 @@ def main(argv=None, sources=None, reader=None):
               f'goals at mock server {data["mock_server_goals_received"]}, cancels '
               f'{data["mock_server_cancels_received"]}')
         target = f'{args.out}/mock/{args.scenario}/mock_report.json'
-        code = (EXIT_OK if data['state'] == SUCCEEDED
-                else EXIT_REFUSED if data['state'] == REFUSED else EXIT_FAILED)
+        code = _exit_code(data['state'])
     if not args.no_write:
         try:
             print(f'Report: {_write(target, data)}')

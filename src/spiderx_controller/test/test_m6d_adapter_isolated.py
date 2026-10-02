@@ -223,3 +223,44 @@ def test_adapter_source_is_command_free():
     for word in ('create_publisher', '.publish(', 'switch_controller', 'set_parameters',
                  'cmd_vel', 'subprocess', 'SignalHandlerOptions.ALL'):
         assert word not in src
+
+
+# ---------------------------------------------------------------- live-enabling wiring (isolated)
+def test_graph_collector_is_read_only_and_sees_only_the_test_double(approved):
+    traj, goal, fp = approved
+    srv = fake.IsolatedFakeServer(DOMAIN)
+    t = open_transport(fp)
+    try:
+        obs = t.graph_collector(timeout_s=0.5, window_s=0.3, discovery_s=1.0)()
+        assert obs.action_servers == [('/m6d_test_double_fjt_server', [
+            'control_msgs/action/FollowJointTrajectory'])]
+        assert obs.controllers is None                         # no controller manager exists
+        assert obs.joint_state_publishers == [] and obs.joint_state_messages == []
+        assert t.node.count_publishers('/leg_trajectory_controller/joint_trajectory') == 0
+        assert srv.received == [] and srv.cancel_requests == 0
+    finally:
+        t.close()
+        srv.stop()
+
+
+def test_enabled_live_wiring_refuses_without_a_controller_stack(approved, monkeypatch, tmp_path):
+    """Gate set True IN THIS TEST ONLY, real rclpy transport and collector, isolated domain:
+    the readiness gate refuses (no controller manager, no /joint_states) and no goal is sent."""
+    from spiderx_controller import m6_live_contract as lc
+    traj, goal, fp = approved
+    monkeypatch.setattr(lc, 'LIVE_DISPATCH_ENABLED', True)
+    srv = fake.IsolatedFakeServer(DOMAIN)
+    asked = []
+    try:
+        args = lpb.parse_args(['--live', '--domain-id', str(DOMAIN), '--no-write',
+                               '--out', str(tmp_path)])
+        rc = lpb._live_main(
+            args, None, lambda: asked.append(1) or lc.CONFIRMATION_WORD + '\n',
+            collect_factory=lambda tr: tr.graph_collector(timeout_s=0.5, window_s=0.3,
+                                                          discovery_s=1.0),
+            utc_stamp='isolated')
+        assert rc == lpb.EXIT_REFUSED
+        assert asked == []                                    # refused before the confirmation
+        assert srv.received == [] and srv.cancel_requests == 0
+    finally:
+        srv.stop()
