@@ -80,7 +80,11 @@ The code keeps these three apart. Tests pin each one.
 | Joint-limit soft margin | **0.05 rad**, read from `spiderx_legs.yaml` (= `joint_safety.DEFAULT_MARGIN_RAD`) | `Sources.soft_margin_rad` | A tightened limit fires only `joint_limit_violation`. The same limit without the margin passes. A changed margin is refused (`soft_margin_inconsistent`) |
 
 **A fourth, separate value:** the start-pose tolerance of **0.05 rad**, the existing M4
-`START_POSE_TOL_RAD`. Only the live read-only preflight uses it.
+`START_POSE_TOL_RAD`. The owner approved it for M6.0-D only ([plan §14.9](M6_GAIT_PLAYBACK_SAFETY_PLAN.md#149-final-owner-decisions-2026-10-02)).
+- It is an observed `/joint_states` comparison against the expected neutral.
+- A failure must block goal construction and dispatch.
+- Today only the live read-only preflight evaluates it. Wiring it in front of goal construction is
+  a requirement for the future M6.0-D runner.
 
 ## Offline preflight evidence (M6.0-A) [MEASURED]
 
@@ -218,6 +222,10 @@ For each one, the mock server records **0 calls**. The outcome is `refused`, eve
 The verdict is then `NOT READY` and the exit code 1.
 
 **Versions.** A version difference is reported visibly (D6) but is not a failure.
+- The owner-approved classification is in [plan §14.9](M6_GAIT_PLAYBACK_SAFETY_PLAN.md#149-final-owner-decisions-2026-10-02): `compatible`, `warning` or
+  `incompatible`; only `incompatible` blocks.
+- The tool does not yet emit these labels. It records the actual versions with
+  `matches` / `differs` / `unavailable` and reports the blocking contract failures separately.
 
 **No-dispatch guarantee.** A fake node raises on any method outside a read-only allow-list:
 - graph queries;
@@ -288,14 +296,18 @@ process.
 **Generated output** exists only under the git-ignored `log/m6_playback/`. No `log/`, `build/` or
 `install/` file is tracked.
 
-## Implementation choice for owner review
+## `goal_time_tolerance` (owner-approved 2026-10-02)
 
-**`goal_time_tolerance` = 1.0 s.** This is the existing `settle_s` from
+**`goal_time_tolerance` = 1.0 s**, approved for the bounded M6.0-D trajectory only
+([plan §14.9](M6_GAIT_PLAYBACK_SAFETY_PLAN.md#149-final-owner-decisions-2026-10-02)). This is the existing settled-pose convention: `settle_s` in
 `m3_kinematics_targets.yaml` and `m4_pose_validation.SETTLE_S`.
-- In the installed controller, 0 means "unchecked". A value > 0 makes the controller abort with
+- It is a finite, M6.0-specific deadline set only in the goal message. It is not a controller-YAML
+  change.
+- In the installed controller, 0 would mean "unchecked". 1.0 s makes the controller abort with
   `GOAL_TOLERANCE_VIOLATED` if the 0.05 rad goal tolerance is not met within 1.0 s after the
   trajectory ends.
-- The owner fixed the 0.05 rad path and goal tolerances, but not this value.
+- It is **not** a claim that controller tracking is independently validated. Tracking evidence
+  comes only from the `/joint_states` channel, and none has been gathered live.
 
 ## Pending (not claimed)
 

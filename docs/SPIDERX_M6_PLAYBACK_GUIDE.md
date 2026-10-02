@@ -49,7 +49,7 @@ running controller stack ──► m6_live_preflight (M6.0-B) ──► READY / 
 | **Maximum commanded displacement from neutral** (M6.0-D only) | **0.1223 rad**. Accepted iff \|q − q_neutral\| ≤ 0.1223 + 1e-9 rad | Owner option (i): the exact M4 `crouch_10mm` delta, 0.12229413600889982 rad. It never widens automatically |
 | **Tracking tolerance** | **0.05 rad** | D3. Used for the `/joint_states` comparison and the goal's `path_tolerance` / `goal_tolerance` |
 | **Joint-limit soft margin** | **0.05 rad** | `spiderx_legs.yaml` `soft_limit_margin_rad`. Every point must lie inside the URDF limits pulled in by the margin; nothing is clamped |
-| Start-pose tolerance (live preflight only) | 0.05 rad | The existing M4 `START_POSE_TOL_RAD` |
+| Start-pose tolerance (M6.0-D only) | 0.05 rad | The existing M4 `START_POSE_TOL_RAD`, owner-approved. An observed `/joint_states` comparison against neutral; a failure must block goal construction and dispatch. Today only the live preflight evaluates it |
 | Points | ≤ 5. The approved content is exactly 3: neutral, `crouch_10mm`, neutral | D4, D1 |
 | Duration | ≤ 30 s. The shipped trajectory is 9 s | D4 |
 | Start delay | > 0 and ≥ the lead-in, max(3.0 s, 2 × 0.05 / 0.5) = 3.0 s | D4; the M3/M4 duration rule |
@@ -60,9 +60,12 @@ running controller stack ──► m6_live_preflight (M6.0-B) ──► READY / 
 | Values | Every time, position and velocity finite and numeric | D4 |
 | Mode | `single` only. No cyclic or repeat field exists, and unknown fields are refused | D4 |
 | Goals | One per session; no retry; no concatenation; no automatic neutral return | D4, D5 |
-| Goal message | `path_tolerance` and `goal_tolerance` of 0.05 rad position per joint; `goal_time_tolerance` 1.0 s; no controller-YAML change | D3 |
+| Goal message | `path_tolerance` and `goal_tolerance` of 0.05 rad position per joint; `goal_time_tolerance` 1.0 s; no controller-YAML change | D3. The 1.0 s is owner-approved for M6.0-D only: a finite deadline, not a claim that tracking is validated |
 
-**Do not mix up the three quantities.**
+**Do not mix up the four values.** The fourth is the observed start-pose tolerance; see the
+table above.
+
+**The three envelope quantities:**
 - 0.1223 rad limits what may be **commanded**.
 - 0.05 rad tracking judges how closely the joints **followed**.
 - The 0.05 rad soft margin keeps commands away from the **mechanical limits**.
@@ -152,8 +155,21 @@ ros2 run spiderx_controller m6_live_preflight --interface-only   # versions + in
 
 - **Report location.** The report is saved to
   `log/m6_playback/live_preflight/<UTC time>/live_preflight.json`.
-- **Versions (D6).** Version differences from the cloud reference are shown as `differs`. They are
-  a visible outcome, not a failure. The interface contract is what must pass.
+- **Installed-stack classification (owner decision, [plan §14.9](M6_GAIT_PLAYBACK_SAFETY_PLAN.md#149-final-owner-decisions-2026-10-02)).** Exact version
+  equality is not required. The approved classes are:
+  - `compatible`: the exact action and interface contract, the controller endpoint and the
+    12-joint contract are present and usable;
+  - `warning`: a package version differs from the cloud reference, or is unavailable, but the
+    action and interface inspection is compatible. It does not block;
+  - `incompatible`: a required FollowJointTrajectory, action or message field, the endpoint or
+    the joint contract differs or is missing. Only this class blocks a future valid playback.
+- **Current output.** The tool does not yet print these labels.
+  - It records the actual versions as `matches` / `differs` / `unavailable`, which correspond to
+    `warning` when not `matches`.
+  - It reports the blocking contract failures (`interface_contract_mismatch`,
+    `action_server_*`, `action_type_mismatch`, `joint_names_mismatch`), which correspond to
+    `incompatible`.
+  - `--interface-only` cannot establish `compatible`, because it observes no endpoint or joints.
 - **What READY means.** READY only means that the interfaces M6.0-D would use are present and that
   nothing was sent. It does not prove tracking, movement, contact or walking.
 

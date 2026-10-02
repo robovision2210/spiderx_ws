@@ -14,7 +14,7 @@ Last updated on branch `claude/spiderx-m6-gait-playback-safety-plan` (M6.0 imple
   - a 0.05 rad joint-limit soft margin.
 - **Not done.** No valid or invalid trajectory was sent to a live controller. No Gazebo playback, contact, locomotion, walking, navigation or hardware operation. The live read-only preflight on the owner's PC and the owner-approved M6.0-D playback are pending. M6.1 is deferred.
 - See the [M6 plan](docs/M6_GAIT_PLAYBACK_SAFETY_PLAN.md) §14, the [M6 results](docs/M6_TEST_RESULTS.md) and the [M6 playback guide](docs/SPIDERX_M6_PLAYBACK_GUIDE.md).
-- **Naming.** The roadmap's "M6 – Odometry" entry predates this plan. Renumbering it is an owner decision.
+- **Naming (owner decision).** M6 is Gait playback safety: M6.0 is the safety implementation and M6.1 is future protected replay, not implemented. The former future "M6 – Odometry" is now **M7 – Odometry and state estimation (future work)**; SLAM, Nav2 and hardware move to M8, M9 and M10. See the [roadmap](docs/SPIDERX_DEVELOPMENT_ROADMAP.md).
 
 **M5 is merged into `main` (`99c835a`).** The notes below describe its branch-time state.
 
@@ -129,7 +129,7 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | Gait playback / walking in simulation | ⚪ Future work | Unscheduled "Future — gait playback" item (owner decision). Nothing streams gait trajectories to the controllers |
 | Offline evaluation study (M5) | ✅ Cloud + local offline verification passed | `m5_offline_evaluation`: staged study, Stage 0/1 gate, deterministic provenance-rich records. [M5 results](docs/M5_TEST_RESULTS.md), [guide](docs/SPIDERX_M5_EVALUATION_GUIDE.md). Offline model analysis only; **not** walking, dynamic stability, energy or hardware |
 | `/cmd_vel` → gait bridge | ⚪ Future work | M5.5: Command-velocity bridge (renamed from M5). Not implemented. Nothing consumes `/cmd_vel` today |
-| Odometry (`/spiderx/leg_odometry`, `/odom`) | ⚪ Future work | M6. **Not faked** |
+| Odometry (`/spiderx/leg_odometry`, `/odom`) | ⚪ Future work | M7 – Odometry and state estimation (formerly M6). Not implemented. **Not faked** |
 
 ## Mapping, localization, navigation
 

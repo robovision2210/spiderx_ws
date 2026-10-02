@@ -3,7 +3,8 @@
 > **Status (2026-10-02): implementation complete; cloud offline/mock verified; live playback and
 > local verification pending.** See [§14.8](#148-implementation-status-2026-10-02), [M6 test results](M6_TEST_RESULTS.md) and the
 > [M6 playback guide](SPIDERX_M6_PLAYBACK_GUIDE.md). No valid trajectory has been sent to a live
-> controller.
+> controller. Final owner decisions (goal-time tolerance, version classification, start-pose
+> check, M6/M7 naming) are in [§14.9](#149-final-owner-decisions-2026-10-02).
 >
 > **Phase 0 (read-only audit and plan only).** Written before any M6 code. Branch
 > `claude/spiderx-m6-gait-playback-safety-plan`, created from `origin/main` @ `99c835a` (M5 merged;
@@ -698,14 +699,72 @@ verification pending.** The evidence is in [M6_TEST_RESULTS.md](M6_TEST_RESULTS.
 | M6.0-B live read-only preflight tool | `m6_live_preflight.py` | `e9b1565` | Mock-tested. Cloud ran `--interface-only` only (no node). **Graph mode pending locally** |
 | M6.0-D one valid playback | No live adapter exists | – | **Not run. Needs separate owner approval** |
 
-**Implementation choices for owner review:**
-- **`goal_time_tolerance` = 1.0 s**, the existing M3/M4 `settle_s`. In the installed controller,
-  0 would mean "unchecked".
-- **Version differences** from the §2.2 cloud reference are reported visibly by the live preflight
-  and are not a failure. The interface-contract check must pass (D6).
-- **Start-pose tolerance.** The live preflight also requires the observed start pose to be within
-  the existing 0.05 rad start-pose tolerance. This is a fourth, separate quantity, distinct from
-  the three in §14.7.
-- **Naming.** The [development roadmap](SPIDERX_DEVELOPMENT_ROADMAP.md) still lists
-  "M6 – Odometry", which predates this plan. Renumbering is an owner decision and has not been
-  made here.
+**Implementation choices for owner review:** all four were decided by the owner on 2026-10-02;
+see [§14.9](#149-final-owner-decisions-2026-10-02).
+
+### 14.9 Final owner decisions (2026-10-02)
+
+**[OWNER DECISION]** These are recorded docs-only. No code, test, CMake or config changed with
+this record.
+
+**1. `goal_time_tolerance` = 1.0 s, approved for the bounded M6.0-D trajectory only.**
+- It matches the existing settled-pose convention (`settle_s`, M3/M4).
+- It is a finite, M6.0-specific deadline, set only in the FollowJointTrajectory goal message
+  (`m6_envelope.GOAL_TIME_TOLERANCE_S`).
+- It is **not** a controller-YAML change and not a general controller setting.
+- It is **not** a claim that controller tracking is independently validated. Tracking evidence
+  comes only from D3 channel 2, the independent `/joint_states` comparison.
+
+**2. Installed-stack classification: exact version equality is not required.** The live preflight
+classifies the installed stack as follows.
+
+| Class | Definition | Effect |
+|---|---|---|
+| `compatible` | The exact action and interface contract is present and usable: FollowJointTrajectory goal, result and tolerance fields and error codes; the controller endpoint `/leg_trajectory_controller/follow_joint_trajectory` with type `control_msgs/action/FollowJointTrajectory`; the 12-joint contract | May proceed, subject to every other requirement |
+| `warning` | One or more package versions differ from the §2.2 cloud reference, or are unavailable, but the action and interface inspection is compatible | Visible in the report. Does **not** block |
+| `incompatible` | A required FollowJointTrajectory, action or message field, the controller endpoint, or the joint contract differs or is missing | **Blocks** any future valid live playback |
+
+- Only `incompatible` must block a valid live playback in the future.
+- Actual installed version values are always recorded in the reports.
+- **Implementation status [FACT].** `m6_live_preflight` (`e9b1565`) does not yet emit these three
+  labels. Today it records the actual versions with a per-package `matches` / `differs` /
+  `unavailable` status, which never blocks. It also reports, as blocking failures,
+  `interface_contract_mismatch`, `action_server_missing` / `_ambiguous`, `action_type_mismatch`
+  and `joint_names_mismatch`.
+- **Mapping.** These are the inputs to the approved classes:
+  - any of those failures = `incompatible`;
+  - otherwise, any version that is not `matches` = `warning`;
+  - otherwise `compatible`.
+- **`--interface-only`.** That mode observes no endpoint or joint contract, so it alone cannot
+  establish `compatible`.
+- **Code change.** Emitting the explicit class field is a code change for a later, owner-approved
+  batch. It is not made here.
+
+**3. Start-pose check = 0.05 rad, approved for M6.0-D only.**
+- It is an **observed** `/joint_states` preflight comparison against the expected neutral.
+- A failure must **block goal construction and dispatch**.
+- **Implementation status [FACT].** The live read-only preflight reports it as
+  `start_pose_not_neutral` (NOT READY, exit 1). No live M6.0-D adapter or runner exists yet.
+  Wiring this check in front of goal construction is a requirement for that future,
+  owner-approved implementation. `build_goal` today checks only the offline trajectory.
+
+**The four distinct M6 values.** None may be substituted for another.
+
+| # | Value | Purpose |
+|---|---|---|
+| a | **0.1223 rad** commanded-displacement cap (M6.0-D only, epsilon 1e-9) | Limits what may be **commanded**, relative to neutral; offline preflight, before any goal exists |
+| b | **0.05 rad** goal/path tracking tolerance | Judges how closely joints **followed**: goal `path_tolerance` / `goal_tolerance` and the `/joint_states` tracking channel |
+| c | **0.05 rad** joint-limit soft margin (`spiderx_legs.yaml`) | Keeps every commanded point away from the URDF **mechanical limits**; client-side, no clamping |
+| d | **0.05 rad** start-pose tolerance (M6.0-D only) | **Observed** start state versus expected neutral before any goal; failure blocks construction and dispatch |
+
+Plus the **1.0 s** `goal_time_tolerance`, a finite deadline after the trajectory end (decision 1).
+
+**4. Naming collision, resolved docs-only.**
+- **M6** remains **"Gait playback safety"**. **M6.0** is the safety implementation.
+- **M6.1** remains future protected replay. It is **not implemented**.
+- The old future "M6 – Odometry" milestone is renamed **"M7 – Odometry and state estimation
+  (future work)"**. M7 is not implemented, not scheduled and not complete.
+- To avoid a new collision in the live roadmap, the later future milestones move down by one:
+  SLAM/localization becomes M8, Nav2 M9, real hardware M10.
+- Historical documents keep their original numbers. The
+  [roadmap](SPIDERX_DEVELOPMENT_ROADMAP.md) gives the mapping.
