@@ -50,6 +50,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_eval_regression test/test_eval_regression.py)
   ament_add_pytest_test(test_m6_trajectory test/test_m6_trajectory.py)
   ament_add_pytest_test(test_m6_offline_preflight test/test_m6_offline_preflight.py)
+  ament_add_pytest_test(test_m6_action_client test/test_m6_action_client.py)
 endif()
 
 ament_package()
