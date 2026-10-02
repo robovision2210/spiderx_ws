@@ -20,11 +20,13 @@ Sources (all read, never written):
 Every failure has a machine-readable code (FAILURE_CODES). Nothing here sends or builds a goal.
 """
 
+import copy
 from dataclasses import dataclass, field
 import hashlib
 import json
 import math
 import os
+import re
 import xml.etree.ElementTree as ET
 
 from spiderx_controller import m6_envelope as env
@@ -144,6 +146,40 @@ def sha256_file(path):
     return h.hexdigest()
 
 
+# xacro expands $(find spiderx_description) into an absolute, machine-specific install prefix
+# (file:///home/<user>/<ws>/install/.../share/spiderx_description/meshes/<rel>). For PROVENANCE
+# HASHING ONLY, such mesh URIs are rewritten to package://spiderx_description/meshes/<rel>, so the
+# hash identifies the robot description, not the workspace location. Only <mesh filename="...">
+# attributes of exactly this shape are touched; everything else is hashed byte-for-byte.
+_SPIDERX_MESH_FILE_URI = re.compile(
+    r'^file://(?:/[^\s?#]*)?/share/spiderx_description/meshes/([^\s?#]+)$')
+CANONICAL_MESH_PREFIX = 'package://spiderx_description/meshes/'
+
+
+def canonical_mesh_uri(uri):
+    """package:// form of a SpiderX install-tree mesh file URI; any other string unchanged."""
+    m = _SPIDERX_MESH_FILE_URI.match(uri)
+    return CANONICAL_MESH_PREFIX + m.group(1) if m else uri
+
+
+def canonicalize_urdf_for_provenance(urdf_root):
+    """A deep copy of the URDF with SpiderX mesh file URIs made workspace-independent.
+
+    Idempotent. The input tree is never modified, and the result is used only for hashing.
+    """
+    root = copy.deepcopy(urdf_root)
+    for mesh in root.iter('mesh'):
+        uri = mesh.get('filename')
+        if uri is not None:
+            mesh.set('filename', canonical_mesh_uri(uri))
+    return root
+
+
+def urdf_provenance_sha256(urdf_root):
+    """SHA-256 of the canonicalized expanded URDF (provenance only)."""
+    return hashlib.sha256(ET.tostring(canonicalize_urdf_for_provenance(urdf_root))).hexdigest()
+
+
 def canonical_json(data):
     """Byte-stable JSON (sorted keys, no whitespace, NaN refused)."""
     return json.dumps(data, sort_keys=True, separators=(',', ':'), allow_nan=False)
@@ -227,7 +263,7 @@ def load_sources(config_dir=None, urdf_root=None):
         if urdf_root is None:
             from spiderx_controller.config_check import load_urdf
             urdf_root = load_urdf()
-        hashes['urdf_expanded_xml'] = hashlib.sha256(ET.tostring(urdf_root)).hexdigest()
+        hashes['urdf_expanded_xml'] = urdf_provenance_sha256(urdf_root)
         cfg, geoms, _, plan = m4.load_and_evaluate(config_dir=config_dir, urdf_root=urdf_root)
         urdf_order = lk.all_joint_names(geoms)
     except (PostureConfigError, m4.PoseTargetError, OSError, KeyError, TypeError,

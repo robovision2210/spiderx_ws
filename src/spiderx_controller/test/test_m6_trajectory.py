@@ -464,3 +464,145 @@ def test_report_never_contains_nan(traj, sources):
     d = m6t.preflight(restamp(t), sources).to_dict()
     json.dumps(d, allow_nan=False)
     assert not any(isinstance(v, float) and math.isnan(v) for v in d['summary'].values())
+
+
+# ------------------------------------------------------------ provenance portability
+# xacro writes machine-specific mesh URIs (file:///home/<user>/<ws>/install/...). The provenance
+# hash must not depend on that prefix, but must still change for any real description change.
+import xml.etree.ElementTree as ET  # noqa: E402
+
+
+def _relocated(urdf, user, layout='isolated'):
+    """The same expanded URDF as if built by <user>, with a given install layout."""
+    root = copy.deepcopy(urdf)
+    for mesh in root.iter('mesh'):
+        rel = mesh.get('filename').split('/share/spiderx_description/meshes/', 1)[1]
+        prefix = {'isolated': f'/home/{user}/spiderx_ws/install/spiderx_description',
+                  'merged': f'/home/{user}/spiderx_ws/install'}[layout]
+        mesh.set('filename', f'file://{prefix}/share/spiderx_description/meshes/{rel}')
+    return root
+
+
+def _first_mesh(root):
+    return next(root.iter('mesh'))
+
+
+def test_shipped_urdf_mesh_uris_are_the_only_path_like_attributes(urdf):
+    path_like = [(e.tag, k) for e in urdf.iter() for k, v in e.attrib.items()
+                 if v.startswith(('file:', 'package:'))]
+    assert path_like and set(path_like) == {('mesh', 'filename')}
+
+
+def test_cloud_and_local_prefixes_hash_identically(urdf):
+    cloud, local = _relocated(urdf, 'user'), _relocated(urdf, 'jagadeswar')
+    merged = _relocated(urdf, 'jagadeswar', layout='merged')
+    assert ET.tostring(cloud) != ET.tostring(local)            # raw text differs
+    h = m6t.urdf_provenance_sha256(cloud)
+    assert m6t.urdf_provenance_sha256(local) == h == m6t.urdf_provenance_sha256(merged)
+    assert m6t.urdf_provenance_sha256(urdf) == h
+
+
+def _resolvable(urdf, tmp_path, user):
+    """Like _relocated, but under tmp_path with the real meshes symlinked in, because the full
+    source loader reads the mesh files (collision geometry for the foot tips)."""
+    real = _first_mesh(urdf).get('filename')[len('file://'):].rsplit('/', 1)[0]
+    share = tmp_path / 'home' / user / 'spiderx_ws' / 'install' / 'spiderx_description' / \
+        'share' / 'spiderx_description'
+    share.mkdir(parents=True)
+    os.symlink(real, share / 'meshes')
+    root = copy.deepcopy(urdf)
+    for mesh in root.iter('mesh'):
+        rel = mesh.get('filename').split('/share/spiderx_description/meshes/', 1)[1]
+        mesh.set('filename', f'file://{share}/meshes/{rel}')
+    return root
+
+
+def test_cloud_and_local_prefixes_give_the_same_trajectory_id(urdf, tmp_path):
+    cloud, local = _resolvable(urdf, tmp_path, 'user'), _resolvable(urdf, tmp_path, 'jagadeswar')
+    assert ET.tostring(cloud) != ET.tostring(local)
+    a = m6t.build_trajectory(m6t.load_sources(SRC_CONFIG, cloud))
+    b = m6t.build_trajectory(m6t.load_sources(SRC_CONFIG, local))
+    assert a['trajectory_id'] == b['trajectory_id']
+    assert m6t.dumps(a) == m6t.dumps(b)
+    assert a['trajectory_id'] == m6t.build_trajectory(m6t.load_sources(SRC_CONFIG, urdf))[
+        'trajectory_id']
+
+
+def test_cross_machine_trajectory_passes_preflight(urdf, tmp_path):
+    t = m6t.build_trajectory(m6t.load_sources(SRC_CONFIG, _resolvable(urdf, tmp_path, 'user')))
+    s = m6t.load_sources(SRC_CONFIG, _resolvable(urdf, tmp_path, 'jagadeswar'))
+    assert m6t.preflight(t, s).ok
+
+
+def test_package_uris_are_stable_and_canonical(urdf):
+    canon = m6t.canonicalize_urdf_for_provenance(urdf)
+    for mesh in canon.iter('mesh'):
+        assert mesh.get('filename').startswith(m6t.CANONICAL_MESH_PREFIX)
+    assert m6t.urdf_provenance_sha256(canon) == m6t.urdf_provenance_sha256(urdf)
+    uri = 'package://spiderx_description/meshes/sub/dir/part_1.stl'
+    assert m6t.canonical_mesh_uri(uri) == uri
+
+
+def test_canonicalization_is_idempotent_and_does_not_modify_input(urdf):
+    local = _relocated(urdf, 'jagadeswar')
+    before = ET.tostring(local)
+    once = m6t.canonicalize_urdf_for_provenance(local)
+    twice = m6t.canonicalize_urdf_for_provenance(once)
+    assert ET.tostring(once) == ET.tostring(twice)
+    assert ET.tostring(local) == before
+
+
+def test_mesh_relative_path_is_preserved():
+    uri = ('file:///home/x/ws/install/spiderx_description/share/spiderx_description/meshes/'
+           'a/b/foot_1.stl')
+    assert m6t.canonical_mesh_uri(uri) == 'package://spiderx_description/meshes/a/b/foot_1.stl'
+
+
+@pytest.mark.parametrize('change', ['filename', 'subpath'])
+def test_mesh_name_or_subpath_change_changes_the_hash(change, urdf):
+    root = _relocated(urdf, 'user')
+    mesh = _first_mesh(root)
+    head, name = mesh.get('filename').rsplit('/', 1)
+    mesh.set('filename', f'{head}/other_{name}' if change == 'filename'
+             else f'{head}/sub/{name}')
+    assert m6t.urdf_provenance_sha256(root) != m6t.urdf_provenance_sha256(urdf)
+
+
+@pytest.mark.parametrize('tag, attr', [('limit', 'upper'), ('inertia', 'ixx'),
+                                       ('mass', 'value'), ('origin', 'xyz')])
+def test_non_path_value_change_changes_the_hash(tag, attr, urdf):
+    root = copy.deepcopy(urdf)
+    el = next(e for e in root.iter(tag) if e.get(attr) is not None)
+    el.set(attr, el.get(attr) + '1' if attr == 'xyz' else repr(float(el.get(attr)) + 1e-6))
+    assert m6t.urdf_provenance_sha256(root) != m6t.urdf_provenance_sha256(urdf)
+
+
+@pytest.mark.parametrize('uri', [
+    'file:///home/user/spiderx_ws/install/other_pkg/share/other_pkg/meshes/x.stl',
+    'file:///home/user/spiderx_ws/src/spiderx_description/meshes/x.stl',
+    'package://other_pkg/meshes/x.stl',
+    '/home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/meshes/x.stl',
+    'file:///home/user/share/spiderx_description/meshes/x.stl?query=1',
+])
+def test_unrelated_uris_are_left_unchanged(uri):
+    assert m6t.canonical_mesh_uri(uri) == uri
+
+
+def test_non_mesh_attributes_are_never_rewritten(urdf):
+    root = copy.deepcopy(urdf)
+    odd = ('file:///home/user/spiderx_ws/install/spiderx_description/share/'
+           'spiderx_description/meshes/x.stl')
+    link = next(root.iter('link'))
+    link.set('note', odd)
+    canon = m6t.canonicalize_urdf_for_provenance(root)
+    assert next(canon.iter('link')).get('note') == odd
+
+
+def test_real_description_change_is_still_stale(urdf):
+    t = m6t.build_trajectory(m6t.load_sources(SRC_CONFIG, urdf))
+    changed = copy.deepcopy(urdf)
+    lim = next(changed.iter('limit'))
+    lim.set('upper', repr(float(lim.get('upper')) + 1e-6))
+    report = m6t.preflight(t, m6t.load_sources(SRC_CONFIG, changed))
+    assert report.codes == ['source_stale']
+    assert 'urdf_expanded_xml' in report.failures[0][1]
