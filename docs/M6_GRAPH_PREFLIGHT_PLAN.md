@@ -5,10 +5,12 @@
 > offline/mock tooling merged; cloud + local offline/mock verified). During this audit no Gazebo,
 > launch file, controller, ROS node, graph query, action goal or command was started or sent.
 >
-> **Status (2026-10-02): Phase 0 approved by the owner; decisions OD-1 to OD-11 approved
-> ([§11.1](#111-approved-owner-decisions-2026-10-02)). The live graph-mode run has NOT been performed.** It is a manual, two-terminal run on
-> the owner's Ubuntu PC only (§9); its results go to `docs/M6_GRAPH_PREFLIGHT_RESULTS.md`, created
-> only after that run.
+> **Status (2026-10-02): COMPLETED locally.** The approved local GUI graph-mode read-only
+> preflight ran on the owner's Ubuntu PC at `b64217d`. Verdict READY, all five evidence tiers
+> passed, manual classification `warning`, clean shutdown, no retry. See the
+> [M6.0-B results](M6_GRAPH_PREFLIGHT_RESULTS.md). Phase 0 and decisions OD-1 to OD-11 were
+> approved by the owner ([§11.1](#111-approved-owner-decisions-2026-10-02)). M6.0-D valid
+> playback remains pending.
 
 ```text
 M6.0-B only OBSERVES a running, unmodified SpiderX Fortress control simulation and then stops it.
