@@ -2,7 +2,14 @@
 
 Last updated on branch `claude/spiderx-m6d-live-playback` (M6.0-D implementation, from `main` @ `9885057` with M6.0 and M6.0-B merged).
 
-**M6.0-D: implementation cloud-verified in offline/mock/isolated-domain tests; live dispatch disabled and local live playback pending.** Draft PR, not merged.
+**M6.0-D implementation cloud + local verified in offline/mock/isolated-domain testing; live dispatch remains hard-disabled and local live playback remains pending separate approval.** Draft PR, not merged.
+- **Local verification passed** on the owner's Ubuntu PC at `412eb45`, in offline/mock/isolated-domain modes only:
+  - clean build, then 1116 tests with 0 failures and 180 M6.0-D tests passing;
+  - the same trajectory ID and goal fingerprint as the cloud;
+  - dry-run and six mock reports byte-identical to the cloud SHA-256 values;
+  - `--live` refused with exit 3;
+  - the M1–M4 and Fortress static validators pass;
+  - no live graph, goal or Gazebo was used. See [results §12](docs/M6D_LIVE_PLAYBACK_RESULTS.md#12-local-verification-passed-owners-ubuntu-pc-local-result).
 - **What it is.** The code path that would send exactly **one** approved goal, neutral → `crouch_10mm` → neutral (3 points at 3/6/9 s, ≤ 0.1223 rad, 0.05 rad tolerances, goal velocity tolerance 0.05 rad/s), with a goal fingerprint, same-process readiness (≤ 10 s, `compatible`/`warning`/`incompatible`), a typed confirmation word, one cancel then hold, and no retry, no automatic return and no second goal.
 - **Cloud results.** 1116 tests, 0 failures, 0 skipped; 180 M6.0-D tests, including the fingerprint and state-machine mutation suites and rclpy tests against an in-process action test double on an isolated, non-default, localhost-only ROS domain; dry-run and six mock reports byte-identical across two runs; M1–M4 and Fortress static validators pass.
 - **Live dispatch is hard-disabled** (`LIVE_DISPATCH_ENABLED = False`; `--live` exits 3 before importing `rclpy`). No trajectory goal was sent to a live controller; no Gazebo playback, movement, contact, balance, walking, navigation or hardware operation occurred. A separate owner approval and enabling change are required before any local live goal.

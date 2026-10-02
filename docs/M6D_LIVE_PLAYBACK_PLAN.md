@@ -1,7 +1,7 @@
 # M6.0-D Plan – Single Valid Live Playback Safety Plan
 
-> **Status (2026-10-02): implementation cloud-verified in offline/mock/isolated-domain tests;
-> live dispatch disabled and local live playback pending.** Batches A–D (`28b72a4`, `e87c81a`,
+> **Status (2026-10-02): M6.0-D implementation cloud + local verified in offline/mock/isolated-domain testing; live dispatch remains hard-disabled and local live playback remains pending separate approval.**
+> Local verification on the owner's Ubuntu PC at `412eb45` passed (results §12). Batches A–D (`28b72a4`, `e87c81a`,
 > `d7fb6a2`, `7fd0152`) implement this plan with `LIVE_DISPATCH_ENABLED = False`; `--live` refuses
 > with exit 3. No trajectory goal was sent to a live controller. Evidence:
 > [M6D_LIVE_PLAYBACK_RESULTS.md](M6D_LIVE_PLAYBACK_RESULTS.md); usage:

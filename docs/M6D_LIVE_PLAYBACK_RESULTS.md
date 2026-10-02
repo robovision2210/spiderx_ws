@@ -1,7 +1,7 @@
 # M6.0-D Live Playback – Implementation Results (offline, mock and isolated-domain only)
 
-> **Status: implementation cloud-verified in offline/mock/isolated-domain tests; live dispatch
-> disabled and local live playback pending.**
+> **Status: M6.0-D implementation cloud + local verified in offline/mock/isolated-domain testing; live dispatch remains hard-disabled and local live playback remains pending separate approval.**
+> Cloud evidence: §1–§10. Local verification passed on the owner's Ubuntu PC: [§12](#12-local-verification-passed-owners-ubuntu-pc-local-result).
 >
 > M6.0-D implementation is verified only by offline, mock, and isolated-domain tests. Live
 > controller dispatch is hard-disabled. No trajectory goal was sent to a live controller; no Gazebo
@@ -216,3 +216,143 @@ gates, limits and refusal paths against simulated responses.
 3. **The D15 local stack re-check** of the owner's installed 2.54.x controller and action headers.
 4. **The owner-approved manual M6.0-D runtime checklist** on the owner's Ubuntu PC, in GUI mode,
    with two terminals (D17, plan §13).
+
+## 12. Local verification passed (owner's Ubuntu PC) [LOCAL RESULT]
+
+**Status: M6.0-D implementation cloud + local verified in offline/mock/isolated-domain testing; live dispatch remains hard-disabled and local live playback remains pending separate approval.**
+
+The owner ran this verification locally, in offline, mock and isolated-domain modes only. The
+facts below are as reported by the owner.
+
+### 12.1 State
+
+- Branch `claude/spiderx-m6d-live-playback` at `412eb45`, clean and up to date with `origin`.
+- `log/` is git-ignored.
+- No tracked file was modified locally. No local commit, push, PR update or config change was
+  made.
+
+### 12.2 Build and tests
+
+- 8 packages built in 15.8 s, with no warnings or errors.
+- Full suite: **1116 tests, 0 errors, 0 failures, 0 skipped**.
+- 180 M6.0-D tests passed:
+
+| Suite | Tests |
+|---|---|
+| `test_m6d_contract` | 83 |
+| `test_m6d_session` | 58 |
+| `test_m6d_cli_readiness` | 29 |
+| `test_m6d_adapter_isolated` | 10 |
+
+**What the suites cover:**
+- **Contract tests:** deterministic fingerprint, classification, fresh readiness, the confirmation
+  parser, 25 fingerprint mutations, and SHA-256 pins of protected files.
+- **Session tests:** gates, action outcomes, timeout and stream behaviour, single-use logic,
+  cancel-only handling, and all mutation cases.
+- **Mutants caught:**
+  - removed freshness gate;
+  - removed incompatible gate;
+  - confirmation bypass;
+  - changed fingerprint;
+  - retry;
+  - automatic return;
+  - duplicate cancel;
+  - second dispatch.
+- **Isolated-domain suite:** passed both in full and in a focused rerun.
+
+### 12.3 Contract (matches the cloud)
+
+| Item | Value |
+|---|---|
+| Trajectory ID | `44f0a7ad52e5c330` |
+| Goal fingerprint | `0d6ef4171f2d338a01e76b934be94d1a4386e7c0fc68fe74262fb3c65005ff83` |
+| Points | neutral at 3 s → `crouch_10mm` at 6 s → neutral at 9 s; explicit point velocities 0.0 |
+| Maximum displacement | 0.12229413600889982 rad, at `rr_foot_joint` |
+| Cap | 0.1223 rad + 1e-9 epsilon |
+| Path and goal position tolerance | 0.05 rad, for all 12 joints |
+| Goal velocity tolerance | 0.05 rad/s |
+| Path velocity tolerance | unspecified (0.0) |
+| Goal-time tolerance | 1.0 s |
+| Header stamp / goal count / mode | 0 / 1 / `single` |
+| Mock reports | `retries 0`; `automatic_return_goals 0` |
+
+### 12.4 Dry-run and mock
+
+`--dry-run` and the six mock scenarios each ran twice, into separate ignored log roots. All seven
+reports were byte-identical across the local runs, and **exactly matched the cloud SHA-256 values
+in §6**.
+
+| Run | Exit | Final state |
+|---|---|---|
+| `--dry-run` | 0 | PASS |
+| `success` | 0 | `SUCCEEDED` |
+| `interrupt` | 1 | `CANCEL_CONFIRMED` |
+| `tracking_error` | 1 | `TRACKING_FAILED` |
+| `stale_joint_states` | 1 | `READINESS_LOST` |
+| `controller_lost` | 1 | `HELD_ERROR` |
+| `rejected` | 1 | `REJECTED` |
+| Wrong-case confirmation word | 2 | `REFUSED`, `confirmation_refused`; 0 goals, 0 cancels |
+
+The mock reports state explicitly that they come from mock, in-memory operation and that nothing
+is sent to a ROS graph.
+
+**Import clarification [LOCAL RESULT].** Dry-run and mock modes do import ROS message-definition
+packages: `control_msgs`, `action_msgs`, `trajectory_msgs` and `builtin_interfaces`. In fresh
+processes they do **not** import `rclpy` or `rclpy.action`. They therefore build offline message
+objects for validation and fingerprinting, but create no ROS node or action client and interact
+with no graph.
+
+### 12.5 Hard-disabled live mode
+
+- `ros2 run spiderx_controller m6_live_playback --live` was run once, with stdin `/dev/null`. It
+  printed `REFUSED` and exited **3**.
+- The refusal happened before any of the following:
+  - `load_sources()`;
+  - goal construction;
+  - the stdin confirmation;
+  - `rclpy` or action-client initialization;
+  - any graph query or node creation;
+  - report generation.
+- `LIVE_DISPATCH_ENABLED` remains hard-coded `False`.
+- No `--yes`, `--force` or environment-variable override exists.
+- `_run_live` has a second `PermissionError` gate.
+
+### 12.6 Isolated domain
+
+- The domain is `150 + pid % 50`, within [150, 200), and explicitly different from the default
+  domain 0.
+- The tests set `ROS_LOCALHOST_ONLY=1`.
+- After discovery:
+  - only the test client is visible;
+  - there is no action server, no external node and no `/joint_states` publisher;
+  - `server_ready` is false.
+- The test server publishes no topic.
+- Every transport, server and context closes in `finally`. Neither the focused rerun nor the full
+  suite left any process, daemon or server running.
+
+### 12.7 Static validators (no arguments)
+
+| Validator | Result |
+|---|---|
+| Fortress | `All checks passed.` (58 PASS) |
+| M1 | `All M1 checks passed.` (14) |
+| M2 | `All M2 checks passed.` (17) |
+| M3 | `All M3 checks passed.` (17) |
+| M4 | `All M4 checks passed.` (18) |
+
+### 12.8 Final safety
+
+- Generated outputs exist only under the ignored `log/`.
+- None of the following occurred:
+  - Gazebo or launch;
+  - a live graph or controller query;
+  - an action goal or cancel;
+  - playback or movement;
+  - M6.1, M7–M10, navigation or hardware activity.
+- `LIVE_DISPATCH_ENABLED` was never changed.
+- No relevant process was left running.
+
+This local verification does **not** show live dispatch, controller goal acceptance, joint
+tracking, Gazebo movement, contact, balance, walking, navigation or hardware capability. §11 still
+applies in full: a separate owner approval and an enabling change are required before any local
+live goal.

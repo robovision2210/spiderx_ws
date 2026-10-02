@@ -122,7 +122,7 @@ walking and no hardware. See the [plan](M5_EVALUATION_PLAN.md) and its owner-dec
 - [x] The same checks on the owner's Ubuntu PC: offline only; two full local runs exit 0 and byte-identical with each other; 700 tests passing
 - [ ] Citations-only review step: original-source-verified candidate references for owner approval (not started)
 
-## M6.0 – Gazebo gait-playback safety layers — cloud + local offline/mock verified; M6.0-B graph-mode read-only preflight passed locally; M6.0-D implementation cloud-verified in offline/mock/isolated-domain tests; live dispatch disabled and local live playback pending
+## M6.0 – Gazebo gait-playback safety layers — cloud + local offline/mock verified; M6.0-B graph-mode read-only preflight passed locally; M6.0-D implementation cloud + local verified in offline/mock/isolated-domain testing; live dispatch hard-disabled; local live playback pending separate approval
 
 A trajectory-execution and observability check only. It replays **one** bounded neutral →
 `crouch_10mm` → neutral trajectory, after approval. It is not gait playback and not walking. See
@@ -140,7 +140,8 @@ protected replay (not implemented). Odometry is now M7 (see the numbering note a
 - [x] Local offline/mock verification on the owner's Ubuntu PC (`f49a6e0`): 932 tests, 0 failures; same `trajectory_id` as the cloud; byte-identical outputs; M1–M4 static validators pass
 - [x] M6.0-B: live GUI graph-mode read-only preflight against the running stack on the owner's PC (`b64217d`): READY, five evidence tiers passed, classification `warning`, clean shutdown; observation only, no goal or command ([plan](M6_GRAPH_PREFLIGHT_PLAN.md), [results](M6_GRAPH_PREFLIGHT_RESULTS.md))
 - [x] M6.0-D plan adopted with owner decisions D1–D17 (`311a849`, [plan](M6D_LIVE_PLAYBACK_PLAN.md))
-- [x] M6.0-D implementation (`28b72a4`, `e87c81a`, `d7fb6a2`, `7fd0152`): goal fingerprint, readiness classification, single-goal live state machine, rclpy transport, CLI (`--dry-run`, `--mock`); cloud-verified in offline/mock/isolated-domain tests only (1116 tests, 0 failures); **live dispatch hard-disabled** ([results](M6D_LIVE_PLAYBACK_RESULTS.md), [guide](SPIDERX_M6D_LIVE_PLAYBACK_GUIDE.md))
+- [x] M6.0-D implementation (`28b72a4`, `e87c81a`, `d7fb6a2`, `7fd0152`): goal fingerprint, readiness classification, single-goal live state machine, rclpy transport, CLI (`--dry-run`, `--mock`); cloud-verified in offline/mock/isolated-domain tests only (1116 tests, 0 failures); **live dispatch hard-disabled**
+- [x] M6.0-D local offline/mock/isolated-domain verification on the owner's Ubuntu PC (`412eb45`): 1116 tests, 0 failures; 180 M6.0-D tests; identical fingerprint; dry-run/mock reports byte-identical to the cloud; `--live` exit 3 ([results §12](M6D_LIVE_PLAYBACK_RESULTS.md)) ([results](M6D_LIVE_PLAYBACK_RESULTS.md), [guide](SPIDERX_M6D_LIVE_PLAYBACK_GUIDE.md))
 - [ ] M6.0-D local live playback: one valid neutral → `crouch_10mm` → neutral goal on the owner's PC (needs a separate owner approval, an enabling change and the manual runtime checklist; no goal has been sent)
 - [ ] M6.1: protected replay of an offline-validated gait cycle (future work, not implemented; deferred by D2; needs a separate plan)
 
