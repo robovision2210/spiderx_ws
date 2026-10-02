@@ -122,7 +122,7 @@ walking and no hardware. See the [plan](M5_EVALUATION_PLAN.md) and its owner-dec
 - [x] The same checks on the owner's Ubuntu PC: offline only; two full local runs exit 0 and byte-identical with each other; 700 tests passing
 - [ ] Citations-only review step: original-source-verified candidate references for owner approval (not started)
 
-## M6.0 – Gazebo gait-playback safety layers — implementation complete; cloud offline/mock verified; live and local pending
+## M6.0 – Gazebo gait-playback safety layers — cloud + local offline/mock verified; live graph preflight and valid playback pending
 
 A trajectory-execution and observability check only. It replays **one** bounded neutral →
 `crouch_10mm` → neutral trajectory, after approval. It is not gait playback and not walking. See
@@ -136,8 +136,9 @@ protected replay (not implemented). Odometry is now M7 (see the numbering note a
 - [x] M6.0-A: offline conversion and preflight (`0a9d2db`)
 - [x] M6.0-C: single-goal action client, mock-only safety and mutation tests (`d6ebaad`)
 - [x] M6.0-B tool: live read-only preflight, mock-tested; cloud ran `--interface-only` only (`e9b1565`)
-- [x] Cloud validation: 912 tests, 0 failures; M1–M4 static validators pass
-- [ ] Local verification on the owner's Ubuntu PC, including the live read-only preflight against a running stack
+- [x] Cloud validation: 912 tests, then 932 after the provenance portability fix (`fd7a9de`); 0 failures; M1–M4 static validators pass
+- [x] Local offline/mock verification on the owner's Ubuntu PC (`f49a6e0`): 932 tests, 0 failures; same `trajectory_id` as the cloud; byte-identical outputs; M1–M4 static validators pass
+- [ ] Live graph-mode read-only preflight against a running stack (owner's PC), with the installed-stack classification
 - [ ] M6.0-D: one valid neutral → `crouch_10mm` → neutral goal (needs separate owner approval and a live adapter)
 - [ ] M6.1: protected replay of an offline-validated gait cycle (future work, not implemented; deferred by D2; needs a separate plan)
 

@@ -2,9 +2,10 @@
 
 Last updated on branch `claude/spiderx-m6-gait-playback-safety-plan` (M6.0 implementation, from `main` @ `99c835a` with M5 merged).
 
-**M6.0 gait-playback safety layers: implementation complete; cloud offline/mock verified; live playback and local verification pending.** It is a draft PR and not merged.
+**M6.0 cloud + local offline/mock verified; live graph preflight and valid playback remain pending.** It is a draft PR and not merged.
+- **Local offline/mock verification passed** on the owner's Ubuntu PC at `f49a6e0`: clean build (8 packages), 932 tests with 0 failures, `trajectory_id 44f0a7ad52e5c330` identical to the cloud (portable provenance, `fd7a9de`), byte-identical offline outputs matching the cloud SHA-256 values, all 8 refusal cases exit 2, `--interface-only` with no node, and the M1–M4 static validators pass. The installed stack is not yet classified.
 - **What it is.** Safety layers for replaying **one** bounded trajectory, neutral → `crouch_10mm` → neutral, through the existing controller stack. It is a trajectory-execution and observability check only.
-- **Implemented (cloud, 912 tests, 0 failures):**
+- **Implemented (cloud + local, 932 tests, 0 failures):**
   - an offline conversion and preflight with 32 machine-readable refusal codes (M6.0-A);
   - a single-goal action client tested only against a deterministic mock, including mutation tests (M6.0-C);
   - a live **read-only** preflight tool (M6.0-B). It is mock-tested; the cloud ran only its no-node `--interface-only` mode.
@@ -12,7 +13,7 @@ Last updated on branch `claude/spiderx-m6-gait-playback-safety-plan` (M6.0 imple
   - a 0.1223 rad maximum commanded displacement, for M6.0-D only (owner option (i));
   - a 0.05 rad tracking tolerance;
   - a 0.05 rad joint-limit soft margin.
-- **Not done.** No valid or invalid trajectory was sent to a live controller. No Gazebo playback, contact, locomotion, walking, navigation or hardware operation. The live read-only preflight on the owner's PC and the owner-approved M6.0-D playback are pending. M6.1 is deferred.
+- **Not done.** No valid or invalid trajectory was sent to a live controller. No Gazebo playback, contact, locomotion, walking, navigation or hardware operation. The live graph-mode read-only preflight and the owner-approved M6.0-D valid playback are pending. M6.1 is deferred.
 - See the [M6 plan](docs/M6_GAIT_PLAYBACK_SAFETY_PLAN.md) §14, the [M6 results](docs/M6_TEST_RESULTS.md) and the [M6 playback guide](docs/SPIDERX_M6_PLAYBACK_GUIDE.md).
 - **Naming (owner decision).** M6 is Gait playback safety: M6.0 is the safety implementation and M6.1 is future protected replay, not implemented. The former future "M6 – Odometry" is now **M7 – Odometry and state estimation (future work)**; SLAM, Nav2 and hardware move to M8, M9 and M10. See the [roadmap](docs/SPIDERX_DEVELOPMENT_ROADMAP.md).
 
@@ -125,7 +126,7 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | All-leg inverse kinematics (simulation only) | ✅ **All-leg inverse kinematics verified for documented, joint-safe, simulation-only static poses** (cloud + local) | 3 poses: `neutral_stance`, `crouch_10mm`, `lift_lf_15mm`. Foot tips ≤ 1.2e-10 m from target; negative poses refused and never commanded |
 | Static multi-leg pose hold via IK (simulation only) | ✅ **Static multi-leg pose hold via IK validated in Gazebo** (cloud + local) | 5 s holds; \|roll\|, \|pitch\| ≤ 2.8e-5 rad; body height within 0.05 mm of the geometric expectation. **Not** walking, gait, balance or hardware validation; contact not measured |
 | Offline gait configuration and trajectory validation (M4.5) | ✅ Verified (offline; cloud + local) | `m4_5_gait_analysis`: 6 YAML gaits checked against the URDF-derived IK, joint limits, a static-stability **approximation** and the joint-speed **placeholder**. wave and tripod_crawl FAIL static stability (reported, not tuned). [M4.5 results](docs/M4_5_TEST_RESULTS.md). **Not** walking, not a validated gait, not hardware |
-| M6.0 gait-playback safety layers (one bounded crouch trajectory) | 🟡 Implemented; cloud offline/mock verified; live and local pending | `m6_offline_preflight` (offline conversion + preflight), `m6_action_client` (single goal, mock-tested only), `m6_live_preflight` (read-only; sends no goal). No goal has been sent to a live controller; M6.0-D needs owner approval. [M6 results](docs/M6_TEST_RESULTS.md), [guide](docs/SPIDERX_M6_PLAYBACK_GUIDE.md). **Not** gait playback or walking |
+| M6.0 gait-playback safety layers (one bounded crouch trajectory) | 🟡 Implemented; cloud + local offline/mock verified; live graph preflight and valid playback pending | `m6_offline_preflight` (offline conversion + preflight), `m6_action_client` (single goal, mock-tested only), `m6_live_preflight` (read-only; sends no goal). No goal has been sent to a live controller; M6.0-D needs owner approval. [M6 results](docs/M6_TEST_RESULTS.md), [guide](docs/SPIDERX_M6_PLAYBACK_GUIDE.md). **Not** gait playback or walking |
 | Gait playback / walking in simulation | ⚪ Future work | Unscheduled "Future — gait playback" item (owner decision). Nothing streams gait trajectories to the controllers |
 | Offline evaluation study (M5) | ✅ Cloud + local offline verification passed | `m5_offline_evaluation`: staged study, Stage 0/1 gate, deterministic provenance-rich records. [M5 results](docs/M5_TEST_RESULTS.md), [guide](docs/SPIDERX_M5_EVALUATION_GUIDE.md). Offline model analysis only; **not** walking, dynamic stability, energy or hardware |
 | `/cmd_vel` → gait bridge | ⚪ Future work | M5.5: Command-velocity bridge (renamed from M5). Not implemented. Nothing consumes `/cmd_vel` today |

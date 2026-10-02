@@ -1,9 +1,9 @@
-# M6.0 Test Results – Gait-Playback Safety Layers (cloud offline/mock only)
+# M6.0 Test Results – Gait-Playback Safety Layers (cloud + local offline/mock)
 
 ```text
-M6.0 implementation is cloud offline/mock verified only. No valid trajectory was sent to a live
-controller; no Gazebo playback, contact, locomotion, walking, navigation, or hardware operation
-was performed. Local live read-only preflight and owner-approved M6.0-D playback remain pending.
+M6.0 cloud + local offline/mock verified; live graph preflight and valid playback remain pending.
+No valid trajectory was sent to a live controller; no Gazebo playback, contact, locomotion,
+walking, navigation, or hardware operation was performed, in the cloud or locally.
 ```
 
 ## Outcome
@@ -29,14 +29,18 @@ was performed. Local live read-only preflight and owner-approved M6.0-D playback
   - no goal, valid or invalid, sent to any live controller;
   - no `/cmd_vel`;
   - no hardware.
+- **Local offline/mock verification passed** on the owner's Ubuntu PC at `f49a6e0`: 932 tests,
+  0 failures, the same `trajectory_id` `44f0a7ad52e5c330` as the cloud, and byte-identical outputs
+  matching the cloud SHA-256 values. See
+  [Local verification passed](#local-verification-passed-owners-ubuntu-pc-f49a6e0-local).
 - **Pending:**
-  - the live read-only preflight (M6.0-B) on the owner's Ubuntu PC;
-  - M6.0-D playback, which needs separate owner approval;
-  - local verification.
+  - the live graph-mode read-only preflight (M6.0-B) on the owner's Ubuntu PC;
+  - M6.0-D valid playback, which needs separate owner approval.
 
 **Labels used below:**
 - **[MEASURED]**: a command run in this cloud environment.
 - **[RESULT]**: an offline output.
+- **[LOCAL]**: reported by the owner from their Ubuntu PC.
 
 The design and the owner decisions are in [M6_GAIT_PLAYBACK_SAFETY_PLAN.md](M6_GAIT_PLAYBACK_SAFETY_PLAN.md)
 §14. Usage is in [SPIDERX_M6_PLAYBACK_GUIDE.md](SPIDERX_M6_PLAYBACK_GUIDE.md).
@@ -386,17 +390,123 @@ of the URDF in which each `<mesh filename>` matching
 No existing test was changed or weakened. No ID is pinned in the tests, so no expected value
 needed migrating.
 
-**Local verification remains pending** until the owner reruns it. With identical sources, the
-owner's PC should now also report `trajectory_id 44f0a7ad52e5c330`.
+**Local rerun.** The owner reran local verification after this fix: the PC reported
+`trajectory_id 44f0a7ad52e5c330`, the same as the cloud. See
+[Local verification passed](#local-verification-passed-owners-ubuntu-pc-f49a6e0-local).
+
+## Local verification passed (owner's Ubuntu PC, `f49a6e0`) [LOCAL]
+
+**Local offline/mock verification passed.** The owner ran it on their Ubuntu PC and reported the
+evidence below; it is recorded as reported. This was offline, mocked and static only: no Gazebo,
+no launch file, no graph-mode preflight, no live controller query, no action server or goal, no
+playback and no hardware.
+
+**Local state.**
+- Branch `claude/spiderx-m6-gait-playback-safety-plan` at `f49a6e0`, which includes the
+  provenance fix `fd7a9de`.
+- Up to date with origin, with a clean tree at start and finish. `log/` is ignored.
+- No tracked files changed. No commits, pushes or PR changes were made locally.
+
+**Build and tests.**
+- Clean build: 8 packages, 13.8 s, no warnings or errors.
+- Full suite: **932 tests, 0 errors, 0 failures, 0 skipped.**
+- M6 test groups: `test_m6_trajectory` 109, `test_m6_offline_preflight` 14,
+  `test_m6_action_client` 63, `test_m6_live_preflight` 42.
+- All focused M6 safety suites passed.
+
+**Portable provenance.**
+- The local raw expanded-URDF hash (`f87b1c33…`) and the cloud-prefix raw hash (`2af3fefeb0a1…`)
+  both canonicalized to `915125596b3d…`.
+- All 60 SpiderX mesh file URIs normalize to `package://spiderx_description/meshes/…`.
+- The local trajectory ID, the `--check-only` run and both valid runs all produced
+  **`44f0a7ad52e5c330`**, the same as the cloud post-fix ID.
+- A changed mesh filename, a changed mesh subpath, a changed joint limit and a 1% mass change each
+  produced a different canonical hash.
+- These remained unchanged:
+  - an other-package mesh URI;
+  - a plain path;
+  - a `src` URI;
+  - a URI with a query;
+  - a `package://` URI;
+  - a non-mesh attribute.
+- The canonicalization was idempotent and did not modify its input.
+- The cross-machine fixture tests passed, including:
+  - `test_cloud_and_local_prefixes_give_the_same_trajectory_id`;
+  - `test_cross_machine_trajectory_passes_preflight`;
+  - `test_cloud_and_local_prefixes_hash_identically`.
+
+**Offline preflight.**
+- Two valid outputs were generated in ignored `log/` directories. Both passed and were
+  byte-identical.
+- They match the documented cloud post-fix SHA-256 values:
+  - `trajectory.json`: `0ceff902…abab`;
+  - `preflight.json`: `a3ed8216…e80c`.
+- Both used neutral → `crouch_10mm` → neutral:
+  - 3 points at 3, 6 and 9 s;
+  - maximum displacement 0.1222941360 rad at `rr_foot_joint`, within 0.1223 rad + 1e-9 rad.
+- Writing into an existing output directory was refused with exit 2.
+- `--check-only` wrote nothing and loaded no ROS, action or launch modules.
+
+**Refusal safety.** All eight cases returned exit code 2 and stated that no goal can be
+constructed or sent.
+
+| Case | Codes |
+|---|---|
+| Changed URDF provenance | `source_stale` |
+| Edited without restamping | `trajectory_id_mismatch`, `source_pose_mismatch` |
+| Beyond the cap | `displacement_exceeds_cap`, `source_pose_mismatch` |
+| Non-monotonic time | `time_not_strictly_increasing` |
+| NaN | `non_finite_value` |
+| 31-second duration | `duration_exceeds_max` |
+| Cyclic mode | `mode_not_single` |
+| Reversed joint order | `joint_order_not_canonical` |
+
+**Mock action-client safety.**
+- Invalid input does not reach goal construction or dispatch.
+- There is no retry and at most one goal per session.
+- Cancel means cancel only, then hold; there is no automatic return to neutral.
+- The goal carries explicit 0.05 rad path and goal tolerances.
+- The mutation tests catch:
+  - removed dispatch, session and construction gates;
+  - added retry logic;
+  - added auto-return logic.
+
+**Interface-only check.**
+- `m6_live_preflight --interface-only` exited 0 with verdict `INTERFACE ONLY`.
+- The six graph checks were `not_run`; 0 goals were sent and 0 messages published.
+- `ros2 node list` was empty before and after.
+- A spy run observed no rclpy init, node, publisher, client, subscription or `ActionClient` calls.
+- The `ros2` CLI daemon was stopped after the inspection.
+- **Eight local package versions differ from the cloud references.** The stack is **not yet
+  classified** as compatible, warning or incompatible: that needs the graph-mode preflight and
+  the class labels, both still pending.
+
+**Static validators** (no `--runtime`).
+
+| Validator | Result |
+|---|---|
+| Fortress | All checks passed (58 PASS) |
+| M1 | All M1 checks passed (14) |
+| M2 | All M2 checks passed (17) |
+| M3 | All M3 checks passed (17) |
+| M4 | All M4 checks passed (18) |
+
+**Final safety.**
+- No `ros2` daemon, Gazebo, controller, spawner or bridge remained.
+- All generated artifacts stayed under the ignored `log/`.
+- None of the following occurred:
+  - Gazebo or a launch file;
+  - the graph-mode preflight or a live controller query;
+  - an action server or goal;
+  - playback;
+  - M6.1 or M7–M10 work;
+  - hardware.
 
 ## Pending (not claimed)
 
-**1. Local verification on the owner's Ubuntu PC:**
-- build;
-- full suite;
-- offline preflight;
-- `--interface-only`;
-- the M6.0-B live read-only preflight against a running `fortress_control.launch.py`.
+**1. The M6.0-B live graph-mode read-only preflight** on the owner's Ubuntu PC, against a running
+`fortress_control.launch.py`. It also needs the installed-stack classification
+(compatible / warning / incompatible).
 
 **2. M6.0-D**, one neutral → `crouch_10mm` → neutral goal. It needs:
 - a separate owner approval;
@@ -406,7 +516,7 @@ owner's PC should now also report `trajectory_id 44f0a7ad52e5c330`.
 M6.1 remains deferred (D2).
 
 ```text
-M6.0 implementation is cloud offline/mock verified only. No valid trajectory was sent to a live
-controller; no Gazebo playback, contact, locomotion, walking, navigation, or hardware operation
-was performed. Local live read-only preflight and owner-approved M6.0-D playback remain pending.
+M6.0 cloud + local offline/mock verified; live graph preflight and valid playback remain pending.
+No valid trajectory was sent to a live controller; no Gazebo playback, contact, locomotion,
+walking, navigation, or hardware operation was performed, in the cloud or locally.
 ```

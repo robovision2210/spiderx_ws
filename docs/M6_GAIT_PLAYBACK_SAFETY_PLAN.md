@@ -1,7 +1,6 @@
 # M6.0 Plan – Gazebo Gait-Playback Safety Plan
 
-> **Status (2026-10-02): implementation complete; cloud offline/mock verified; live playback and
-> local verification pending.** See [§14.8](#148-implementation-status-2026-10-02), [M6 test results](M6_TEST_RESULTS.md) and the
+> **Status (2026-10-02): implementation complete. M6.0 cloud + local offline/mock verified; live graph preflight and valid playback remain pending.** See [§14.8](#148-implementation-status-2026-10-02), [M6 test results](M6_TEST_RESULTS.md) and the
 > [M6 playback guide](SPIDERX_M6_PLAYBACK_GUIDE.md). No valid trajectory has been sent to a live
 > controller. Final owner decisions (goal-time tolerance, version classification, start-pose
 > check, M6/M7 naming) are in [§14.9](#149-final-owner-decisions-2026-10-02).
@@ -50,8 +49,8 @@ Nothing in SpiderX is verified as walking, dynamically stable, navigating, or ru
 
 - **Status [PLAN].** M6.0 Phase 0 is complete when this document is committed. M6.0 Phase 1
   starts only after the owner reviews §12.
-- **Status (2026-10-02).** Implementation complete; cloud offline/mock verified; live playback and
-  local verification pending ([§14.8](#148-implementation-status-2026-10-02)).
+- **Status (2026-10-02).** Implementation complete. M6.0 cloud + local offline/mock verified; live graph preflight and valid playback remain pending.
+  ([§14.8](#148-implementation-status-2026-10-02)).
 - **What M6.0 may eventually show:**
   - a validated trajectory can be converted, preflighted and **refused** without sending anything;
   - the controller's action interface is available and its controllers are active;
@@ -688,15 +687,16 @@ the reports.
 
 ### 14.8 Implementation status (2026-10-02)
 
-**[RESULT]** **Implementation complete; cloud offline/mock verified; live playback and local
-verification pending.** The evidence is in [M6_TEST_RESULTS.md](M6_TEST_RESULTS.md) and the usage in
+**[RESULT]** **Implementation complete. M6.0 cloud + local offline/mock verified; live graph preflight and valid playback remain pending.** Local offline/mock
+verification passed on the owner's Ubuntu PC at `f49a6e0`, with the same `trajectory_id` as the
+cloud. The evidence is in [M6_TEST_RESULTS.md](M6_TEST_RESULTS.md) and the usage in
 [SPIDERX_M6_PLAYBACK_GUIDE.md](SPIDERX_M6_PLAYBACK_GUIDE.md).
 
 | Step | Implementation (`spiderx_controller/`) | Commit | Cloud status |
 |---|---|---|---|
 | M6.0-A offline conversion and preflight | `m6_envelope.py`, `m6_trajectory.py`, `m6_offline_preflight.py` | `0a9d2db` | Verified offline: deterministic, 32 failure codes, exit 2 on refusal |
 | M6.0-C mock-only safety tests | `m6_action_client.py` (adapter-based), `test/m6_mock_action.py` | `d6ebaad` | Verified against a test double only, including mutation tests |
-| M6.0-B live read-only preflight tool | `m6_live_preflight.py` | `e9b1565` | Mock-tested. Cloud ran `--interface-only` only (no node). **Graph mode pending locally** |
+| M6.0-B live read-only preflight tool | `m6_live_preflight.py` | `e9b1565` | Mock-tested. Cloud and local ran `--interface-only` only (no node). **Graph mode pending** |
 | M6.0-D one valid playback | No live adapter exists | – | **Not run. Needs separate owner approval** |
 
 **Implementation choices for owner review:** all four were decided by the owner on 2026-10-02;
