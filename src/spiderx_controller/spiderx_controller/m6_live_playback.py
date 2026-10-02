@@ -513,3 +513,156 @@ class LiveSession:
 
 __all__ = ['LiveSession', 'LiveTransport', 'InterruptLatch', 'StreamMonitor', 'graph_violation',
            'TERMINAL', 'REASON_STATE', 'OUTCOME_SCHEMA']
+
+
+# ==================================================================== CLI (Batch D)
+# ros2 run spiderx_controller m6_live_playback --dry-run       offline goal contract, no ROS graph
+# ros2 run spiderx_controller m6_live_playback --mock [...]    full state machine, in-memory mock
+# ros2 run spiderx_controller m6_live_playback --live          HARD-DISABLED in this build
+#
+# There is no option to supply a trajectory, skip the confirmation, retry, repeat or force.
+# Exit codes: 0 succeeded / dry-run PASS; 1 terminal failure; 2 refused; 3 live dispatch disabled.
+
+EXIT_OK, EXIT_FAILED, EXIT_REFUSED, EXIT_DISABLED = 0, 1, 2, 3
+DEFAULT_OUT = 'log/m6d_playback'
+CLI_SCOPE = ('M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run '
+             'and --mock never touch a ROS graph. Nothing here shows motion, tracking, contact, '
+             'balance or walking.')
+
+
+def parse_args(argv):
+    import argparse
+    p = argparse.ArgumentParser(prog='m6_live_playback', description=CLI_SCOPE)
+    mode = p.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--dry-run', action='store_true',
+                      help='build and fingerprint the one approved goal offline; send nothing')
+    mode.add_argument('--mock', action='store_true',
+                      help='run the full state machine against the in-memory mock transport; '
+                           'reads the confirmation word from stdin')
+    mode.add_argument('--live', action='store_true',
+                      help='live dispatch (HARD-DISABLED in this build)')
+    p.add_argument('--scenario', default='success',
+                   help='--mock scenario: success, interrupt, tracking_error, '
+                        'stale_joint_states, controller_lost, rejected')
+    p.add_argument('--out', default=DEFAULT_OUT,
+                   help=f'report root under the git-ignored log/ (default: {DEFAULT_OUT})')
+    p.add_argument('--no-write', action='store_true', help='print only')
+    return p.parse_args(argv)
+
+
+def _write(path, data):
+    import json
+    import os
+    if os.path.exists(path):
+        raise FileExistsError(path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w') as f:
+        f.write(json.dumps(data, indent=1, sort_keys=True, allow_nan=False, default=str) + '\n')
+    return path
+
+
+def dry_run_report(sources):
+    traj = m6t.build_trajectory(sources)
+    goal, report, spec, fp = gf.build_live_goal(traj, sources)
+    return {
+        'schema': 'spiderx.m6d.dry_run/1',
+        'mode': 'dry-run',
+        'verdict': 'PASS',
+        'trajectory_id': traj['trajectory_id'],
+        'goal_fingerprint': fp,
+        'goal_spec': spec,
+        'preflight': report.to_dict(),
+        'live_dispatch_enabled': lc.LIVE_DISPATCH_ENABLED,
+        'limits': lc.as_dict(),
+        'envelope': env.as_dict(),
+        'goals_sent': 0,
+        'non_claims': list(env.NON_CLAIMS),
+    }
+
+
+def run_mock(sources, scenario, reader):
+    from spiderx_controller import m6_live_mock as mock
+    if scenario not in mock.SCENARIOS:
+        raise ValueError(f'unknown scenario {scenario!r}; choose from {sorted(mock.SCENARIOS)}')
+    traj = m6t.build_trajectory(sources)
+    fp = gf.fingerprint(gf.approved_spec(traj, sources))
+    latch = InterruptLatch()
+    transport = mock.FakeTransport(traj, fp, latch=latch, **mock.SCENARIOS[scenario])
+    neutral = list(sources.poses[env.NEUTRAL_LABEL])
+    report = mock.mock_readiness_report(sources.joint_names, neutral)
+    session = LiveSession(transport, sources,
+                          lambda: rd.assess(report, transport.wall_now()), reader, latch=latch)
+    out = session.run()
+    out['mode'] = 'mock'
+    out['scenario'] = scenario
+    out['mock_server_goals_received'] = len(transport.sent)
+    out['mock_server_cancels_received'] = transport.cancels
+    return out
+
+
+def _run_live(sources, transport_factory, collect_factory, reader, latch, domain_id):
+    """The future live path. Refuses unless LIVE_DISPATCH_ENABLED (hard-disabled in this build).
+
+    Every dependency is injected so the wiring can be audited and tested without ROS.
+    """
+    if not lc.LIVE_DISPATCH_ENABLED:
+        raise PermissionError(lc.LIVE_DISPATCH_DISABLED_MESSAGE)
+    traj = m6t.build_trajectory(sources)
+    fp = gf.fingerprint(gf.approved_spec(traj, sources))
+    transport = transport_factory(fp, domain_id)
+    try:
+        provide = rd.make_readiness_provider(collect_factory(transport),
+                                             sources.joint_names,
+                                             list(sources.poses[env.NEUTRAL_LABEL]),
+                                             transport.wall_now)       # the session's clock
+        return LiveSession(transport, sources, provide, reader, latch=latch).run()
+    finally:
+        transport.close()
+
+
+def main(argv=None, sources=None, reader=None):
+    import sys
+    argv = list(argv if argv is not None else sys.argv)
+    args = parse_args(argv[1:])
+    print('SpiderX M6.0-D live-playback tool')
+    print(CLI_SCOPE)
+    if args.live:
+        # hard gate, checked before any configuration, ROS import or input
+        print(f'REFUSED: {lc.LIVE_DISPATCH_DISABLED_MESSAGE}')
+        return EXIT_DISABLED
+    if sources is None:
+        sources = m6t.load_sources()
+    if args.dry_run:
+        try:
+            data = dry_run_report(sources)
+        except (m6t.TrajectoryBuildError, gf.FingerprintError, ac.PreflightRefused) as e:
+            print(f'REFUSED: {e}')
+            return EXIT_REFUSED
+        print(f'Dry run PASS: trajectory {data["trajectory_id"]}, goal fingerprint '
+              f'{data["goal_fingerprint"]}; goal velocity tolerance '
+              f'{lc.GOAL_VELOCITY_TOLERANCE_RAD_S} rad/s; nothing sent')
+        target = f'{args.out}/dry_run/{data["trajectory_id"]}/dry_run_report.json'
+        code = EXIT_OK
+    else:
+        if reader is None:
+            print(f'Type {lc.CONFIRMATION_WORD} to continue the MOCK run (nothing is sent '
+                  'to any ROS graph):')
+            reader = sys.stdin.readline
+        try:
+            data = run_mock(sources, args.scenario, reader)
+        except ValueError as e:
+            print(f'REFUSED: {e}')
+            return EXIT_REFUSED
+        print(f'Mock {args.scenario}: final state {data["state"]}, reason {data["reason"]}, '
+              f'goals at mock server {data["mock_server_goals_received"]}, cancels '
+              f'{data["mock_server_cancels_received"]}')
+        target = f'{args.out}/mock/{args.scenario}/mock_report.json'
+        code = (EXIT_OK if data['state'] == SUCCEEDED
+                else EXIT_REFUSED if data['state'] == REFUSED else EXIT_FAILED)
+    if not args.no_write:
+        try:
+            print(f'Report: {_write(target, data)}')
+        except FileExistsError:
+            print(f'REFUSED: {target} already exists (reports are never overwritten)')
+            return EXIT_REFUSED
+    return code

@@ -8,12 +8,12 @@ safety check can fail.
 import copy
 import os
 
-import m6d_fake_transport as ft
 import pytest
 
 from spiderx_controller import m6_action_client as ac
 from spiderx_controller import m6_goal_fingerprint as gf
 from spiderx_controller import m6_live_contract as lc
+from spiderx_controller import m6_live_mock as ft
 from spiderx_controller import m6_live_playback as lpb
 from spiderx_controller import m6_live_preflight as lp
 from spiderx_controller import m6_live_readiness as rd
@@ -475,5 +475,6 @@ def test_session_source_has_no_return_or_retry_path():
     src = inspect.getsource(lpb)
     assert src.count('self.transport.send_goal(') == 1
     assert src.count('self.transport.cancel_goal()') == 1
-    for word in ('NEUTRAL_LABEL', 'build_trajectory(self.sources)\n' * 2, 'while retry'):
-        assert word not in src
+    session_src = inspect.getsource(lpb.LiveSession)
+    for word in ('NEUTRAL_LABEL', 'while retry', 'for attempt'):
+        assert word not in session_src

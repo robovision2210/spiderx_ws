@@ -109,5 +109,35 @@ def dispatch_permitted(result, now_monotonic, max_age_s=lc.READINESS_MAX_AGE_S):
     return True, None
 
 
-__all__ = ['COMPATIBLE', 'WARNING', 'INCOMPATIBLE', 'CLASSES', 'INCOMPATIBLE_CODES', 'classify',
-           'ReadinessResult', 'assess', 'dispatch_permitted']
+def make_readiness_provider(collect_graph, names, neutral, monotonic, versions=None,
+                            interface=None, wall_iso=None):
+    """A same-process readiness provider: () -> ReadinessResult (D3).
+
+    collect_graph() returns read-only graph observations (m6_live_preflight.GraphProbe.collect on
+    the dispatching process's own node). versions/interface default to the installed stack. The
+    observation time is taken AFTER collection, so the 10 s expiry covers the whole observation.
+    """
+    from spiderx_controller import m6_live_preflight as lpf
+
+    def provide():
+        obs = lpf.Observations()
+        try:
+            obs.versions = versions if versions is not None else lpf.collect_versions()
+            obs.interface = interface if interface is not None else lpf.collect_interface()
+        except Exception as e:  # noqa: BLE001 - recorded; evaluate() then fails the contract
+            obs.probe_errors.append(f'interface: {type(e).__name__}: {e}')
+        try:
+            graph = collect_graph()
+            for attr in ('action_servers', 'controllers', 'joint_state_publishers',
+                         'joint_state_messages'):
+                setattr(obs, attr, getattr(graph, attr))
+            obs.probe_errors += list(graph.probe_errors)
+        except Exception as e:  # noqa: BLE001
+            obs.probe_errors.append(f'graph: {type(e).__name__}: {e}')
+        report = lpf.evaluate(obs, list(names), list(neutral))
+        return assess(report, monotonic(), wall_iso() if wall_iso else None)
+    return provide
+
+
+__all__ = ['make_readiness_provider', 'COMPATIBLE', 'WARNING', 'INCOMPATIBLE', 'CLASSES',
+           'INCOMPATIBLE_CODES', 'classify', 'ReadinessResult', 'assess', 'dispatch_permitted']

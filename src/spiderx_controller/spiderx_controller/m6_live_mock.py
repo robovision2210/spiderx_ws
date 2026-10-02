@@ -1,8 +1,9 @@
-"""Deterministic fake LiveTransport for M6.0-D tests (no ROS, no graph, simulated clocks).
+"""Deterministic in-memory LiveTransport for M6.0-D tests and the CLI --mock mode.
 
-It models a FollowJointTrajectory server and a /joint_states stream on a fake wall clock that
-advances only inside poll(). Every goal and cancel it receives is recorded, so tests can prove
-what was (not) dispatched.
+No ROS, no graph, simulated clocks: it models a FollowJointTrajectory server and a /joint_states
+stream on a fake wall clock that advances only inside poll(). Nothing it does reaches any ROS
+graph. Every goal and cancel it receives is recorded, so tests can prove what was (not)
+dispatched. It also provides the fixed readiness report used by --mock.
 """
 
 from spiderx_controller import m6_action_client as ac
@@ -11,6 +12,8 @@ from spiderx_controller import m6_live_playback as lp
 
 
 class FakeTransport(lp.LiveTransport):
+    """Scripted server + stream; see the module docstring."""
+
     def __init__(self, trajectory, expected_fp, *, latch=None, ready=True, respond=True,
                  accept=True, response_latency=0.1, result='success', result_at=None,
                  result_code=0, rtf=1.0, js_rate=50.0, js_offset=0.0, error_after=None,
@@ -45,6 +48,9 @@ class FakeTransport(lp.LiveTransport):
         self.next_js = start_wall
         self.next_fb = None
         self.finished = False
+
+    def close(self):
+        self.closed = True
 
     # ---------------------------------------------------------------- clocks
     def wall_now(self):
@@ -156,3 +162,40 @@ class FakeTransport(lp.LiveTransport):
         self.t = end
         events.sort(key=lambda te: te[0])
         return [e for _, e in events]
+
+
+# ---------------------------------------------------------------- --mock fixtures
+MOCK_VERSIONS = {               # the owner PC versions recorded by M6.0-B (classification: warning)
+    'joint_trajectory_controller': '2.54.0', 'control_msgs': '4.9.0', 'trajectory_msgs': '4.9.0',
+    'controller_manager': '2.54.2', 'controller_manager_msgs': '2.54.2',
+    'hardware_interface': '2.54.2', 'gz_ros2_control': '0.7.21', 'rclpy': '3.3.19',
+    'sensor_msgs': '4.9.0', 'action_msgs': '1.2.2',
+}
+
+SCENARIOS = {
+    'success': {},
+    'interrupt': {'interrupts_at': (5.0,)},
+    'tracking_error': {'error_after': 4.0, 'error_value': 0.06},
+    'stale_joint_states': {'js_stop_at': 5.0},
+    'controller_lost': {'server_lost_at': 5.0},
+    'rejected': {'accept': False},
+}
+
+
+def mock_readiness_report(names, neutral):
+    """A READY live-preflight report built from fixed observations (no graph)."""
+    from spiderx_controller import m6_live_preflight as lpf
+    obs = lpf.Observations(
+        action_servers=[('/leg_trajectory_controller', [lpf.env.ACTION_TYPE])],
+        controllers=[('joint_state_broadcaster',
+                      'joint_state_broadcaster/JointStateBroadcaster', 'active'),
+                     ('leg_trajectory_controller', lpf.JTC_TYPE, 'active')],
+        joint_state_publishers=[('/joint_state_broadcaster', lpf.JOINT_STATE_TYPE)],
+        joint_state_messages=[(100.0 + 0.02 * i, list(names), list(neutral)) for i in range(5)],
+        versions=dict(MOCK_VERSIONS),
+        interface={'action_file_sha256': 'mock',
+                   'goal_fields': ['goal_time_tolerance', 'goal_tolerance', 'path_tolerance',
+                                   'trajectory'],
+                   'tolerance_fields': ['acceleration', 'name', 'position', 'velocity'],
+                   'error_codes': dict(lpf.REQUIRED_ERROR_CODES)})
+    return lpf.evaluate(obs, list(names), list(neutral))
