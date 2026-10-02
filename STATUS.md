@@ -1,8 +1,8 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/spiderx-m6d-live-playback` (M6.0-D implementation, from `main` @ `9885057` with M6.0 and M6.0-B merged).
+Last updated on branch `claude/stoic-shannon-ur2mes` (M6.0-D live-enabling design, from `main` @ `e65c213` with M6.0-D merged).
 
-**M6.0-D implementation cloud + local verified in offline/mock/isolated-domain testing; live dispatch remains hard-disabled and local live playback remains pending separate approval.** Draft PR, not merged.
+**M6.0-D implementation cloud + local verified in offline/mock/isolated-domain testing; live dispatch remains hard-disabled and local live playback remains pending separate approval.** Merged into `main` (`e65c213`).
 - **Local verification passed** on the owner's Ubuntu PC at `412eb45`, in offline/mock/isolated-domain modes only:
   - clean build, then 1116 tests with 0 failures and 180 M6.0-D tests passing;
   - the same trajectory ID and goal fingerprint as the cloud;
@@ -14,6 +14,11 @@ Last updated on branch `claude/spiderx-m6d-live-playback` (M6.0-D implementation
 - **Cloud results.** 1116 tests, 0 failures, 0 skipped; 180 M6.0-D tests, including the fingerprint and state-machine mutation suites and rclpy tests against an in-process action test double on an isolated, non-default, localhost-only ROS domain; dry-run and six mock reports byte-identical across two runs; M1–M4 and Fortress static validators pass.
 - **Live dispatch is hard-disabled** (`LIVE_DISPATCH_ENABLED = False`; `--live` exits 3 before importing `rclpy`). No trajectory goal was sent to a live controller; no Gazebo playback, movement, contact, balance, walking, navigation or hardware operation occurred. A separate owner approval and enabling change are required before any local live goal.
 - See the [M6.0-D results](docs/M6D_LIVE_PLAYBACK_RESULTS.md), [guide](docs/SPIDERX_M6D_LIVE_PLAYBACK_GUIDE.md) and [plan](docs/M6D_LIVE_PLAYBACK_PLAN.md).
+- **Live-enabling design (draft PR, dispatch still disabled).**
+  - The gated `--live` wiring is implemented behind `m6_live_contract.LIVE_DISPATCH_ENABLED`, which is still `False`.
+  - It is tested offline and on an isolated test domain only.
+  - The later enabling commit is exactly two lines and needs a separate owner approval.
+  - No live goal has been sent. See the [live-enabling design](docs/M6D_LIVE_ENABLING_DESIGN.md).
 
 **M6.0-B is merged into `main` (`9885057`).** The notes below describe the M6.0/M6.0-B state.
 

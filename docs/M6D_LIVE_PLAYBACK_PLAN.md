@@ -7,7 +7,8 @@
 > [M6D_LIVE_PLAYBACK_RESULTS.md](M6D_LIVE_PLAYBACK_RESULTS.md); usage:
 > [SPIDERX_M6D_LIVE_PLAYBACK_GUIDE.md](SPIDERX_M6D_LIVE_PLAYBACK_GUIDE.md). D16 was implemented by
 > composition (`m6_goal_fingerprint.build_live_goal`), so `m6_action_client.py` and its tests are
-> unchanged.
+> unchanged. The gated live wiring, the two-line enabling commit and the manual checklist are in
+> the [live-enabling design](M6D_LIVE_ENABLING_DESIGN.md); the gate is still `False`.
 
 > **Adopted plan (2026-10-02).** The Phase 0 audit was written on
 > `claude/spiderx-m6d-live-playback-plan` (`c55421b`, from `f5a7252`). It is adopted here on the

@@ -153,6 +153,10 @@ Source `install/setup.bash` first; the tests load the installed URDF.
 
 ## 8. Before any live goal
 
+The gated `--live` wiring (it needs `--domain-id`; the confirmation prompt appears only after
+readiness #1 passes), the exact two-line enabling commit and the future manual checklist are in
+the [live-enabling design](M6D_LIVE_ENABLING_DESIGN.md). The gate is still `False`.
+
 The following are all required, and none of them exists yet:
 1. owner review of the draft PR;
 2. a **separate owner approval**;
