@@ -550,7 +550,7 @@ The owner approved the Phase 0 audit commit cc6974d. M6 implementation still nee
 
 | ID | Decision | Binding consequences |
 |---|---|---|
-| **D1** | **(b)** One bounded, non-repeating neutral → `crouch_10mm` → neutral playback | Reuses the **exact** M4-validated `crouch_10mm` pose (`config/m4_pose_targets.yaml:46-53`) and the M4 joint conventions. It is a **trajectory-execution and observability check only**. It does not validate gait playback, contact, body support, balance, locomotion or walking. **Blocked: see §14.2** |
+| **D1** | **(b)** One bounded, non-repeating neutral → `crouch_10mm` → neutral playback | Reuses the **exact** M4-validated `crouch_10mm` pose (`config/m4_pose_targets.yaml:46-53`) and the M4 joint conventions. It is a **trajectory-execution and observability check only**. It does not validate gait playback, contact, body support, balance, locomotion or walking. The §14.2 conflict is **resolved** by option (i), [§14.7](#147-owner-decision-crouch-envelope-option-i-2026-10-02) |
 | **D2** | **Defer M6.1 entirely** | Nothing for M6.1 in this branch: no fixed-base model, launch variant, raised base, free base, contact analysis or M6.1 runtime work. M6.1 needs a separate future plan and owner approval, and only after M6.0-D passes locally |
 | **D3** | **(c)** Three evidence channels, **all required** | (1) The goal is accepted **and** the result is successful. (2) An independent `/joint_states` tracking check at **0.05 rad**. (3) Explicit `path_tolerance` / `goal_tolerance` in the FollowJointTrajectory **goal**, with **no controller-YAML change**. Each channel is recorded separately as `passed`, `failed`, `timed_out` or `unavailable`. **Action success alone is not tracking evidence** |
 | **D4** | **(a)** Conservative envelope (§14.3) | If the pose exceeds the envelope: **stop and report; never widen the envelope automatically** |
@@ -558,7 +558,10 @@ The owner approved the Phase 0 audit commit cc6974d. M6 implementation still nee
 | **D6** | **(b)** Cloud **and** owner Ubuntu PC | Installed versions are recorded in every run report. The §3 interface-compatibility checks are repeated on the owner's stack **before any valid local playback**. A version mismatch is a visible preflight outcome, never silently ignored |
 | **D7** | **(a)** New M6-specific modules and scripts in `spiderx_controller` | `trajectory_client.py` and the M1–M4 tools stay **unchanged** |
 
-### 14.2 Blocking finding: D1 pose exceeds the D4 per-joint limit [FINDING]
+### 14.2 Finding: D1 pose exceeded the original D4 per-joint limit [FINDING, RESOLVED]
+
+> **Resolved 2026-10-02 by owner option (i)**, [§14.7](#147-owner-decision-crouch-envelope-option-i-2026-10-02). M6.0-D is no longer blocked. The
+> text below is kept as the audit record of the finding.
 
 **[RESULT]** This was computed read-only and in memory with the shipped loader:
 `m4_pose_targets.load_and_evaluate()` followed by `pose_command(plan, …)`. Nothing was written and
@@ -578,7 +581,7 @@ no ROS node was created. It agrees with `docs/M4_PLAN.md:189`.
 **Handling, per D4.** Stop and report; do not widen.
 - The envelope stays at 0.05 rad.
 - The pose is **not** scaled, clipped or replaced.
-- **M6.0-D is BLOCKED** until the owner resolves the conflict with a new decision.
+- **M6.0-D was BLOCKED** until the owner resolved the conflict (resolved: option (i), [§14.7](#147-owner-decision-crouch-envelope-option-i-2026-10-02)).
 - M6.0-A, M6.0-B and M6.0-C do not depend on the pose content and are not blocked by this
   finding. Each still needs its own approval.
 
@@ -601,7 +604,7 @@ at every waypoint, and refusal without clamping.
 
 | Rule | Value |
 |---|---|
-| Per-joint delta from neutral | ≤ the exact M4 `crouch_10mm` delta **and** ≤ **0.05 rad** (currently unsatisfiable; §14.2) |
+| Per-joint commanded displacement from neutral | ≤ **0.1223 rad**, M6.0-D only, with a documented numerical epsilon of 1e-9 rad (owner option (i), [§14.7](#147-owner-decision-crouch-envelope-option-i-2026-10-02)). Superseded value: ≤ 0.05 rad (§14.2) |
 | Maximum total duration | **30 s** |
 | Maximum points | **5** |
 | Start delay | **Required**: the first moving point is never at `time_from_start` = 0 |
@@ -610,7 +613,7 @@ at every waypoint, and refusal without clamping.
 | Point validity | Every value finite; all **12 joints in canonical controller order**; client-side soft-limit check at URDF limits − **0.05 rad** margin |
 | Preflight order | Every check runs **before goal construction**. A goal object is never built for a refused trajectory |
 | Envelope breach | Stop and report. **Never widen automatically** |
-| Goal tolerances (D3 channel 3) | Explicit per-joint `path_tolerance` and `goal_tolerance`, plus `goal_time_tolerance`, set in the goal message only. **[PLAN]** The proposal is 0.05 rad position (the M1 tolerance). The values are fixed in the implementation plan for owner approval |
+| Goal tolerances (D3 channel 3) | Explicit per-joint `path_tolerance` and `goal_tolerance` of **0.05 rad** position (the tracking tolerance, [§14.7](#147-owner-decision-crouch-envelope-option-i-2026-10-02)), set in the goal message only, plus `goal_time_tolerance` (value fixed in the implementation and listed in the M6 test results for owner review). No controller-YAML change |
 | Abort | Cancel only (D5) |
 
 ### 14.4 Revised verification ladder
@@ -620,10 +623,10 @@ interaction.**
 
 | Step | Kind | Content | Evidence | Allowed claim | Non-claims |
 |---|---|---|---|---|---|
-| **M6.0-A** | Offline, no ROS | Conversion and offline preflight of the D1 waypoint spec; `--validate-only` | Deterministic trajectory and ID; all §6 and §14.3 checks; every mutation refused with exit 2 and **0 send calls**; reproduces the §14.2 refusal | "Offline conversion and preflight are implemented and tested" | No motion, controller, Gazebo, tracking or playback claim |
+| **M6.0-A** | Offline, no ROS | Conversion and offline preflight of the D1 waypoint spec; `--validate-only` | Deterministic trajectory and ID; all §6 and §14.3 checks; every mutation refused with exit 2 and **0 send calls**; the D1 crouch trajectory **passes** under the 0.1223 rad cap and a point beyond the cap is refused | "Offline conversion and preflight are implemented and tested" | No motion, controller, Gazebo, tracking or playback claim |
 | **M6.0-B** | **Live, read-only; no goal** | Preflight against the running controller stack: action-server availability, controller states, `/joint_states` source and publisher count, exact 12-joint name contract, installed-version collection (D6) | Run report with each check's outcome; **0 goals sent** (logged and asserted); clean process-group shutdown with no leftovers | "The controller action interface was observed read-only, and the preflight ran without sending any goal" | No motion, tracking, rejection-behaviour or playback claim |
 | **M6.0-C** | **Mock-only** (deterministic test double; no live controller) | A mock FollowJointTrajectory action server or test double | (1) Malformed, non-monotonic, out-of-limit, NaN and incomplete trajectories are **rejected before any valid-goal dispatch**. (2) A rejected status or result is surfaced as a structured `failed` outcome. (3) **No retry** occurs. (4) **No automatic neutral-return goal** is generated. (5) **No later valid goal** follows a rejection | "The M6 client's rejection and failure paths are proven against a deterministic mock" | Nothing about the live controller's rejection behaviour. **No invalid goal is sent to the live controller.** A live invalid-goal test is out of scope unless separately approved |
-| **M6.0-D** | Live, one valid goal — **BLOCKED (§14.2)** | One neutral → `crouch_10mm` → neutral goal within §14.3, after the D6 checks on the target machine | The three D3 channels, recorded separately; controllers still active; one `/joint_states` publisher; no leftovers | "One bounded multi-point joint trajectory was executed in Gazebo through the existing controller stack, and joint-space tracking was observed within 0.05 rad (simulation, placeholder actuators)" | No gait playback, walking, locomotion, contact, body support, balance, stability, real-time, actuator or hardware claim |
+| **M6.0-D** | Live, one valid goal (unblocked by [§14.7](#147-owner-decision-crouch-envelope-option-i-2026-10-02); still needs separate owner approval and local verification) | One neutral → `crouch_10mm` → neutral goal within §14.3, after the D6 checks on the target machine | The three D3 channels, recorded separately; controllers still active; one `/joint_states` publisher; no leftovers | "One bounded multi-point joint trajectory was executed in Gazebo through the existing controller stack, and joint-space tracking was observed within 0.05 rad (simulation, placeholder actuators)" | No gait playback, walking, locomotion, contact, body support, balance, stability, real-time, actuator or hardware claim |
 | M6.1 | Deferred (D2) | — | — | — | Needs a separate plan and approval after M6.0-D passes locally |
 
 ### 14.5 Implementation boundary
@@ -644,6 +647,33 @@ interaction.**
 - Only `docs/M6_GAIT_PLAYBACK_SAFETY_PLAN.md` changed.
 - No code, test, config, URDF, launch or package file was touched.
 - Nothing was run except one read-only, in-memory offline computation (§14.2).
+
+### 14.7 Owner decision: crouch envelope, option (i) (2026-10-02)
+
+**[OWNER DECISION]** This resolves the §14.2 conflict with option (i).
+
+**The cap.** For **M6.0-D only**, the maximum commanded per-joint displacement from verified
+neutral is **0.1223 rad**.
+- It is an exact, evidence-based cap, derived from the existing M4-validated `crouch_10mm` pose.
+  The exact maximum \|Δ\| is 0.12229413600889982 rad (the `lr`/`rr` foot joints; §14.2).
+- It is **not** a general M6 gait-playback envelope.
+- It must **never widen automatically**.
+
+**Three separate quantities.** They must never be confused in the plan, the code, the tests or
+the reports.
+
+| # | Quantity | Value | Used for | Must not be used for |
+|---|---|---|---|---|
+| 1 | **Maximum commanded displacement from neutral** (M6.0-D only) | **0.1223 rad**, inclusive only within a documented numerical epsilon of **1e-9 rad** (accept \|q − q_neutral\| ≤ 0.1223 + 1e-9) | The single approved neutral → `crouch_10mm` → neutral trajectory. Any point beyond the cap is rejected **before any action goal is constructed or sent** | Tracking, joint limits, any other trajectory or any later milestone |
+| 2 | **Tracking tolerance** | **0.05 rad** | Comparing observed `/joint_states` with the commanded trajectory during and after a valid playback (D3 channel 2), and the goal-message `path_tolerance` / `goal_tolerance` (D3 channel 3) | Limiting commanded displacement |
+| 3 | **Joint-limit soft margin** | **0.05 rad**, the existing `soft_limit_margin_rad` in `config/spiderx_legs.yaml` (`joint_safety.DEFAULT_MARGIN_RAD`) | Client-side mechanical-limit preflight: every commanded point must lie within URDF limits pulled inward by the margin; no clamping | Tracking or displacement |
+
+**Effect on the ladder.**
+- The §14.2 blocked status is removed.
+- **M6.0-D remains un-run.** It still needs the D6 checks on the owner's stack, a passing local
+  live read-only preflight (M6.0-B) and separate owner approval before any valid goal is sent.
+- The M6.0 implementation (offline, mock and live read-only layers) proceeds on this branch.
+- Cloud validation is limited to offline tests, mocked tests and static checks.
 - No Gazebo, launch, controller manager, action client, goal, playback, `/cmd_vel`, M5.5, contact,
   fixed-base or free-base work, and no hardware.
 - No PR was created.
