@@ -93,6 +93,17 @@ duration, and a maximum displacement of 0.1222941360 rad (`rr_foot_joint`).
 `trajectory_id` hashes the content and the SHA-256 of every source file. Any source edit gives a
 new ID, and an old file is refused as `source_stale`.
 
+**Cross-machine identity.** The expanded URDF is hashed after its SpiderX mesh URIs are made
+workspace-independent: `file://…/share/spiderx_description/meshes/<rel>` is hashed as
+`package://spiderx_description/meshes/<rel>`, for provenance only.
+- The same sources therefore give the same `trajectory_id` on any machine. With the current
+  sources it is `44f0a7ad52e5c330`.
+- Any real change to the description still changes the hash, including a mesh name, a joint limit
+  or an inertia value.
+- Before `fd7a9de`, IDs differed between workspaces; for example, cloud `b884584ed4aeddf0` versus
+  local `1280770cae26aa54`.
+- Trajectory files written before the fix are refused as `source_stale`. Regenerate them.
+
 ## 4. Mock action-client tests (M6.0-C)
 
 M6.0-C is **mock-only**.

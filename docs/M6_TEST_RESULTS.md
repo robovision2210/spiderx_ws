@@ -15,7 +15,8 @@ was performed. Local live read-only preflight and owner-approved M6.0-D playback
   - **D:** these docs.
 - **Cloud verification is offline, mocked and static only.**
   - Clean build: 8 packages.
-  - **912 tests, 0 errors, 0 failures, 0 skipped.**
+  - **932 tests, 0 errors, 0 failures, 0 skipped** after the provenance portability fix
+    (`fd7a9de`; 912 before it).
   - The offline preflight CLI is deterministic. It refuses every invalid trajectory with exit 2.
   - Mutation tests show the dispatch gates, the single-goal rule and the no-auto-return rule are
     all enforced.
@@ -62,12 +63,14 @@ Each code batch was checked the same way:
 | `bef3c25` | Docs: owner decision option (i), 0.1223 rad cap for M6.0-D | – | – |
 | `0a9d2db` | A: offline conversion and trajectory preflight | 805 | 89 (`test_m6_trajectory`), 14 (`test_m6_offline_preflight`) |
 | `d6ebaad` | B: single-goal action client, mock-only | 869 | 63 (`test_m6_action_client`) |
-| `e9b1565` | C: live read-only preflight tool, mock-tested | **912** | 42 (`test_m6_live_preflight`) |
+| `e9b1565` | C: live read-only preflight tool, mock-tested | 912 | 42 (`test_m6_live_preflight`) |
+| `fd7a9de` | Fix: expanded-URDF provenance made workspace-path independent | **932** | 20 (`test_m6_trajectory` 89 → 109) |
 
 - **How totals add up.** Each total is the earlier total, plus the new pytest cases, plus one
   CTest entry per new test file.
 - **Final gate.** The final gate re-ran the clean build and the full suite at `e9b1565`:
-  912 tests, 0 errors, 0 failures, 0 skipped.
+  912 tests, 0 errors, 0 failures, 0 skipped. After the fix at `fd7a9de` a clean build and
+  the full suite gave **932 tests, 0 errors, 0 failures, 0 skipped**.
 
 ## The three separate quantities
 
@@ -87,6 +90,12 @@ The code keeps these three apart. Tests pin each one.
   a requirement for the future M6.0-D runner.
 
 ## Offline preflight evidence (M6.0-A) [MEASURED]
+
+> **Provenance-ID migration (`fd7a9de`).** The `trajectory_id` below, `b884584ed4aeddf0`, is the
+> superseded pre-fix value. After the fix the same trajectory has `trajectory_id`
+> **`44f0a7ad52e5c330`**; see [Provenance portability fix](#provenance-portability-fix-fd7a9de).
+> Only the identity and provenance hash changed. The trajectory content (points, times,
+> positions, displacement) is unchanged.
 
 **Valid trajectory.**
 - Command: `ros2 run spiderx_controller m6_offline_preflight --out log/m6_playback/offline_run1`,
@@ -308,6 +317,77 @@ process.
   trajectory ends.
 - It is **not** a claim that controller tracking is independently validated. Tracking evidence
   comes only from the `/joint_states` channel, and none has been gathered live.
+
+## Provenance portability fix (`fd7a9de`)
+
+**Finding (owner's local verification).** The same trajectory got different identities on the two
+machines:
+- cloud: `trajectory_id b884584ed4aeddf0`;
+- owner's Ubuntu PC: `trajectory_id 1280770cae26aa54`.
+
+Everything else was identical:
+- the M4 pose hash;
+- the 12 joints and their order;
+- the three points and the 3.0 / 6.0 / 9.0 s times;
+- the 0.1222941360 rad maximum displacement at `rr_foot_joint`.
+
+**Cause.** The provenance included a SHA-256 of the xacro-expanded URDF. Its 60
+`<mesh filename>` attributes are absolute, machine-specific URIs, such as
+`file:///home/user/spiderx_ws/install/...` versus `file:///home/jagadeswar/spiderx_ws/install/...`.
+The ID was therefore path-dependent.
+
+**Fix (provenance hashing only).** `m6_trajectory.urdf_provenance_sha256` hashes a deep copy
+of the URDF in which each `<mesh filename>` matching
+`^file://(/<path>)?/share/spiderx_description/meshes/<rel>$` is rewritten to
+`package://spiderx_description/meshes/<rel>`.
+- Nothing else is touched:
+  - no other element or attribute;
+  - no other package;
+  - no `src/` path;
+  - no plain path;
+  - no URI with a query or fragment.
+- The URDF used for geometry, the xacro output, the install tree and the meshes are all unchanged.
+- The rewrite is idempotent.
+
+**Evidence [MEASURED].**
+
+| Expanded URDF | Raw SHA-256 (old) | Canonical SHA-256 (new) | `trajectory_id` (new) |
+|---|---|---|---|
+| Cloud, actual `/home/user/...` install | `2af3fefeb0a1…` | `915125596b3d…` | `44f0a7ad52e5c330` |
+| Cloud-like relocated prefix | `fc7785a66b3d…` | `915125596b3d…` | `44f0a7ad52e5c330` |
+| Local-like `/home/jagadeswar/...` prefix | `6e6693a4344d…` | `915125596b3d…` | `44f0a7ad52e5c330` |
+
+**Offline runs after the fix.**
+- Two CLI runs into `log/m6_playback/fix_run1` and `fix_run2` both exited 0 with PASS,
+  `trajectory_id 44f0a7ad52e5c330`.
+- `diff -r` is empty, so the runs are byte-identical:
+  - `trajectory.json`: `0ceff902410b38ceea255b880a544c043bad05b69f0288117737d4e14a20abab`;
+  - `preflight.json`: `a3ed82168761ef522778a0304314c9451e6eba90c29756312dbcc65a9f2ae80c`.
+- Refusals are unchanged, each exiting 2:
+  - beyond the cap: `displacement_exceeds_cap` and `source_pose_mismatch`;
+  - non-monotonic time: `time_not_strictly_increasing`;
+  - NaN: `non_finite_value`;
+  - 31 s: `duration_exceeds_max`;
+  - cyclic: `mode_not_single`;
+  - reversed order: `joint_order_not_canonical`;
+  - a changed URDF hash: `source_stale`;
+  - an edited but un-restamped file: `trajectory_id_mismatch`.
+- The CLI loaded no ROS client library.
+
+**Stale and tamper protection is unchanged.** Twenty new tests (`test_m6_trajectory`) show that:
+- cloud-like and local-like prefixes give the same hash and the same `trajectory_id`;
+- a trajectory from one prefix passes preflight against the other;
+- a different mesh filename or mesh subpath changes the hash;
+- a changed joint limit, inertia, mass or origin value changes the hash, and such a change is
+  refused as `source_stale`;
+- unrelated URIs and non-mesh attributes are left unchanged;
+- the canonicalization is idempotent and never modifies its input.
+
+No existing test was changed or weakened. No ID is pinned in the tests, so no expected value
+needed migrating.
+
+**Local verification remains pending** until the owner reruns it. With identical sources, the
+owner's PC should now also report `trajectory_id 44f0a7ad52e5c330`.
 
 ## Pending (not claimed)
 
