@@ -4,6 +4,11 @@
 > `claude/spiderx-m6-graph-preflight-plan`, created from `origin/main` @ `f5a7252` (M6.0
 > offline/mock tooling merged; cloud + local offline/mock verified). During this audit no Gazebo,
 > launch file, controller, ROS node, graph query, action goal or command was started or sent.
+>
+> **Status (2026-10-02): Phase 0 approved by the owner; decisions OD-1 to OD-11 approved
+> ([§11.1](#111-approved-owner-decisions-2026-10-02)). The live graph-mode run has NOT been performed.** It is a manual, two-terminal run on
+> the owner's Ubuntu PC only (§9); its results go to `docs/M6_GRAPH_PREFLIGHT_RESULTS.md`, created
+> only after that run.
 
 ```text
 M6.0-B only OBSERVES a running, unmodified SpiderX Fortress control simulation and then stops it.
@@ -53,8 +58,11 @@ locomotion, walking, navigation or hardware capability.
 - 0 controller commands, and 0 messages on any command topic (for example
   `/leg_trajectory_controller/joint_trajectory`);
 - 0 `/cmd_vel` messages;
-- 0 controller load, configure, switch or unload requests;
+- 0 controller load, configure, switch or unload requests (no controller-lifecycle activity);
 - 0 parameter changes on any other node.
+
+The exact approved definition of "zero", and the node-local housekeeping that is allowed and must
+be disclosed, are in [§11.1](#111-approved-owner-decisions-2026-10-02) (OD-4).
 
 **What the normal launch itself does (not M6.0-B activity) [FACT].** These happen before the
 preflight window, and they are unchanged since M1/M4.1:
@@ -65,8 +73,9 @@ preflight window, and they are unchanged since M1/M4.1:
   to the `gz_ros2_control` command interfaces on every control cycle, internally, inside the Gazebo
   server process. This is not a ROS topic publication and not caused by the preflight. It is still
   a reason why no "zero joint commands" claim may ever be made for the simulation as a whole.
-- **[OWNER DECISION OD-8]** confirms that the zero-command requirement applies to the **preflight
-  window and the preflight tool**, not to the launch's own start-up activation and hold.
+- **[OWNER DECISION OD-8, approved]** The zero-command requirement applies to the **preflight
+  window and the preflight tool**, not to the launch's own start-up activation and hold. No claim
+  may say that the launch itself emits no internal controller commands.
 
 **Allowed claim after a successful run [PLAN]:**
 
@@ -374,7 +383,8 @@ Also recorded in this audit [FACT]:
 - `ros2cli` 0.18.12 and `ros2controlcli` 2.51.0;
 - Gazebo (Ignition) 6.16.0.
 
-**3. Classification [OWNER DECISION, M6 plan §14.9].** Applied to the **graph-mode** report,
+**3. Classification [OWNER DECISION, M6 plan §14.9; applied by hand per OD-5].** The tool
+reports the facts; the owner's manual review applies the label to the **graph-mode** report,
 because `--interface-only` cannot observe the endpoint or the joints:
 - **`incompatible`** if any of these appear: `interface_contract_mismatch`,
   `action_server_missing`, `action_server_ambiguous`, `action_type_mismatch`,
@@ -412,8 +422,8 @@ sleep 3
 grep -c -E 'Loading controller|Configuring controller|Deactivating controller|Switching controllers:|unloading service called' \
   log/m6_graph_preflight/launch.log               # T0 count (tier 4b)
 
-# 4. Terminal B: the graph-mode preflight (window T0..T1), wall-capped
-timeout 60 ros2 run spiderx_controller m6_live_preflight; echo "exit=$?"
+# 4. Terminal B: the graph-mode preflight (window T0..T1), wall-capped (OD-7)
+timeout 60 ros2 run spiderx_controller m6_live_preflight --timeout 10 --window 2; echo "exit=$?"
 
 # 5. Terminal B: independent zero-command evidence (tiers 3-4), read-only
 ros2 topic info -v /leg_trajectory_controller/joint_trajectory   # 0 publishers
@@ -466,6 +476,9 @@ Every batch would also need:
 
 ## 11. Owner decisions required before any graph-mode run
 
+The table below is the Phase 0 proposal, kept for the record. The owner's approved decisions are
+in [§11.1](#111-approved-owner-decisions-2026-10-02), which governs.
+
 | ID | Decision | Options | Recommendation |
 |---|---|---|---|
 | **OD-1** | Display mode | (a) default GUI+server; (b) `headless:=true` | **(a)**. It was proven locally in M1–M4; headless is untested (no EGL in the cloud) |
@@ -479,6 +492,100 @@ Every batch would also need:
 | **OD-9** | Start pose | Keep `start_pose_not_neutral` as a M6.0-B readiness failure (0.05 rad, §14.9 decision 3) | Keep |
 | **OD-10** | Retries | No automatic retry; at most one manual rerun for F1 or a discovery-timing `action_server_missing`; both attempts reported | As listed |
 | **OD-11** | Results location | A new `docs/M6_GRAPH_PREFLIGHT_RESULTS.md` (or a section in `docs/M6_TEST_RESULTS.md`), committed docs-only after the run | Owner's choice |
+
+### 11.1 Approved owner decisions (2026-10-02)
+
+**[OWNER DECISION]** Approved after the Phase 0 review. Docs-only record; no code, test, script or
+config changed, and no runtime operation occurred.
+
+**OD-1 Display mode: GUI.**
+- Use the existing normal GUI default: `ros2 launch spiderx_bringup fortress_control.launch.py`.
+- Do not introduce or test `headless:=true` during M6.0-B.
+
+**OD-2 Environment: the owner's Ubuntu PC only.**
+- The live graph-mode preflight runs only on the owner's Ubuntu PC.
+- The cloud is not used for this live runtime step, because of the documented cloud GUI↔server
+  start-up hang (§2.4).
+
+**OD-3 Execution: manual two-terminal checklist.**
+- The first live run follows §9 by hand, with the existing tool unchanged.
+- No new runtime wrapper script is created for the first live run.
+
+**OD-4 The precise zero rule.**
+- **"Zero" means** zero activity of the following kinds **from the M6 preflight tool**:
+  - robot commands;
+  - trajectory commands;
+  - action goals;
+  - action cancels;
+  - controller switches;
+  - controller-lifecycle requests (load, configure, activate, deactivate, unload);
+  - `/cmd_vel` messages;
+  - parameter changes on other nodes.
+- **Allowed node-local housekeeping**, which must be disclosed in the results:
+  - the preflight node's one `/parameter_events` update announcing its own `use_sim_time`
+    parameter (§3.3);
+  - its `/rosout` publisher;
+  - its parameter services (servers nobody calls);
+  - normal node discovery and graph traffic.
+- **These side effects are never described as controller or robot commands.** The same applies
+  to the read-only `ros2` CLI queries in §9, which create their own short-lived nodes.
+
+**OD-5 Classification: manual.**
+- For M6.0-B, the report collects the package-version, action-interface and joint-contract facts.
+- The owner's manual review applies `compatible` / `warning` / `incompatible`, following the
+  approved rules (§8; M6 plan §14.9).
+- No classification-label code is added on this plan branch. Label support in code remains a
+  prerequisite for M6.0-D.
+
+**OD-6 Evidence: all five tiers.**
+- All five evidence tiers of §4 are required.
+- A tier that cannot be observed is reported as **`unavailable`**, never as passed.
+- Missing evidence is never inferred.
+
+**OD-7 Timeouts.**
+
+| Phase | Limit |
+|---|---|
+| Start-up (both controllers `active`) | 240 s |
+| Settle after `active` | 3 s |
+| Each graph or controller query (`--timeout`) | 10 s |
+| `/joint_states` observation window (`--window`) | 2 s |
+| Preflight tool wall-clock cap (`timeout 60`) | 60 s |
+| SIGINT grace before forced cleanup | 20 s |
+
+There is no automatic retry.
+
+**OD-8 Scope of the zero rule.**
+- The zero-command rule applies to the M6 preflight window and tool.
+- It does not prohibit the existing launch's normal start-up: the spawners loading, configuring
+  and activating `joint_state_broadcaster` and `leg_trajectory_controller`, and that controller's
+  hold-position behaviour.
+- No claim may say that the launch itself emits no internal controller commands.
+
+**OD-9 Start pose.**
+- The check that every observed joint is within 0.05 rad of neutral is kept.
+- A failure is **NOT READY** and blocks any future playback authorization.
+- The check sends no command, and M6.0-B never moves the robot to fix it.
+
+**OD-10 Retry.**
+- At most **one** manual rerun is allowed.
+- It may be used only after full cleanup (§5) and only for one of these:
+  - a documented Gazebo start-up hang (F1);
+  - a documented discovery-timing miss (`action_server_missing` while `ros2 action list -t`
+    shows the server).
+- There is no automatic retry, and no rerun for a substantive preflight failure.
+- Both attempts are reported.
+
+**OD-11 Results.**
+- After the actual live run, create `docs/M6_GRAPH_PREFLIGHT_RESULTS.md`. It records:
+  - environment and version facts;
+  - the command and timing;
+  - all five evidence tiers;
+  - the classification;
+  - the result;
+  - the shutdown and cleanup evidence;
+  - the strict non-claims.
+- That file is **not** created now, because no live run has occurred.
 
 ## 12. Out of scope
 
@@ -494,4 +601,6 @@ Every batch would also need:
 - Contact, stability, balance, locomotion or walking evaluation; hardware, servos, firmware.
 - Fixing the upstream Gazebo GUI↔server handshake hang or the launch-only orphaning path
   (`M4_1_TEST_RESULTS.md` findings 3–4).
+- A live graph-mode run in the cloud, `headless:=true`, a runtime wrapper script, and
+  classification-label code (OD-1, OD-2, OD-3, OD-5).
 - Opening a PR or merging. This plan is committed docs-only on its own branch.
