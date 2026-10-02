@@ -667,9 +667,11 @@ def _live_main(args, sources, reader, transport_factory=None, collect_factory=No
     if sources is None:
         sources = m6t.load_sources()
     if reader is None:
-        print(f'Type {lc.CONFIRMATION_WORD} to send ONE goal (neutral -> crouch_10mm -> neutral) '
-              f'to the running simulation on ROS domain {args.domain_id}; anything else refuses:')
-        reader = sys.stdin.readline
+        def reader():              # asked only after readiness #1 passed (not incompatible)
+            print(f'Readiness passed (compatible or warning). Type {lc.CONFIRMATION_WORD} to send '
+                  'ONE goal (neutral -> crouch_10mm -> neutral) to the running simulation on ROS '
+                  f'domain {args.domain_id}; anything else refuses:', flush=True)
+            return sys.stdin.readline()
     latch = latch or InterruptLatch()
     latch.install()
     try:

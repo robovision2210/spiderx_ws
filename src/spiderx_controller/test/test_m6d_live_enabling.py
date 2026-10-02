@@ -266,6 +266,20 @@ def test_live_main_has_no_loop_retry_or_direct_send(enabled, sources, tmp_path):
             and isinstance(n.func, ast.Name)].count('_run_live') == 1
 
 
+def test_default_prompt_appears_only_after_readiness_passes(enabled, sources, tmp_path,
+                                                            monkeypatch, capsys):
+    import io
+    monkeypatch.setattr(sys, 'stdin', io.StringIO(lc.CONFIRMATION_WORD + '\n'))
+    bad = Factories(sources, graph=Graph(action_servers=[]))
+    assert lpb._live_main(live_args(tmp_path, '--domain-id', '0', '--no-write'), sources, None,
+                          bad.transport, bad.collect, utc_stamp=STAMP) == lpb.EXIT_REFUSED
+    assert 'Readiness passed' not in capsys.readouterr().out and len(bad.made[0].sent) == 0
+    good = Factories(sources)
+    assert lpb._live_main(live_args(tmp_path, '--domain-id', '0', '--no-write'), sources, None,
+                          good.transport, good.collect, utc_stamp=STAMP) == lpb.EXIT_OK
+    assert 'Readiness passed' in capsys.readouterr().out and len(good.made[0].sent) == 1
+
+
 # ---------------------------------------------------------------- unchanged safety logic
 # SHA-256 of each definition's source as merged in main @ e65c213 (PR #15). The enabling change
 # must not alter any of them.
