@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""M6.0-D live-playback tool: --dry-run and --mock only; --live is HARD-DISABLED in this build
+(see spiderx_controller/m6_live_playback.py).
+
+    ros2 run spiderx_controller m6_live_playback --dry-run
+    echo SEND-ONE-CROUCH-GOAL | ros2 run spiderx_controller m6_live_playback --mock
+"""
+import sys
+
+from spiderx_controller.m6_live_playback import main
+
+if __name__ == '__main__':
+    sys.exit(main())

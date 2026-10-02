@@ -22,6 +22,7 @@ install(PROGRAMS
   scripts/m5_offline_evaluation
   scripts/m6_offline_preflight
   scripts/m6_live_preflight
+  scripts/m6_live_playback
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -53,6 +54,10 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m6_offline_preflight test/test_m6_offline_preflight.py)
   ament_add_pytest_test(test_m6_action_client test/test_m6_action_client.py)
   ament_add_pytest_test(test_m6_live_preflight test/test_m6_live_preflight.py)
+  ament_add_pytest_test(test_m6d_contract test/test_m6d_contract.py)
+  ament_add_pytest_test(test_m6d_session test/test_m6d_session.py)
+  ament_add_pytest_test(test_m6d_adapter_isolated test/test_m6d_adapter_isolated.py)
+  ament_add_pytest_test(test_m6d_cli_readiness test/test_m6d_cli_readiness.py)
 endif()
 
 ament_package()
