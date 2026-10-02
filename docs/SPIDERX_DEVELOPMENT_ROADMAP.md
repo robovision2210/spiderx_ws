@@ -1,14 +1,21 @@
 # SpiderX Development Roadmap
 
 A legged robot has to be built bottom-up. Each milestone depends on the one before it and has a
-test that proves it works. Do not start Nav2 or SLAM work until M6 is done: they need a robot that
+test that proves it works. Do not start Nav2 or SLAM work until M7 is done: they need a robot that
 moves when commanded (`/cmd_vel`) and reports its motion (`/odom`).
 
 ```
-M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 offline gait analysis  ─►  M5 offline evaluation study  ─►  (future: gait playback)
+M0 model + sim  ─►  M1 joint control  ─►  M2 sim posture hold  ─►  M3 single-leg FK/IK  ─►  M4 all-leg IK + static poses  ─►  M4.5 offline gait analysis  ─►  M5 offline evaluation study  ─►  M6.0 playback safety layers  ─►  (future: gait playback)
                                                                           │
-      M9 hardware ◄─ M8 Nav2 ◄─ M7 SLAM/AMCL ◄─ M6 odometry ◄─ M5.5 command-velocity bridge
+      M10 hardware ◄─ M9 Nav2 ◄─ M8 SLAM/AMCL ◄─ M7 odometry + state estimation ◄─ M5.5 command-velocity bridge
 ```
+
+**Milestone numbering (owner decision, 2026-10-02).** M6 is **Gait playback safety** (M6.0, the
+safety implementation; M6.1, future protected replay, not implemented). The former future
+"M6 – Odometry" is now **M7 – Odometry and state estimation (future work)**, and the later future
+milestones move down by one: SLAM/localization M7 → **M8**, Nav2 M8 → **M9**, real hardware
+M9 → **M10**. Older documents keep their original numbers as historical records: there, "M6
+odometry" means M7, "M7" SLAM means M8, "M8" Nav2 means M9 and "M9" hardware means M10.
 
 ## M0 – Model and simulation ✅ done
 
@@ -30,7 +37,7 @@ See [`M1_JOINT_POSITION_CONTROL_GUIDE.md`](M1_JOINT_POSITION_CONTROL_GUIDE.md) a
 - [x] All 12 joints follow one trajectory to `cad_neutral` (cloud)
 - [x] The same checks on the owner's Ubuntu PC
 - [ ] With the robot lifted (fixed base), every joint reaches both soft limits
-- [ ] Servo datasheet effort/velocity limits and joint damping (moved to M9: hardware evidence needed)
+- [ ] Servo datasheet effort/velocity limits and joint damping (moved to M10, formerly M9: hardware evidence needed)
 
 ## M2 – Simulation-only CAD neutral posture hold ✅ verified (cloud + local)
 
@@ -44,7 +51,7 @@ Simulation only. This is not balance control, walking, IK or hardware validation
 - [x] 10 s hold (simulation time): joint error, controller states, body height, roll and pitch within the documented thresholds; JSON report (cloud)
 - [x] Negative tests: invalid configs refused before sending; failed measured conditions report "not verified"
 - [x] The same checks on the owner's Ubuntu PC
-- [ ] Longer holds, disturbance tests and a tuned stand height: **not M2**. Only after real actuator limits exist (M9), and only as new, separately tested poses
+- [ ] Longer holds, disturbance tests and a tuned stand height: **not M2**. Only after real actuator limits exist (M10, formerly M9), and only as new, separately tested poses
 
 Balance / standing control (body feedback) is not scheduled yet; it needs an IMU and real actuator data.
 
@@ -115,6 +122,26 @@ walking and no hardware. See the [plan](M5_EVALUATION_PLAN.md) and its owner-dec
 - [x] The same checks on the owner's Ubuntu PC: offline only; two full local runs exit 0 and byte-identical with each other; 700 tests passing
 - [ ] Citations-only review step: original-source-verified candidate references for owner approval (not started)
 
+## M6.0 – Gazebo gait-playback safety layers — cloud + local offline/mock verified; live graph preflight and valid playback pending
+
+A trajectory-execution and observability check only. It replays **one** bounded neutral →
+`crouch_10mm` → neutral trajectory, after approval. It is not gait playback and not walking. See
+the [plan](M6_GAIT_PLAYBACK_SAFETY_PLAN.md) (§14 owner decisions D1–D7 and option (i)), the
+[results](M6_TEST_RESULTS.md) and the [guide](SPIDERX_M6_PLAYBACK_GUIDE.md).
+
+**Naming.** M6 is Gait playback safety: M6.0 is the safety implementation and M6.1 is future
+protected replay (not implemented). Odometry is now M7 (see the numbering note at the top).
+
+- [x] Phase 0: read-only audit and safety plan (`cc6974d`); decisions D1–D7 (`3536575`); crouch envelope option (i), 0.1223 rad for M6.0-D only (`bef3c25`)
+- [x] M6.0-A: offline conversion and preflight (`0a9d2db`)
+- [x] M6.0-C: single-goal action client, mock-only safety and mutation tests (`d6ebaad`)
+- [x] M6.0-B tool: live read-only preflight, mock-tested; cloud ran `--interface-only` only (`e9b1565`)
+- [x] Cloud validation: 912 tests, then 932 after the provenance portability fix (`fd7a9de`); 0 failures; M1–M4 static validators pass
+- [x] Local offline/mock verification on the owner's Ubuntu PC (`f49a6e0`): 932 tests, 0 failures; same `trajectory_id` as the cloud; byte-identical outputs; M1–M4 static validators pass
+- [ ] Live graph-mode read-only preflight against a running stack (owner's PC), with the installed-stack classification
+- [ ] M6.0-D: one valid neutral → `crouch_10mm` → neutral goal (needs separate owner approval and a live adapter)
+- [ ] M6.1: protected replay of an offline-validated gait cycle (future work, not implemented; deferred by D2; needs a separate plan)
+
 ## Future — Gait playback and walking in simulation (unscheduled; formerly the M4.5 goal)
 
 By the owner's decision, this stays an unscheduled future item. It is not part of M4.5.
@@ -130,24 +157,27 @@ Renamed from "M5 – `/cmd_vel` → gait bridge" by owner decision D1 (see [M5 p
 - [ ] Stepping velocity follows `/cmd_vel` (vx, vy, ωz) within limits
 - [ ] A timeout stops the robot safely
 
-## M6 – Odometry
+## M7 – Odometry and state estimation (future work)
+
+Formerly "M6 – Odometry". Not implemented and not scheduled.
+
 
 - [ ] Leg odometry publishes `/spiderx/leg_odometry`
 - [ ] The EKF (`spiderx_localization`) fuses it with the IMU and publishes `odom → dummy_link`
 - [ ] Drift is measured against Gazebo ground truth
 - [ ] Add a REP-103 base frame (x forward) for Nav2
 
-## M7 – SLAM and localization
+## M8 – SLAM and localization (formerly M7)
 
 - [ ] `spiderx_mapping slam.launch.py` builds a map of `spiderx_fortress.sdf`
 - [ ] AMCL localizes on that map
 
-## M8 – Nav2
+## M9 – Nav2 (formerly M8)
 
 - [ ] Replace the velocity placeholders with gait-measured limits
 - [ ] Reach a goal in simulation
 
-## M9 – Real hardware
+## M10 – Real hardware (formerly M9)
 
-- [ ] Actuator interface (`SPIDERX_HARDWARE_INTERFACE.md`), then repeat M1–M8 on the robot
+- [ ] Actuator interface (`SPIDERX_HARDWARE_INTERFACE.md`), then repeat M1–M9 on the robot
 - [ ] Real masses (weighed parts) replace the steel-density CAD values

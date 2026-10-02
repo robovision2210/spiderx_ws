@@ -20,6 +20,8 @@ install(PROGRAMS
   scripts/m4_pose_validation
   scripts/m4_5_gait_analysis
   scripts/m5_offline_evaluation
+  scripts/m6_offline_preflight
+  scripts/m6_live_preflight
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -47,6 +49,10 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_eval_records test/test_eval_records.py)
   ament_add_pytest_test(test_eval_tables test/test_eval_tables.py)
   ament_add_pytest_test(test_eval_regression test/test_eval_regression.py)
+  ament_add_pytest_test(test_m6_trajectory test/test_m6_trajectory.py)
+  ament_add_pytest_test(test_m6_offline_preflight test/test_m6_offline_preflight.py)
+  ament_add_pytest_test(test_m6_action_client test/test_m6_action_client.py)
+  ament_add_pytest_test(test_m6_live_preflight test/test_m6_live_preflight.py)
 endif()
 
 ament_package()
