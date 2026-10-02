@@ -99,9 +99,10 @@ def disabled(monkeypatch):
 
 
 # ---------------------------------------------------------------- the gate itself
-def test_gate_is_false_in_this_build():
-    assert lc.LIVE_DISPATCH_ENABLED is False
-    assert m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED is lc.LIVE_DISPATCH_ENABLED
+def test_gate_matches_the_single_test_expectation():
+    # m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED is False in this build (the only place it is pinned)
+    assert lc.LIVE_DISPATCH_ENABLED is m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED
+    assert ('HARD-DISABLED' in lpb.LIVE_STATE) is (not lc.LIVE_DISPATCH_ENABLED)
 
 
 def test_gate_false_refuses_live_before_anything(disabled, tmp_path, monkeypatch, capsys):
@@ -134,7 +135,7 @@ def test_help_states_the_gate_and_has_no_bypass(capsys):
     with pytest.raises(SystemExit):
         lpb.main(['m6_live_playback', '--help'])
     out = capsys.readouterr().out
-    assert 'HARD-DISABLED' in out and '--domain-id' in out
+    assert lpb.LIVE_STATE.split()[0] in out and '--domain-id' in out
     for bad in ('--yes', '--force', '--enable', '--retry', '--repeat', '--trajectory'):
         assert bad not in out
 

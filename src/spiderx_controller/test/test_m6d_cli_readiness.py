@@ -119,7 +119,7 @@ def test_help_lists_no_bypass_options(capsys):
     for opt in ('--yes', '--force', '--trajectory', '--repeat', '--cycles', '--retry',
                 '--config-dir', '--skip', '--no-confirm', '--bypass'):
         assert opt not in text
-    assert 'HARD-DISABLED' in text
+    assert lpb.LIVE_STATE.split()[0] in text
 
 
 def test_a_mode_is_required():
