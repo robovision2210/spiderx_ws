@@ -7,7 +7,9 @@ RclpyLiveTransport is the only code that can put the approved M6.0-D goal on a R
   - send_goal() is single-use and verifies the goal fingerprint BEFORE any ROS call; a goal that
     is not the approved M6.0-D goal (e.g. a return-to-neutral) is refused;
   - cancel_goal() is single-use (cancel-only; never a new goal);
-  - it publishes nothing: one action client, one /joint_states subscription, graph queries.
+  - it publishes nothing: one action client, one /joint_states subscription, graph queries;
+  - open() releases everything it created if any step fails; close() releases this process's ROS
+    resources only - it never cancels or stops an accepted goal on the controller.
 
 Live use against the Fortress graph is HARD-DISABLED by the CLI (m6_live_contract). In this build
 the transport is exercised only by tests on an explicit, non-default, localhost-only ROS domain
@@ -62,8 +64,12 @@ class RclpyLiveTransport:
         self.use_sim_time = use_sim_time
         self.action_name = action_name
         self.joint_states_topic = joint_states_topic
+        self._rclpy = None
         self.context = None
         self.node = None
+        self.executor = None
+        self.client = None
+        self.sub = None
         self._events = []
         self._handle = None
         self._goal_sent = False
@@ -83,32 +89,52 @@ class RclpyLiveTransport:
 
         self._rclpy = rclpy
         self.context = Context()
-        rclpy.init(context=self.context, domain_id=self.domain_id,
-                   signal_handler_options=SignalHandlerOptions.NO)
-        if self.context.get_domain_id() != self.domain_id:
-            raise TransportError('context domain id differs from the requested one')
-        self.node = rclpy.create_node(
-            self.node_name, context=self.context,
-            parameter_overrides=[Parameter('use_sim_time', value=self.use_sim_time)])
-        self.executor = SingleThreadedExecutor(context=self.context)
-        self.executor.add_node(self.node)
-        self.client = ActionClient(self.node, FollowJointTrajectory, self.action_name)
-        self.sub = self.node.create_subscription(JointState, self.joint_states_topic,
-                                                 self._on_joint_state, 10)
+        try:
+            rclpy.init(context=self.context, domain_id=self.domain_id,
+                       signal_handler_options=SignalHandlerOptions.NO)
+            if self.context.get_domain_id() != self.domain_id:
+                raise TransportError('context domain id differs from the requested one')
+            self.node = rclpy.create_node(
+                self.node_name, context=self.context,
+                parameter_overrides=[Parameter('use_sim_time', value=self.use_sim_time)])
+            self.executor = SingleThreadedExecutor(context=self.context)
+            self.executor.add_node(self.node)
+            self.client = ActionClient(self.node, FollowJointTrajectory, self.action_name)
+            self.sub = self.node.create_subscription(JointState, self.joint_states_topic,
+                                                     self._on_joint_state, 10)
+        except BaseException:
+            try:
+                self.close()                     # release whatever was created so far
+            except Exception:  # noqa: BLE001 - the original error is the one to report
+                pass
+            raise
         return self
 
     def close(self):
-        try:
-            if self.node is not None:
-                self.executor.remove_node(self.node)
-                self.client.destroy()
-                self.node.destroy_subscription(self.sub)
-                self.node.destroy_node()
-                self.executor.shutdown()
-        finally:
-            if self.context is not None:
-                self._rclpy.try_shutdown(context=self.context)
-            self.node = None
+        """Release local ROS resources (each step attempted). Does NOT stop an accepted goal."""
+        node, executor, client, sub = self.node, self.executor, self.client, self.sub
+        self.node = self.executor = self.client = self.sub = None
+        steps = []
+        if executor is not None and node is not None:
+            steps.append(lambda: executor.remove_node(node))
+        if client is not None:
+            steps.append(client.destroy)
+        if node is not None and sub is not None:
+            steps.append(lambda: node.destroy_subscription(sub))
+        if node is not None:
+            steps.append(node.destroy_node)
+        if executor is not None:
+            steps.append(executor.shutdown)
+        if self.context is not None and self._rclpy is not None:
+            steps.append(lambda: self._rclpy.try_shutdown(context=self.context))
+        first = None
+        for step in steps:
+            try:
+                step()
+            except Exception as e:  # noqa: BLE001 - keep releasing; report the first failure
+                first = first or e
+        if first is not None:
+            raise first
 
     def __enter__(self):
         return self.open()
@@ -198,7 +224,8 @@ class RclpyLiveTransport:
         handle = future.result()
         if handle is None:
             return
-        self._events.append(('goal_response', bool(handle.accepted)))
+        goal_id = bytes(bytearray(handle.goal_id.uuid)).hex()
+        self._events.append(('goal_response', bool(handle.accepted), goal_id))
         if handle.accepted:
             self._handle = handle
             handle.get_result_async().add_done_callback(self._on_result)

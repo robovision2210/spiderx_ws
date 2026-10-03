@@ -10,6 +10,13 @@ neutral -> crouch_10mm -> neutral goal, and only after
 Everything after dispatch is cancel-only: one cancel at most, never a retry, a preemption, an
 automatic return-to-neutral or a second goal (D2, D5-D9, D11).
 
+Evidence of uncertainty (corrective batch 1): the outcome's `dispatch` block distinguishes
+dispatch not attempted / attempted with acceptance unknown / accepted (with the goal ID) /
+rejected, whether the one cancel was attempted and answered, and whether the final goal status is
+known. A transport or processing failure after dispatch is recorded, requests at most the one
+cancel through the same guard as every other cancel reason, and ends the session with the final
+goal status marked unknown. Closing the client never stops or cancels an accepted goal.
+
 The transport is injected (LiveTransport). Tests use a deterministic fake; the rclpy transport is
 m6_live_adapter (Batch C). Live dispatch is hard-disabled at the CLI (m6_live_contract).
 
@@ -91,6 +98,42 @@ class LiveTransport:
     """
 
 
+def dispatch_record(send='not_attempted', acceptance=None, goal_id=None, cancels_sent=0,
+                    cancel_error=None, cancel_response=None, result=None):
+    """What is known about the one goal. Pure; shared by sessions and pre-session records.
+
+    send: not_attempted | refused_by_transport (verified before any ROS call; nothing sent)
+          | attempted (the send call started but did not complete: it may have reached the
+          server) | sent.
+    """
+    attempted = send in ('attempted', 'sent')
+    if not attempted:
+        accept = 'not_attempted'
+    elif acceptance is None:
+        accept = 'unknown'
+    else:
+        accept = 'accepted' if acceptance else 'rejected'
+    known = result is not None
+    if known:
+        final = result[0]
+    elif not attempted:
+        final = 'not_applicable'
+    else:
+        final = 'rejected' if accept == 'rejected' else 'unknown'
+    return {
+        'send': send,
+        'attempted': attempted,
+        'acceptance': accept,
+        'goal_id': goal_id,
+        'cancel_attempted': cancels_sent > 0,
+        'cancel_error': cancel_error,
+        'cancel_response_known': cancel_response is not None,
+        'final_result_known': known,
+        'final_goal_status': final,
+        'goal_may_still_be_executing': attempted and accept != 'rejected' and not known,
+    }
+
+
 class InterruptLatch:
     """Counts operator interrupts (SIGINT/SIGTERM). trigger() is what a signal handler calls."""
 
@@ -150,12 +193,14 @@ def graph_violation(status):
 class LiveSession:
     """One approved goal, at most once. Use run(); it returns a structured outcome dict."""
 
-    def __init__(self, transport, sources, readiness_provider, confirm_reader, latch=None):
+    def __init__(self, transport, sources, readiness_provider, confirm_reader, latch=None,
+                 checkpoint=None):
         self.transport = transport
         self.sources = sources
         self.readiness_provider = readiness_provider   # () -> rd.ReadinessResult
         self.confirm_reader = confirm_reader           # () -> str (one line)
         self.latch = latch or InterruptLatch()
+        self.checkpoint = checkpoint                   # (outcome) -> None; raises = not saved
         self.state = NEW
         self.goals_sent = 0
         self.cancels_sent = 0
@@ -175,6 +220,13 @@ class LiveSession:
         self._max_inflight_error = None
         self._handled_interrupts = 0
         self._dispatch_attempted = False
+        self._send = 'not_attempted'
+        self._acceptance = None                        # None = unknown; True / False = answered
+        self._goal_id = None
+        self._cancel_error = None
+        self._cancel_on_accept = None
+        self._supervision_errors = 0
+        self._errors = []
 
     # ------------------------------------------------------------ helpers
     def _now(self):
@@ -187,6 +239,11 @@ class LiveSession:
         self.state = state
         if text:
             self._event(text)
+
+    def _record_error(self, where, exc):
+        self._errors.append({'where': where, 'type': type(exc).__name__, 'message': str(exc),
+                             'state': self.state,
+                             't': None if self._t0 is None else round(self._now() - self._t0, 6)})
 
     def _refuse(self, code, text):
         self.reason = code
@@ -205,6 +262,29 @@ class LiveSession:
         if self.state != NEW:
             raise ac.SecondGoalForbidden(f'session is {self.state}; a new owner approval and '
                                          'a new session are required for any further goal')
+        try:
+            return self._run()
+        except ac.SecondGoalForbidden:
+            raise
+        except Exception as e:  # noqa: BLE001 - recorded as evidence; never retried
+            return self.outcome_after_exception(e)
+
+    def outcome_after_exception(self, exc, where='session'):
+        """A truthful outcome for an exception that escaped the session logic."""
+        self._record_error(where, exc)
+        if self.state not in TERMINAL:
+            if self._send in ('attempted', 'sent'):
+                if self.state == ACTIVE and self._result is None and \
+                        self._cancel_reason is None:
+                    self._request_cancel('transport_error')     # the one cancel, same guard
+                self.reason = 'transport_error'
+                self._set(HELD_ERROR, f'{where} failed after dispatch ({type(exc).__name__}); '
+                                      'final goal status unknown; no new command')
+            else:
+                self._refuse('session_exception', f'{type(exc).__name__}: {exc}; nothing sent')
+        return self.outcome()
+
+    def _run(self):
         self._t0 = self._now()
         self._event('session start')
         # 1. offline preflight + approved spec (no goal object yet)
@@ -244,15 +324,25 @@ class LiveSession:
         if self.latch.count:
             return self._refuse('operator_interrupt', 'interrupted before dispatch')
         self._set(DISPATCHING, 'dispatching the one approved goal')
+        if self.checkpoint is not None:
+            try:
+                self.checkpoint(self.outcome())          # pre-send evidence, or no send at all
+            except Exception as e:  # noqa: BLE001
+                self._record_error('evidence_checkpoint', e)
+                return self._refuse('evidence_persistence_failed',
+                                    'pre-dispatch evidence could not be saved; nothing sent')
         try:
             self._dispatch(goal)
         except gf.FingerprintError as e:
+            self._send = 'refused_by_transport'          # verified before any ROS call
             return self._refuse('goal_fingerprint_mismatch', str(e))
         except ac.SecondGoalForbidden:
             raise
         except Exception as e:  # noqa: BLE001 - a failed send is reported, never retried
+            self._record_error('send_goal', e)
             self.reason = 'transport_error'
-            self._set(HELD_ERROR, f'send failed: {type(e).__name__}: {e}')
+            self._set(HELD_ERROR, f'send failed: {type(e).__name__}: {e}; the goal may have '
+                                  'reached the server; acceptance unknown; no retry')
             return self.outcome()
         return self._supervise()
 
@@ -260,7 +350,9 @@ class LiveSession:
         if self._dispatch_attempted:
             raise ac.SecondGoalForbidden('this session already used its one dispatch')
         self._dispatch_attempted = True
+        self._send = 'attempted'                    # from here the goal may reach the server
         self.transport.send_goal(goal, gf.binding(self._trajectory))   # verifies fingerprint
+        self._send = 'sent'
         self.goals_sent += 1
         self._dispatch_wall = self._now()
         self._set(GOAL_PENDING, 'goal sent (the only goal of this session)')
@@ -272,10 +364,31 @@ class LiveSession:
         self._cancel_reason = reason
         self.reason = reason
         if self.cancels_sent == 0:
-            self.cancels_sent += 1
-            self.transport.cancel_goal()
+            self.cancels_sent += 1                  # counted as attempted before the call
+            try:
+                self.transport.cancel_goal()
+            except Exception as e:  # noqa: BLE001 - recorded; the one cancel is never retried
+                self._cancel_error = f'{type(e).__name__}: {e}'
+                self._record_error('cancel_goal', e)
         self._cancel_wall = self._now()
-        self._set(CANCEL_REQUESTED, f'one cancel requested ({reason}); holding, no new goal')
+        self._set(CANCEL_REQUESTED, f'one cancel requested ({reason}); no new goal')
+
+    def _supervision_error(self, where, exc):
+        """A failure after dispatch: at most the one cancel (same guard), never a retry."""
+        self._record_error(where, exc)
+        self._supervision_errors += 1
+        if self._supervision_errors == 1 and self._cancel_reason is None:
+            if self.state == ACTIVE:
+                self._request_cancel('transport_error')
+                return None                        # wait for the cancel outcome (bounded)
+            if self.state == GOAL_PENDING:
+                self._cancel_on_accept = 'transport_error'
+                self._event(f'{where} failed while the goal is pending: cancel on acceptance')
+                return None
+        self.reason = 'transport_error'
+        self._set(HELD_ERROR, f'{where} failed after dispatch ({type(exc).__name__}); '
+                              'supervision stopped; final goal status unknown; no new command')
+        return self.outcome()
 
     def _ref_time(self, stamp):
         t0 = self._t_accept_sim
@@ -330,7 +443,8 @@ class LiveSession:
             pending_for = now - self._dispatch_wall
             if self.state == GOAL_PENDING and pending_for > lc.GOAL_RESPONSE_TIMEOUT_S:
                 self.reason = 'goal_response_timeout'
-                self._set(TIMED_OUT, 'no goal response within 10 s; nothing to cancel')
+                self._set(TIMED_OUT, 'no goal response within 10 s; acceptance unknown; no goal '
+                                     'handle to cancel; final goal status unknown')
                 return self.outcome()
             if self.state in (ACTIVE, GOAL_PENDING) and \
                     now - self._dispatch_wall > lc.RESULT_WATCHDOG_S:
@@ -346,21 +460,28 @@ class LiveSession:
                 reason = monitor.check(now)
                 if reason is None and now >= next_check:
                     next_check = now + lc.CONTROLLER_CHECK_PERIOD_S
-                    reason = graph_violation(self.transport.graph_status())
+                    try:
+                        reason = graph_violation(self.transport.graph_status())
+                    except Exception as e:  # noqa: BLE001
+                        done = self._supervision_error('graph_status', e)
+                        if done is not None:
+                            return done
+                        continue
                 if reason is not None:
                     self._request_cancel(reason)
             # events
             try:
                 events = self.transport.poll(POLL_S)
             except Exception as e:  # noqa: BLE001
-                if self.state == ACTIVE:
-                    self._request_cancel('transport_error')
-                    continue
-                self.reason = 'transport_error'
-                self._set(HELD_ERROR, f'transport error: {type(e).__name__}: {e}')
-                return self.outcome()
+                done = self._supervision_error('poll', e)
+                if done is not None:
+                    return done
+                continue
             for ev in events:
-                done = self._on_event(ev, monitor)
+                try:
+                    done = self._on_event(ev, monitor)
+                except Exception as e:  # noqa: BLE001 - the remaining events are still read
+                    done = self._supervision_error(f'event {ev[0] if ev else None}', e)
                 if done is not None:
                     return done
             # post-result settle (sim time), then evaluate
@@ -379,16 +500,26 @@ class LiveSession:
         if kind == 'goal_response':
             if self.state != GOAL_PENDING:
                 return None
+            self._acceptance = bool(ev[1])
+            if len(ev) > 2 and ev[2]:
+                self._goal_id = str(ev[2])
             if not ev[1]:
                 self.reason = 'goal_rejected'
                 self._set(REJECTED, 'goal rejected by the server; no retry')
                 return self.outcome()
-            self._t_accept_sim = self.transport.sim_now()
-            if self._t_accept_sim is None:
-                self._t_accept_sim = monitor.last_stamp or 0.0
-            self._set(ACTIVE, 'goal accepted')
+            self._set(ACTIVE, 'goal accepted')        # recorded before anything else can fail
             if self._handled_interrupts >= 1:
                 self._request_cancel('operator_interrupt')
+            elif self._cancel_on_accept is not None:
+                self._request_cancel(self._cancel_on_accept)
+            try:
+                t_accept = self.transport.sim_now()
+            except Exception as e:  # noqa: BLE001 - no trustworthy time base: cancel (guarded)
+                self._record_error('sim_now', e)
+                self._request_cancel('transport_error')
+                t_accept = None
+            self._t_accept_sim = ((monitor.last_stamp or 0.0) if t_accept is None
+                                  else t_accept)
         elif kind == 'feedback':
             fb = ev[1]
             try:
@@ -420,10 +551,12 @@ class LiveSession:
                 return self._finish_cancel(confirmed=(status == STATUS_CANCELED),
                                            why=f'final status {status}')
             if self.state == GOAL_PENDING:
+                if self._acceptance is None:
+                    self._acceptance = True             # a result implies acceptance
                 self._set(ACTIVE)
             if status != STATUS_SUCCEEDED or code != 0:
                 self.reason = 'action_aborted' if status == STATUS_ABORTED else 'action_failed'
-                self._set(ABORTED, 'controller ended the goal without success; holding')
+                self._set(ABORTED, 'controller ended the goal without success; no new goal')
                 return self.outcome()
         return None
 
@@ -435,7 +568,7 @@ class LiveSession:
             state = REASON_STATE.get(reason, HELD_ERROR)
         self._cancel_confirmed = confirmed
         self._set(state, f'cancel {"confirmed" if confirmed else "unconfirmed"} ({why}); '
-                         'controller holds; no new goal')
+                         'no new goal')
         return self.outcome()
 
     def _finish_result(self):
@@ -491,6 +624,10 @@ class LiveSession:
             'cancel_response': self._cancel_response,
             'retries': 0,
             'automatic_return_goals': 0,
+            'dispatch': dispatch_record(self._send, self._acceptance, self._goal_id,
+                                        self.cancels_sent, self._cancel_error,
+                                        self._cancel_response, self._result),
+            'errors': [dict(e) for e in self._errors],
             'channels': self.channels(),
             'result': {'status': status, 'error_code': code,
                        'error_name': ac.ERROR_CODES.get(code), 'error_string': text},
@@ -512,7 +649,7 @@ class LiveSession:
 
 
 __all__ = ['LiveSession', 'LiveTransport', 'InterruptLatch', 'StreamMonitor', 'graph_violation',
-           'TERMINAL', 'REASON_STATE', 'OUTCOME_SCHEMA']
+           'TERMINAL', 'REASON_STATE', 'OUTCOME_SCHEMA', 'dispatch_record']
 
 
 # ==================================================================== CLI (Batch D)
@@ -609,24 +746,45 @@ def run_mock(sources, scenario, reader):
     return out
 
 
-def _run_live(sources, transport_factory, collect_factory, reader, latch, domain_id):
+TRANSPORT_CLOSE_NOTE = ('closing the client releases local ROS resources only; it does not '
+                        'cancel or stop an accepted goal on the controller')
+
+
+def _close_transport(transport, out):
+    """Close the transport; a close failure is recorded, never allowed to hide the outcome."""
+    try:
+        transport.close()
+        closed, error = True, None
+    except Exception as e:  # noqa: BLE001
+        closed, error = False, f'{type(e).__name__}: {e}'
+    if isinstance(out, dict):
+        out['transport'] = {'closed': closed, 'close_error': error, 'note': TRANSPORT_CLOSE_NOTE}
+
+
+def _run_live(sources, transport_factory, collect_factory, reader, latch, domain_id,
+              checkpoint=None):
     """The future live path. Refuses unless LIVE_DISPATCH_ENABLED (hard-disabled in this build).
 
-    Every dependency is injected so the wiring can be audited and tested without ROS.
+    Every dependency is injected so the wiring can be audited and tested without ROS. An exception
+    that escapes this function was raised before any session ran, so nothing was sent; anything
+    raised while the session runs becomes part of its outcome (LiveSession.run).
     """
     if not lc.LIVE_DISPATCH_ENABLED:
         raise PermissionError(lc.LIVE_DISPATCH_DISABLED_MESSAGE)
     traj = m6t.build_trajectory(sources)
     fp = gf.fingerprint(gf.approved_spec(traj, sources))
     transport = transport_factory(fp, domain_id)
+    out = None
     try:
         provide = rd.make_readiness_provider(collect_factory(transport),
                                              sources.joint_names,
                                              list(sources.poses[env.NEUTRAL_LABEL]),
                                              transport.wall_now)       # the session's clock
-        return LiveSession(transport, sources, provide, reader, latch=latch).run()
+        out = LiveSession(transport, sources, provide, reader, latch=latch,
+                          checkpoint=checkpoint).run()
+        return out
     finally:
-        transport.close()
+        _close_transport(transport, out)
 
 
 MAX_DOMAIN_ID = 232                                  # largest valid ROS 2 domain id
@@ -645,24 +803,162 @@ def _default_collect_factory(transport):
     return transport.graph_collector()
 
 
+class EvidenceFile:
+    """One live run's evidence file: created exclusively, then rewritten only through its own fd.
+
+    reserve() creates the file with O_CREAT | O_EXCL, so an existing file (another run's evidence)
+    refuses. Every later write goes through the descriptor this run created - never a path-based
+    rename or reopen - so no other file can be overwritten. Each write serializes first, then
+    rewrites the file in place and fsyncs. A failed write may leave the file incomplete; the
+    caller then emits the outcome to stderr and never claims it was saved.
+    """
+
+    def __init__(self, path, fd):
+        self.path = path
+        self._fd = fd
+
+    @classmethod
+    def reserve(cls, path):
+        import os
+        parent = os.path.dirname(path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+        return cls(path, os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644))
+
+    def write(self, doc):
+        import json
+        import os
+        data = (json.dumps(doc, indent=1, sort_keys=True, allow_nan=False, default=str)
+                + '\n').encode()
+        if self._fd is None:
+            raise ValueError(f'evidence file {self.path} is closed')
+        os.lseek(self._fd, 0, os.SEEK_SET)
+        view = memoryview(data)
+        while view:
+            n = os.write(self._fd, view)
+            if n <= 0:
+                raise OSError(f'short write to {self.path}')
+            view = view[n:]
+        os.ftruncate(self._fd, len(data))
+        os.fsync(self._fd)
+
+    def checkpoint(self, outcome):
+        """The pre-send record: if it is the last one saved, the goal status is UNKNOWN."""
+        self.write(dict(outcome, evidence={'path': self.path, 'phase': 'pre_send'}))
+
+    def close(self):
+        import os
+        fd, self._fd = self._fd, None
+        if fd is not None:
+            os.close(fd)
+
+
+EVIDENCE_PHASES = {
+    'reserved': 'written before any ROS initialization; if it is the last record, nothing was '
+                'sent',
+    'pre_send': 'every gate passed except the final latch and freshness checks; a send may have '
+                'followed; if it is the last record, the goal status is UNKNOWN',
+    'final': 'the complete outcome of the run',
+}
+
+
+def _reserved_record(args, utc_stamp, path):
+    return {'schema': OUTCOME_SCHEMA, 'mode': 'live', 'state': 'NOT_DISPATCHED',
+            'terminal': False, 'passed': False, 'reason': None, 'run_utc': utc_stamp,
+            'domain_id': args.domain_id, 'goals_sent': 0, 'cancels_sent': 0,
+            'dispatch': dispatch_record(), 'errors': [],
+            'evidence': {'path': path, 'phase': 'reserved'}, 'evidence_phases': EVIDENCE_PHASES,
+            'limits': lc.as_dict(), 'non_claims': list(env.NON_CLAIMS)}
+
+
+def _setup_failure_outcome(exc):
+    """Outcome when the run failed before any session ran (so nothing was sent)."""
+    return {'schema': OUTCOME_SCHEMA, 'state': REFUSED, 'terminal': True, 'passed': False,
+            'reason': 'session_setup_failed', 'goals_sent': 0, 'cancels_sent': 0,
+            'retries': 0, 'automatic_return_goals': 0, 'dispatch': dispatch_record(),
+            'errors': [{'where': 'setup', 'type': type(exc).__name__, 'message': str(exc)}],
+            'limits': lc.as_dict(), 'non_claims': list(env.NON_CLAIMS)}
+
+
+def _fallback_json(data):
+    import json
+    try:
+        return json.dumps(data, indent=1, sort_keys=True, allow_nan=True, default=repr)
+    except Exception:  # noqa: BLE001 - the fallback itself must not fail
+        return repr(data)
+
+
+def _finish_live(evidence, data):
+    """Persist the final record. On failure: stderr fallback, exit 1, never 'saved', no retry."""
+    import sys
+    dispatch = data.get('dispatch') or {}
+    print(f'Live: final state {data.get("state")}, reason {data.get("reason")}, goals sent '
+          f'{data.get("goals_sent")}, cancels sent {data.get("cancels_sent")}; no retry, '
+          'no second goal')
+    if dispatch.get('goal_may_still_be_executing'):
+        print('WARNING: the final goal status is UNKNOWN; the controller may still be executing '
+              f'the goal ({TRANSPORT_CLOSE_NOTE}).')
+    data['evidence'] = {'path': evidence.path, 'phase': 'final'}
+    try:
+        evidence.write(data)
+        saved, error = True, None
+    except Exception as e:  # noqa: BLE001
+        saved, error = False, f'{type(e).__name__}: {e}'
+    finally:
+        try:
+            evidence.close()
+        except Exception:  # noqa: BLE001 - nothing more can be done about a close failure
+            pass
+    if saved:
+        print(f'Report: {evidence.path}')
+        return _exit_code(data.get('state'))
+    data['evidence'] = {'path': evidence.path, 'phase': 'final', 'saved': False,
+                        'persistence_error': error}
+    print(f'EVIDENCE NOT SAVED: writing {evidence.path} failed ({error}). The outcome below '
+          '(stderr) is the only complete record. The goal is never retried.', file=sys.stderr)
+    print(_fallback_json(data), file=sys.stderr)
+    return EXIT_FAILED
+
+
 def _live_main(args, sources, reader, transport_factory=None, collect_factory=None,
-               latch=None, utc_stamp=None):
-    """--live after the gate: one goal through _run_live, one report, never an overwrite.
+               latch=None, utc_stamp=None, evidence_factory=None):
+    """--live after the gate: one goal through _run_live, persisted evidence, never an overwrite.
 
     Reached only when LIVE_DISPATCH_ENABLED is True. Dependencies are injectable so this wiring is
     tested without ROS; the defaults are the rclpy transport and its read-only graph collector.
+    Before any ROS initialization the evidence file is reserved exclusively and a
+    NOT_DISPATCHED record is saved; if either fails, nothing starts.
     """
     import datetime
     import sys
+    if not lc.LIVE_DISPATCH_ENABLED:
+        print(f'REFUSED: {lc.LIVE_DISPATCH_DISABLED_MESSAGE}')
+        return EXIT_DISABLED
+    if args.no_write:
+        print('REFUSED: --live always records evidence; --no-write is not allowed with --live')
+        return EXIT_REFUSED
     if args.domain_id is None or not 0 <= args.domain_id <= MAX_DOMAIN_ID:
         print(f'REFUSED: --live needs an explicit --domain-id in 0..{MAX_DOMAIN_ID}')
         return EXIT_REFUSED
     if utc_stamp is None:
         utc_stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
     target = f'{args.out}/live/{utc_stamp}/live_outcome.json'
-    import os
-    if not args.no_write and os.path.exists(target):
-        print(f'REFUSED: {target} already exists (reports are never overwritten)')
+    try:
+        evidence = (evidence_factory or EvidenceFile.reserve)(target)
+    except FileExistsError:
+        print(f'REFUSED: {target} already exists (evidence is never overwritten); nothing '
+              'started')
+        return EXIT_REFUSED
+    except OSError as e:
+        print(f'REFUSED: cannot reserve live evidence at {target} ({type(e).__name__}: {e}); '
+              'nothing started')
+        return EXIT_REFUSED
+    try:
+        evidence.write(_reserved_record(args, utc_stamp, target))
+    except Exception as e:  # noqa: BLE001
+        evidence.close()
+        print(f'REFUSED: the initial NOT_DISPATCHED evidence could not be saved '
+              f'({type(e).__name__}: {e}); nothing started')
         return EXIT_REFUSED
     if sources is None:
         sources = m6t.load_sources()
@@ -677,16 +973,14 @@ def _live_main(args, sources, reader, transport_factory=None, collect_factory=No
     try:
         data = _run_live(sources, transport_factory or _default_transport_factory,
                          collect_factory or _default_collect_factory, reader, latch,
-                         args.domain_id)
+                         args.domain_id, checkpoint=evidence.checkpoint)
+    except Exception as e:  # noqa: BLE001 - raised before any session ran: nothing was sent
+        data = _setup_failure_outcome(e)
     finally:
         latch.uninstall()
-    data['mode'] = 'live'
-    data['domain_id'] = args.domain_id
-    print(f'Live: final state {data["state"]}, reason {data["reason"]}, goals sent '
-          f'{data["goals_sent"]}, cancels sent {data["cancels_sent"]}; no retry, no second goal')
-    if not args.no_write:
-        print(f'Report: {_write(target, data)}')
-    return _exit_code(data['state'])
+    data.update(mode='live', domain_id=args.domain_id, run_utc=utc_stamp,
+                evidence_phases=EVIDENCE_PHASES)
+    return _finish_live(evidence, data)
 
 
 def main(argv=None, sources=None, reader=None):
