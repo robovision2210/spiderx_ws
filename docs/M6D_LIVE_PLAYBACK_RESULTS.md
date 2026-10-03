@@ -144,6 +144,12 @@ Each run used a fresh `--out` root under the session scratchpad: one `--dry-run`
   2, with 0 goals at the mock.
 - **`--live`.** It gave exit 3 with the REFUSED message.
 
+> **Later change (PR #16 review corrections).** The hashes above are the PR #15 build. The
+> corrective batches added fields to the mock report (`dispatch`, `errors`, `freshness_at_send`,
+> readiness `collection_s`), so the six mock hashes changed. The dry-run hash, trajectory ID and goal
+> fingerprint did not. The new values are in the
+> [live-enabling design §8](M6D_LIVE_ENABLING_DESIGN.md#8-corrective-changes-from-the-pr-16-read-only-review).
+
 ## 7. Static M1–M4 and Fortress validators (no arguments, so no `--runtime`) [MEASURED]
 
 | Validator | Result |

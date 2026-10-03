@@ -14,11 +14,18 @@ Last updated on branch `claude/stoic-shannon-ur2mes` (M6.0-D live-enabling desig
 - **Cloud results.** 1116 tests, 0 failures, 0 skipped; 180 M6.0-D tests, including the fingerprint and state-machine mutation suites and rclpy tests against an in-process action test double on an isolated, non-default, localhost-only ROS domain; dry-run and six mock reports byte-identical across two runs; M1–M4 and Fortress static validators pass.
 - **Live dispatch is hard-disabled** (`LIVE_DISPATCH_ENABLED = False`; `--live` exits 3 before importing `rclpy`). No trajectory goal was sent to a live controller; no Gazebo playback, movement, contact, balance, walking, navigation or hardware operation occurred. A separate owner approval and enabling change are required before any local live goal.
 - See the [M6.0-D results](docs/M6D_LIVE_PLAYBACK_RESULTS.md), [guide](docs/SPIDERX_M6D_LIVE_PLAYBACK_GUIDE.md) and [plan](docs/M6D_LIVE_PLAYBACK_PLAN.md).
-- **Live-enabling design (draft PR, dispatch still disabled).**
+- **Live-enabling design (draft PR #16, dispatch still disabled).**
   - The gated `--live` wiring is implemented behind `m6_live_contract.LIVE_DISPATCH_ENABLED`, which is still `False`.
-  - It is tested offline and on an isolated test domain only.
-  - The later enabling commit is exactly two lines and needs a separate owner approval.
-  - No live goal has been sent. See the [live-enabling design](docs/M6D_LIVE_ENABLING_DESIGN.md).
+  - It is tested offline, with mocks and on an isolated test domain only.
+  - Corrective batches from the PR #16 read-only review cover:
+    - live evidence reserved before ROS and never overwritten;
+    - failure-safe single cancel and truthful dispatch uncertainty;
+    - freshness re-checked at the send;
+    - a Ctrl+C-responsive confirmation prompt;
+    - an isolated end-to-end success path against a fake controller stack.
+  - Controller hold after a cancel is intended (D15), not proven by any test. One goal is enforced per session and process, not across processes.
+  - The later enabling commit is exactly two lines and needs a separate owner approval. Local live playback remains pending.
+  - No live goal has been sent. See the [live-enabling design](docs/M6D_LIVE_ENABLING_DESIGN.md) §8.
 
 **M6.0-B is merged into `main` (`9885057`).** The notes below describe the M6.0/M6.0-B state.
 

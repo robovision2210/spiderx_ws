@@ -3,8 +3,9 @@
 Reference: [`robovision2210/mechaprime_ws`](https://github.com/robovision2210/mechaprime_ws) at commit
 `041d3f8`. It was inspected read-only and was not modified.
 
-Baseline: SpiderX branch `claude/stoic-shannon-ur2mes`, which was validated on Ubuntu 22.04 with
-ROS 2 Humble and Gazebo Fortress.
+Baseline: SpiderX branch `claude/stoic-shannon-ur2mes` at PR #4's head `d85968f`, which was
+validated on Ubuntu 22.04 with ROS 2 Humble and Gazebo Fortress. (PR #4 was merged into `main` on
+2026-09-25 as `d6bcec1`; the branch name was later reused for PR #16.)
 
 This document was written **before** any SpiderX implementation change on this branch.
 
