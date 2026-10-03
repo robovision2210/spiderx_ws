@@ -1,8 +1,13 @@
 # M6.1 – Protected Trot Gait Replay: Design Note
 
-**Status: DESIGN ONLY.** Nothing here is implemented, enabled or run. No Gazebo, launch or ROS
-runtime was started to write it. The live gate for M6.1 does not exist yet; when it does, it is
-`False` on `main`. Every step after this note needs a separate owner approval (§7).
+**Status: DESIGN APPROVED; IMPLEMENTED for offline, mock and isolated-domain use only. Live
+dispatch is HARD-DISABLED.** See [§10](#10-implementation-status) and
+[`M61_IMPLEMENTATION_NOTES.md`](M61_IMPLEMENTATION_NOTES.md).
+- The M6.1 gate `M61_LIVE_DISPATCH_ENABLED` exists and is `False`.
+- No goal has been sent, and no Gazebo, launch or ROS runtime was started.
+- Every step after the implementation needs a separate owner approval (§7).
+- The design text below is unchanged from `7b8798c`. Its tables in §2.2 describe the 2.5 cm /
+  10 mm example; the owner approved 2 cm / 6 mm (§10).
 
 **Scope.** Replay **one** trot gait cycle, as **one** `FollowJointTrajectory` goal, in Gazebo
 Fortress, with the M6.0-D safety envelope adapted for gait-specific risks.
@@ -506,5 +511,57 @@ need.
 
 ---
 
-*This note changes no source, test, launch, model or configuration file. The M6.0-D gate stays
-`False` on `main`. The enabling branch `claude/spiderx-m6d-enable-gate` is not merged.*
+## 10. Implementation status
+
+**Owner decisions (2026-10-03):**
+
+| Decision | Approved choice |
+|---|---|
+| D-M61-1 | Fixed / clamped base |
+| D-M61-2 | Option (ii): keep the 0.1223 rad cap with a 2 cm step and 6 mm lift |
+| D-M61-3 | 4.0 s cycle |
+| D-M61-4 | Neutral body height |
+| D-M61-5 | 0.045 m body-height gate |
+| D-M61-8 | `SEND-ONE-TROT-CYCLE` |
+| D-M61-9 | Configuration in `spiderx_controller/config`, with a separate `m61_limits.yaml` |
+
+D-M61-6 (contact: proxy only) and D-M61-7 (pose-bridge launch) were not decided; this batch
+implements no contact sensor and no launch file.
+
+| Design batch (§9) | State |
+|---|---|
+| A: envelope, generator, preflight, config, pinned IDs | **Done**. `config/m61_limits.yaml`, `config/m61_trot_cycle.yaml`, `m61_limits.py`, `m61_trot_cycle.py`, `m61_goal.py` |
+| B: gate logic G1–G7 + mock tests | **Done**. `m61_gates.py`, `m61_mock.py` |
+| C: CLI, M6.1 gate and contract, evidence, isolated-domain test | **Done**. `m6_gait_replay.py`, `m61_live_contract.py`, `m61_evidence.py`, `m61_live_adapter.py` (read-only pose subscription, isolated-domain test) |
+| D: M6.1 launch with the pose bridge; fixed-base variant | **Not done**: needs Gazebo to verify, which was prohibited. A live run is blocked until it exists |
+| E: docs and cloud verification | **Done (cloud)**. 8 packages built; 1332 tests, 0 failures. Owner-PC verification pending |
+| F: audit, enabling branch, one live run | **Not started**. Separate approvals |
+
+**Identity of the approved trajectory:**
+
+| Item | Value |
+|---|---|
+| Content | `94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64` |
+| `trajectory_id` | `241760e7dfd5ef12` |
+| Goal fingerprint | `9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a` |
+
+The §2.4 hash `d03e80a0…` identifies the 2.5 cm / 10 mm table, which was not approved.
+
+**Approved trajectory figures** (offline, commanded spline):
+
+| Measure | Value | Limit |
+|---|---|---|
+| Max displacement | 0.1114 rad | cap 0.1223 rad |
+| Peak joint speed | 0.139 rad/s | – |
+| Max limit fraction | 0.169 | G3 at 0.8 |
+
+Implementation deviations from this design, with justifications, are listed in
+[`M61_IMPLEMENTATION_NOTES.md` §3](M61_IMPLEMENTATION_NOTES.md#3-deviations-from-the-design-or-the-request-with-justification).
+The verification checklist that must be satisfied before any live run is in
+[§5](M61_IMPLEMENTATION_NOTES.md#5-verification-checklist-before-any-live-m61-run).
+
+---
+
+*The M6.0-D gate stays `False` on `main`, and the enabling branch
+`claude/spiderx-m6d-enable-gate` is not merged. The M6.1 gate `M61_LIVE_DISPATCH_ENABLED` is
+`False`.*

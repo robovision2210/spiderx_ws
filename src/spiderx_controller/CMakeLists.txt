@@ -23,6 +23,7 @@ install(PROGRAMS
   scripts/m6_offline_preflight
   scripts/m6_live_preflight
   scripts/m6_live_playback
+  scripts/m6_gait_replay.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -62,6 +63,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m6d_evidence_safety test/test_m6d_evidence_safety.py)
   ament_add_pytest_test(test_m6d_freshness_confirmation test/test_m6d_freshness_confirmation.py)
   ament_add_pytest_test(test_m6d_isolated_success test/test_m6d_isolated_success.py)
+  ament_add_pytest_test(test_m61_gait_replay test/test_m61_gait_replay.py)
 endif()
 
 ament_package()

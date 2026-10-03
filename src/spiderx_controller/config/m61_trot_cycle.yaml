@@ -1,0 +1,81 @@
+# M6.1 - the ONE approved trot gait cycle for protected replay (SIMULATION ONLY).
+#
+# One start-stop trot cycle as ONE FollowJointTrajectory goal: neutral -> pair A (LF + RR) swings
+# while pair B (RF + LR) is in stance -> pair B swings while pair A is in stance -> neutral.
+# Owner-approved configuration (2026-10-03): 2 cm step, 6 mm lift, 4.0 s cycle, fixed / clamped
+# base, neutral body height. Design: docs/M61_TROT_REPLAY_DESIGN.md section 2.
+#
+# The waypoints below are DATA, read by spiderx_controller/m61_trot_cycle.py, which refuses the file
+# unless (1) its canonical content hashes to content_sha256, (2) every waypoint equals the waypoint
+# re-derived from the parameters by the design generator (offline IK, leg_kinematics) within
+# m61_limits.yaml source_match_rad, and (3) the parameters equal the owner-approved values
+# (m61_live_contract.APPROVED_GAIT). Values are stored with exactly 9 decimals (fixed point, so
+# every value parses back to the float that was hashed; "-0.000000000" is a signed zero).
+#
+# content_sha256 = SHA-256 of the canonical JSON of the design-note scheme
+#   {schema: spiderx.m61.trot_cycle.design/0, params, joint_names, points}; reproduced by the
+#   design-note generator (section 2.3) with STEP 0.020 and LIFT 0.006.
+# design_note_reference_sha256 = the hash quoted in the implementation request. It identifies the
+#   design note table for STEP 0.025 / LIFT 0.010 (NOT approved: 0.1517 rad > the 0.1223 rad cap).
+#   It is recorded for traceability only and is NOT the hash of this trajectory.
+#
+# Frame base_link: +x right, +y front (travel), +z up. Units: m, rad, rad/s, s (sim time).
+# Joint order = spiderx_ros2_controllers.yaml leg_trajectory_controller.joints.
+
+schema: spiderx.m61.trot_cycle/1
+milestone: M6.1
+simulation_only: true
+gait_name: trot
+variant: start_stop_single_cycle
+num_cycles: 1
+num_waypoints: 9
+cycle_duration_s: 4.0
+step_length_m: 0.02          # world forward advance of each foot (= body advance per cycle)
+lift_height_m: 0.006         # cycloid swing apex
+stance_height_offset_m: 0.0  # neutral body height (base_link 0.0545 m above the ground)
+lead_in_s: 3.0               # neutral hold before the cycle
+segments: 8                  # waypoint spacing = cycle_duration_s / segments = 0.5 s
+duty_factor: 0.5
+swing_pair_first: [front_left, rear_right]
+swing_pair_second: [front_right, rear_left]
+base_constraint: fixed
+content_sha256: 94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64
+design_note_reference_sha256: d03e80a0e733ae756ed95433514aea5490ac627ffb6b18f5b47d2816174e876c
+joint_names: [lf_hip, lf_thigh_joint, lf_foot_joint, rf_hip, rf_thigh_joint, rf_foot_joint, lr_hip, lr_thigh_joint, lr_foot_joint, rr_hip, rr_thigh_joint, rr_foot_joint]
+waypoints:
+  - label: neutral_start_pair_a_liftoff
+    time_from_start_s: 3.0
+    positions: [0.000000000, 0.000000000, -0.000000000, -0.000000000, -0.000000000, -0.000000000, 0.000000000, -0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000]
+    velocities: [0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000]
+  - label: pair_a_swing_quarter
+    time_from_start_s: 3.5
+    positions: [0.000000000, 0.005606216, 0.036781367, -0.000000000, -0.001772035, -0.000071836, 0.000000000, 0.001772035, -0.000071836, 0.000000000, -0.005606216, -0.036781367]
+    velocities: [0.000000000, -0.010289136, 0.112664614, 0.000000000, -0.010406159, -0.000406151, 0.000000000, 0.010406159, -0.000406151, 0.000000000, 0.010289135, -0.112664616]
+  - label: pair_a_apex
+    time_from_start_s: 4.0
+    positions: [0.000000000, -0.028217468, 0.068690075, -0.000000000, -0.012863242, -0.000398933, 0.000000000, 0.012863242, -0.000398933, 0.000000000, 0.028217467, -0.068690076]
+    velocities: [0.000000000, -0.115685328, -0.015393582, 0.000000000, -0.035218398, -0.000699793, 0.000000000, 0.035218397, -0.000699792, 0.000000000, 0.115685327, 0.015393581]
+  - label: pair_a_swing_three_quarter
+    time_from_start_s: 4.5
+    positions: [0.000000000, -0.079908169, 0.026117498, -0.000000000, -0.036798304, -0.000363098, 0.000000000, 0.036798304, -0.000363098, 0.000000000, 0.079908169, -0.026117499]
+    velocities: [0.000000000, -0.058140219, -0.118340494, 0.000000000, -0.058911450, 0.001372847, 0.000000000, 0.058911449, 0.001372848, 0.000000000, 0.058140220, 0.118340494]
+  - label: pair_a_touchdown_pair_b_liftoff
+    time_from_start_s: 5.0
+    positions: [0.000000000, -0.072987705, -0.007370581, -0.000000000, -0.069096433, 0.001389834, 0.000000000, 0.069096433, 0.001389835, 0.000000000, 0.072987704, 0.007370579]
+    velocities: [0.000000000, 0.074708855, 0.011745229, 0.000000000, -0.066925522, 0.005769833, -0.000000000, 0.066925521, 0.005769834, 0.000000000, -0.074708855, -0.011745228]
+  - label: pair_b_swing_quarter
+    time_from_start_s: 5.5
+    positions: [0.000000000, -0.037870350, -0.002777354, 0.000000000, -0.107494801, -0.033884892, 0.000000000, 0.107494800, -0.033884890, 0.000000000, 0.037870350, 0.002777354]
+    velocities: [0.000000000, 0.062398074, 0.006478116, 0.000000000, -0.049325817, -0.117586874, -0.000000000, 0.049325817, -0.117586875, 0.000000000, -0.062398073, -0.006478115]
+  - label: pair_b_apex
+    time_from_start_s: 6.0
+    positions: [0.000000000, -0.012991672, -0.000688189, 0.000000000, -0.093089303, -0.073636544, 0.000000000, 0.093089303, -0.073636544, 0.000000000, 0.012991672, 0.000688189]
+    velocities: [0.000000000, 0.035925265, 0.002291810, 0.000000000, 0.106159748, -0.006336106, 0.000000000, -0.106159747, -0.006336108, 0.000000000, -0.035925265, -0.002291809]
+  - label: pair_b_swing_three_quarter
+    time_from_start_s: 6.5
+    positions: [0.000000000, -0.001774451, -0.000077278, 0.000000000, -0.028383027, -0.037723799, 0.000000000, 0.028383027, -0.037723799, 0.000000000, 0.001774451, 0.000077278]
+    velocities: [0.000000000, 0.010434556, 0.000470109, 0.000000000, 0.115214577, 0.117811549, 0.000000000, -0.115214577, 0.117811549, 0.000000000, -0.010434556, -0.000470109]
+  - label: neutral_end_pair_b_touchdown
+    time_from_start_s: 7.0
+    positions: [0.000000000, 0.000000000, -0.000000000, -0.000000000, -0.000000000, -0.000000000, 0.000000000, -0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000]
+    velocities: [0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000, 0.000000000]
