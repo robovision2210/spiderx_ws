@@ -251,6 +251,7 @@ def test_enabled_failures_never_retry_or_return(enabled, sources, tmp_path, scen
     f = Factories(sources, latch=latch, **mock.SCENARIOS[scenario])
     out = run_enabled(sources, tmp_path, f, '--domain-id', '0', latch=latch)
     assert out == rc
+    assert report(tmp_path, STAMP)['state'] == state         # the expected terminal state
     t = f.made[0]
     assert len(f.made) == 1 and len(t.sent) == 1 and t.cancels <= 1 and t.closed
 
@@ -306,6 +307,58 @@ def test_default_prompt_appears_only_after_readiness_passes(enabled, sources, tm
     assert lpb._live_main(live_args(tmp_path, '--domain-id', '0'), sources, None,
                           good.transport, good.collect, utc_stamp=stamp()) == lpb.EXIT_OK
     assert 'Readiness passed' in capsys.readouterr().out and len(good.made[0].sent) == 1
+
+
+# ---------------------------------------------------------------- identity vs report bytes
+TRAJECTORY_ID = '44f0a7ad52e5c330'
+FINGERPRINT = '0d6ef4171f2d338a01e76b934be94d1a4386e7c0fc68fe74262fb3c65005ff83'
+
+
+def _serialized(doc):                                    # exactly what the CLI writes
+    return (json.dumps(doc, indent=1, sort_keys=True, allow_nan=False, default=str)
+            + '\n').encode()
+
+
+def _flatten(o, p=''):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            yield from _flatten(v, f'{p}.{k}' if p else k)
+    elif isinstance(o, list):
+        for i, v in enumerate(o):
+            yield from _flatten(v, f'{p}[{i}]')
+    else:
+        yield p, o
+
+
+def _reports(sources, gate, monkeypatch):
+    monkeypatch.setattr(lc, 'LIVE_DISPATCH_ENABLED', gate)       # test-local only
+    return (lpb.dry_run_report(sources),
+            lpb.run_mock(sources, 'success', lambda: lc.CONFIRMATION_WORD + '\n'))
+
+
+@pytest.mark.parametrize('gate', [False, True])
+def test_identity_is_pinned_under_both_gate_states(sources, monkeypatch, gate):
+    dry, mock_out = _reports(sources, gate, monkeypatch)
+    for doc in (dry, mock_out):
+        assert doc['trajectory_id'] == TRAJECTORY_ID
+        assert doc['goal_fingerprint'] == FINGERPRINT
+    assert m6t.build_trajectory(sources)['trajectory_id'] == TRAJECTORY_ID
+
+
+def test_gate_fields_change_report_hashes_but_not_identity(sources, monkeypatch):
+    off = _reports(sources, False, monkeypatch)
+    on = _reports(sources, True, monkeypatch)
+    expected_diff = ({'live_dispatch_enabled', 'limits.live_dispatch_enabled'},   # dry run
+                     {'limits.live_dispatch_enabled'})                           # mock
+    for a, b, want in zip(off, on, expected_diff):
+        assert hashlib.sha256(_serialized(a)).hexdigest() != \
+            hashlib.sha256(_serialized(b)).hexdigest()
+        fa, fb = dict(_flatten(a)), dict(_flatten(b))
+        assert set(fa) == set(fb)
+        assert {k for k in fa if fa[k] != fb[k]} == want
+        assert all(fa[k] is False and fb[k] is True for k in want)
+        assert (fa['trajectory_id'], fa['goal_fingerprint']) == \
+            (fb['trajectory_id'], fb['goal_fingerprint']) == (TRAJECTORY_ID, FINGERPRINT)
 
 
 # ---------------------------------------------------------------- protected baseline

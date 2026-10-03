@@ -61,6 +61,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m6d_live_enabling test/test_m6d_live_enabling.py)
   ament_add_pytest_test(test_m6d_evidence_safety test/test_m6d_evidence_safety.py)
   ament_add_pytest_test(test_m6d_freshness_confirmation test/test_m6d_freshness_confirmation.py)
+  ament_add_pytest_test(test_m6d_isolated_success test/test_m6d_isolated_success.py)
 endif()
 
 ament_package()
