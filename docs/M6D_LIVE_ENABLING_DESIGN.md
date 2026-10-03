@@ -60,7 +60,7 @@ changed deliberately by the corrective batches (§8) and re-pinned. SHA-256 pins
 | Item | Value |
 |---|---|
 | Name | `LIVE_DISPATCH_ENABLED` |
-| Location | `src/spiderx_controller/spiderx_controller/m6_live_contract.py`, line 17 |
+| Location | `src/spiderx_controller/spiderx_controller/m6_live_contract.py`, line 18 (`LIVE_DISPATCH_ENABLED = False`) |
 | Current value | **`False`** |
 | Test-side expectation | `src/spiderx_controller/test/m6d_gate.py`: `EXPECTED_LIVE_DISPATCH_ENABLED = False` |
 | Read by | `m6_live_playback.main()` (first statement of the `--live` branch, before configuration, ROS import or input), `m6_live_playback._live_main()` (defensive re-check before any evidence or ROS work) and `m6_live_playback._run_live()` (`PermissionError`) |
