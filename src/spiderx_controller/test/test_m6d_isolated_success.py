@@ -21,6 +21,7 @@ import json
 import os
 import time
 
+import m6d_gate
 import m6d_isolated_stack as fake_stack
 import pytest
 
@@ -101,7 +102,8 @@ def test_isolation_preconditions():
     assert 150 <= DOMAIN < 200
     assert DOMAIN != int(os.environ.get('ROS_DOMAIN_ID', '0') or 0)
     assert os.environ['ROS_LOCALHOST_ONLY'] == '1'
-    assert lc.LIVE_DISPATCH_ENABLED is False             # committed gate, outside the test patch
+    # committed gate, outside the test patch; pinned only in m6d_gate
+    assert lc.LIVE_DISPATCH_ENABLED is m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED
 
 
 def test_gate_enabled_main_succeeds_end_to_end_with_one_goal(sources, monkeypatch, tmp_path):
