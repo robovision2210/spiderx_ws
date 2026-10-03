@@ -8,7 +8,9 @@ Classification (owner decision, M6 plan section 14.9; D4):
 Only `incompatible` blocks on classification grounds; any other NOT-READY code (controllers not
 active, stale or incomplete /joint_states, start pose, probe error) blocks as well.
 
-A readiness result carries the monotonic time it was observed at and expires after 10 s (D3).
+A readiness result carries the monotonic time its observation STARTED and expires 10 s after that
+(D3). Timing is truthful: a slow collection ages the evidence instead of hiding it - the age
+counts from the oldest observation, and the collection duration is recorded.
 Pure Python: the input is the report dict of m6_live_preflight.evaluate(); nothing here touches
 a ROS graph.
 """
@@ -65,9 +67,10 @@ class ReadinessResult:
     label: str                       # compatible | warning | incompatible
     reasons: tuple
     failure_codes: tuple
-    observed_monotonic: float        # time.monotonic() when the observation finished
+    observed_monotonic: float        # time.monotonic() when the observation STARTED (oldest)
     observed_wall_iso: object = None
     report: dict = field(default_factory=dict, compare=False)
+    collection_s: float = 0.0        # how long the observation took (already included in age)
 
     def age_s(self, now_monotonic):
         return now_monotonic - self.observed_monotonic
@@ -79,19 +82,21 @@ class ReadinessResult:
     def to_dict(self, now_monotonic=None):
         d = {'ready': self.ready, 'classification': self.label, 'reasons': list(self.reasons),
              'failure_codes': list(self.failure_codes),
-             'observed_wall_iso': self.observed_wall_iso}
+             'observed_wall_iso': self.observed_wall_iso,
+             'collection_s': round(self.collection_s, 6)}
         if now_monotonic is not None:
             d['age_s'] = round(self.age_s(now_monotonic), 6)
         return d
 
 
-def assess(report, observed_monotonic, observed_wall_iso=None):
+def assess(report, observed_monotonic, observed_wall_iso=None, collection_s=0.0):
     label, reasons = classify(report)
     rep = report if isinstance(report, dict) else {}
     return ReadinessResult(ready=bool(rep.get('ready')), label=label, reasons=tuple(reasons),
                            failure_codes=tuple(rep.get('failure_codes') or ()),
                            observed_monotonic=float(observed_monotonic),
-                           observed_wall_iso=observed_wall_iso, report=rep)
+                           observed_wall_iso=observed_wall_iso, report=rep,
+                           collection_s=float(collection_s))
 
 
 def dispatch_permitted(result, now_monotonic, max_age_s=lc.READINESS_MAX_AGE_S):
@@ -115,11 +120,14 @@ def make_readiness_provider(collect_graph, names, neutral, monotonic, versions=N
 
     collect_graph() returns read-only graph observations (m6_live_preflight.GraphProbe.collect on
     the dispatching process's own node). versions/interface default to the installed stack. The
-    observation time is taken AFTER collection, so the 10 s expiry covers the whole observation.
+    observation time is taken BEFORE collection starts, so the 10 s expiry is measured from the
+    oldest evidence; the collection duration is recorded and already counted in the age.
     """
     from spiderx_controller import m6_live_preflight as lpf
 
     def provide():
+        started = monotonic()
+        started_iso = wall_iso() if wall_iso else None
         obs = lpf.Observations()
         try:
             obs.versions = versions if versions is not None else lpf.collect_versions()
@@ -135,7 +143,7 @@ def make_readiness_provider(collect_graph, names, neutral, monotonic, versions=N
         except Exception as e:  # noqa: BLE001
             obs.probe_errors.append(f'graph: {type(e).__name__}: {e}')
         report = lpf.evaluate(obs, list(names), list(neutral))
-        return assess(report, monotonic(), wall_iso() if wall_iso else None)
+        return assess(report, started, started_iso, collection_s=monotonic() - started)
     return provide
 
 

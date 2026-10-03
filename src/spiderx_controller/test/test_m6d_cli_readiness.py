@@ -10,6 +10,7 @@ import os
 import subprocess
 import sys
 
+import m6d_gate
 import pytest
 
 from spiderx_controller import m6_live_contract as lc
@@ -75,9 +76,12 @@ def test_provider_ready_warning_with_owner_versions():
     clock = Clock()
     r = provider(clock)()
     assert r.ready and r.label == rd.WARNING and len(r.reasons) == 8
-    assert r.observed_monotonic == 52.5                  # stamped AFTER collection
-    assert rd.dispatch_permitted(r, 62.5) == (True, None)
-    assert rd.dispatch_permitted(r, 62.6) == (False, 'readiness_stale')
+    # PR #16 finding 3: stamped when collection STARTS (oldest evidence); the 2.5 s the
+    # collection took is recorded and already counted in the age
+    assert r.observed_monotonic == 50.0 and r.collection_s == 2.5
+    assert r.to_dict(52.5)['age_s'] == 2.5 and r.to_dict()['collection_s'] == 2.5
+    assert rd.dispatch_permitted(r, 60.0) == (True, None)
+    assert rd.dispatch_permitted(r, 60.1) == (False, 'readiness_stale')
 
 
 @pytest.mark.parametrize('graph, code', [
@@ -118,7 +122,7 @@ def test_help_lists_no_bypass_options(capsys):
     for opt in ('--yes', '--force', '--trajectory', '--repeat', '--cycles', '--retry',
                 '--config-dir', '--skip', '--no-confirm', '--bypass'):
         assert opt not in text
-    assert 'HARD-DISABLED' in text
+    assert lpb.LIVE_STATE.split()[0] in text
 
 
 def test_a_mode_is_required():
@@ -127,7 +131,8 @@ def test_a_mode_is_required():
     assert e.value.code == 2
 
 
-def test_live_mode_is_hard_disabled(sources, tmp_path, capsys):
+def test_live_mode_is_hard_disabled(sources, tmp_path, capsys, monkeypatch):
+    monkeypatch.setattr(lc, 'LIVE_DISPATCH_ENABLED', False)
     calls = []
     assert lpb.main(['m6_live_playback', '--live', '--out', str(tmp_path)], sources=sources,
                     reader=lambda: calls.append(1) or lc.CONFIRMATION_WORD) == lpb.EXIT_DISABLED
@@ -138,6 +143,7 @@ def test_live_mode_is_hard_disabled(sources, tmp_path, capsys):
 
 def test_live_mode_imports_no_ros_client():
     code = ('import sys; from spiderx_controller import m6_live_playback as m;'
+            'm.lc.LIVE_DISPATCH_ENABLED = False;'
             'rc = m.main(["m6_live_playback", "--live"]);'
             'bad=[x for x in sys.modules if x.split(".")[0] == "rclpy"];'
             'print(rc, bad); sys.exit(0 if rc == 3 and not bad else 1)')
@@ -146,7 +152,9 @@ def test_live_mode_imports_no_ros_client():
     assert out.returncode == 0, out.stdout + out.stderr
 
 
-def test_run_live_refuses_before_touching_anything(sources):
+def test_run_live_refuses_before_touching_anything(sources, monkeypatch):
+    monkeypatch.setattr(lc, 'LIVE_DISPATCH_ENABLED', False)
+
     def boom(*a):
         raise AssertionError('factory must not be called')
     with pytest.raises(PermissionError):
@@ -175,7 +183,7 @@ def test_dry_run_passes_and_records_the_goal_contract(sources, tmp_path):
     (tid,) = os.listdir(tmp_path / 'dry_run')
     data = json.loads((tmp_path / 'dry_run' / tid / 'dry_run_report.json').read_text())
     assert data['verdict'] == 'PASS' and data['goals_sent'] == 0
-    assert data['live_dispatch_enabled'] is False
+    assert data['live_dispatch_enabled'] is m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED
     spec = data['goal_spec']
     assert all(t['velocity'] == 0.05 and t['position'] == 0.05 for t in spec['goal_tolerance'])
     assert spec['header_stamp_ns'] == 0 and spec['goal_time_tolerance_ns'] == 1_000_000_000
@@ -220,7 +228,7 @@ def test_mock_scenarios(scenario, state, code, sources, tmp_path):
     data = json.loads((tmp_path / 'mock' / scenario / 'mock_report.json').read_text())
     assert data['state'] == state and data['mode'] == 'mock'
     assert data['mock_server_goals_received'] <= 1 and data['mock_server_cancels_received'] <= 1
-    assert data['limits']['live_dispatch_enabled'] is False
+    assert data['limits']['live_dispatch_enabled'] is m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED
 
 
 def test_mock_requires_the_typed_word(sources, tmp_path):
@@ -254,14 +262,15 @@ def test_live_gate_is_a_single_false_literal():
     import re
     hits = [(n, line) for n, src in _package_sources() for line in src.splitlines()
             if re.match(r'\s*(\w+\.)?LIVE_DISPATCH_ENABLED\s*=', line)]
-    assert hits == [('m6_live_contract.py', 'LIVE_DISPATCH_ENABLED = False')]
+    assert hits == [('m6_live_contract.py',
+                     f'LIVE_DISPATCH_ENABLED = {m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED}')]
 
 
 def test_no_environment_or_flag_can_enable_live_dispatch():
     srcs = dict(_package_sources())
     for name in ('m6_live_contract.py', 'm6_live_playback.py', 'm6_goal_fingerprint.py',
                  'm6_live_readiness.py', 'm6_live_adapter.py'):
-        for word in ('os.environ', 'getenv', 'LIVE_DISPATCH_ENABLED = True',
+        for word in ('os.environ', 'getenv', 'LIVE_DISPATCH_ENABLED or', "add_argument('--enable",
                      "add_argument('--yes'", "add_argument('--force'"):
             assert word not in srcs[name], (name, word)
 

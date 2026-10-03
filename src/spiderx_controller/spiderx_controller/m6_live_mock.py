@@ -20,7 +20,8 @@ class FakeTransport(lp.LiveTransport):
                  error_value=0.0, js_stop_at=None, stamp_freeze_at=None, gap_at=None,
                  extra_pub_at=None, server_lost_at=None, cancel_response=0,
                  cancel_latency=0.1, cancel_final=True, interrupts_at=(), feedback_offset=0.0,
-                 verify=True, single_use=True, poll_raises_at=None, start_wall=1000.0):
+                 verify=True, single_use=True, poll_raises_at=None, start_wall=1000.0,
+                 goal_id='mock-goal-0001'):
         self.traj = trajectory
         self.expected_fp = expected_fp
         self.latch = latch
@@ -37,6 +38,7 @@ class FakeTransport(lp.LiveTransport):
         self.feedback_offset = feedback_offset
         self.verify, self.single_use = verify, single_use
         self.poll_raises_at = poll_raises_at
+        self.goal_id = goal_id    # deterministic stand-in for the client-generated goal UUID
         self.t = start_wall
         self.t_start = start_wall
         self.sent = []            # goals that reached the "server"
@@ -81,7 +83,8 @@ class FakeTransport(lp.LiveTransport):
             gf.verify_goal(goal, binding, self.expected_fp)
         self.sent.append(goal)
         if self.respond:
-            self.queue.append((self.t + self.response_latency, ('goal_response', self.accept)))
+            self.queue.append((self.t + self.response_latency,
+                               ('goal_response', self.accept, self.goal_id)))
             if self.accept:
                 start = self._stamp(self.t + self.response_latency)
                 self.ctrl_start_sim = start

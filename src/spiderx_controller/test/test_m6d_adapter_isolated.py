@@ -53,6 +53,13 @@ def open_transport(fp):
                                  use_sim_time=False).open()
 
 
+def goal_responses(events):
+    """[(accepted, goal_id)]: the adapter reports the client-generated goal UUID as 32 hex."""
+    out = [(e[1], e[2]) for e in events if e[0] == 'goal_response']
+    assert all(isinstance(g, str) and len(g) == 32 and int(g, 16) >= 0 for _, g in out), out
+    return out
+
+
 def wait_events(transport, kinds, timeout=10.0):
     got = []
     end = time.monotonic() + timeout
@@ -105,7 +112,7 @@ def test_one_approved_goal_reaches_the_server_with_every_field(approved):
         assert t.server_ready(10.0)
         t.send_goal(goal, gf.binding(traj))
         ev = wait_events(t, ['goal_response', 'result'])
-        assert ('goal_response', True) in ev
+        assert [a for a, _ in goal_responses(ev)] == [True]
         res = [e for e in ev if e[0] == 'result'][0]
         assert res[1] == ac.STATUS_SUCCEEDED and res[2] == 0
         assert any(e[0] == 'feedback' for e in ev)
@@ -152,7 +159,7 @@ def test_reject_and_abort_map_to_events(approved):
             t.send_goal(goal, gf.binding(traj))
             ev = wait_events(t, ['goal_response'] + (['result'] if expect else []))
             if expect is None:
-                assert ('goal_response', False) in ev
+                assert [a for a, _ in goal_responses(ev)] == [False]
             else:
                 res = [e for e in ev if e[0] == 'result'][0]
                 assert (res[1], res[2]) == (expect, -4)
@@ -168,7 +175,7 @@ def test_cancel_only_once_and_goal_ends_canceled(approved):
     try:
         assert t.server_ready(10.0)
         t.send_goal(goal, gf.binding(traj))
-        assert ('goal_response', True) in wait_events(t, ['goal_response'])
+        assert [a for a, _ in goal_responses(wait_events(t, ['goal_response']))] == [True]
         t.cancel_goal()
         ev = wait_events(t, ['cancel_response', 'result'])
         assert ('cancel_response', 0) in ev
@@ -190,7 +197,7 @@ def test_sigint_keeps_the_context_alive_for_exactly_one_cancel(approved):
     try:
         assert t.server_ready(10.0)
         t.send_goal(goal, gf.binding(traj))
-        assert ('goal_response', True) in wait_events(t, ['goal_response'])
+        assert [a for a, _ in goal_responses(wait_events(t, ['goal_response']))] == [True]
         os.kill(os.getpid(), signal.SIGINT)                   # an operator Ctrl+C
         end = time.monotonic() + 2.0
         while latch.count == 0 and time.monotonic() < end:
@@ -216,6 +223,30 @@ def test_close_shuts_the_context_down(approved):
         t.poll(0.01)
 
 
+@pytest.mark.parametrize('fail_at', ['create_node', 'action_client', 'subscription'])
+def test_partial_open_releases_everything_it_created(approved, monkeypatch, fail_at):
+    """open() fails after rclpy.init: the context and any node are released, error re-raised."""
+    import rclpy
+    import rclpy.action
+    from rclpy.node import Node
+
+    def boom(*a, **k):
+        raise RuntimeError(f'injected {fail_at} failure')
+    if fail_at == 'create_node':
+        monkeypatch.setattr(rclpy, 'create_node', boom)
+    elif fail_at == 'action_client':
+        monkeypatch.setattr(rclpy.action, 'ActionClient', boom)
+    else:
+        monkeypatch.setattr(Node, 'create_subscription', boom)
+    t = la.RclpyLiveTransport(approved[2], DOMAIN, node_name='m6d_partial', use_sim_time=False)
+    with pytest.raises(RuntimeError, match='injected'):
+        t.open()
+    assert t.context is not None and not t.context.ok()
+    assert (t.node, t.executor, t.client, t.sub) == (None, None, None, None)
+    with pytest.raises(la.TransportError):
+        t.poll(0.01)
+
+
 def test_adapter_source_is_command_free():
     import inspect
     src = inspect.getsource(la)
@@ -223,3 +254,52 @@ def test_adapter_source_is_command_free():
     for word in ('create_publisher', '.publish(', 'switch_controller', 'set_parameters',
                  'cmd_vel', 'subprocess', 'SignalHandlerOptions.ALL'):
         assert word not in src
+
+
+# ---------------------------------------------------------------- live-enabling wiring (isolated)
+def test_graph_collector_is_read_only_and_sees_only_the_test_double(approved):
+    traj, goal, fp = approved
+    srv = fake.IsolatedFakeServer(DOMAIN)
+    t = open_transport(fp)
+    try:
+        obs = t.graph_collector(timeout_s=0.5, window_s=0.3, discovery_s=1.0)()
+        assert obs.action_servers == [('/m6d_test_double_fjt_server', [
+            'control_msgs/action/FollowJointTrajectory'])]
+        assert obs.controllers is None                         # no controller manager exists
+        assert obs.joint_state_publishers == [] and obs.joint_state_messages == []
+        assert t.node.count_publishers('/leg_trajectory_controller/joint_trajectory') == 0
+        assert srv.received == [] and srv.cancel_requests == 0
+    finally:
+        t.close()
+        srv.stop()
+
+
+def test_enabled_live_wiring_refuses_without_a_controller_stack(approved, monkeypatch, tmp_path):
+    """Gate set True IN THIS TEST ONLY, real rclpy transport and collector, isolated domain:
+    the readiness gate refuses (no controller manager, no /joint_states) and no goal is sent."""
+    from spiderx_controller import m6_live_contract as lc
+    traj, goal, fp = approved
+    monkeypatch.setattr(lc, 'LIVE_DISPATCH_ENABLED', True)
+    srv = fake.IsolatedFakeServer(DOMAIN)
+    asked = []
+    try:
+        args = lpb.parse_args(['--live', '--domain-id', str(DOMAIN), '--out', str(tmp_path)])
+        rc = lpb._live_main(
+            args, None, lambda: asked.append(1) or lc.CONFIRMATION_WORD + '\n',
+            collect_factory=lambda tr: tr.graph_collector(timeout_s=0.5, window_s=0.3,
+                                                          discovery_s=1.0),
+            utc_stamp='isolated')
+        assert rc == lpb.EXIT_REFUSED
+        assert asked == []                                    # refused before the confirmation
+        assert srv.received == [] and srv.cancel_requests == 0
+        import json
+        data = json.loads((tmp_path / 'live' / 'isolated' / 'live_outcome.json').read_text())
+        # no /joint_states on the isolated domain: the joint contract is unobserved, which the
+        # D4 classification treats as incompatible (refused before any confirmation)
+        assert data['state'] == lpb.REFUSED and data['reason'] == 'stack_incompatible'
+        assert 'joint contract not observed' in data['readiness'][0]['result']['reasons']
+        codes = data['readiness'][0]['result']['failure_codes']
+        assert 'controller_manager_unavailable' in codes and 'joint_states_no_publisher' in codes
+        assert data['dispatch']['attempted'] is False and data['transport']['closed']
+    finally:
+        srv.stop()

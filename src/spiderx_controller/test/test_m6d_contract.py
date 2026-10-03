@@ -37,8 +37,9 @@ def live(traj, sources):
 
 
 # ---------------------------------------------------------------- limits
-def test_live_dispatch_is_hard_disabled():
-    assert lc.LIVE_DISPATCH_ENABLED is False
+def test_live_dispatch_gate_matches_the_owner_expectation():
+    import m6d_gate
+    assert lc.LIVE_DISPATCH_ENABLED is m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED
     assert 'HARD-DISABLED' in lc.LIVE_DISPATCH_DISABLED_MESSAGE
 
 

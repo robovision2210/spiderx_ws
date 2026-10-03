@@ -12,10 +12,16 @@ By the end of this guide, you will have:
 | Item | Value |
 |---|---|
 | Repository | `https://github.com/robovision2210/spiderx_ws` |
-| Branch to test | `claude/stoic-shannon-ur2mes` |
-| Draft pull request | https://github.com/robovision2210/spiderx_ws/pull/4 (do **not** merge until your local test passes) |
+| Branch to test | `claude/stoic-shannon-ur2mes` at the time of PR #4 (see the history note below) |
+| Pull request | https://github.com/robovision2210/spiderx_ws/pull/4 - **merged into `main` on 2026-09-25** (merge commit `d6bcec1`; PR head `d85968f`) |
 | Workspace folder | `~/spiderx_ws` |
 | Launch command | `ros2 launch spiderx_bringup fortress.launch.py` |
+
+> **History note (2026-10-03).** This guide was written for PR #4, which is now **merged**: the
+> Gazebo Fortress path is on `main`. To test it today, use `main` wherever this guide says
+> `claude/stoic-shannon-ur2mes`, or check out `d85968f` to reproduce the exact PR #4 state. The
+> branch name `claude/stoic-shannon-ur2mes` was later reused for PR #16 (M6.0-D live-enabling
+> work), so it no longer points at the PR #4 head.
 
 ---
 
