@@ -6,7 +6,9 @@ neutral -> crouch_10mm -> neutral goal, and only after
   2. a same-process readiness result is fresh (<= 10 s) and not `incompatible` (D3, D4);
   3. the operator typed the exact confirmation word (D10);
   4. readiness is re-observed and still permitted after the confirmation;
-  5. the action server is ready, and the transport verifies the goal fingerprint (adapter gate).
+  5. the action server is ready; then, immediately before the send, the latch is re-checked and
+     the readiness evidence must still be fresh, counted from the start of its observation;
+  6. the transport verifies the goal fingerprint (adapter gate).
 Everything after dispatch is cancel-only: one cancel at most, never a retry, a preemption, an
 automatic return-to-neutral or a second goal (D2, D5-D9, D11).
 
@@ -220,6 +222,8 @@ class LiveSession:
         self._max_inflight_error = None
         self._handled_interrupts = 0
         self._dispatch_attempted = False
+        self._last_readiness = None
+        self._freshness_at_send = None
         self._send = 'not_attempted'
         self._acceptance = None                        # None = unknown; True / False = answered
         self._goal_id = None
@@ -252,6 +256,7 @@ class LiveSession:
 
     def _readiness_ok(self, label):
         result = self.readiness_provider()
+        self._last_readiness = result
         now = self._now()
         entry = result.to_dict(now) if isinstance(result, rd.ReadinessResult) else None
         self._readiness.append((label, entry))
@@ -302,11 +307,12 @@ class LiveSession:
             return self._refuse(code, 'readiness gate before confirmation')
         if self.latch.count:
             return self._refuse('operator_interrupt', 'interrupted before confirmation')
-        # 3. typed confirmation
-        if not lc.parse_confirmation(self.confirm_reader):
-            return self._refuse('confirmation_refused', 'confirmation word not typed exactly')
+        # 3. typed confirmation (an interrupt while typing wins over the typed text)
+        confirmed = lc.parse_confirmation(self.confirm_reader)
         if self.latch.count:
             return self._refuse('operator_interrupt', 'interrupted at confirmation')
+        if not confirmed:
+            return self._refuse('confirmation_refused', 'confirmation word not typed exactly')
         self._set(CONFIRMED, 'operator confirmation accepted')
         # 4. readiness re-observed after confirmation
         ok, code = self._readiness_ok('after_confirmation')
@@ -321,8 +327,6 @@ class LiveSession:
             return self._refuse('goal_fingerprint_mismatch', 'goal differs from preflighted spec')
         if not self.transport.server_ready(lc.SERVER_WAIT_S):
             return self._refuse('action_server_unavailable', 'server not ready within 10 s')
-        if self.latch.count:
-            return self._refuse('operator_interrupt', 'interrupted before dispatch')
         self._set(DISPATCHING, 'dispatching the one approved goal')
         if self.checkpoint is not None:
             try:
@@ -331,6 +335,13 @@ class LiveSession:
                 self._record_error('evidence_checkpoint', e)
                 return self._refuse('evidence_persistence_failed',
                                     'pre-dispatch evidence could not be saved; nothing sent')
+        # 6. last checks, immediately before the send, after every wait and write above
+        if self.latch.count:
+            return self._refuse('operator_interrupt', 'interrupted before dispatch')
+        ok, code = self._fresh_at_send()
+        if not ok:
+            return self._refuse(code, 'readiness evidence no longer permitted at the send; '
+                                      'no new observation, no retry')
         try:
             self._dispatch(goal)
         except gf.FingerprintError as e:
@@ -345,6 +356,17 @@ class LiveSession:
                                   'reached the server; acceptance unknown; no retry')
             return self.outcome()
         return self._supervise()
+
+    def _fresh_at_send(self):
+        """D3 at the send instant: the readiness #2 evidence, aged from its observation start."""
+        now = self._now()
+        ok, code = rd.dispatch_permitted(self._last_readiness, now)
+        res = self._last_readiness
+        self._freshness_at_send = {
+            'permitted': ok, 'code': code, 'max_age_s': lc.READINESS_MAX_AGE_S,
+            'age_s': (round(res.age_s(now), 6) if isinstance(res, rd.ReadinessResult)
+                      else None)}
+        return ok, code
 
     def _dispatch(self, goal):
         if self._dispatch_attempted:
@@ -426,19 +448,20 @@ class LiveSession:
         settle_until_stamp = None
         while True:
             now = self._now()
-            # interrupts: first -> one cancel; second -> stop waiting
-            if self.latch.count >= 2 and self._handled_interrupts < 2:
-                self._handled_interrupts = 2
-                self.reason = self._cancel_reason or 'operator_interrupt'
-                self._set(CANCEL_UNCONFIRMED, 'second interrupt: stopped waiting; '
-                                              'no further command')
-                return self.outcome()
+            # interrupts: first -> one cancel; second -> stop waiting. The first is always
+            # handled first, so two interrupts latched within one poll still send the cancel.
             if self.latch.count >= 1 and self._handled_interrupts < 1:
                 self._handled_interrupts = 1
                 if self.state == ACTIVE:
                     self._request_cancel('operator_interrupt')
                 else:
                     self._event('interrupt while goal pending: cancel on acceptance')
+            if self.latch.count >= 2 and self._handled_interrupts < 2:
+                self._handled_interrupts = 2
+                self.reason = self._cancel_reason or 'operator_interrupt'
+                self._set(CANCEL_UNCONFIRMED, 'second interrupt: stopped waiting; '
+                                              'no further command')
+                return self.outcome()
             # timers
             pending_for = now - self._dispatch_wall
             if self.state == GOAL_PENDING and pending_for > lc.GOAL_RESPONSE_TIMEOUT_S:
@@ -632,6 +655,7 @@ class LiveSession:
             'result': {'status': status, 'error_code': code,
                        'error_name': ac.ERROR_CODES.get(code), 'error_string': text},
             'readiness': [{'when': w, 'result': r} for w, r in self._readiness],
+            'freshness_at_send': self._freshness_at_send,
             'tracking': {
                 'max_inflight_error_rad': self._max_inflight_error,
                 'samples': len(self._samples),
@@ -920,6 +944,45 @@ def _finish_live(evidence, data):
     return EXIT_FAILED
 
 
+MAX_CONFIRMATION_BYTES = 256
+CONFIRMATION_POLL_S = 0.1
+
+
+def interruptible_line_reader(latch, prompt=None, fd=None, poll_s=CONFIRMATION_POLL_S,
+                              select_fn=None, read_fn=None):
+    """A one-line stdin reader for the live confirmation that answers the interrupt latch.
+
+    It waits in short select() slices and checks the latch between them, so a Ctrl+C (latched,
+    not raised) ends the wait within about poll_s instead of blocking until a newline. It returns
+    what sys.stdin.readline() would: the line with its newline, a partial line at EOF, or '' at
+    EOF; an over-long line is cut at MAX_CONFIRMATION_BYTES (it can never match the word). On an
+    interrupt it raises KeyboardInterrupt, which parse_confirmation() turns into a refusal.
+    """
+    import os
+    import select
+    import sys
+    select_fn = select_fn or select.select
+    read_fn = read_fn or os.read
+
+    def read_line():
+        if prompt:
+            print(prompt, flush=True)
+        src = sys.stdin.fileno() if fd is None else fd
+        buf = b''
+        while True:
+            if latch.count:
+                raise KeyboardInterrupt('interrupted at the confirmation prompt')
+            ready, _, _ = select_fn([src], [], [], poll_s)
+            if not ready:
+                continue
+            chunk = read_fn(src, 1)
+            if chunk:
+                buf += chunk
+            if not chunk or chunk == b'\n' or len(buf) >= MAX_CONFIRMATION_BYTES:
+                return buf.decode('utf-8', 'replace')
+    return read_line
+
+
 def _live_main(args, sources, reader, transport_factory=None, collect_factory=None,
                latch=None, utc_stamp=None, evidence_factory=None):
     """--live after the gate: one goal through _run_live, persisted evidence, never an overwrite.
@@ -930,7 +993,6 @@ def _live_main(args, sources, reader, transport_factory=None, collect_factory=No
     NOT_DISPATCHED record is saved; if either fails, nothing starts.
     """
     import datetime
-    import sys
     if not lc.LIVE_DISPATCH_ENABLED:
         print(f'REFUSED: {lc.LIVE_DISPATCH_DISABLED_MESSAGE}')
         return EXIT_DISABLED
@@ -962,13 +1024,13 @@ def _live_main(args, sources, reader, transport_factory=None, collect_factory=No
         return EXIT_REFUSED
     if sources is None:
         sources = m6t.load_sources()
-    if reader is None:
-        def reader():              # asked only after readiness #1 passed (not incompatible)
-            print(f'Readiness passed (compatible or warning). Type {lc.CONFIRMATION_WORD} to send '
-                  'ONE goal (neutral -> crouch_10mm -> neutral) to the running simulation on ROS '
-                  f'domain {args.domain_id}; anything else refuses:', flush=True)
-            return sys.stdin.readline()
     latch = latch or InterruptLatch()
+    if reader is None:             # called (and the prompt shown) only after readiness #1 passed
+        reader = interruptible_line_reader(
+            latch, prompt=f'Readiness passed (compatible or warning). Type '
+                          f'{lc.CONFIRMATION_WORD} to send ONE goal (neutral -> crouch_10mm -> '
+                          f'neutral) to the running simulation on ROS domain {args.domain_id}; '
+                          'anything else, EOF or Ctrl+C refuses:')
     latch.install()
     try:
         data = _run_live(sources, transport_factory or _default_transport_factory,

@@ -76,9 +76,12 @@ def test_provider_ready_warning_with_owner_versions():
     clock = Clock()
     r = provider(clock)()
     assert r.ready and r.label == rd.WARNING and len(r.reasons) == 8
-    assert r.observed_monotonic == 52.5                  # stamped AFTER collection
-    assert rd.dispatch_permitted(r, 62.5) == (True, None)
-    assert rd.dispatch_permitted(r, 62.6) == (False, 'readiness_stale')
+    # PR #16 finding 3: stamped when collection STARTS (oldest evidence); the 2.5 s the
+    # collection took is recorded and already counted in the age
+    assert r.observed_monotonic == 50.0 and r.collection_s == 2.5
+    assert r.to_dict(52.5)['age_s'] == 2.5 and r.to_dict()['collection_s'] == 2.5
+    assert rd.dispatch_permitted(r, 60.0) == (True, None)
+    assert rd.dispatch_permitted(r, 60.1) == (False, 'readiness_stale')
 
 
 @pytest.mark.parametrize('graph, code', [

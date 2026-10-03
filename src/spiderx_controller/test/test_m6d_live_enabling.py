@@ -286,14 +286,22 @@ def test_live_main_has_no_loop_retry_or_direct_send(enabled, sources, tmp_path):
             and isinstance(n.func, ast.Name)].count('_run_live') == 1
 
 
+def piped_stdin(monkeypatch, text):
+    """A real stdin file descriptor (the live reader selects on it) holding `text`."""
+    r, w = os.pipe()
+    os.write(w, text.encode())
+    os.close(w)
+    monkeypatch.setattr(sys, 'stdin', os.fdopen(r, 'r'))
+
+
 def test_default_prompt_appears_only_after_readiness_passes(enabled, sources, tmp_path,
                                                             monkeypatch, capsys):
-    import io
-    monkeypatch.setattr(sys, 'stdin', io.StringIO(lc.CONFIRMATION_WORD + '\n'))
+    piped_stdin(monkeypatch, lc.CONFIRMATION_WORD + '\n')
     bad = Factories(sources, graph=Graph(action_servers=[]))
     assert lpb._live_main(live_args(tmp_path, '--domain-id', '0'), sources, None,
                           bad.transport, bad.collect, utc_stamp=stamp()) == lpb.EXIT_REFUSED
     assert 'Readiness passed' not in capsys.readouterr().out and len(bad.made[0].sent) == 0
+    piped_stdin(monkeypatch, lc.CONFIRMATION_WORD + '\n')
     good = Factories(sources)
     assert lpb._live_main(live_args(tmp_path, '--domain-id', '0'), sources, None,
                           good.transport, good.collect, utc_stamp=stamp()) == lpb.EXIT_OK
@@ -309,20 +317,23 @@ def test_default_prompt_appears_only_after_readiness_passes(enabled, sources, tm
 #       batch 1: LiveSession (dispatch-uncertainty evidence, failure-safe single cancel, pre-send
 #                checkpoint), _run_live (close errors recorded, checkpoint), m6_live_mock.py (goal
 #                ID in the goal response)
+#       batch 2: LiveSession (freshness re-checked immediately before the send; an interrupt
+#                while typing wins; first interrupt handled before a second one in the same
+#                poll), m6_live_readiness.py (observation aged from its start; collection time)
 PINNED_SINCE_E65C213 = {
     'InterruptLatch': '66627f50d7fefeaeed439661e581eb85fb6bcfe162beb3b0ff17621209e46570',
     'StreamMonitor': '486e029d82009987f9c65c506896973c3876005bd83a3ace072d14fc59c61925',
     'graph_violation': '0ad1611cad17b2c008ed12e44704c4d89e40e2343b6e3c6d0349d6bbcf6fa332',
 }
 REBASELINED_IN_PR16 = {
-    'LiveSession': '2684f1f1fc7f1d0087f0ab4a39c9cc2a2ed337b8636a4c23273eaa35e2baae83',
+    'LiveSession': '51a9ad97c70759062ab9b973c970918b6e6eb817be7453f637de2090513cb3f2',
     '_run_live': 'e865071a20ee8cf08504a15e186d4c76f0d4de9b0e5ee39a735c0c4fd64dcec2',
 }
 PINNED_FILES_SINCE_E65C213 = {
     'm6_goal_fingerprint.py': 'edf942110ca3987a400a44e456554800bc55f30ca695c0684f6e9f4a37eb3a35',
-    'm6_live_readiness.py': '6707c999bab9ee0c515b359564ebfd6ce0415321cd56278d18cb929d09db21a0',
 }
 REBASELINED_FILES_IN_PR16 = {
+    'm6_live_readiness.py': '97e18cc178268c6c32a4e8f1d4e5858e68598f33fb8588c9e9a8e2804858aaad',
     'm6_live_mock.py': 'c8cea1a8add29226cb397b1dde1b76973ba16d62bd7f10fd0914d088c27f16d1',
 }
 
