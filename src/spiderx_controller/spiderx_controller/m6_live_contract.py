@@ -15,7 +15,7 @@ from spiderx_controller import m6_envelope as env
 # ---- THE single live gate: no live goal can be dispatched while this is False ----
 # Read only by m6_live_playback.main() (before any ROS import or input), _live_main() and
 # _run_live() (defensive re-checks).
-LIVE_DISPATCH_ENABLED = True
+LIVE_DISPATCH_ENABLED = False
 LIVE_DISPATCH_DISABLED_MESSAGE = (
     'Live M6.0-D dispatch is HARD-DISABLED in this build. Sending the one live goal needs a '
     'separate owner authorization and an enabling code change after a final audit '
