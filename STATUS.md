@@ -1,6 +1,26 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/stoic-shannon-ur2mes` (M6.0-D live-enabling design, from `main` @ `e65c213` with M6.0-D merged).
+Last updated on branch `claude/stoic-shannon-ur2mes` (M6.1-A fixed base, stacked on the unmerged M6.1 branch `claude/spiderx-m61-trot-replay` @ `6a7f1f0`, from `main` @ `77fd171`).
+
+**M6.1 protected trot replay and M6.1-A fixed base: implemented, Cloud-verified in offline/mock/isolated-domain tests only; both live gates `False`; nothing has run in Gazebo.**
+- **M6.1** (`6a7f1f0`, [notes](docs/M61_IMPLEMENTATION_NOTES.md)):
+  - the one approved trot cycle: 2 cm step, 6 mm lift, 4.0 s;
+  - `content_sha256 94a492c4…`, `trajectory_id 241760e7dfd5ef12`, fingerprint `9dba1a17…`;
+  - gates G1–G7 plus pose freshness, a mock CLI and a hard-disabled `--live`.
+- **M6.1-A** ([implementation](docs/M61A_FIXED_BASE_IMPLEMENTATION.md), [design](docs/M61A_FIXED_BASE_POSE_OBSERVABILITY_DESIGN.md)):
+  - a fixed-base wrapper (Approach B: a world → `dummy_link` weld at a **provisional 0.125 m**, with an identity spawn) and a dedicated launch `fortress_m61a_fixed_base.launch.py`;
+  - full frame composition `T_world_body = T_world_model · T_model_body`, checked against sdformat output;
+  - an offline collision clearance analysis: every reachable configuration stays ≥ 15.9 mm above the ground (guaranteed bound); 0.075 m was rejected (−34 mm);
+  - pose, frame, spawn and attachment checks, plus a new gate **G8 (attachment)**;
+  - a read-only observer/preflight `m61a_observe_fixed_base`;
+  - M6.1 readiness requires the verified fixed base.
+- **Unchanged:** both trajectory identities (M6.0-D `44f0a7ad52e5c330`, M6.1 `241760e7dfd5ef12`), the free-base model and every existing launch.
+- **Pending (local, each needs approval):**
+  - phase 1, the launch-only fixed-base observation, which decides the provisional tolerances and height;
+  - phase 2, one fixed-base cycle.
+
+  Free-base walking and keyboard teleoperation are **not** demonstrated.
+
 
 **M6.0-D implementation cloud + local verified in offline/mock/isolated-domain testing; live dispatch remains hard-disabled and local live playback remains pending separate approval.** Merged into `main` (`e65c213`).
 - **Local verification passed** on the owner's Ubuntu PC at `412eb45`, in offline/mock/isolated-domain modes only:
@@ -160,6 +180,8 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | Static multi-leg pose hold via IK (simulation only) | ✅ **Static multi-leg pose hold via IK validated in Gazebo** (cloud + local) | 5 s holds; \|roll\|, \|pitch\| ≤ 2.8e-5 rad; body height within 0.05 mm of the geometric expectation. **Not** walking, gait, balance or hardware validation; contact not measured |
 | Offline gait configuration and trajectory validation (M4.5) | ✅ Verified (offline; cloud + local) | `m4_5_gait_analysis`: 6 YAML gaits checked against the URDF-derived IK, joint limits, a static-stability **approximation** and the joint-speed **placeholder**. wave and tripod_crawl FAIL static stability (reported, not tuned). [M4.5 results](docs/M4_5_TEST_RESULTS.md). **Not** walking, not a validated gait, not hardware |
 | M6.0 gait-playback safety layers (one bounded crouch trajectory) | 🟡 Implemented; cloud + local offline/mock verified; M6.0-B graph-mode read-only preflight passed locally; M6.0-D valid playback pending | `m6_offline_preflight` (offline conversion + preflight), `m6_action_client` (single goal, mock-tested only), `m6_live_preflight` (read-only; sends no goal). No goal has been sent to a live controller; M6.0-D needs owner approval. [M6 results](docs/M6_TEST_RESULTS.md), [guide](docs/SPIDERX_M6_PLAYBACK_GUIDE.md). **Not** gait playback or walking |
+| M6.1 protected one-cycle trot replay (fixed base) | 🟡 Implemented; Cloud offline/mock/isolated verified; live hard-disabled | `m6_gait_replay.py --dry-run / --mock`; [notes](docs/M61_IMPLEMENTATION_NOTES.md). No goal has been sent |
+| M6.1-A fixed-base simulation + body-pose observability | 🟡 Implemented; Cloud offline/mock/isolated verified; **not run in Gazebo** | `fortress_m61a_fixed_base.launch.py`, `m61a_observe_fixed_base`, `m61a_clearance`; provisional mount 0.125 m; [implementation](docs/M61A_FIXED_BASE_IMPLEMENTATION.md) |
 | Gait playback / walking in simulation | ⚪ Future work | Unscheduled "Future — gait playback" item (owner decision). Nothing streams gait trajectories to the controllers |
 | Offline evaluation study (M5) | ✅ Cloud + local offline verification passed | `m5_offline_evaluation`: staged study, Stage 0/1 gate, deterministic provenance-rich records. [M5 results](docs/M5_TEST_RESULTS.md), [guide](docs/SPIDERX_M5_EVALUATION_GUIDE.md). Offline model analysis only; **not** walking, dynamic stability, energy or hardware |
 | `/cmd_vel` → gait bridge | ⚪ Future work | M5.5: Command-velocity bridge (renamed from M5). Not implemented. Nothing consumes `/cmd_vel` today |

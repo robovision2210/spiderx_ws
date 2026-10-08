@@ -1,5 +1,10 @@
 # M6.1-A – Fixed-Base Simulation and Body-Pose Observability: Design Note
 
+> **Implementation update (2026-10-08).** Approach B (weld origin = mounting transform, identity
+> spawn) was implemented offline in Cloud. The weld height is now a derived, provisional **0.125 m**,
+> not 0.075 m. See [`M61A_FIXED_BASE_IMPLEMENTATION.md`](M61A_FIXED_BASE_IMPLEMENTATION.md). The
+> text below is the original design record, kept unchanged.
+
 **Status: DESIGN ONLY.** The owner asked for this note to be saved as a documentation record
 (2026-10-08). Saving it is **not** approval to implement, launch or run anything, and **every
 decision in §7 is pending**.

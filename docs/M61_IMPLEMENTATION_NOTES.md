@@ -277,8 +277,8 @@ Every item must be true, and each run needs a separate owner approval. Status at
 | 4 | `M61_LIVE_DISPATCH_ENABLED` is False | ✅ | `grep -n "M61_LIVE_DISPATCH_ENABLED =" src/spiderx_controller/spiderx_controller/m61_live_contract.py` and `test/m61_gate.py` |
 | 5 | No leftover processes from previous runs | ✅ cloud (none) / ⏳ owner PC | `pgrep -af "ign gazebo\|gz sim\|ros2\|parameter_bridge\|controller_manager"` is empty, then `ros2 daemon stop` |
 | 6 | Controllers active in the launch config | ⏳ runtime only | Static: `spiderx_ros2_controllers.yaml` defines `joint_state_broadcaster` and `leg_trajectory_controller` (hash-pinned). At run time, readiness refuses unless `list_controllers` reports both `active` |
-| 7 | Fixed / clamped base variant exists and is verified | ❌ not implemented (V7) | Separate approval; design Batch D |
-| 8 | Ground-truth pose bridge is in the M6.1 launch | ❌ not implemented (V8) | Separate approval; design Batch D. Without it, readiness refuses (`body_pose_missing`) |
+| 7 | Fixed / clamped base variant exists and is verified | 🟡 implemented by M6.1-A, verified offline only ([implementation](M61A_FIXED_BASE_IMPLEMENTATION.md)); ⏳ phase 1 observation | `ros2 run spiderx_controller m61a_observe_fixed_base --domain-id 0 --preflight` READY on `fortress_m61a_fixed_base.launch.py` |
+| 8 | Ground-truth pose bridge is in the M6.1 launch | 🟡 in `fortress_m61a_fixed_base.launch.py` (M6.1-A), not yet run | The body pose is now COMPOSED (`T_world_model · T_model_body`); without the bridge readiness still refuses (`body_pose_missing`) |
 | 9 | Owner-side offline / mock / isolated verification on the Ubuntu PC | ⏳ | Items 1–4, then `--mock --scenario success` and one gate scenario |
 | 10 | Read-only graph preflight on the M6.1 launch (no goal) | ⏳ | Separate approval |
 | 11 | Final audit, then the enabling change on a never-merged branch (flips `M61_LIVE_DISPATCH_ENABLED` and `test/m61_gate.py` only) | ⏳ | Separate approval |

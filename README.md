@@ -48,6 +48,7 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | Single-leg FK/IK (front-left, simulation only) | ✅ Verified locally and in the cloud (M3): FK matches the URDF, TF and Gazebo; IK reaches 5 small lifted targets and refuses unreachable or out-of-limit targets. **Not** walking, a gait or hardware validation |
 | All-leg FK/IK and static pose hold (simulation only) | ✅ Verified locally and in the cloud (M4): 3 static four-leg poses via IK held in Gazebo. **Not** walking, gait or hardware validation |
 | Offline gait configuration and trajectory validation (M4.5) | ✅ Verified offline (cloud + local, M4.5): 6 YAML gaits checked against the URDF-derived IK, joint limits and a static-stability **approximation**. **Not** walking or hardware validation |
+| Protected one-cycle trot replay on a fixed base (M6.1 / M6.1-A) | 🟡 Implemented and verified offline/mock/isolated (Cloud): welded-base model, clearance analysis, read-only observer; **live dispatch disabled, not run in Gazebo** |
 | Gait playback / walking, `/cmd_vel` bridge | ⚪ Planned |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
