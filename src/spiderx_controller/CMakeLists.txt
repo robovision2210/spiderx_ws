@@ -24,6 +24,7 @@ install(PROGRAMS
   scripts/m6_live_preflight
   scripts/m6_live_playback
   scripts/m6_gait_replay.py
+  scripts/m61a_clearance
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -64,6 +65,8 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m6d_freshness_confirmation test/test_m6d_freshness_confirmation.py)
   ament_add_pytest_test(test_m6d_isolated_success test/test_m6d_isolated_success.py)
   ament_add_pytest_test(test_m61_gait_replay test/test_m61_gait_replay.py)
+  ament_add_pytest_test(test_m61a_fixed_base test/test_m61a_fixed_base.py TIMEOUT 600)
+  ament_add_pytest_test(test_m61a_clearance test/test_m61a_clearance.py TIMEOUT 600)
 endif()
 
 ament_package()
