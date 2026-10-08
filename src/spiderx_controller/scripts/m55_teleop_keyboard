@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+"""M5.5 keyboard teleop (see spiderx_controller/m55_teleop.py). Run it in its own terminal.
+
+    ros2 run spiderx_controller m55_teleop_keyboard
+"""
+import sys
+
+from spiderx_controller.m55_teleop import main
+
+if __name__ == '__main__':
+    sys.exit(main())

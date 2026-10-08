@@ -26,6 +26,9 @@ install(PROGRAMS
   scripts/m6_gait_replay.py
   scripts/m61a_clearance
   scripts/m61a_observe_fixed_base
+  scripts/m55_locomotion_node
+  scripts/m55_teleop_keyboard
+  scripts/m55_gait_feasibility
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -70,6 +73,9 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m61a_clearance test/test_m61a_clearance.py TIMEOUT 600)
   ament_add_pytest_test(test_m61a_observer test/test_m61a_observer.py TIMEOUT 300)
   ament_add_pytest_test(test_m55_command test/test_m55_command.py)
+  ament_add_pytest_test(test_m55_locomotion test/test_m55_locomotion.py TIMEOUT 300)
+  ament_add_pytest_test(test_m55_gait test/test_m55_gait.py TIMEOUT 900)
+  ament_add_pytest_test(test_m55_ros test/test_m55_ros.py TIMEOUT 300)
 endif()
 
 ament_package()
