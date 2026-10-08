@@ -1,0 +1,68 @@
+# M5.5 - continuous free-base locomotion (statically stable crawl) and keyboard teleoperation.
+# SIMULATION DEVELOPMENT ONLY. Continuous locomotion dispatch is HARD-DISABLED
+# (m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED = False): the node runs in SHADOW mode.
+#
+# Read by spiderx_controller/m55_locomotion.py (strict loader: unknown, missing, ill-typed or
+# inconsistent values are refused). Design and evidence: docs/M55_KEYBOARD_WALKING.md.
+#
+# EVERY NUMBER BELOW IS PROVISIONAL. The gait values were chosen offline (Cloud) so that every
+# template passes the m55_crawl validation (static margin, joint speed, IK, spline); the timing,
+# tolerance and monitor values follow the M6.0-D / M6.1 monitors. None has runtime evidence yet;
+# the local acceptance phases (docs/M55_KEYBOARD_WALKING.md section 9) must confirm them.
+#
+# Frames: commands are REP-103 (/cmd_vel linear.x = forward); the gait works in base_link
+# (+x right, +y FRONT, +z up). Units: m, rad, s, Hz.
+
+schema: spiderx.m55.locomotion/1
+status: provisional
+
+command:
+  topic: /cmd_vel                  # geometry_msgs/Twist (REP-103)
+  lease_s: 0.5                     # no valid command for this long -> controlled stop, disarm
+  deadband_m_s: 0.0002             # |linear.x| below this = stop
+  max_rate_hz: 50.0                # faster commands are rejected (and stop the robot)
+  unsupported_tolerance: 1.0e-6    # |linear.y|, |angular.z|, ... above this are REJECTED
+
+gait:                              # m55_crawl.CrawlParams (one validated template per level)
+  stride_levels_m: [0.02, 0.04, 0.06]   # speed levels = stride / (cycle + 9 * lead-in)
+  lift_m: 0.012                    # swing apex height
+  min_shift_s: 0.5
+  min_swing_s: 0.6
+  design_margin_m: 0.020           # COM target inset inside each support triangle
+  min_margin_m: 0.015              # validation threshold (quasi-static approximation)
+  max_joint_speed_rad_s: 0.25      # development bound (NOT an actuator rating)
+  speed_use: 0.9                   # phases are timed for 0.9 x the bound
+  point_dt_s: 0.1                  # dispatched waypoint spacing
+  check_dt_s: 0.02                 # dense validation spacing
+  spline_tolerance_rad: 0.002      # controller spline vs dense IK path
+
+dispatch:
+  action: /leg_trajectory_controller/follow_joint_trajectory
+  command_topic: /leg_trajectory_controller/joint_trajectory   # must have NO publisher
+  phase_lead_s: 0.2                # each goal: measured state -> phase start over this time
+  continuity_tolerance_rad: 0.02   # measured vs phase start (and arm posture) per joint
+  tracking_tolerance_rad: 0.05     # feedback |error| abort (= M6.0-D/M6.1 tracking tolerance)
+  goal_time_tolerance_s: 1.0
+  goal_response_timeout_s: 2.0
+  result_margin_s: 1.0             # result watchdog = duration + goal_time_tolerance + margin
+
+monitor:
+  joint_states_topic: /joint_states
+  joint_states_stale_s: 0.5
+  sim_stall_s: 5.0
+  body_pose_required: true         # simulator ground truth (development monitor, not odometry)
+  pose_topic: /spiderx/sim/world_poses
+  model_name: spiderx
+  body_link: dummy_link
+  pose_stale_s: 1.0
+  max_tilt_rad: 0.26               # ~15 deg (the M6.1 G6 tilt limit)
+  graph_period_s: 1.0
+  graph_stale_s: 3.0
+
+node:
+  tick_hz: 20.0
+  status_hz: 2.0
+
+teleop:
+  heartbeat_hz: 10.0               # the teleop publishes /cmd_vel at this rate (zero when idle)
+  hold_s: 0.8                      # > the terminal key-repeat delay (X11 default 660 ms; xset q)
