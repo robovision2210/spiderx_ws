@@ -352,6 +352,30 @@ def with_fixed_base(base_provider, snapshot, cfg):
     return provide
 
 
+def with_command_owner(base_provider, owner_snapshot):
+    """Wrap a readiness provider: also NOT READY while another commander is VISIBLE in the graph
+    (a publisher on the controller's topic, or another FollowJointTrajectory client).
+    owner_snapshot() -> {'command_publishers', 'foreign_action_clients'}. It is re-evaluated at
+    every readiness observation, including the one immediately before dispatch. It is a
+    point-in-time graph observation (m61a_fixed_base.command_owner_codes), not a lock."""
+    def provide():
+        res = base_provider()
+        if not isinstance(res, rd.ReadinessResult):
+            return res
+        snap = owner_snapshot()
+        codes = fb.command_owner_codes(snap.get('command_publishers'),
+                                       snap.get('foreign_action_clients'))
+        report = dict(res.report or {}, m61a_command_owner={'ok': not codes, 'codes': codes,
+                                                            'snapshot': snap})
+        if not codes:
+            return dataclasses.replace(res, report=report)
+        return dataclasses.replace(
+            res, ready=False, failure_codes=tuple(res.failure_codes) + tuple(codes),
+            reasons=tuple(res.reasons) + tuple(f'command owner: {c}' for c in codes),
+            report=report)
+    return provide
+
+
 def load_fixed_base_config(config_dir=None):
     """The M6.1-A config with its file SHA-256 recorded (raw['_sha256'])."""
     import hashlib
@@ -460,10 +484,10 @@ def run_mock(plan, scenario, reader):
     transport = m61_mock.M61FakeTransport(traj, fp, latch=latch, fixed_base=cfg,
                                           **m61_mock.SCENARIOS[scenario])
     report = m6mock.mock_readiness_report(plan.sources.joint_names, plan.neutral)
-    provide = with_fixed_base(
+    provide = with_command_owner(with_fixed_base(
         with_body_pose(lambda: rd.assess(report, transport.wall_now()),
                        transport.latest_body_pose, transport.wall_now, plan.limits),
-        transport.fixed_base_snapshot, cfg)
+        transport.fixed_base_snapshot, cfg), transport.command_owner_snapshot)
     session = M61Session(transport, plan, provide, reader, latch=latch, fixed_base=cfg)
     out = session.run()
     out.update(mode='mock', scenario=scenario, mock_server_goals_received=len(transport.sent),
@@ -533,9 +557,9 @@ def _run_live(plan, transport_factory, collect_factory, reader, latch, domain_id
     try:
         base = rd.make_readiness_provider(collect_factory(transport), plan.sources.joint_names,
                                           plan.neutral, transport.wall_now)
-        provide = with_fixed_base(
+        provide = with_command_owner(with_fixed_base(
             with_body_pose(base, transport.latest_body_pose, transport.wall_now, plan.limits),
-            transport.fixed_base_snapshot, cfg)
+            transport.fixed_base_snapshot, cfg), transport.command_owner_snapshot)
         session = M61Session(transport, plan, provide, reader, latch=latch,
                              checkpoint=checkpoint, fixed_base=cfg)
         out = session.run()

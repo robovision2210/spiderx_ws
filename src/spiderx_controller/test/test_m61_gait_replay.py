@@ -40,6 +40,8 @@ from spiderx_controller import m61_limits
 from spiderx_controller import m61_live_contract as c61
 from spiderx_controller import m61_mock
 from spiderx_controller import m61_trot_cycle as tc
+from spiderx_controller import m61a_fixed_base as fb
+from spiderx_controller import m6_live_readiness as rd
 from spiderx_controller.config_check import load_urdf
 
 PKG = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
@@ -586,6 +588,9 @@ EXPECTED = {   # scenario: (state, reason, goals, cancels, gates tripped)
     'joint_state_gap': (lpb.TRACKING_FAILED, 'sample_gap', 1, 1, (gates.G6,)),
     'body_pose_stale': (gr.GATE_TRIPPED, 'body_pose_stale', 1, 1, (gates.POSE_FRESHNESS,)),
     'no_body_pose': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'competing_publisher': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'competing_client': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'competing_client_late': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
 }
 
 
@@ -980,3 +985,35 @@ def test_rclpy_transport_reads_the_body_pose_read_only(isolated_env):
             rclpy.try_shutdown(context=ctx)
         t.close()
     assert t.node is None and t.pose_sub is None
+
+
+# ============================================================ command owner (M6.1-A review)
+@pytest.mark.parametrize('scenario, code', [
+    ('competing_publisher', fb.COMMAND_PUBLISHERS),
+    ('competing_client', fb.COMMAND_ACTION_CLIENTS),
+    ('competing_client_late', fb.COMMAND_ACTION_CLIENTS),
+])
+def test_a_visible_competing_commander_refuses_before_any_goal(plan, scenario, code):
+    out, session, _ = gr.run_mock(plan, scenario, word())
+    assert out['goals_sent'] == 0 and out['mock_server_goals_received'] == 0
+    assert code in json.dumps(out)
+
+
+def test_a_late_competing_client_is_caught_by_the_pre_dispatch_recheck(plan):
+    """Readiness #1 sees no other commander; the client appears before the re-observation that
+    immediately precedes dispatch, which refuses. A client appearing after that re-check is not
+    seen by readiness at all (point-in-time graph observation); the controller would then
+    preempt our goal, which ends not SUCCEEDED."""
+    out, session, _ = gr.run_mock(plan, 'competing_client_late', word())
+    assert session.transport.owner_snapshots == 2
+    assert out['state'] == lpb.REFUSED and out['goals_sent'] == 0
+
+
+def test_command_owner_wrapper_unknown_counts_are_not_ready():
+    base = lambda: rd.ReadinessResult(True, 'compatible', (), (), 0.0)      # noqa: E731
+    res = gr.with_command_owner(base, lambda: {'command_publishers': None,
+                                               'foreign_action_clients': 0})()
+    assert not res.ready and fb.COMMAND_OWNER_UNKNOWN in res.failure_codes
+    res = gr.with_command_owner(base, lambda: {'command_publishers': 0,
+                                               'foreign_action_clients': 0})()
+    assert res.ready and res.report['m61a_command_owner']['ok']

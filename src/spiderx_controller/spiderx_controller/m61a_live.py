@@ -22,6 +22,12 @@ DESCRIPTION_TOPIC = '/robot_description'
 EVENT_KINDS_DROPPED_AFTER_COLLECT = ('body_pose', 'fixed_base')
 
 
+def action_status_topic(action=None):
+    """The status topic every FollowJointTrajectory client subscribes to (one per client)."""
+    from spiderx_controller import m6_envelope as env
+    return (action or env.ACTION_NAME).rstrip('/') + '/_action/status'
+
+
 def description_qos():
     """robot_state_publisher's /robot_description: reliable, transient local, depth 1."""
     from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
@@ -71,6 +77,15 @@ class M61AFixedBaseTransport(la.M61RclpyLiveTransport):
 
     def latest_body_pose(self):
         return self.tracker.latest_body_pose()
+
+    def command_owner_snapshot(self):
+        """Other commanders VISIBLE now (graph counts; see fb.command_owner_codes for the limits):
+        publishers on the controller's topic, and FollowJointTrajectory clients other than this
+        transport's own one."""
+        self._require_open()
+        return {'command_publishers': self.node.count_publishers(self.cfg.command_topic),
+                'foreign_action_clients': max(0, self.node.count_subscribers(
+                    action_status_topic(self.action_name)) - 1)}
 
     def fixed_base_snapshot(self):
         return self.tracker.snapshot()

@@ -260,6 +260,8 @@ class FixedBaseObserver:
         from spiderx_controller import m61a_live
         return {'joint_state_publishers': self.node.count_publishers(self.cfg.joint_state_topic),
                 'command_publishers': self.node.count_publishers(self.cfg.command_topic),
+                # this node has no action client, so every client of the action counts
+                'action_clients': self.node.count_subscribers(m61a_live.action_status_topic()),
                 'pose_publishers': names(self.cfg.pose_topic),
                 'description_publishers': names(m61a_live.DESCRIPTION_TOPIC),
                 'clock_publishers': names('/clock')}
@@ -273,7 +275,8 @@ class FixedBaseObserver:
             latest_joint_states=self.latest_joint_states, clock=self.clock,
             controllers=controllers,
             joint_state_publishers=graph.get('joint_state_publishers'),
-            command_publishers=graph.get('command_publishers'))
+            command_publishers=graph.get('command_publishers'),
+            action_clients=graph.get('action_clients'))
 
 
 def run_observation(observer, cfg, duration_s, discovery_s, interrupted=None):
@@ -303,6 +306,8 @@ def interface_report(cfg, joint_names):
             'publishers': {}, 'action_clients': {},
             'graph_queries': ['count_publishers ' + cfg.joint_state_topic,
                               'count_publishers ' + cfg.command_topic,
+                              'count_subscribers ' + m61a_live.action_status_topic()
+                              + ' (= FollowJointTrajectory clients)',
                               'publisher node names of the pose, description and clock topics'],
             'joint_names': list(joint_names), 'model_name': cfg.model_name,
             'body_link': cfg.body_link, 'mount_xyz_rpy': list(cfg.mount.xyz_rpy())}

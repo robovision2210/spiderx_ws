@@ -34,7 +34,8 @@ class M61FakeTransport(m6mock.FakeTransport):
                  tilt_rad=0.30, drift_at=None, drift_dx=0.03, joint_jump_at=None,
                  jump_joint='rf_foot_joint', jump_to=0.60, fixed_base=None,
                  description='fixed_base', spawn_offset=None, link_offset=None,
-                 mount_override=None, **kw):
+                 mount_override=None, command_publishers=0, foreign_clients=0,
+                 competing_after_calls=None, **kw):
         latency = kw.get('response_latency', 0.1)
         rtf = kw.get('rtf', 1.0)
         duration = trajectory['points'][-1]['time_from_start_s']
@@ -65,6 +66,18 @@ class M61FakeTransport(m6mock.FakeTransport):
         self.drift_at, self.drift_dx = drift_at, drift_dx
         self.joint_jump_at, self.jump_joint, self.jump_to = joint_jump_at, jump_joint, jump_to
         self.next_pose = self.t_start
+        # other commanders visible in the graph; competing_after_calls = a client that appears
+        # after that many snapshots (late arrival between readiness observations)
+        self.command_publishers, self.foreign_clients = command_publishers, foreign_clients
+        self.competing_after_calls = competing_after_calls
+        self.owner_snapshots = 0
+
+    def command_owner_snapshot(self):
+        self.owner_snapshots += 1
+        late = (self.competing_after_calls is not None
+                and self.owner_snapshots > self.competing_after_calls)
+        return {'command_publishers': self.command_publishers,
+                'foreign_action_clients': self.foreign_clients + (1 if late else 0)}
 
     # ---------------------------------------------------------------- joints (M6.1 reference)
     def _positions(self, wall):
@@ -178,6 +191,9 @@ SCENARIOS = {
     'spawn_offset': {'spawn_offset': 0.075},               # readiness refuses (double counting)
     'description_mismatch': {'link_offset': -0.05},        # Gazebo body link != description
     'mount_not_approved': {'mount_override': fb.Pose.from_xyz_rpy(z=0.15)},   # refused
+    'competing_publisher': {'command_publishers': 1},     # readiness refuses; nothing sent
+    'competing_client': {'foreign_clients': 1},           # readiness refuses; nothing sent
+    'competing_client_late': {'competing_after_calls': 1},  # appears before the final check
 }
 # Fixed-base scenarios need the fixed-base mode; G7 report-only drift is a free-base behaviour
 # (on a weld, any drift G7 could flag is first an attachment failure, G8).
