@@ -499,7 +499,7 @@ def evidence(cfg, weld, now=10.0, **kw):
                     latest_joint_states=(now - 0.01, {'j1': 0.0, 'j2': 0.0}), clock=c,
                     controllers={'joint_state_broadcaster': 'active',
                                  'leg_trajectory_controller': 'active'},
-                    joint_state_publishers=1, command_publishers=0)
+                    joint_state_publishers=1, command_publishers=0, action_clients=0)
     for k, v in kw.items():
         setattr(e, k, v)
     return e
@@ -512,7 +512,7 @@ def test_assess_ready_with_complete_evidence(cfg, weld):
     assert {k for k, v in rep['checks'].items() if isinstance(v, dict) and 'ok' in v} == {
         'robot_description', 'frame_body_link', 'spawn_identity', 'attachment',
         'body_pose_fresh', 'joint_states', 'sim_clock', 'controllers',
-        'joint_state_publishers', 'command_publishers'}
+        'joint_state_publishers', 'command_publishers', 'action_clients'}
 
 
 @pytest.mark.parametrize('kw, code', [
@@ -527,6 +527,10 @@ def test_assess_ready_with_complete_evidence(cfg, weld):
                       'leg_trajectory_controller': 'inactive'}}, fb.CONTROLLERS_NOT_ACTIVE),
     ({'joint_state_publishers': 2}, fb.JOINT_STATE_PUBLISHERS),
     ({'command_publishers': 1}, fb.COMMAND_PUBLISHERS),
+    # M6.1-A review: another FollowJointTrajectory client is a competing commander too, and an
+    # unmeasured count (None) is not READY (behaviour change: evidence must now carry the count)
+    ({'action_clients': 1}, fb.COMMAND_ACTION_CLIENTS),
+    ({'action_clients': None}, fb.COMMAND_ACTION_CLIENTS),
 ])
 def test_assess_names_each_failure(cfg, weld, kw, code):
     ready, codes, _ = fb.assess(evidence(cfg, weld, **kw), cfg, 10.0, ['j1', 'j2'])
@@ -545,3 +549,14 @@ def test_assess_plant_frame_codes(cfg, weld):
                                    fb.PoseSample(1, 1, fb.select_entries(t)), cfg)
     assert not ok and codes == [fb.FRAME_SPAWN_NOT_IDENTITY, fb.ATTACHMENT_DISPLACED]
 
+
+
+@pytest.mark.parametrize('pubs, clients, codes', [
+    (0, 0, []),
+    (1, 0, [fb.COMMAND_PUBLISHERS]),
+    (0, 2, [fb.COMMAND_ACTION_CLIENTS]),
+    (None, 0, [fb.COMMAND_OWNER_UNKNOWN]),
+    (0, None, [fb.COMMAND_OWNER_UNKNOWN]),
+])
+def test_command_owner_codes(pubs, clients, codes):
+    assert fb.command_owner_codes(pubs, clients) == codes

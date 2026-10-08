@@ -37,7 +37,7 @@ cd ~/spiderx_ws && git fetch origin && git checkout claude/stoic-shannon-ur2mes 
 sudo apt update && sudo apt install ros-humble-ros-gz-sim ros-humble-ros-gz-bridge ros-humble-ros-gz-interfaces
 source /opt/ros/humble/setup.bash
 rosdep install --from-paths src --ignore-src -r -y --skip-keys gazebo_ros2_control
-rm -rf build install log && colcon build --symlink-install && source install/setup.bash
+rm -rf build install && colcon build --symlink-install && source install/setup.bash   # keep log/ (evidence)
 ros2 launch spiderx_bringup fortress.launch.py
 
 # Terminal 2
@@ -468,12 +468,13 @@ source /opt/ros/humble/setup.bash
 
 **5b. Remove old build results.**
 
-- **What it does:** deletes the `build`, `install` and `log` folders, which are generated output and never your source code.
+- **What it does:** deletes the `build` and `install` folders, which are generated output and never your source code.
 - **Why:** after switching branches, old build output can refer to files or packages that no longer exist and cause confusing errors. Rebuilding from clean avoids that.
+- **Keep `log/`.** The SpiderX tools save their evidence reports under `log/<tool>/<date>/` and never overwrite them. Deleting `log/` would delete that evidence. Copy anything you want to keep to `~/spiderx_evidence/` first.
 
 ```bash
 cd ~/spiderx_ws
-rm -rf build install log
+rm -rf build install
 ```
 
 > ⚠️ Run this **only inside `~/spiderx_ws`**. The `cd` line makes sure of that. Type the
@@ -755,7 +756,7 @@ The script does **not** start Gazebo. That is what Sections 6 and 7 do.
 | `ros2: command not found` | ROS is not sourced in this terminal | `source /opt/ros/humble/setup.bash` (and then the workspace, see Step 6) | Output of `ls /opt/ros` |
 | `Package 'ros_gz_sim' not found` | The Fortress packages are not installed | Redo Step 3b, then `source /opt/ros/humble/setup.bash` | Output of `apt list --installed 2>/dev/null \| grep ros-gz` |
 | `Package 'spiderx_bringup' not found` | The workspace is not built or not sourced, or you are on the wrong branch | `cd ~/spiderx_ws && git status` (must show `claude/stoic-shannon-ur2mes`), then redo Steps 5 and 6 | `git status` output and the `colcon build` summary |
-| `colcon build` fails | Missing dependency or old build files | Redo Step 4b, then Step 5 (including `rm -rf build install log`) | Build output from `---` to the end, plus `cat ~/spiderx_ws/log/latest_build/*/stderr.log` |
+| `colcon build` fails | Missing dependency or old build files | Redo Step 4b, then Step 5 (including `rm -rf build install`; keep `log/`) | Build output from `---` to the end, plus `cat ~/spiderx_ws/log/latest_build/*/stderr.log` |
 | `Could not get lock ...` / `unattended-upgr` | The automatic updater is busy | **Wait.** Never delete locks and never kill the process. After 15 minutes, restart normally, wait 2 minutes after login, and retry (Step 3 box) | The full lock message |
 | Gazebo window does not open | Crash at start, usually graphics | Read Terminal 1 for `[ERROR]` lines. Try `ign gazebo --versions` (should print `6.x.x`). Then try the "black screen" fix below | `~/spiderx_launch.log` (see Section 6) |
 | Black Gazebo screen / OpenGL or `ogre2` error | The graphics driver cannot run Gazebo's renderer (common in virtual machines) | Stop with Ctrl + C, then in the same terminal run `export LIBGL_ALWAYS_SOFTWARE=1` and launch again (slower, but works). On a real PC, install the recommended driver: `sudo ubuntu-drivers autoinstall`, then reboot | Launch log, plus the output of `glxinfo -B` (needs `sudo apt install mesa-utils`) |

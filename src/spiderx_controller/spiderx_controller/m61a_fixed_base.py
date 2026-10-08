@@ -78,6 +78,8 @@ CONTROLLERS_NOT_ACTIVE = 'controllers_not_active'
 CONTROLLERS_UNKNOWN = 'controllers_unknown'
 JOINT_STATE_PUBLISHERS = 'joint_state_publisher_count'
 COMMAND_PUBLISHERS = 'competing_command_publishers'
+COMMAND_ACTION_CLIENTS = 'competing_action_clients'
+COMMAND_OWNER_UNKNOWN = 'command_owner_unknown'
 
 
 class FixedBaseError(ValueError):
@@ -674,6 +676,24 @@ class Evidence:
     controllers: dict = None                   # {name: state} or None = not queried
     joint_state_publishers: int = None
     command_publishers: int = None
+    action_clients: int = None                 # FollowJointTrajectory clients other than ours
+
+
+def command_owner_codes(command_publishers, foreign_action_clients):
+    """Codes for another commander VISIBLE in one graph snapshot (None = not measured).
+
+    A point-in-time observation, not mutual exclusion: DDS discovery takes time, a commander that
+    appears after the snapshot, or publishes once and leaves between snapshots, is not seen. The
+    controller accepts goals and topic commands from anyone; a later competing command preempts
+    ours, which then ends not SUCCEEDED (reported), never silently."""
+    codes = []
+    if command_publishers is None or foreign_action_clients is None:
+        codes.append(COMMAND_OWNER_UNKNOWN)
+    if command_publishers:
+        codes.append(COMMAND_PUBLISHERS)
+    if foreign_action_clients:
+        codes.append(COMMAND_ACTION_CLIENTS)
+    return codes
 
 
 INTEGRITY_CODES = (ATTACHMENT_DISPLACED, FRAME_SPAWN_NOT_IDENTITY, FRAME_LINK_INCONSISTENT)
@@ -730,7 +750,9 @@ def assess(evidence, cfg, now_wall, joint_names):
 
     Every check is separate. READY needs all of: the plant checks (assess_plant); a fresh usable
     body pose (wall receipt age); fresh complete joint states; a progressing /clock with no
-    reset; both controllers active; exactly one /joint_states publisher; no command publisher.
+    reset; both controllers active; exactly one /joint_states publisher; no other commander
+    visible (no publisher on the controller's topic, no FollowJointTrajectory client) in the
+    graph snapshot (see command_owner_codes for what a snapshot cannot show).
     """
     ok, codes, checks = assess_plant(evidence.description, evidence.latest_usable_pose, cfg)
     rep = {'checks': checks}
@@ -757,6 +779,8 @@ def assess(evidence, cfg, now_wall, joint_names):
         else JOINT_STATE_PUBLISHERS, evidence.joint_state_publishers)
     put('command_publishers', None if evidence.command_publishers == 0 else COMMAND_PUBLISHERS,
         evidence.command_publishers)
+    put('action_clients', None if evidence.action_clients == 0 else COMMAND_ACTION_CLIENTS,
+        evidence.action_clients)
     return not codes, codes, rep
 
 

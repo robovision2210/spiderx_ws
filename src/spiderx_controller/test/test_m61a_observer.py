@@ -129,7 +129,7 @@ class FakeObserver(ob.FixedBaseObserver):
         return self._ctrl
 
     def graph(self):
-        return {'joint_state_publishers': 1, 'command_publishers': 0}
+        return {'joint_state_publishers': 1, 'command_publishers': 0, 'action_clients': 0}
 
 
 def test_cli_ready_and_evidence_never_overwritten(tmp_path, capsys):
@@ -402,3 +402,48 @@ def test_observer_script_interface_only_runs_without_ros(tmp_path):
                        env=dict(os.environ, ROS_LOCALHOST_ONLY='1'))
     assert r.returncode == 0, r.stderr
     assert '"publishers": {}' in r.stdout
+
+
+# ==================================================================== late competing commanders
+@pytest.mark.parametrize('kind', ['publisher', 'action_client'])
+def test_observer_sees_a_late_competing_commander_after_discovery(isolated_env, cfg, kind):
+    """A commander that appears AFTER a clean snapshot is only seen by a later snapshot, once
+    discovery has propagated: graph counts are point-in-time observations, not a lock."""
+    from control_msgs.action import FollowJointTrajectory
+    from rclpy.action import ActionClient
+    from trajectory_msgs.msg import JointTrajectory
+    desc = fb.minimal_description(cfg.mount)
+    peers = observer = other = None
+    try:
+        observer = ob.FixedBaseObserver(cfg, JOINTS, DOMAIN).open()
+        _isolated_or_skip(observer)
+        peers = FakePeers(DOMAIN, desc, cfg)
+        observer.spin(1.0)
+        before = observer.graph()
+        assert before['command_publishers'] == 0 and before['action_clients'] == 0
+        t0 = time.monotonic()
+        if kind == 'publisher':
+            other = peers.node.create_publisher(JointTrajectory, cfg.command_topic, 10)
+            key, code = 'command_publishers', fb.COMMAND_PUBLISHERS
+        else:
+            other = ActionClient(peers.node, FollowJointTrajectory,
+                                 '/leg_trajectory_controller/follow_joint_trajectory')
+            key, code = 'action_clients', fb.COMMAND_ACTION_CLIENTS
+        seen = None
+        while time.monotonic() - t0 < 10.0:
+            observer.spin(0.05)
+            if observer.graph()[key] == 1:
+                seen = time.monotonic() - t0
+                break
+        assert seen is not None, 'never discovered within 10 s'
+        ready, codes, _ = fb.assess(observer.evidence(observer.controllers(), observer.graph()),
+                                    cfg, time.monotonic(), JOINTS)
+        assert not ready and code in codes
+        print(f'{kind} discovered after {seen:.3f} s')       # recorded by pytest -s
+    finally:
+        if other is not None and kind == 'action_client':
+            other.destroy()
+        if peers is not None:
+            peers.stop()
+        if observer is not None:
+            observer.close()

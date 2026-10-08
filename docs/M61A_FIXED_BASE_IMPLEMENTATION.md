@@ -160,9 +160,15 @@ ground. It was rejected.
 - Gazebo contact margins are not modelled, and nothing about contact forces is claimed.
 - The commanded envelope is a guaranteed bound; the reachable-set bound depends on Gazebo keeping
   joints within limit + 0.02 rad (an assumption for phase 1 to check).
+- The weld is assumed rigid at exactly zero roll and pitch. A weld that sags or tilts within the
+  attachment tolerance (3 mm, 0.01 rad) can lower geometry by up to about 3 mm + 0.01 rad × the
+  largest horizontal extent of the collision geometry; the 15 mm margin is meant to cover it,
+  and G8 trips beyond the tolerance.
 
 Reproduce with `ros2 run spiderx_controller m61a_clearance`; the report is
-`log/m61a_clearance/<UTC>/clearance.json`. `--check-config` recomputes only the reachable-set bound
+`log/m61a_clearance/<UTC>/clearance.json`. A preserved copy, regenerated twice from a recorded
+revision with its hashes, command and environment, is in
+[`docs/evidence/m61a/`](evidence/m61a/README.md) (§14). `--check-config` recomputes only the reachable-set bound
 (about 30 s) and compares it with the config. The test `test_config_agrees_with_a_fresh_passive_bound`
 does the same.
 
@@ -187,6 +193,29 @@ does the same.
 - `/robot_description` is never trusted alone. Its weld must **match** Gazebo's `dummy_link` entry
   (`frame_body_link_inconsistent` otherwise), which associates the description with the spawned
   model.
+
+**The physical body versus a stationary model root.** A welded model can be reported two ways:
+Gazebo may keep the model root fixed and move the `dummy_link` entry, or move the model root with
+its canonical link. The composition covers both:
+- a body that moves while the root stays put changes the `dummy_link` entry:
+  `frame_body_link_inconsistent` and `attachment_displaced`;
+- a root that moves with the body: `frame_spawn_not_identity` and `attachment_displaced`.
+
+Neither case can pass as "attached", because the attachment check uses the composed body, never
+the root alone.
+
+**Association with the spawned model:**
+- the entries are selected by name: `spiderx` is the `create -name` of the launch, and
+  `dummy_link` is its canonical link;
+- two entries with either name make the sample ambiguous (refused);
+- the `dummy_link` entry must agree with the description's weld to 0.1 mm;
+- `header.frame_id` values are recorded, not gated (their runtime content is unverified).
+
+**What this cannot detect.** If `pose/info` itself stopped reflecting the simulated body (a stale
+or wrong scene broadcast while the body moved), every pose check would be blind. Freshness only
+proves that messages arrive. Phase 1 therefore adds an independent cross-check: the body-mounted
+lidar's `/scan` ranges to the world walls must match the welded pose (M0 measured them within
+±8 mm of the world geometry).
 
 **Handling.** Each problem is a separate code, never guessed around:
 
@@ -261,7 +290,24 @@ this.
 - fresh, complete 12-joint `/joint_states` from exactly one publisher;
 - a progressing `/clock` with no reset;
 - both controllers `active`;
-- **no** publisher on `/leg_trajectory_controller/joint_trajectory`.
+- **no other commander visible**: no publisher on `/leg_trajectory_controller/joint_trajectory`
+  and no FollowJointTrajectory client (counted as subscribers of
+  `/leg_trajectory_controller/follow_joint_trajectory/_action/status`; the observer has none of
+  its own). An unmeasured count is not READY (`command_owner_unknown`).
+
+**Command ownership is a graph observation, not a lock.**
+- ROS 2 has no exclusive ownership of a topic or an action: the controller accepts topic commands
+  and goals from anyone.
+- The counts are a snapshot at the moment of the query. DDS discovery adds a delay before a new
+  participant is counted: 0.05–0.06 s on a localhost-only private domain in the Cloud tests
+  (`test_observer_sees_a_late_competing_commander_after_discovery`). There is no general bound,
+  and it is slower across hosts.
+- A commander that appears after the last snapshot, or publishes once and leaves between
+  snapshots, is **not** seen.
+- What then happens is the controller's behaviour: a later goal or topic command preempts the
+  M6.1 goal. M6.1 then ends **not SUCCEEDED** (preempted, cancelled or aborted, or a tracking or
+  G-gate trip), which is reported, never silently accepted.
+- Codes: `competing_command_publishers`, `competing_action_clients`.
 
 **Statistics (long mode):**
 - body z mean, minimum, maximum and range;
@@ -287,6 +333,19 @@ usual and **hold** their positions. The observer sends them nothing.
 ---
 
 ## 7. M6.1 integration
+
+**Command owner (review correction).** `with_command_owner` wraps the M6.1 readiness provider:
+- **Rule.** NOT READY while another commander is visible:
+  - a publisher on the controller's topic;
+  - a FollowJointTrajectory client other than the transport's own (its own client counts once
+    and is subtracted).
+- **When it runs.** It is re-evaluated at every readiness observation, including the
+  re-observation immediately before dispatch.
+- **Mock scenarios:** `competing_publisher`, `competing_client` and `competing_client_late`. In
+  the late case a client appears after a clean readiness #1; the pre-dispatch re-check refuses
+  it, and 0 goals are sent.
+- **Not covered.** A commander appearing after that last re-check is not seen by readiness
+  (§6).
 
 - **Readiness** (`m6_gait_replay.with_fixed_base`, before and after the confirmation): adds
   `m61a_fixed_base.assess_plant` to the existing M6.0-D readiness and body-pose readiness. That
@@ -323,6 +382,8 @@ The CLI `--mock` now plays the welded plant, because M6.1 is only valid on the f
 | `body_too_low`, `body_tilt` tripped gates | G1 / G2 | G1 then G8 / G2 then G8 (the first reason still ends the run, one cancel) | A body that drops or tilts on a weld has left the weld pose |
 | `body_drift_report_only` scenario | SUCCEEDED with G7 flags | Replaced by `attachment_drift` → G8 trip. G7 report-only is still tested on the free-base mock | On a weld any drift G7 could flag is first an attachment failure |
 | Test transport factory | `(fp, domain_id)` | `(fp, domain_id, fixed_base)` | The live path needs the fixed-base config |
+| `assess` evidence (review correction) | READY without an action-client count | NOT READY unless `action_clients == 0` (`competing_action_clients`); the observer now measures it | Another FollowJointTrajectory client is a competing commander too |
+| M6.1 mock scenarios (review correction) | 18 | 21: `competing_publisher`, `competing_client`, `competing_client_late` (all REFUSED, 0 goals) | Readiness now includes the command-owner observation |
 
 ---
 
@@ -410,8 +471,12 @@ ros2 control list_controllers
 ros2 run spiderx_controller m61a_observe_fixed_base --domain-id 0 --preflight
 ros2 run spiderx_controller m61a_observe_fixed_base --domain-id 0 --duration 120
 ros2 topic info /leg_trajectory_controller/joint_trajectory      # Publisher count: 0
+ros2 action info /leg_trajectory_controller/follow_joint_trajectory   # Action clients: 0
+ros2 topic echo /scan --once > log/m61a_phase1_scan.yaml          # independent body cross-check
 # repeat the 120 s observation in 3 separate launches; then Ctrl+C in terminal A,
 ros2 daemon stop; pgrep -af "ign gazebo|gz sim|parameter_bridge|controller_manager"   # empty
+# preserve the evidence BEFORE any clean build (a clean build must not delete log/; §14):
+mkdir -p ~/spiderx_evidence && cp -a log/m61a_observation log/m61a_phase1_* ~/spiderx_evidence/
 ```
 
 **Provisional acceptance criteria** (the owner approves, edits or replaces them before the run):
@@ -427,7 +492,13 @@ ros2 daemon stop; pgrep -af "ign gazebo|gz sim|parameter_bridge|controller_manag
 4. No sample codes other than the expected ones. The `header.frame_id` values are recorded.
 5. Visual: the legs hang clear of the ground (screenshot from the GUI). No contact is claimed;
    there is no contact sensor.
-6. Clean shutdown: no leftover process.
+6. Independent cross-check of the pose source: the `/scan` ranges to the world walls agree with
+   the welded pose (0, 0, 0.125 m, yaw 0) to within the M0 ±8 mm. A disagreement means
+   `pose/info` does not describe the simulated body, and nothing else in this list can be
+   trusted.
+7. Command ownership: `Action clients: 0` and `Publisher count: 0` above, and the observer's
+   `action_clients` and `command_publishers` are 0 (a snapshot; see §6).
+8. Clean shutdown: no leftover process.
 
 If a criterion fails, record it and stop; do not tune a tolerance from the same run.
 
@@ -481,3 +552,30 @@ in Gazebo, a replay, balance, walking or hardware capability.
 | Clearance analysis | Finds the lowest point any collision mesh can reach | So the feet can never touch the ground, whatever the legs do | Every reachable configuration stays ≥ 15.9 mm above ground |
 | Attachment check (G8) | Watches that the body stays where it was glued | The height check alone cannot see a broken glue | Deviation stays ≪ 3 mm |
 | Observer | Looks, measures and reports; never moves anything | Evidence before any motion is approved | READY plus a statistics file |
+
+---
+
+## 13. Focused Cloud review: corrections (after `252b9c2`)
+
+| Finding | Kind | Correction |
+|---|---|---|
+| M6.1 readiness had no command-owner check; the observer counted topic publishers but not other FollowJointTrajectory clients | Confirmed gap | `command_owner_codes`; the observer counts action clients; `with_command_owner` in M6.1 readiness (re-evaluated before dispatch); 3 mock scenarios; isolated late-arrival tests |
+| Graph checks were described as if they excluded other commanders | Wording | §6: point-in-time observation, discovery delay, races, and what the controller does instead |
+| Body versus stationary model root; association with the spawned model | Resolved by inspection | §4: the composition and both Gazebo reporting cases; residual blindness and the `/scan` cross-check |
+| Clearance assumptions | Wording | §3: rigid zero-tilt weld and the attachment tolerance's effect |
+| The clearance report lived only in `log/` and was deleted by `rm -rf build install log` | Evidence defect | Regenerated twice from a recorded revision and preserved in `docs/evidence/m61a/` (§14) |
+
+The verification record for these corrections is in
+[`docs/evidence/m61a/README.md`](evidence/m61a/README.md).
+
+## 14. Evidence preservation and clean builds
+
+- A clean build is `rm -rf build install && colcon build --symlink-install`. **Do not delete
+  `log/`**: every tool writes its evidence under `log/<tool>/<UTC>/`, never overwriting, and
+  colcon's own logs there are harmless.
+- Evidence that matters is copied out of `log/` before anything else touches it: locally to
+  `~/spiderx_evidence/`, and reports that the documents quote are committed under
+  `docs/evidence/` with a manifest giving the commit, configuration hashes, command, environment
+  and output hashes.
+- Earlier documents that show `rm -rf build install log` record what was run then; they are not
+  the current instruction.
