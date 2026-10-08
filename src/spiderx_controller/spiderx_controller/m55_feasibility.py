@@ -97,7 +97,9 @@ def main(argv=None, config_dir=None, designer=None, utc=None):
         except loc.LocomotionError as e:
             levels.append({'library_error': str(e)})
     ok = all(lv.get('ok') for lv in levels if 'stride_m' in lv) and library is not None
+    labels = temps[0].report.get('labels') if temps else None
     report = {'schema': REPORT_SCHEMA, 'milestone': c55.MILESTONE,
+              'template_labels': labels,         # method, support, COM and units of the margins
               'config_sha256': cfg.sha256, 'config_status': cfg.status,
               'dispatch_gate': c55.M55_LOCOMOTION_DISPATCH_ENABLED, 'ok': ok,
               'levels': levels, 'library': library, 'support': support_analysis(designer),

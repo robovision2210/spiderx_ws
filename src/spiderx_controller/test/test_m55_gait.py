@@ -197,6 +197,8 @@ def test_feasibility_cli_writes_a_report(designer, tmp_path, capsys):
     assert data['schema'] == fe.REPORT_SCHEMA and data['ok'] and data['dispatch_gate'] is False
     assert data['levels'][0]['stride_m'] == 0.02 and data['library']['goals'] == 18
     assert len(data['config_sha256']) == 64 and data['non_claims']
+    assert 'not a continuous bound' in data['template_labels']['static_margin_method']
+    assert data['levels'][0]['max_margin_step_between_samples_m'] > 0
 
 
 def test_feasibility_cli_reports_an_infeasible_level(designer, capsys):
