@@ -379,3 +379,44 @@ def test_walking_launch_is_free_base_with_the_locomotion_node():
     assert "executable='m55_locomotion_node'" in text and 'fixed_base' not in text
     for w in ('enable', 'dispatch:=', 'gate', 'live'):
         assert w not in ''.join(args), w
+
+
+# ==================================================================== review: late commanders
+def test_arm_uses_a_fresh_graph_snapshot(stack):
+    """The node takes a graph snapshot for every request: a client that appeared after the last
+    periodic snapshot is already seen by arm (once DDS discovery has propagated)."""
+    from control_msgs.action import FollowJointTrajectory
+    from rclpy.action import ActionClient
+    ln, peers, _, _ = stack
+    time.sleep(1.2)
+    peers.cmd = (0.0, 0.0, 0.0)
+    time.sleep(0.3)
+    other = ActionClient(peers.node, FollowJointTrajectory, ACTION)
+    try:
+        time.sleep(0.3)                                # discovery, but no periodic poll needed
+        assert peers.call('arm') == (False, loc.OWNER_CONFLICT)
+    finally:
+        other.destroy()
+
+
+def test_a_late_foreign_client_faults_an_armed_node(stack, lib):
+    from control_msgs.action import FollowJointTrajectory
+    from rclpy.action import ActionClient
+    ln, peers, _, _ = stack
+    time.sleep(1.2)
+    peers.cmd = (0.0, 0.0, 0.0)
+    time.sleep(0.3)
+    assert peers.call('arm')[0]
+    peers.cmd = (lib.speeds_m_s[0], 0.0, 0.0)
+    assert peers.wait(lambda: (peers.status or {}).get('state') == 'WALKING', 5.0)
+    t0 = time.monotonic()
+    other = ActionClient(peers.node, FollowJointTrajectory, ACTION)
+    try:
+        assert peers.wait(lambda: peers.status['state'] == 'FAULTED', 6.0)
+        latency = time.monotonic() - t0
+        assert peers.status['faults'] == [loc.OWNER_CONFLICT]
+        # one graph period (1 s) + discovery + status publication (2 Hz); observed, not bounded
+        assert latency < 4.0, latency
+        print(f'late foreign client -> FAULTED after {latency:.2f} s')
+    finally:
+        other.destroy()

@@ -12,7 +12,7 @@ feedback, results and cancels. Scenarios inject the failures the session must ha
 from spiderx_controller import m55_locomotion as loc
 
 SCENARIOS = ('ok', 'reject', 'abort', 'tracking_drift', 'no_result', 'no_response',
-             'cancel_ignored', 'send_raises')
+             'cancel_ignored', 'cancel_late', 'send_raises')
 
 
 def _cubic(a, b, s):
@@ -40,7 +40,7 @@ class FakeLocomotionTransport:
     mode = 'dispatch'
 
     def __init__(self, library, start_positions, scenario='ok', fail_phase=1, latency_s=0.05,
-                 drift_rad_s=0.05, abort_after_s=0.5):
+                 drift_rad_s=0.05, abort_after_s=0.5, use_sim=False):
         if scenario not in SCENARIOS:
             raise ValueError(f'unknown scenario {scenario!r}')
         self.lib = library
@@ -57,8 +57,13 @@ class FakeLocomotionTransport:
         self.server_ready = True
         self._events = []
         self._active = None             # dict(seq, goal, t_accept, q_start, cancelled)
-        self._pending = []              # (wall_due, event)
+        self._pending = []              # (due time, event)
         self.closed = False
+        # use_sim: the plant's MOTION follows SIM time (the stamps the world passes to poll), as
+        # the real controller does; goal and cancel RESPONSES stay on wall time (the action
+        # server's executor answers whether or not physics is stepping). Otherwise all is wall.
+        self.use_sim = use_sim
+        self.now = None
 
     # -------------------------------------------------------------- transport interface
     def ready(self):
@@ -66,6 +71,9 @@ class FakeLocomotionTransport:
 
     def _failing(self):
         return self.sent == self.fail_phase
+
+    def _plant_t(self, wall):
+        return self.now if self.use_sim and self.now is not None else wall
 
     def send(self, goal, wall):
         if self.scenario == 'send_raises' and self.sent + 1 == self.fail_phase:
@@ -81,7 +89,8 @@ class FakeLocomotionTransport:
         accepted = not (self.scenario == 'reject' and self._failing())
         self._pending.append((wall + self.latency_s, ('goal_response', seq, accepted)))
         if accepted:
-            self._active = {'seq': seq, 'goal': goal, 't_accept': wall + self.latency_s,
+            start = self._plant_t(wall) + (0.0 if self.use_sim else self.latency_s)
+            self._active = {'seq': seq, 'goal': goal, 't_accept': start,
                             'q_start': list(self.q), 'cancelled': False, 'done': False}
         return seq
 
@@ -93,14 +102,18 @@ class FakeLocomotionTransport:
             self._pending.append((wall + self.latency_s, ('cancel_response', seq, -1)))
             return
         self._pending.append((wall + self.latency_s, ('cancel_response', a['seq'], 0)))
+        if self.scenario == 'cancel_late':
+            return                      # acknowledged, but the phase still runs to completion
         a['cancelled'] = True
         if not (self.scenario == 'cancel_ignored'):
             self._pending.append((wall + 2 * self.latency_s,
                                   ('result', a['seq'], loc.STATUS_CANCELED, 0, 'canceled')))
             a['done'] = True
 
-    def poll(self, wall):
-        self._advance(wall)
+    def poll(self, wall, sim=None):
+        if self.use_sim and sim is not None:
+            self.now = sim
+        self._advance(self._plant_t(wall))
         due = [e for t, e in self._pending if t <= wall]
         self._pending = [(t, e) for t, e in self._pending if t > wall]
         events, self._events = self._events + due, []
@@ -157,7 +170,8 @@ class FakeWorld:
     """Deterministic loop: plant joint states, graph status, body pose, operator commands and
     session ticks on one simulated monotonic clock (sim time = wall)."""
 
-    def __init__(self, session, plant, dt=0.05, graph=None, pose=True, heartbeat_hz=10.0):
+    def __init__(self, session, plant, dt=0.05, graph=None, pose=True, heartbeat_hz=10.0,
+                 rtf=1.0, graph_period_s=None):
         self.s = session
         self.plant = plant              # anything with joint_positions() -> {name: q}
         self.dt = dt
@@ -171,6 +185,9 @@ class FakeWorld:
         self.joint_states = True
         self.sim_advancing = True
         self.sim = 50.0
+        self.rtf = rtf                  # sim seconds per wall second
+        self.graph_period_s = graph_period_s    # None: a graph snapshot every tick
+        self._next_graph = self.wall
         self.states = []
         self.tilt = 0.0
         self.pose_codes = ()
@@ -178,12 +195,15 @@ class FakeWorld:
     def tick(self):
         self.wall = round(self.wall + self.dt, 9)
         if self.sim_advancing:
-            self.sim = round(self.sim + self.dt, 9)
+            self.sim = round(self.sim + self.dt * self.rtf, 9)
         if self.joint_states:
             q = self.plant.joint_positions()
             self.s.on_joint_state(self.wall, self.sim, list(q), list(q.values()))
-        if self.graph is not None:
+        if self.graph is not None and (self.graph_period_s is None or
+                                       self.wall >= self._next_graph - 1e-9):
             self.s.on_graph(self.wall, self.graph)
+            if self.graph_period_s is not None:
+                self._next_graph = self.wall + self.graph_period_s
         if self.pose:
             self.s.on_body_pose(self.wall, self.pose_codes,
                                 None if self.pose_codes else

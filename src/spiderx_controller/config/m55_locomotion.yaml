@@ -44,12 +44,15 @@ dispatch:
   tracking_tolerance_rad: 0.05     # feedback |error| abort (= M6.0-D/M6.1 tracking tolerance)
   goal_time_tolerance_s: 1.0
   goal_response_timeout_s: 2.0
-  result_margin_s: 1.0             # result watchdog = duration + goal_time_tolerance + margin
+  result_margin_s: 1.0             # result watchdog (SIM time) = duration + goal_time_tol + margin
+  min_real_time_factor: 0.1        # wall backstop for that watchdog = its sim limit / this RTF
+  post_result_wait_s: 2.0          # WALL bound for a /joint_states sample measured after a phase
 
 monitor:
   joint_states_topic: /joint_states
   joint_states_stale_s: 0.5
   sim_stall_s: 5.0
+  clock_reset_tolerance_s: 0.001   # a joint-state stamp this far backwards = sim-time reset (= M6.1-A)
   body_pose_required: true         # simulator ground truth (development monitor, not odometry)
   pose_topic: /spiderx/sim/world_poses
   model_name: spiderx

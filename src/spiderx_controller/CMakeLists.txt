@@ -76,6 +76,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m55_locomotion test/test_m55_locomotion.py TIMEOUT 300)
   ament_add_pytest_test(test_m55_gait test/test_m55_gait.py TIMEOUT 900)
   ament_add_pytest_test(test_m55_ros test/test_m55_ros.py TIMEOUT 300)
+  ament_add_pytest_test(test_m55_review test/test_m55_review.py TIMEOUT 300)
 endif()
 
 ament_package()

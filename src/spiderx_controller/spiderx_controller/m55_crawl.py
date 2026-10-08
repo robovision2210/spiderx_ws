@@ -14,9 +14,12 @@ Why a crawl with body shift (and not trot) for the first free-base walking
   dynamic. Without balance feedback, an IMU, real actuator data or a measured contact model, a
   slow trot is not shown to be stable by anything in this repository, and slow playback is not a
   proof of balance either. The approved M6.1 trot stays a FIXED-BASE test case only.
-* A quasi-static crawl is stable by construction under its assumptions (flat ground, point feet at
-  the derived tips, no slip, CAD masses, quasi-static motion); those assumptions are exactly what
-  the local free-base runs must check (docs/M55_KEYBOARD_WALKING.md).
+* A quasi-static crawl keeps the COM inside the support polygon by design, and each template is
+  CHECKED to keep a static margin >= min_margin_m at every sample (every check_dt_s, on the dense
+  path and on the controller spline) under explicit assumptions: flat ground, point feet at the
+  derived tips, assumed contacts, no slip, CAD masses, a level body, quasi-static motion. That is
+  an offline approximation, not a stability proof; the assumptions are what the local free-base
+  runs must check (docs/M55_KEYBOARD_WALKING.md).
 
 Cycle (forward, stride L > 0, body frame +y = forward)
 ------------------------------------------------------
@@ -359,6 +362,7 @@ def build_template(designer, p, fd_eps=1e-4):
     # dense validation
     n_check = int(round(T / p.check_dt_s))
     dense, worst_margin, worst_speed = [], (math.inf, None), (0.0, None)
+    margin_step, prev_m = 0.0, None        # largest change between consecutive samples
     prev = ref
     for i in range(n_check + 1):
         t = i * p.check_dt_s
@@ -370,6 +374,9 @@ def build_template(designer, p, fd_eps=1e-4):
         m = gm.stability_margin(com, support)
         if m is None or m < worst_margin[0]:
             worst_margin = (-math.inf if m is None else m, t)
+        if m is not None and prev_m is not None and prev_m[1] == swing:
+            margin_step = max(margin_step, abs(m - prev_m[0]))
+        prev_m = None if m is None else (m, swing)
         if i:
             for n in names:
                 v = abs(q[n] - prev[n]) / p.check_dt_s
@@ -423,8 +430,21 @@ def build_template(designer, p, fd_eps=1e-4):
         'spline_min_static_margin_m': spline_margin[0],
         'max_joint_speed_rad_s': worst_speed[0], 'max_joint_speed_at': worst_speed[1],
         'max_spline_error_rad': spline_err[0],
+        'max_margin_step_between_samples_m': margin_step,
         'labels': {'static_margin': 'quasi-static approximation (CAD masses, point feet, '
                                     'flat ground, no slip, no dynamics)',
+                   'static_margin_method': (
+                       f'minimum over samples every {p.check_dt_s} s of the dense IK path and '
+                       f'of the controller spline through the waypoints; a sampled value, not '
+                       f'a continuous bound (max_margin_step_between_samples_m shows the '
+                       f'change between neighbouring samples)'),
+                   'support': ('all four feet during shifts; the three feet other than the '
+                               'swinging leg for the WHOLE swing, lift-off to touch-down; feet '
+                               'are points at the derived foot tips on the plane of the stance '
+                               'tips; contacts are assumed (no forces, friction or slip)'),
+                   'com': ('whole-robot COM from the URDF inertials (CAD steel-density '
+                           'masses) by forward kinematics at each sampled configuration, '
+                           'projected vertically; body level, height constant'),
                    'joint_speed': 'development bound, not an actuator rating'},
     }
     failures = []

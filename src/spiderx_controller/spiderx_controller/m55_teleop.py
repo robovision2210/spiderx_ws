@@ -40,6 +40,8 @@ HELP = """SpiderX M5.5 keyboard teleop  (simulation development; dispatch gate: 
   a arm | z disarm | w forward (hold) | s reverse (hold) | space stop | x/Esc EMERGENCY STOP
   r reset after a fault | h home | +/- speed level | j/l turning: not supported | q quit"""
 
+REPEAT_GAP_WINDOW_S = 2.0          # presses further apart are separate presses, not repeats
+
 TURN_MESSAGE = ('turning is not supported by the current gait (forward and reverse only); '
                 'nothing was sent')
 
@@ -53,6 +55,8 @@ class TeleopState:
         self.motion_wall = None
         self.level = 0
         self.levels = None               # validated speeds from the node status (m/s)
+        self.last_motion_key = None      # (action, wall) of the last motion key press
+        self.repeat_gaps = []            # observed gaps between presses of the same motion key
 
     def on_status(self, status):
         levels = status.get('levels_m_s')
@@ -64,11 +68,22 @@ class TeleopState:
     def key(self, action, wall):
         """Apply one decoded key. Returns (service to call or None, message or None)."""
         if action in (FORWARD, REVERSE):
+            note = None
+            if self.last_motion_key is not None and self.last_motion_key[0] == action:
+                gap = wall - self.last_motion_key[1]
+                if gap <= REPEAT_GAP_WINDOW_S:
+                    self.repeat_gaps.append(gap)
+                    if gap > self.hold_s:
+                        note = (f'key repeat gap {gap * 1000:.0f} ms > hold window '
+                                f'{self.hold_s * 1000:.0f} ms: if the key was held, walking '
+                                f'stops between repeats (raise teleop.hold_s or shorten the '
+                                f'repeat delay)')
+            self.last_motion_key = (action, wall)
             self.motion = 1 if action == FORWARD else -1
             self.motion_wall = wall
             if self.levels is None:
                 return None, 'no locomotion status yet: speed levels unknown, sending zero'
-            return None, None
+            return None, note
         if action == FASTER or action == SLOWER:
             if self.levels is None:
                 return None, 'no locomotion status yet: speed levels unknown'

@@ -103,7 +103,7 @@ class RclpyPhaseTransport:
         self._handle.cancel_goal_async().add_done_callback(
             lambda f: self._on_cancel_response(seq, f))
 
-    def poll(self, wall):
+    def poll(self, wall, sim=None):
         events, self._events = self._events, []
         return events
 
@@ -230,6 +230,7 @@ class LocomotionNode:
         self.session.on_body_pose(self.clock(), codes, pose)
 
     def _on_request(self, name, resp):
+        self._graph()                    # every request decides on a fresh graph snapshot
         ok, message = self.session.request(name, self.clock())
         resp.success, resp.message = bool(ok), str(message)
         self._after()

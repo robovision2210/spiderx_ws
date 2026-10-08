@@ -44,10 +44,12 @@ def gate_on(monkeypatch):
     monkeypatch.setattr(c55, 'M55_LOCOMOTION_DISPATCH_ENABLED', True)      # tests only
 
 
-def dispatch_world(cfg, lib, scenario='ok', **kw):
+def dispatch_world(cfg, lib, scenario='ok', rtf=1.0, graph_period_s=None, **kw):
+    """The dispatching fake follows SIM time, like the real controller."""
+    kw.setdefault('use_sim', True)
     plant = fk.FakeLocomotionTransport(lib, lib.boundary_positions(0, 0), scenario=scenario, **kw)
     s = loc.LocomotionSession(cfg, lib, plant)
-    return fk.FakeWorld(s, plant), s, plant
+    return fk.FakeWorld(s, plant, rtf=rtf, graph_period_s=graph_period_s), s, plant
 
 
 def shadow_world(cfg, lib):
@@ -263,19 +265,18 @@ def test_neutral_is_shared_by_every_level_and_mid_boundaries_differ(lib):
     assert lib.boundary_positions(0, 4) != lib.boundary_positions(2, 4)
 
 
-def test_posture_match(lib):
-    assert lib.match(lib.boundary_positions(0, 0), 0.02, prefer_level=2)[:2] == (2, 0)
+def test_posture_candidates(lib):
+    assert lib.candidates(lib.boundary_positions(0, 0), 0.02) == [(None, 0, 0.0)]
     q = dict(lib.boundary_positions(1, 5))
     q['lf_hip'] += 0.015
-    level, b, err = lib.match(q, 0.02)
+    (level, b, err), = lib.candidates(q, 0.02)
     assert (level, b) == (1, 5) and err == pytest.approx(0.015)
     q['lf_hip'] += 0.01
-    assert lib.match(q, 0.02) is None
-    near = dict(lib.boundary_positions(2, 5))                # a level-2 boundary...
-    assert lib.match(near, 0.02, prefer_level=1)[:2] == (2, 5)   # ...is not a level-1 one
-    assert lib.match(lib.boundary_positions(1, 5), 0.5, prefer_level=2)[0] == 2  # preference
+    assert lib.candidates(q, 0.02) == []
     del q['lf_hip']
-    assert lib.match(q, 0.02) is None
+    assert lib.candidates(q, 0.02) == []
+    wide = lib.candidates(lib.boundary_positions(1, 5), 10.0)       # every boundary, sorted
+    assert wide[0][:2] == (1, 5) and len(wide) == 1 + 3 * 8
 
 
 @pytest.mark.parametrize('mutate', [
@@ -583,15 +584,13 @@ def test_arm_refuses_an_unknown_posture(cfg, lib):
     assert _refusal(w) == loc.POSTURE
 
 
-def test_arm_at_a_mid_cycle_boundary_resumes_there(cfg, lib):
+def test_fresh_process_refuses_a_mid_cycle_posture(cfg, lib):
+    """No rest record from this process: the posture could be partway through an adjacent swing
+    and the level is unknown, so a mid-cycle boundary is refused, never guessed."""
     w, s, tr = shadow_world(cfg, lib)
     w.plant.q = dict(lib.boundary_positions(2, 4))
     w.run(1.0)
-    arm(w)
-    assert (s.level, s.b) == (2, 4)
-    w.cmd = fwd(lib, 0)                                      # level 0 asked mid-cycle
-    w.run(1.0)
-    assert tr.records[0]['level'] == 2 and tr.records[0]['phase'] == 4
+    assert _refusal(w) == loc.POSTURE_UNVERIFIED and tr.sent == 0
 
 
 def test_arm_refuses_stalled_or_reset_sim_time(cfg, lib):

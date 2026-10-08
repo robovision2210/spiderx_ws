@@ -117,12 +117,18 @@ def test_boundaries_are_unambiguous_within_a_level_and_against_neutral(cfg, lib)
                 d = max(abs(qs[b][n] - q2[n]) for n in lib.joint_names)
                 if d <= 2 * tol:
                     close_across_levels.append((lv, lv2, b, d))
-    # the same phase of two strides can be close: arm then keeps the level last executed
+    # the same phase of two strides can be close (real templates: down to ~0.023 rad). Without
+    # this process's rest record such a posture is refused; with it, the recorded one is used.
+    assert close_across_levels, 'expected close cross-level boundaries in the real templates'
     for lv, lv2, b, d in close_across_levels:
         q = lib.boundary_positions(lv2, b)
-        assert lib.match(q, tol, prefer_level=lv2)[:2] == (lv2, b)
+        cands = lib.candidates(q, tol)
+        assert (lv2, b) in [c[:2] for c in cands]
+        level, bb, _ = loc.resolve_arm_posture(cands, None, False)
+        assert level is None and bb == loc.POSTURE_UNVERIFIED
+        assert loc.resolve_arm_posture(cands, (lv2, b), False)[:2] == (lv2, b)
         if d <= tol:
-            assert lib.match(q, tol, prefer_level=lv)[:2] == (lv, b)
+            assert loc.resolve_arm_posture(cands, (lv, b), False)[:2] == (lv, b)
 
 
 def test_dispatched_goals_respect_the_joint_speed_bound_including_the_lead_in(cfg, lib):
@@ -227,3 +233,28 @@ def test_no_m55_goal_is_an_approved_m6_goal(lib):
     trot = [tuple(round(q, 9) for q in p['positions']) for p in m61['points']]
     for g in lib.goals.values():
         assert not any(p[1] == q for p in g.points for q in trot[1:-1])
+
+
+# ============================================================ review: claims the code relies on
+def test_the_margin_report_states_its_method(cfg, temps):
+    for t in temps:
+        r = t.report
+        assert 'not a continuous bound' in r['labels']['static_margin_method']
+        assert 'WHOLE swing' in r['labels']['support'] and 'URDF inertials' in r['labels']['com']
+        step = r['max_margin_step_between_samples_m']
+        assert 0.0 < step < 0.002                     # samples are close in margin terms
+        assert r['min_static_margin_m'] - step / 2 > cfg.gait.min_margin_m
+
+
+def test_only_the_neutral_adjacent_shifts_come_near_the_neutral_stance(cfg, temps):
+    """Supports resolve_arm_posture accepting neutral after an interruption: a posture within
+    2 x tolerance of neutral can only be partway into S1 or S5 (four feet down), never a swing or
+    another shift (checked at every 0.1 s waypoint)."""
+    tol = cfg.dispatch.continuity_tolerance_rad
+    for t in temps:
+        n0 = t.points[0]['positions']
+        last = len(t.phase_info) - 1
+        assert t.phase_info[0][0] == t.phase_info[last][0] == 'shift'
+        for k in range(1, last):
+            for p in t.points[t.boundaries[k]:t.boundaries[k + 1] + 1]:
+                assert max(abs(a - b) for a, b in zip(p['positions'], n0)) > 2 * tol, (k, p)

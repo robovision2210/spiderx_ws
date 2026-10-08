@@ -102,13 +102,15 @@ GOAL_ABORTED = 'goal_aborted'
 GOAL_UNEXPECTED = 'goal_result_unexpected'
 RESPONSE_TIMEOUT = 'goal_response_timeout'
 RESULT_WATCHDOG = 'phase_result_watchdog'
+POST_RESULT_TIMEOUT = 'post_result_feedback_timeout'
 TRANSPORT_ERROR = 'transport_error'
 DISPATCH_DISABLED = 'dispatch_disabled'
 FAULT_REASONS = (ESTOP, JOINT_STATES_STALE, JOINT_STATES_INVALID, SIM_TIME_STALLED, SIM_TIME_RESET,
                  BODY_POSE_STALE, BODY_POSE_INVALID, BODY_TILT_EXCEEDED, GRAPH_STALE,
                  OWNER_CONFLICT, TOPIC_PUBLISHER, JOINT_STATE_PUBLISHERS, SERVER_MISSING,
                  CONTINUITY, TRACKING, GOAL_REJECTED, GOAL_ABORTED, GOAL_UNEXPECTED,
-                 RESPONSE_TIMEOUT, RESULT_WATCHDOG, TRANSPORT_ERROR, DISPATCH_DISABLED)
+                 RESPONSE_TIMEOUT, RESULT_WATCHDOG, POST_RESULT_TIMEOUT, TRANSPORT_ERROR,
+                 DISPATCH_DISABLED)
 
 # refusal reasons for requests (no state change)
 NOT_DISARMED = 'not_disarmed'
@@ -117,6 +119,9 @@ NOT_FAULTED = 'not_faulted'
 GOAL_UNRESOLVED = 'goal_in_flight_unresolved'
 NO_JOINT_STATES = 'joint_states_missing'
 POSTURE = 'posture_not_at_phase_boundary'
+POSTURE_AMBIGUOUS = 'posture_ambiguous'
+POSTURE_UNVERIFIED = 'posture_mid_cycle_unverified'
+POSTURE_NOT_LAST_REST = 'posture_not_at_last_rest'
 MOVING_COMMAND = 'arm_requires_stop_command'
 SERVER_UNAVAILABLE = 'action_server_unavailable'
 NOT_READY = 'not_ready'
@@ -151,8 +156,10 @@ _SPEC = {
     'dispatch': {'action': _STR, 'command_topic': _STR, 'phase_lead_s': _POS,
                  'continuity_tolerance_rad': _POS, 'tracking_tolerance_rad': _POS,
                  'goal_time_tolerance_s': _POS, 'goal_response_timeout_s': _POS,
-                 'result_margin_s': _POS},
+                 'result_margin_s': _POS, 'min_real_time_factor': _POS,
+                 'post_result_wait_s': _POS},
     'monitor': {'joint_states_topic': _STR, 'joint_states_stale_s': _POS, 'sim_stall_s': _POS,
+                'clock_reset_tolerance_s': _POS,
                 'body_pose_required': _BOOL, 'pose_topic': _STR, 'model_name': _STR,
                 'body_link': _STR, 'pose_stale_s': _POS, 'max_tilt_rad': _POS,
                 'graph_period_s': _POS, 'graph_stale_s': _POS},
@@ -268,6 +275,8 @@ def parse_config(data, sha256=None):
         raise LocomotionError('teleop.hold_s must exceed one heartbeat period')
     if m.graph_stale_s <= m.graph_period_s:
         raise LocomotionError('monitor.graph_stale_s must exceed monitor.graph_period_s')
+    if d.min_real_time_factor > 1.0:
+        raise LocomotionError('dispatch.min_real_time_factor must be in (0, 1]')
     return cfg
 
 
@@ -432,30 +441,26 @@ class PhaseLibrary:
         t = self.templates[level]
         return dict(zip(self.joint_names, t.points[t.boundaries[b % self.n_phases]]['positions']))
 
-    def match(self, measured, tol, prefer_level=0):
-        """(level, b, max_error) of a validated boundary within tol of `measured`, or None.
+    def candidates(self, measured, tol):
+        """Every validated rest boundary within tol of `measured`: [(level, b, max_error)].
 
-        b = 0 (neutral) is the same for every level and reports prefer_level. Mid-cycle
-        boundaries of DIFFERENT levels can be close (the same phase of two strides; the real
-        templates come within ~0.023 rad), so a boundary of prefer_level (the level last
-        executed) wins whenever it is within tol; otherwise the closest one. Any match is within
-        tol of a validated rest configuration, which is all the next phase's continuity needs.
-        None if nothing is within tol or a joint is missing."""
+        The neutral stance (b = 0) is shared by every level and is reported once, as level None.
+        Empty if a joint is missing. Choosing among candidates is the session's job
+        (resolve_arm_posture): a posture can be within tol of a boundary and still be partway
+        through an adjacent phase, and the same phase of two strides can be close (the real
+        templates come within ~0.023 rad)."""
         if any(n not in measured for n in self.joint_names):
-            return None
-        cands = []
+            return []
+        out = []
         for level in range(len(self.templates)):
             for b in range(self.n_phases):
                 if b == 0 and level > 0:
-                    continue                                   # one shared neutral
+                    continue
                 ref = self.boundary_positions(level, b)
                 err = max(abs(measured[n] - ref[n]) for n in self.joint_names)
                 if err <= tol:
-                    cands.append((prefer_level if b == 0 else level, b, err))
-        if not cands:
-            return None
-        preferred = [c for c in cands if c[0] == prefer_level]
-        return min(preferred or cands, key=lambda c: c[2])
+                    out.append((None if b == 0 else level, b, err))
+        return sorted(out, key=lambda c: c[2])
 
     def describe(self):
         return {'levels': [{'level': i, 'stride_m': t.params.stride_m, 'cycle_s': t.cycle_s,
@@ -485,8 +490,9 @@ def build_library(cfg, designer=None, progress=None):
 
 # ======================================================================== transports
 class ShadowTransport:
-    """Gate-False transport: verifies and RECORDS each goal, reports it complete after its
-    planned duration, and sends nothing anywhere."""
+    """Gate-False transport: verifies and RECORDS each goal, reports it complete once its planned
+    duration has elapsed in SIMULATION time (the clock the controller would run on; joint-state
+    stamps passed to poll), and sends nothing anywhere. Without sim time it never completes."""
 
     mode = 'shadow'
 
@@ -506,21 +512,25 @@ class ShadowTransport:
             raise LocomotionError('a goal is already active (one goal at a time)')
         self.sent += 1
         self.records.append({'seq': self.sent, 'wall': wall, **goal.summary()})
-        self._active = (self.sent, wall + goal.duration_s)
+        self._active = {'seq': self.sent, 'duration': goal.duration_s, 'start_sim': None}
         self._events.append(('goal_response', self.sent, True))
         return self.sent
 
     def cancel(self, wall):
         if self._active is not None:
-            seq = self._active[0]
+            seq = self._active['seq']
             self._active = None
             self._events += [('cancel_response', seq, 0),
                              ('result', seq, STATUS_CANCELED, 0, 'shadow cancel')]
 
-    def poll(self, wall):
-        if self._active is not None and wall >= self._active[1]:
-            self._events.append(('result', self._active[0], STATUS_SUCCEEDED, 0, ''))
-            self._active = None
+    def poll(self, wall, sim=None):
+        a = self._active
+        if a is not None and sim is not None:
+            if a['start_sim'] is None:
+                a['start_sim'] = sim
+            elif sim - a['start_sim'] >= a['duration']:
+                self._events.append(('result', a['seq'], STATUS_SUCCEEDED, 0, ''))
+                self._active = None
         events, self._events = self._events, []
         return events
 
@@ -529,6 +539,43 @@ class ShadowTransport:
 
 
 # ======================================================================== the session
+def resolve_arm_posture(candidates, rest, shadow):
+    """(level, b, error) to arm at, or (None, refusal code, detail). Pure.
+
+    candidates: PhaseLibrary.candidates(measured, tol); rest: this process's own record of the
+    boundary the robot last came to rest at, (level, b), or None when unknown (a fresh process,
+    or the last goal was interrupted: cancelled, aborted, unanswered or failed to send).
+
+    * Neutral stance (b = 0): accepted. Both phases adjacent to it are four-foot body shifts, so
+      a posture near neutral is safe even if it is partway into one of them; the level is not
+      needed there (the first motion command chooses it at the cycle boundary).
+    * Neutral and a mid-cycle boundary both within tolerance: ambiguous, refused.
+    * Mid-cycle boundary: only this process's rest record is authoritative. Accepted only if the
+      record exists, is that same (level, boundary) and is among the candidates. Without a record
+      the posture could be partway through an adjacent swing (one foot slightly lifted) and the
+      level is unknown, so it is refused, never guessed. Shadow mode never moves the robot, so
+      its records describe the plan, not the robot: only neutral is accepted there.
+    """
+    if not candidates:
+        return None, POSTURE, 'no validated rest boundary within tolerance'
+    neutral = [c for c in candidates if c[1] == 0]
+    mids = [c for c in candidates if c[1] != 0]
+    if neutral and mids:
+        return None, POSTURE_AMBIGUOUS, 'within tolerance of neutral and of a mid-cycle boundary'
+    if neutral:
+        level = rest[0] if rest is not None and rest[0] is not None else 0
+        return level, 0, neutral[0][2]
+    if shadow:
+        return None, POSTURE_UNVERIFIED, 'shadow mode accepts only the neutral stance'
+    if rest is None:
+        return None, POSTURE_UNVERIFIED, ('mid-cycle posture without a rest record from this '
+                                          'process (fresh start or interrupted goal)')
+    for level, b, err in mids:
+        if (level, b) == tuple(rest):
+            return level, b, err
+    return None, POSTURE_NOT_LAST_REST, f'last rest was level {rest[0]} boundary {rest[1]}'
+
+
 @dataclass
 class _Goal:
     seq: int
@@ -540,6 +587,7 @@ class _Goal:
     cancel_sent: bool = False
     cancel_response: int = None
     max_error: float = 0.0
+    accept_sim: float = None          # newest joint-state stamp when the acceptance was handled
 
 
 class LocomotionSession:
@@ -569,7 +617,11 @@ class LocomotionSession:
         self.stop_pending = None          # reason of a requested controlled stop
         self.stop_latched = False         # a stop request holds until a zero command is seen
         self.rest_wall = None             # when the last phase reported its result
-        self.awaiting_js = False          # at rest, waiting for a joint state newer than that
+        self.rest_newest_stamp = None     # newest joint-state stamp seen before that result
+        self.rest_required_stamp = None   # a fresh sample must be measured at or after this
+        self.awaiting_js = False          # at rest, waiting for a sample measured after that
+        self.rest = None                  # (level, b) this process last came to rest at
+        self.out_of_order = 0             # joint-state samples discarded (older stamp)
         self.disarm_after_stop = False
         self.armed_wall = None
         self.faults = []
@@ -654,14 +706,22 @@ class LocomotionSession:
             if self.state in ARMED_STATES:
                 self._fault(wall, JOINT_STATES_INVALID, problem=problem)
             return
-        if self.js is not None and stamp is not None and self.js[1] is not None:
-            if stamp < self.js[1] - 1e-9:
-                self.clock_reset_wall = wall
-                if self.state in ARMED_STATES:
-                    self._fault(wall, SIM_TIME_RESET, previous=self.js[1], stamp=stamp)
-            if stamp > self.js[1]:
-                self.stamp_change_wall = wall
-        elif stamp is not None:
+        if not _number(stamp) or stamp < 0:
+            stamp = None                    # unusable as a measurement time (never "fresh")
+        last = None if self.js is None else self.js[1]
+        if stamp is not None and last is not None and stamp < last:
+            if last - stamp <= self.cfg.monitor.clock_reset_tolerance_s:
+                self.out_of_order += 1           # a slightly older sample: discard, never fresh
+                return
+            # back by more than the tolerance: a sim-time reset (world reset or restart). One
+            # sample cannot tell it from a late, queued old message; both are treated as a reset:
+            # fault if armed, refuse arm for sim_stall_s, then follow the new time line.
+            self.clock_reset_wall = wall
+            self._event(wall, 'sim_time_reset', previous=last, stamp=stamp)
+            if self.state in ARMED_STATES:
+                self._fault(wall, SIM_TIME_RESET, previous=last, stamp=stamp)
+            self.stamp_change_wall = wall
+        elif stamp is not None and (last is None or stamp > last):
             self.stamp_change_wall = wall
         self.js = (wall, stamp, dict(zip(names, (float(p) for p in positions))))
         self.js_problem = None
@@ -704,11 +764,11 @@ class LocomotionSession:
             return BODY_TILT_EXCEEDED
         return None
 
-    def _graph_problem(self, wall):
+    def _graph_problem(self, wall, max_age=None):
         if self.graph is None:
             return NO_GRAPH
         gw, st = self.graph
-        if wall - gw > self.cfg.monitor.graph_stale_s:
+        if wall - gw > (self.cfg.monitor.graph_stale_s if max_age is None else max_age):
             return GRAPH_STALE
         if st.get('command_topic_publishers', 0) != 0:
             return TOPIC_PUBLISHER
@@ -748,10 +808,13 @@ class LocomotionSession:
                 return self._refuse(wall, 'arm', DISPATCH_DISABLED)
             if not self.transport.ready():
                 return self._refuse(wall, 'arm', SERVER_UNAVAILABLE)
-        for check in (self._joint_problem, self._graph_problem, self._pose_problem):
-            problem = check(wall)
-            if problem is not None:
-                return self._refuse(wall, 'arm', problem)
+        # arm needs a graph snapshot no older than one graph period (the node takes a fresh one
+        # for every request); it is still only a snapshot (see docs: command ownership)
+        problem = (self._joint_problem(wall) or
+                   self._graph_problem(wall, self.cfg.monitor.graph_period_s) or
+                   self._pose_problem(wall))
+        if problem is not None:
+            return self._refuse(wall, 'arm', problem)
         if self.clock_reset_wall is not None and \
                 wall - self.clock_reset_wall < self.cfg.monitor.sim_stall_s:
             return self._refuse(wall, 'arm', SIM_TIME_RESET)
@@ -759,11 +822,12 @@ class LocomotionSession:
         if intent.moving:
             return self._refuse(wall, 'arm', MOVING_COMMAND)
         tol = self.cfg.dispatch.continuity_tolerance_rad
-        found = self.lib.match(self._measured(), tol, prefer_level=self.level)
-        if found is None:
-            return self._refuse(wall, 'arm', POSTURE,
-                                f'no validated phase boundary within {tol} rad')
-        self.level, self.b, err = found
+        level, b, err = resolve_arm_posture(self.lib.candidates(self._measured(), tol),
+                                            self.rest, self.shadow)
+        if level is None:
+            return self._refuse(wall, 'arm', b, err)
+        self.level, self.b = level, b
+        self.rest = (level, b)
         self.direction = 0
         self.stop_latched = False
         self.lease.clear()
@@ -859,9 +923,10 @@ class LocomotionSession:
             self._fault(wall, CONTINUITY, error_rad=err, phase=goal.phase, b=self.b,
                         reference='planned' if self.shadow else 'measured')
             return
+        self.rest = None                 # in motion until a result says where it came to rest
         try:
             seq = self.transport.send(goal, wall)
-        except Exception as e:  # noqa: BLE001 - nothing was accepted; fault and hold
+        except Exception as e:  # noqa: BLE001 - outcome unknown: fault, hold, rest unknown
             self._fault(wall, TRANSPORT_ERROR, error=repr(e))
             return
         self.goal = _Goal(seq, goal, wall)
@@ -870,12 +935,20 @@ class LocomotionSession:
         self._set(wall, state, 'dispatch')
 
     def _phase_done(self, wall):
-        g = self.goal.goal
+        record = self.goal
+        g = record.goal
         self.goal = None
         P = self.lib.n_phases
         self.b = g.b_to % P
+        self.rest = (g.level, self.b)
         self.phases_completed += 1
         self.rest_wall = wall
+        newest = None if self.js is None else self.js[1]
+        self.rest_newest_stamp = newest
+        # a post-completion sample must be measured after every sample seen so far AND no earlier
+        # than the goal's planned end in sim time (acceptance stamp + duration)
+        planned_end = None if record.accept_sim is None else record.accept_sim + g.duration_s
+        self.rest_required_stamp = planned_end
         self.planned_xy = [self.planned_xy[0] + g.body_delta[0],
                            self.planned_xy[1] + g.body_delta[1]]
         if (g.direction > 0 and g.b_to == P) or (g.direction < 0 and g.b_to == 0):
@@ -891,7 +964,10 @@ class LocomotionSession:
         Dispatch mode first waits for a /joint_states sample received AFTER the phase result, so
         the continuity check never uses a sample taken while the phase was still finishing (the
         two streams are independent); the joint-state monitor bounds that wait."""
-        if not self.shadow and (self.js is None or self.js[0] <= self.rest_wall):
+        if not self.shadow and not self._fresh_after_rest():
+            if wall - self.rest_wall > self.cfg.dispatch.post_result_wait_s:
+                self._fault(wall, POST_RESULT_TIMEOUT, waited_s=wall - self.rest_wall)
+                return
             self.awaiting_js = True
             return
         self.awaiting_js = False
@@ -922,10 +998,25 @@ class LocomotionSession:
         self.direction = 0
         self._set(wall, READY, 'intent_stop')
 
+    def _fresh_after_rest(self):
+        """A joint-state sample RECEIVED after the phase result and MEASURED after it: its stamp
+        is newer than every stamp seen before the result and no earlier than the planned end.
+        A queued old measurement delivered late fails the stamp test."""
+        if self.js is None or self.js[0] <= self.rest_wall or self.js[1] is None:
+            return False
+        if self.rest_newest_stamp is not None and self.js[1] <= self.rest_newest_stamp:
+            return False
+        if self.rest_required_stamp is not None and self.js[1] < self.rest_required_stamp:
+            return False
+        return True
+
+    def _sim_now(self):
+        return None if self.js is None else self.js[1]
+
     # ------------------------------------------------------------------ the tick
     def step(self, wall):
         try:
-            events = self.transport.poll(wall)
+            events = self.transport.poll(wall, self._sim_now())
         except Exception as e:  # noqa: BLE001
             events = []
             if self.state in ARMED_STATES:
@@ -977,10 +1068,22 @@ class LocomotionSession:
         if g.accepted is None and wall - g.sent_wall > d.goal_response_timeout_s:
             if self.state != FAULTED:
                 self._fault(wall, RESPONSE_TIMEOUT, seq=g.seq)
-        elif g.accepted and wall - g.accept_wall > (g.goal.duration_s + d.goal_time_tolerance_s +
-                                                    d.result_margin_s):
-            if self.state != FAULTED:
-                self._fault(wall, RESULT_WATCHDOG, seq=g.seq)
+        elif g.accepted:
+            # the controller runs on SIM time: its limit is measured in sim time (joint-state
+            # stamps); the wall backstop assumes a real-time factor of at least
+            # min_real_time_factor (slower than that is treated as not progressing)
+            limit = g.goal.duration_s + d.goal_time_tolerance_s + d.result_margin_s
+            sim = self._sim_now()
+            sim_elapsed = None if sim is None or g.accept_sim is None else sim - g.accept_sim
+            if self.state == FAULTED:
+                return
+            if sim_elapsed is not None and sim_elapsed > limit:
+                self._fault(wall, RESULT_WATCHDOG, seq=g.seq, basis='sim',
+                            sim_elapsed_s=sim_elapsed, limit_s=limit)
+            elif wall - g.accept_wall > limit / d.min_real_time_factor:
+                self._fault(wall, RESULT_WATCHDOG, seq=g.seq, basis='wall_backstop',
+                            wall_elapsed_s=wall - g.accept_wall,
+                            limit_s=limit / d.min_real_time_factor)
 
     def _on_transport_event(self, wall, ev):
         kind = ev[0]
@@ -991,9 +1094,11 @@ class LocomotionSession:
         if kind == 'goal_response':
             g.accepted = bool(ev[2])
             g.accept_wall = wall
+            g.accept_sim = self._sim_now()
             self._event(wall, 'goal_response', seq=g.seq, accepted=g.accepted)
             if not g.accepted:
                 self.goal = None
+                self.rest = (g.goal.level, g.goal.b_from % self.lib.n_phases)   # never moved
                 if self.state != FAULTED:
                     self._fault(wall, GOAL_REJECTED, seq=g.seq)
             elif self.state == STARTING:
@@ -1013,6 +1118,11 @@ class LocomotionSession:
                         error_string=ev[4] if len(ev) > 4 else '')
             if self.state == FAULTED:
                 self.goal = None                       # the cancelled goal is resolved
+                if status == STATUS_SUCCEEDED:         # it completed despite the cancel
+                    self.b = g.goal.b_to % self.lib.n_phases
+                    self.rest = (g.goal.level, self.b)
+                    if self.shadow:
+                        self.virtual_q = g.goal.end
             elif status == STATUS_SUCCEEDED:
                 self._phase_done(wall)
             else:
@@ -1051,6 +1161,8 @@ class LocomotionSession:
             'direction': self.direction, 'homing': self.homing,
             'stop_pending': self.stop_pending, 'disarm_pending': self.disarm_after_stop,
             'stop_latched': self.stop_latched, 'awaiting_joint_state': self.awaiting_js,
+            'rest': None if self.rest is None else list(self.rest),
+            'joint_states_out_of_order': self.out_of_order,
             'intent': {'direction': intent.direction, 'level': intent.level,
                        'requested_m_s': intent.requested_m_s,
                        'granted_m_s': intent.granted_m_s, 'reason': reason},
@@ -1074,5 +1186,6 @@ class LocomotionSession:
 __all__ = ['LocomotionConfig', 'LocomotionError', 'GoalRefused', 'DispatchDisabled',
            'parse_config', 'load_config', 'config_path', 'PhaseGoal', 'PhaseLibrary',
            'build_library', 'goal_fingerprint', 'verify_goal', 'ShadowTransport',
+           'resolve_arm_posture',
            'LocomotionSession', 'STATES', 'DISARMED', 'READY', 'STARTING', 'WALKING', 'STOPPING',
            'FAULTED', 'FAULT_REASONS', 'CONFIG_SCHEMA', 'STATUS_SCHEMA', 'GOAL_SCHEMA']
