@@ -155,16 +155,21 @@ protected replay (not implemented). Odometry is now M7 (see the numbering note a
 
 By the owner's decision, this stays an unscheduled future item. It is not part of M4.5.
 
-- [ ] Static walk (3 feet down), then trot, with the stance COM kept inside the support polygon
+- [ ] Static walk (3 feet down), then trot, with the stance COM kept inside the support polygon — the static walk is now the M5.5 crawl with body shift (validated offline, shadow mode; see [M5.5](M55_KEYBOARD_WALKING.md)); a free-base trot is not shown to be stable
 - [ ] Walks forward 1 m in simulation without falling (a video is required before claiming it)
 
-## M5.5 – Command-velocity bridge (future work)
+## M5.5 – Command-velocity bridge and keyboard walking
 
-Renamed from "M5 – `/cmd_vel` → gait bridge" by owner decision D1 (see [M5 plan §16](M5_EVALUATION_PLAN.md#16-owner-decision-addendum)). Not implemented and not scheduled.
+Renamed from "M5 – `/cmd_vel` → gait bridge" by owner decision D1 (see [M5 plan §16](M5_EVALUATION_PLAN.md#16-owner-decision-addendum)). Implemented in **shadow mode** on `claude/spiderx-m55-keyboard-walking` (PR deferred until M6.1-A is reviewed); see [M5.5](M55_KEYBOARD_WALKING.md). Continuous dispatch is hard-disabled (`M55_LOCOMOTION_DISPATCH_ENABLED = False`).
 
-
-- [ ] Stepping velocity follows `/cmd_vel` (vx, vy, ωz) within limits
-- [ ] A timeout stops the robot safely
+- [x] Statically stable free-base crawl with body shift: 3 validated speed levels (20/40/60 mm strides, ≥ 19.4 mm quasi-static margin), offline (Cloud)
+- [x] Locomotion state machine with lease, controlled stop, emergency stop, homing and graph ownership checks; Cloud offline/mock/isolated verified
+- [x] `/cmd_vel` forward/reverse within validated levels; lateral and yaw rejected explicitly
+- [x] A timeout (0.5 s lease) stops the robot and disarms it (tested against the fake plant)
+- [x] Keyboard teleop `m55_teleop_keyboard` (Cloud: logic and isolated domain; not yet on a real terminal)
+- [ ] Phase 1: shadow keyboard session on the owner's PC (no motion)
+- [ ] Phases 2–4: fixed-base crawl, bounded free-base crawl, keyboard walking (separate enabling change and approval)
+- [ ] Turning and sideways motion (vy, ωz): needs a validated turning gait
 
 ## M7 – Odometry and state estimation (future work)
 

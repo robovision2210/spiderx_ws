@@ -49,7 +49,8 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | All-leg FK/IK and static pose hold (simulation only) | ✅ Verified locally and in the cloud (M4): 3 static four-leg poses via IK held in Gazebo. **Not** walking, gait or hardware validation |
 | Offline gait configuration and trajectory validation (M4.5) | ✅ Verified offline (cloud + local, M4.5): 6 YAML gaits checked against the URDF-derived IK, joint limits and a static-stability **approximation**. **Not** walking or hardware validation |
 | Protected one-cycle trot replay on a fixed base (M6.1 / M6.1-A) | 🟡 Implemented and verified offline/mock/isolated (Cloud): welded-base model, clearance analysis, read-only observer; **live dispatch disabled, not run in Gazebo** |
-| Gait playback / walking, `/cmd_vel` bridge | ⚪ Planned |
+| Continuous free-base crawl, locomotion state machine and keyboard teleop (M5.5) | 🟡 Implemented in **shadow mode** and verified offline/mock/isolated (Cloud): 3 validated crawl speed levels, `/cmd_vel` lease, `m55_teleop_keyboard`; **dispatch hard-disabled, nothing walks yet, not run in Gazebo** ([M5.5](docs/M55_KEYBOARD_WALKING.md)) |
+| Walking demonstrated in simulation | ⚪ Pending the local acceptance phases (M5.5 §10) |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
 | Autonomous navigation | ⛔ Blocked until locomotion and odometry exist |

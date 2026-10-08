@@ -1,6 +1,26 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/stoic-shannon-ur2mes` (M6.1-A fixed base, stacked on the unmerged M6.1 branch `claude/spiderx-m61-trot-replay` @ `6a7f1f0`, from `main` @ `77fd171`).
+Last updated on branch `claude/spiderx-m55-keyboard-walking` (M5.5 keyboard walking, stacked on the M6.1-A branch `claude/stoic-shannon-ur2mes` @ `252b9c2` (draft PR #17), on the unmerged M6.1 branch `claude/spiderx-m61-trot-replay` @ `6a7f1f0`, from `main` @ `77fd171`). The M5.5 pull request is deferred until M6.1-A is reviewed.
+
+**M5.5 keyboard walking: implemented in SHADOW mode; Cloud-verified in offline/mock/isolated-domain tests only; the new gate `M55_LOCOMOTION_DISPATCH_ENABLED` is `False`; nothing has run in Gazebo and nothing walks yet** ([M5.5](docs/M55_KEYBOARD_WALKING.md)).
+- **Gait.** A statically stable free-base crawl with body shift (not a trot: two-foot support has no static margin, and nothing here shows dynamic stability):
+  - 3 validated speed levels: 20/40/60 mm strides, 1.06/1.90/2.34 mm/s;
+  - a quasi-static margin of at least 19.4 mm (the requirement is 15 mm);
+  - joint speeds of at most 0.225 rad/s (development bound 0.25).
+- **Locomotion.**
+  - **Dispatch:** one validated phase per goal, fingerprinted, with continuity checks and a lead-in.
+  - **States:** DISARMED, READY, STARTING, WALKING, STOPPING and FAULTED.
+  - **Safety behaviour:**
+    - a 0.5 s command lease (stop, then disarm; never a silent re-arm);
+    - a controlled stop with a stop latch;
+    - an emergency stop that cancels once and holds;
+    - a fresh `reset` + `arm` after any fault;
+    - graph checks for a single command owner.
+- **Operator.** `/cmd_vel` forward/reverse only (lateral and yaw are rejected explicitly) and the keyboard teleop `m55_teleop_keyboard`.
+- **Bench.** The free-base launch `fortress_m55_walking.launch.py` (posture-hold bench + node, shadow).
+- **Pending (local, each needs approval):**
+  - phase 1, the shadow keyboard session;
+  - phases 2–4, a fixed-base crawl, a bounded free-base crawl and keyboard walking, which need a separate enabling change.
 
 **M6.1 protected trot replay and M6.1-A fixed base: implemented, Cloud-verified in offline/mock/isolated-domain tests only; both live gates `False`; nothing has run in Gazebo.**
 - **M6.1** (`6a7f1f0`, [notes](docs/M61_IMPLEMENTATION_NOTES.md)):
@@ -182,9 +202,9 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | M6.0 gait-playback safety layers (one bounded crouch trajectory) | 🟡 Implemented; cloud + local offline/mock verified; M6.0-B graph-mode read-only preflight passed locally; M6.0-D valid playback pending | `m6_offline_preflight` (offline conversion + preflight), `m6_action_client` (single goal, mock-tested only), `m6_live_preflight` (read-only; sends no goal). No goal has been sent to a live controller; M6.0-D needs owner approval. [M6 results](docs/M6_TEST_RESULTS.md), [guide](docs/SPIDERX_M6_PLAYBACK_GUIDE.md). **Not** gait playback or walking |
 | M6.1 protected one-cycle trot replay (fixed base) | 🟡 Implemented; Cloud offline/mock/isolated verified; live hard-disabled | `m6_gait_replay.py --dry-run / --mock`; [notes](docs/M61_IMPLEMENTATION_NOTES.md). No goal has been sent |
 | M6.1-A fixed-base simulation + body-pose observability | 🟡 Implemented; Cloud offline/mock/isolated verified; **not run in Gazebo** | `fortress_m61a_fixed_base.launch.py`, `m61a_observe_fixed_base`, `m61a_clearance`; provisional mount 0.125 m; [implementation](docs/M61A_FIXED_BASE_IMPLEMENTATION.md) |
-| Gait playback / walking in simulation | ⚪ Future work | Unscheduled "Future — gait playback" item (owner decision). Nothing streams gait trajectories to the controllers |
+| Gait playback / walking in simulation | ⚪ Not demonstrated | The M5.5 crawl is validated offline and runs in shadow mode only; nothing streams gait trajectories to the controllers. Local acceptance phases 1–4 pending ([M5.5 §10](docs/M55_KEYBOARD_WALKING.md)) |
 | Offline evaluation study (M5) | ✅ Cloud + local offline verification passed | `m5_offline_evaluation`: staged study, Stage 0/1 gate, deterministic provenance-rich records. [M5 results](docs/M5_TEST_RESULTS.md), [guide](docs/SPIDERX_M5_EVALUATION_GUIDE.md). Offline model analysis only; **not** walking, dynamic stability, energy or hardware |
-| `/cmd_vel` → gait bridge | ⚪ Future work | M5.5: Command-velocity bridge (renamed from M5). Not implemented. Nothing consumes `/cmd_vel` today |
+| Free-base crawl, locomotion state machine and `/cmd_vel` bridge (M5.5) | 🟡 Implemented in **shadow mode**; Cloud offline/mock/isolated verified; **dispatch hard-disabled, not run in Gazebo** | `spiderx_locomotion` node (`m55_locomotion_node`), `m55_teleop_keyboard`, `m55_gait_feasibility`, `fortress_m55_walking.launch.py`; forward/reverse only, lateral/yaw rejected. [M5.5](docs/M55_KEYBOARD_WALKING.md) |
 | Odometry (`/spiderx/leg_odometry`, `/odom`) | ⚪ Future work | M7 – Odometry and state estimation (formerly M6). Not implemented. **Not faked** |
 
 ## Mapping, localization, navigation
