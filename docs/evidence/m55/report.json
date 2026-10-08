@@ -1,0 +1,362 @@
+{
+ "config_sha256": "5b243247ec6ca9be02ea1900dd9f72e7558c6abd5ce974d473ef2514ee4f2b49",
+ "config_status": "provisional",
+ "dispatch_gate": false,
+ "levels": [
+  {
+   "build_s": 24.73018010099986,
+   "cycle_s": 17.0,
+   "direction": 1,
+   "failures": [],
+   "lift_m": 0.012,
+   "max_joint_speed_at": [
+    "lf_foot_joint",
+    6.84
+   ],
+   "max_joint_speed_rad_s": 0.22453029133852054,
+   "max_margin_step_between_samples_m": 0.00047546078591093055,
+   "max_spline_error_rad": 6.864023364874794e-06,
+   "min_static_margin_m": 0.01981615551329519,
+   "min_static_margin_time_s": 7.38,
+   "ok": true,
+   "phase_boundaries": [
+    0,
+    15,
+    37,
+    52,
+    74,
+    100,
+    123,
+    138,
+    160,
+    170
+   ],
+   "phase_durations_s": [
+    1.5,
+    2.2,
+    1.5,
+    2.2,
+    2.6,
+    2.3,
+    1.5,
+    2.2,
+    1.0
+   ],
+   "points": 171,
+   "schema": "spiderx.m55.crawl_template/1",
+   "speed_m_s": 0.0011764705882352942,
+   "spline_min_static_margin_m": 0.019816156082307742,
+   "stride_m": 0.02,
+   "sway_m": [
+    [
+     0.01655216504504676,
+     0.014898707252378358
+    ],
+    [
+     0.012207807041067463,
+     -0.012294901731970814
+    ],
+    [
+     -0.01556150764739201,
+     0.0156725287909915
+    ],
+    [
+     -0.012875565627386648,
+     -0.011589377127956116
+    ]
+   ]
+  },
+  {
+   "build_s": 26.496977359000084,
+   "cycle_s": 19.3,
+   "direction": 1,
+   "failures": [],
+   "lift_m": 0.012,
+   "max_joint_speed_at": [
+    "rf_thigh_joint",
+    17.14
+   ],
+   "max_joint_speed_rad_s": 0.22466730751713423,
+   "max_margin_step_between_samples_m": 0.0004715202125327028,
+   "max_spline_error_rad": 7.049556229044018e-06,
+   "min_static_margin_m": 0.019613390808882483,
+   "min_static_margin_time_s": 8.68,
+   "ok": true,
+   "phase_boundaries": [
+    0,
+    16,
+    46,
+    56,
+    87,
+    116,
+    144,
+    154,
+    183,
+    193
+   ],
+   "phase_durations_s": [
+    1.6,
+    3.0,
+    1.0,
+    3.1,
+    2.9,
+    2.8,
+    1.0,
+    2.9,
+    1.0
+   ],
+   "points": 194,
+   "schema": "spiderx.m55.crawl_template/1",
+   "speed_m_s": 0.002072538860103627,
+   "spline_min_static_margin_m": 0.019613390967516492,
+   "stride_m": 0.04,
+   "sway_m": [
+    [
+     0.0139639785135151,
+     0.01256906437225383
+    ],
+    [
+     0.011155206334526976,
+     -0.012750957578294773
+    ],
+    [
+     -0.011979239243993009,
+     0.013692868319936408
+    ],
+    [
+     -0.012768167547059235,
+     -0.011492707444327933
+    ]
+   ]
+  },
+  {
+   "build_s": 30.283291469000005,
+   "cycle_s": 23.800000000000004,
+   "direction": 1,
+   "failures": [],
+   "lift_m": 0.012,
+   "max_joint_speed_at": [
+    "rf_thigh_joint",
+    21.18
+   ],
+   "max_joint_speed_rad_s": 0.2245587911465785,
+   "max_margin_step_between_samples_m": 0.0004684343848830874,
+   "max_spline_error_rad": 3.0269997249865455e-05,
+   "min_static_margin_m": 0.01939136571708927,
+   "min_static_margin_time_s": 11.18,
+   "ok": true,
+   "phase_boundaries": [
+    0,
+    17,
+    61,
+    67,
+    112,
+    142,
+    182,
+    188,
+    228,
+    238
+   ],
+   "phase_durations_s": [
+    1.7,
+    4.4,
+    0.6,
+    4.5,
+    3.0,
+    4.0,
+    0.6,
+    4.0,
+    1.0
+   ],
+   "points": 239,
+   "schema": "spiderx.m55.crawl_template/1",
+   "speed_m_s": 0.002521008403361344,
+   "spline_min_static_margin_m": 0.01939136575536903,
+   "stride_m": 0.06,
+   "sway_m": [
+    [
+     0.01135581594129096,
+     0.010221440932998344
+    ],
+    [
+     0.010022269867000583,
+     -0.013243155047493693
+    ],
+    [
+     -0.008303338126035828,
+     0.01097180535688045
+    ],
+    [
+     -0.012684073139888279,
+     -0.011417013542618246
+    ]
+   ]
+  }
+ ],
+ "library": {
+  "goals": 54,
+  "joint_names": [
+   "lf_hip",
+   "lf_thigh_joint",
+   "lf_foot_joint",
+   "rf_hip",
+   "rf_thigh_joint",
+   "rf_foot_joint",
+   "lr_hip",
+   "lr_thigh_joint",
+   "lr_foot_joint",
+   "rr_hip",
+   "rr_thigh_joint",
+   "rr_foot_joint"
+  ],
+  "lead_s": 0.2,
+  "levels": [
+   {
+    "cycle_s": 17.0,
+    "level": 0,
+    "max_joint_speed_rad_s": 0.22453029133852054,
+    "min_static_margin_m": 0.01981615551329519,
+    "phase_durations_s": [
+     1.5,
+     2.2,
+     1.5,
+     2.2,
+     2.6,
+     2.3,
+     1.5,
+     2.2,
+     1.0
+    ],
+    "speed_m_s": 0.0010638297872340426,
+    "stride_m": 0.02,
+    "template_speed_m_s": 0.0011764705882352942
+   },
+   {
+    "cycle_s": 19.3,
+    "level": 1,
+    "max_joint_speed_rad_s": 0.22466730751713423,
+    "min_static_margin_m": 0.019613390808882483,
+    "phase_durations_s": [
+     1.6,
+     3.0,
+     1.0,
+     3.1,
+     2.9,
+     2.8,
+     1.0,
+     2.9,
+     1.0
+    ],
+    "speed_m_s": 0.001895734597156398,
+    "stride_m": 0.04,
+    "template_speed_m_s": 0.002072538860103627
+   },
+   {
+    "cycle_s": 23.8,
+    "level": 2,
+    "max_joint_speed_rad_s": 0.2245587911465785,
+    "min_static_margin_m": 0.01939136571708927,
+    "phase_durations_s": [
+     1.7,
+     4.4,
+     0.6,
+     4.5,
+     3.0,
+     4.0,
+     0.6,
+     4.0,
+     1.0
+    ],
+    "speed_m_s": 0.00234375,
+    "stride_m": 0.06,
+    "template_speed_m_s": 0.002521008403361344
+   }
+  ],
+  "phase_sequence": [
+   [
+    "shift",
+    null
+   ],
+   [
+    "swing",
+    "rear_left"
+   ],
+   [
+    "shift",
+    null
+   ],
+   [
+    "swing",
+    "front_left"
+   ],
+   [
+    "shift",
+    null
+   ],
+   [
+    "swing",
+    "rear_right"
+   ],
+   [
+    "shift",
+    null
+   ],
+   [
+    "swing",
+    "front_right"
+   ],
+   [
+    "shift",
+    null
+   ]
+  ],
+  "phases_per_cycle": 9
+ },
+ "milestone": "M5.5",
+ "non_claims": [
+  "Offline, mock and isolated-domain verification only: nothing here has moved a robot.",
+  "The crawl static margin is a quasi-static approximation (CAD masses, point feet, flat ground, no slip, no dynamics); it is not a proof of balance.",
+  "Fault cancellation holds the joints; it does not guarantee physical balance or a safe hold.",
+  "Simulator ground truth used by the development monitor is not odometry or state estimation (M7).",
+  "The joint-speed bound is a development bound, not an actuator rating; URDF effort/velocity values are placeholders."
+ ],
+ "ok": true,
+ "schema": "spiderx.m55.gait_feasibility/1",
+ "support": {
+  "com_neutral_base_link_m": [
+   0.05099999977411731,
+   -0.05763164186619548,
+   0.07168501608644406
+  ],
+  "four_foot_margin_m": 0.08454829677411729,
+  "labels": {
+   "margins": "quasi-static approximation (CAD masses, point feet, flat ground, no slip, no dynamics)",
+   "trot": "two-foot support has zero area: no static margin exists; stability would be dynamic and is NOT shown by this repository"
+  },
+  "three_foot_margin_no_body_shift_m": {
+   "front_left": 0.0037645266514490386,
+   "front_right": 0.003990033489840266,
+   "rear_left": -0.003990033489840253,
+   "rear_right": -0.0037645266514490525
+  },
+  "trot_two_foot_support": {
+   "front_left+rear_right": {
+    "com_distance_to_diagonal_m": 0.003990033489840254,
+    "static_margin_m": null,
+    "support_area_m2": 0.0
+   },
+   "front_right+rear_left": {
+    "com_distance_to_diagonal_m": 0.0037645266514490464,
+    "static_margin_m": null,
+    "support_area_m2": 0.0
+   }
+  }
+ },
+ "template_labels": {
+  "com": "whole-robot COM from the URDF inertials (CAD steel-density masses) by forward kinematics at each sampled configuration, projected vertically; body level, height constant",
+  "joint_speed": "development bound, not an actuator rating",
+  "static_margin": "quasi-static approximation (CAD masses, point feet, flat ground, no slip, no dynamics)",
+  "static_margin_method": "minimum over samples every 0.02 s of the dense IK path and of the controller spline through the waypoints; a sampled value, not a continuous bound (max_margin_step_between_samples_m shows the change between neighbouring samples)",
+  "support": "all four feet during shifts; the three feet other than the swinging leg for the WHOLE swing, lift-off to touch-down; feet are points at the derived foot tips on the plane of the stance tips; contacts are assumed (no forces, friction or slip)"
+ }
+}

@@ -7,6 +7,7 @@ hashes, a repeated-generation comparison and the limitations.
 | Folder | Report | Quoted in |
 |---|---|---|
 | [`m61a/`](m61a/README.md) | `m61a_clearance` ground clearance of the welded model | `docs/M61A_FIXED_BASE_IMPLEMENTATION.md` §3 |
+| [`m55/`](m55/README.md) | `m55_gait_feasibility` free-base crawl feasibility | `docs/M55_KEYBOARD_WALKING.md` §2, §5 |
 
 `compare_reports.py` compares two regenerated JSON reports, ignoring declared nondeterministic
 fields. Clean builds are `rm -rf build install` and keep `log/`; copy local evidence to

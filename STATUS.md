@@ -1,6 +1,6 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/spiderx-m55-keyboard-walking` (M5.5 keyboard walking, stacked on the M6.1-A branch `claude/stoic-shannon-ur2mes` @ `252b9c2` (draft PR #17), on the unmerged M6.1 branch `claude/spiderx-m61-trot-replay` @ `6a7f1f0`, from `main` @ `77fd171`). The M5.5 pull request is deferred until M6.1-A is reviewed.
+Last updated on branch `claude/spiderx-m55-keyboard-walking` (M5.5 keyboard walking, stacked on the M6.1-A branch `claude/stoic-shannon-ur2mes` @ `41fc10f` (draft PR #17, with the focused-review corrections), on the unmerged M6.1 branch `claude/spiderx-m61-trot-replay` @ `6a7f1f0`, from `main` @ `77fd171`). The M5.5 pull request is deferred until M6.1-A is reviewed. Preserved reports: [`docs/evidence/`](docs/evidence/README.md).
 
 **M5.5 keyboard walking: implemented in SHADOW mode; Cloud-verified in offline/mock/isolated-domain tests only; the new gate `M55_LOCOMOTION_DISPATCH_ENABLED` is `False`; nothing has run in Gazebo and nothing walks yet** ([M5.5](docs/M55_KEYBOARD_WALKING.md)).
 - **Gait.** A statically stable free-base crawl with body shift (not a trot: two-foot support has no static margin, and nothing here shows dynamic stability):
@@ -18,6 +18,17 @@ Last updated on branch `claude/spiderx-m55-keyboard-walking` (M5.5 keyboard walk
     - graph checks for a single command owner.
 - **Operator.** `/cmd_vel` forward/reverse only (lateral and yaw are rejected explicitly) and the keyboard teleop `m55_teleop_keyboard`.
 - **Bench.** The free-base launch `fortress_m55_walking.launch.py` (posture-hold bench + node, shadow).
+- **Focused Cloud review** ([§16](docs/M55_KEYBOARD_WALKING.md#16-focused-cloud-review-after-2857d50-findings-corrections-timing)). Corrected:
+  - the phase watchdog now runs on **sim** time; it used wall time, which would have faulted
+    every long phase at the owner's real-time factor of about 0.2;
+  - post-result feedback must be newer by its stamp, not just received later;
+  - clock anomalies;
+  - re-arm now refuses ambiguous or unverified mid-cycle postures;
+  - fresh graph snapshots at arm;
+  - M6.1 readiness now refuses a visible competing commander.
+
+  The section also has a stop-timing table (wall versus sim time). The reports are preserved in
+  `docs/evidence/`.
 - **Pending (local, each needs approval):**
   - phase 1, the shadow keyboard session;
   - phases 2–4, a fixed-base crawl, a bounded free-base crawl and keyboard walking, which need a separate enabling change.
