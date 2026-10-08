@@ -560,20 +560,31 @@ def test_g7_drift_is_report_only(monitor):
 
 
 # ==================================================================== session (mock)
-EXPECTED = {   # scenario: (state, reason, goals, cancels, gate tripped)
+# M6.1-A: run_mock (the CLI --mock) now plays the WELDED plant through m61a_fixed_base, because
+# M6.1 is only valid on the fixed base. Two physical consequences changed this table:
+#  * a body that drops (body_too_low) or tilts (body_tilt) on a weld has left the weld pose, so
+#    G8 (attachment) trips too - after G1/G2, whose reason still ends the run (one cancel);
+#  * 'body_drift_report_only' (a 30 mm slide, G7 report only) cannot happen on an intact weld:
+#    it is now 'attachment_drift' (G8 trips, one cancel). G7 report-only behaviour is still tested
+#    on the free-base mock (test_g7_drift_report_only_on_the_free_base_mock).
+EXPECTED = {   # scenario: (state, reason, goals, cancels, gates tripped)
     'success': (lpb.SUCCEEDED, None, 1, 0, None),
-    'body_drift_report_only': (lpb.SUCCEEDED, None, 1, 0, None),
+    'attachment_drift': (gr.GATE_TRIPPED, 'attachment_lost', 1, 1, (gates.G8,)),
+    'not_fixed_base': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'spawn_offset': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'description_mismatch': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'mount_not_approved': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
     'interrupt': (lpb.CANCEL_CONFIRMED, 'operator_interrupt', 1, 1, None),
     'tracking_error': (lpb.TRACKING_FAILED, 'tracking_error', 1, 1, None),
     'stale_joint_states': (lpb.READINESS_LOST, 'joint_states_stale', 1, 1, None),
     'controller_lost': (lpb.HELD_ERROR, 'controller_lost', 1, 1, None),
     'rejected': (lpb.REJECTED, 'goal_rejected', 1, 0, None),
-    'body_too_low': (gr.GATE_TRIPPED, 'body_too_low', 1, 1, gates.G1),
-    'body_tilt': (gr.GATE_TRIPPED, 'body_tilt', 1, 1, gates.G2),
-    'joint_near_limit': (gr.GATE_TRIPPED, 'joint_near_limit', 1, 1, gates.G3),
-    'sim_stall': (lpb.READINESS_LOST, 'sim_time_stalled', 1, 1, gates.G5),
-    'joint_state_gap': (lpb.TRACKING_FAILED, 'sample_gap', 1, 1, gates.G6),
-    'body_pose_stale': (gr.GATE_TRIPPED, 'body_pose_stale', 1, 1, gates.POSE_FRESHNESS),
+    'body_too_low': (gr.GATE_TRIPPED, 'body_too_low', 1, 1, (gates.G1, gates.G8)),
+    'body_tilt': (gr.GATE_TRIPPED, 'body_tilt', 1, 1, (gates.G2, gates.G8)),
+    'joint_near_limit': (gr.GATE_TRIPPED, 'joint_near_limit', 1, 1, (gates.G3,)),
+    'sim_stall': (lpb.READINESS_LOST, 'sim_time_stalled', 1, 1, (gates.G5,)),
+    'joint_state_gap': (lpb.TRACKING_FAILED, 'sample_gap', 1, 1, (gates.G6,)),
+    'body_pose_stale': (gr.GATE_TRIPPED, 'body_pose_stale', 1, 1, (gates.POSE_FRESHNESS,)),
     'no_body_pose': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
 }
 
@@ -596,11 +607,55 @@ def test_mock_scenario_outcomes(scenario, plan):
     if goals:
         assert out['trajectory_id'] == TRAJECTORY_ID and out['goal_fingerprint'] == FINGERPRINT
     if gate is not None:
-        assert out['gates'][gate]['tripped'], out['gates']
+        assert out['gates'][gate[0]]['tripped'], out['gates']
+        if gate[0] not in (gates.G5, gates.G6):      # re-used M6.0-D monitor: no gate trip record
+            assert out['gates']['trips_in_order'][0]['gate'] == gate[0]
     tripped = [g for g in gates.GATE_IDS if g != gates.G7 and out['gates']
                and out['gates'][g].get('tripped')]
-    assert tripped == ([gate] if gate else [])
+    assert tripped == (list(gate) if gate else [])
     json.dumps(out, allow_nan=False)
+
+
+FIXED_BASE_REFUSAL_CODES = {
+    'not_fixed_base': 'robot_description_not_fixed_base',
+    'spawn_offset': 'frame_spawn_not_identity',
+    'description_mismatch': 'frame_body_link_inconsistent',
+    'mount_not_approved': 'mount_not_approved',
+}
+
+
+@pytest.mark.parametrize('scenario', sorted(FIXED_BASE_REFUSAL_CODES))
+def test_fixed_base_readiness_refusals_send_nothing(scenario, plan):
+    out, _, _ = gr.run_mock(plan, scenario, word())
+    codes = out['readiness'][0]['result']['failure_codes']
+    assert FIXED_BASE_REFUSAL_CODES[scenario] in codes, codes
+    assert out['goals_sent'] == 0 and out['mock_server_goals_received'] == 0
+
+
+def test_fixed_base_success_records_the_plant_apart_from_the_trajectory(plan):
+    out, _, _ = gr.run_mock(plan, 'success', word())
+    f = out['fixed_base']
+    assert f['plant']['ok'] and f['plant']['codes'] == []
+    assert f['mount_xyz_rpy'] == pytest.approx([0, 0, 0.125, 0, 0, 0])
+    assert re.fullmatch(r'[0-9a-f]{64}', f['config_sha256'])
+    assert re.fullmatch(r'[0-9a-f]{64}', f['robot_description_sha256'])
+    assert out['trajectory_id'] == TRAJECTORY_ID and out['goal_fingerprint'] == FINGERPRINT
+    g8 = out['gates'][gates.G8]
+    assert g8['active'] and not g8['tripped'] and g8['worst_observed']['translation_m'] < 1e-9
+    assert out['body']['frame'] == gates.FIXED_BASE_FRAME
+
+
+def test_g8_integrity_codes_match_the_fixed_base_module():
+    from spiderx_controller import m61a_fixed_base as fb
+    assert set(gates.INTEGRITY_CODES) == set(fb.INTEGRITY_CODES)
+    assert gates.REASON_GATE[gates.ATTACHMENT_LOST] == gates.G8
+
+
+def test_g7_drift_report_only_on_the_free_base_mock(plan):
+    s, t = _session(plan, **m61_mock.FREE_BASE_SCENARIOS['body_drift_report_only'])
+    out = s.run()
+    assert out['state'] == lpb.SUCCEEDED and out['cancels_sent'] == 0
+    assert len(out['gates'][gates.G7]['flags']) == 1 and not out['gates'][gates.G8]['active']
 
 
 def test_success_outcome_fields(plan):
@@ -617,8 +672,9 @@ def test_success_outcome_fields(plan):
     assert out['m61_limits'] == c61.APPROVED_LIMITS
     assert out['gait']['step_length_m'] == 0.02 and out['gait']['num_cycles'] == 1
     assert out['trajectory_content_sha256'] == CONTENT_SHA256
-    assert out['preflight']['ok'] and out['body']['z_min_m'] == pytest.approx(0.0545)
-    assert out['gates'][gates.G1]['margin'] == pytest.approx(0.0095)
+    # M6.1-A: the mock body is the welded body at the provisional mount (was 0.0545 m free base)
+    assert out['preflight']['ok'] and out['body']['z_min_m'] == pytest.approx(0.125)
+    assert out['gates'][gates.G1]['margin'] == pytest.approx(0.125 - 0.045)
     assert out['joint_extremes_observed']['rf_thigh_joint']['min_rad'] < -0.1
     assert [r['when'] for r in out['readiness']] == ['before_confirmation',
                                                      'after_confirmation']
@@ -710,7 +766,7 @@ def test_mock_cli_writes_the_evidence_directory(plan, tmp_path):
     bp = (d / 'body_pose.csv').read_text().splitlines()
     assert bp[0] == 'time_s,x,y,z,roll,pitch,yaw'
     assert len(bp) - 1 == out['evidence_rows']['body_pose'] > 100
-    assert float(bp[1].split(',')[3]) == pytest.approx(0.0545)
+    assert float(bp[1].split(',')[3]) == pytest.approx(0.125)        # M6.1-A welded body
     cov = (d / 'commanded_vs_observed.csv').read_text().splitlines()
     assert cov[0].startswith('time_s,ref_time_s,lf_hip_cmd,lf_hip_obs,lf_hip_err')
     assert cov[0].endswith('max_abs_err_rad') and len(cov) > 200
@@ -803,8 +859,9 @@ class Factories:
     def __init__(self, plan, **kw):
         self.plan, self.kw, self.made = plan, kw, []
 
-    def transport(self, fp, domain_id):
-        t = m61_mock.M61FakeTransport(tc.build_trajectory(self.plan), fp, **self.kw)
+    def transport(self, fp, domain_id, fixed_base):     # M6.1-A: the live path is fixed base
+        t = m61_mock.M61FakeTransport(tc.build_trajectory(self.plan), fp, fixed_base=fixed_base,
+                                      **self.kw)
         self.made.append(t)
         return t
 

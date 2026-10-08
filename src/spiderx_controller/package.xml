@@ -25,7 +25,9 @@
   <exec_depend>trajectory_msgs</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>tf2_msgs</exec_depend>
-  <!-- M6.1-A clearance analysis -->
+  <!-- M6.1-A fixed base: /robot_description (std_msgs/String), /clock observation, clearance -->
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>rosgraph_msgs</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>builtin_interfaces</exec_depend>

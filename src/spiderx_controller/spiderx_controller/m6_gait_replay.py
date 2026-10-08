@@ -15,7 +15,13 @@ handling and EvidenceFile persistence. M6.1 replaces only what is gait specific:
   - the tracking reference (cubic Hermite with the waypoint velocities);
   - the gait gates G1-G7 and body-pose freshness (m61_gates), which end the run in GATE_TRIPPED
     after the one cancel - never a return goal;
-  - the evidence directory log/m61_run/<UTC>/ with CSV streams (m61_evidence).
+  - the evidence directory log/m61_run/<UTC>/ with CSV streams (m61_evidence);
+  - M6.1-A: the FIXED BASE the replay requires (m61a_fixed_base): readiness checks the welded
+    plant (fixed-base /robot_description with the approved mount, Gazebo body-link entry matching
+    it, identity spawn, body at the weld pose), the body pose is COMPOSED
+    (T_world_model * T_model_dummy * T_dummy_base, never the bare model root), and G8 cancels if
+    the attachment is lost in flight. The plant evidence is recorded separately from the
+    trajectory provenance, which is unchanged.
 
 LIVE M6.1 DISPATCH IS HARD-DISABLED (m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False).
 
@@ -38,6 +44,7 @@ from spiderx_controller import m61_gates as gates
 from spiderx_controller import m61_goal as goal61
 from spiderx_controller import m61_live_contract as c61
 from spiderx_controller import m61_trot_cycle as tc
+from spiderx_controller import m61a_fixed_base as fb
 
 OUTCOME_SCHEMA = 'spiderx.m61.live_outcome/1'
 GATE_TRIPPED = 'GATE_TRIPPED'
@@ -66,11 +73,12 @@ class M61Session(lp.LiveSession):
     """One approved trot-cycle goal, at most once. Use run(); it returns a structured outcome."""
 
     def __init__(self, transport, plan, readiness_provider, confirm_reader, latch=None,
-                 checkpoint=None):
+                 checkpoint=None, fixed_base=None):
         super().__init__(_TickTransport(transport), plan.sources, readiness_provider,
                          confirm_reader, latch=latch, checkpoint=checkpoint)
         self.plan = plan
         self.limits = plan.limits
+        self.fixed_base = fixed_base             # m61a FixedBaseConfig (G8 active) or None
         self.gates = None
         self._preflight = None
         self._tracking_verdict = None
@@ -89,7 +97,8 @@ class M61Session(lp.LiveSession):
             self._fingerprint = gf.fingerprint(self._spec)
         except (tc.TrajectoryBuildError, gf.FingerprintError) as e:
             return self._refuse('preflight_refused', str(e))
-        self.gates = gates.GateMonitor(self.limits, self.sources.limits)
+        self.gates = gates.GateMonitor(self.limits, self.sources.limits,
+                                       fixed_base=self.fixed_base)
         self._set(lp.PREFLIGHTED, f'preflighted M6.1 trajectory '
                                   f'{self._trajectory["trajectory_id"]}, fingerprint '
                                   f'{self._fingerprint[:16]}')
@@ -171,6 +180,14 @@ class M61Session(lp.LiveSession):
             self._pose_rows.append((stamp, tuple(pose)))
             if self.gates is not None:
                 reason = self.gates.on_body_pose(wall, stamp, pose, gate=self._observing())
+                if reason and self._gating():
+                    self._request_cancel(reason)
+            return None
+        if kind == 'fixed_base':
+            _, wall, stamp, codes, attachment = ev
+            if self.gates is not None:
+                reason = self.gates.on_fixed_base(wall, stamp, codes, attachment,
+                                                  gate=self._observing())
                 if reason and self._gating():
                     self._request_cancel(reason)
             return None
@@ -285,8 +302,64 @@ class M61Session(lp.LiveSession):
             'evidence_rows': {'joint_states': len(self._js_rows),
                               'body_pose': len(self._pose_rows)},
             'm61_live_dispatch_enabled': c61.M61_LIVE_DISPATCH_ENABLED,
+            'fixed_base': fixed_base_record(self.fixed_base, self.transport),
         })
         return out
+
+
+def fixed_base_record(cfg, transport):
+    """The INSTANTIATED-PLANT evidence (M6.1-A), kept apart from the trajectory provenance: the
+    fixed-base config and its SHA-256, and what the transport saw of /robot_description and the
+    Gazebo pose entries. None when the run had no fixed-base configuration."""
+    if cfg is None:
+        return None
+    import hashlib
+    snap = getattr(transport, 'fixed_base_snapshot', None)
+    snap = snap() if callable(snap) else {}
+    desc = snap.get('description')
+    rec = {'config': fb.CONFIG_FILE, 'config_sha256': cfg.raw.get('_sha256'),
+           'mount_xyz_rpy': list(cfg.mount.xyz_rpy()),
+           'min_mount_height_m': cfg.min_mount_height_m,
+           'robot_description_sha256': (None if desc is None else
+                                        hashlib.sha256(desc.encode()).hexdigest()),
+           'pose_messages': snap.get('messages'), 'invalid_pose_samples':
+               snap.get('invalid_samples'), 'plant': None}
+    ok, codes, checks = fb.assess_plant(desc, snap.get('latest_usable_pose'), cfg)
+    rec['plant'] = {'ok': ok, 'codes': codes, 'checks': checks}
+    return rec
+
+
+def with_fixed_base(base_provider, snapshot, cfg):
+    """Wrap a readiness provider: also NOT READY unless the welded plant is verified (M6.1-A):
+    a fixed-base /robot_description with the approved mount above the clearance minimum, Gazebo's
+    body-link entry consistent with it, the model root at the identity spawn and the composed body
+    at the weld pose (m61a_fixed_base.assess_plant). snapshot() -> tracker snapshot dict."""
+    def provide():
+        res = base_provider()
+        if not isinstance(res, rd.ReadinessResult):
+            return res
+        snap = snapshot()
+        ok, codes, checks = fb.assess_plant(snap.get('description'),
+                                            snap.get('latest_usable_pose'), cfg)
+        report = dict(res.report or {}, m61a_fixed_base={'ok': ok, 'codes': codes,
+                                                         'checks': checks})
+        if ok:
+            return dataclasses.replace(res, report=report)
+        return dataclasses.replace(
+            res, ready=False, failure_codes=tuple(res.failure_codes) + tuple(codes),
+            reasons=tuple(res.reasons) + tuple(f'fixed base: {c}' for c in codes),
+            report=report)
+    return provide
+
+
+def load_fixed_base_config(config_dir=None):
+    """The M6.1-A config with its file SHA-256 recorded (raw['_sha256'])."""
+    import hashlib
+    path = fb.config_path(config_dir)
+    cfg = fb.load_config(os.path.dirname(path))
+    with open(path, 'rb') as f:
+        cfg.raw['_sha256'] = hashlib.sha256(f.read()).hexdigest()
+    return cfg
 
 
 def with_body_pose(base_provider, latest_pose, now, limits):
@@ -307,7 +380,8 @@ def with_body_pose(base_provider, latest_pose, now, limits):
     return provide
 
 
-__all__ = ['M61Session', 'GATE_TRIPPED', 'M61_TERMINAL', 'OUTCOME_SCHEMA', 'with_body_pose']
+__all__ = ['M61Session', 'GATE_TRIPPED', 'M61_TERMINAL', 'OUTCOME_SCHEMA', 'with_body_pose',
+           'with_fixed_base', 'fixed_base_record', 'load_fixed_base_config']
 
 
 # ==================================================================== CLI
@@ -382,12 +456,15 @@ def run_mock(plan, scenario, reader):
     traj = tc.build_trajectory(plan)
     fp = gf.fingerprint(goal61.approved_spec(traj, plan))
     latch = lp.InterruptLatch()
-    transport = m61_mock.M61FakeTransport(traj, fp, latch=latch,
+    cfg = load_fixed_base_config(plan.config_dir)
+    transport = m61_mock.M61FakeTransport(traj, fp, latch=latch, fixed_base=cfg,
                                           **m61_mock.SCENARIOS[scenario])
     report = m6mock.mock_readiness_report(plan.sources.joint_names, plan.neutral)
-    provide = with_body_pose(lambda: rd.assess(report, transport.wall_now()),
-                             transport.latest_body_pose, transport.wall_now, plan.limits)
-    session = M61Session(transport, plan, provide, reader, latch=latch)
+    provide = with_fixed_base(
+        with_body_pose(lambda: rd.assess(report, transport.wall_now()),
+                       transport.latest_body_pose, transport.wall_now, plan.limits),
+        transport.fixed_base_snapshot, cfg)
+    session = M61Session(transport, plan, provide, reader, latch=latch, fixed_base=cfg)
     out = session.run()
     out.update(mode='mock', scenario=scenario, mock_server_goals_received=len(transport.sent),
                mock_server_cancels_received=transport.cancels)
@@ -430,9 +507,9 @@ def _setup_failure_outcome(exc):
             'limits': c61.as_dict(), 'non_claims': list(c61.NON_CLAIMS)}
 
 
-def _default_transport_factory(fp, domain_id):
-    from spiderx_controller import m61_live_adapter as la
-    return la.M61RclpyLiveTransport(fp, domain_id).open()
+def _default_transport_factory(fp, domain_id, fixed_base):
+    from spiderx_controller import m61a_live
+    return m61a_live.M61AFixedBaseTransport(fp, domain_id, fixed_base).open()
 
 
 def _default_collect_factory(transport):
@@ -450,15 +527,17 @@ def _run_live(plan, transport_factory, collect_factory, reader, latch, domain_id
         raise PermissionError(c61.M61_LIVE_DISPATCH_DISABLED_MESSAGE)
     traj = tc.build_trajectory(plan)
     fp = gf.fingerprint(goal61.approved_spec(traj, plan))
-    transport = transport_factory(fp, domain_id)
+    cfg = load_fixed_base_config(plan.config_dir)
+    transport = transport_factory(fp, domain_id, cfg)
     out = session = None
     try:
         base = rd.make_readiness_provider(collect_factory(transport), plan.sources.joint_names,
                                           plan.neutral, transport.wall_now)
-        provide = with_body_pose(base, transport.latest_body_pose, transport.wall_now,
-                                 plan.limits)
+        provide = with_fixed_base(
+            with_body_pose(base, transport.latest_body_pose, transport.wall_now, plan.limits),
+            transport.fixed_base_snapshot, cfg)
         session = M61Session(transport, plan, provide, reader, latch=latch,
-                             checkpoint=checkpoint)
+                             checkpoint=checkpoint, fixed_base=cfg)
         out = session.run()
         return out, session
     finally:
@@ -505,7 +584,8 @@ def _live_main(args, plan, reader, transport_factory=None, collect_factory=None,
     latch = latch or lp.InterruptLatch()
     if reader is None:             # called (and the prompt shown) only after readiness #1 passed
         reader = lp.interruptible_line_reader(
-            latch, prompt=f'Readiness passed (including a fresh body pose). Type '
+            latch, prompt=f'Readiness passed (including a fresh body pose and the M6.1-A '
+                          f'fixed-base checks). Type '
                           f'{c61.CONFIRMATION_WORD} to send ONE trot-cycle goal (neutral -> one '
                           f'trot cycle -> neutral, 7.0 s sim time) to the running simulation on '
                           f'ROS domain {args.domain_id}; anything else, EOF or Ctrl+C refuses:')

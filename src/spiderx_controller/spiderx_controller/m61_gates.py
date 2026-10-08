@@ -7,7 +7,13 @@
   G5 sim stall       re-used M6.0-D StreamMonitor reason 'sim_time_stalled' (5.0 s)
   G6 joint-state gap re-used M6.0-D StreamMonitor reason 'sample_gap' (0.25 s)
   G7 body drift      report only: lateral |dx| and |dyaw| over the run; never a cancel
+  G8 attachment      M6.1-A fixed base only: the composed body pose left the weld pose, the model
+                     root left the identity spawn, or Gazebo's body-link entry no longer matches the
+                     description, for attachment debounce samples -> cancel (m61a_fixed_base)
   pose freshness     while the goal runs, no body-pose sample for body_pose_stale_s -> cancel
+
+G1 (height), G2 (tilt) and G8 (attachment displacement) are separate checks: on a raised weld a
+detached body could settle near 0.0545 m, still above the 0.045 m G1 threshold, so only G8 sees it.
 
 A trip returns a cancel reason; the session sends at most ONE cancel (the first reason) and never
 a return goal. Every trip is recorded, including later ones, with its value and threshold.
@@ -20,15 +26,23 @@ from spiderx_controller import m61_trot_cycle as tc
 G1, G2, G3, G4, G5, G6, G7 = ('G1_body_height', 'G2_body_tilt', 'G3_joint_near_limit',
                               'G4_unexpected_contact', 'G5_sim_stall', 'G6_joint_state_gap',
                               'G7_body_drift')
+G8 = 'G8_attachment'
 POSE_FRESHNESS = 'body_pose_freshness'
-GATE_IDS = (G1, G2, G3, G4, G5, G6, G7, POSE_FRESHNESS)
+GATE_IDS = (G1, G2, G3, G4, G5, G6, G7, G8, POSE_FRESHNESS)
 
 # cancel reasons raised by these gates (the session maps them to its GATE_TRIPPED state)
 BODY_TOO_LOW, BODY_TILT, JOINT_NEAR_LIMIT, BODY_POSE_STALE = (
     'body_too_low', 'body_tilt', 'joint_near_limit', 'body_pose_stale')
-M61_REASONS = (BODY_TOO_LOW, BODY_TILT, JOINT_NEAR_LIMIT, BODY_POSE_STALE)
+ATTACHMENT_LOST = 'attachment_lost'
+M61_REASONS = (BODY_TOO_LOW, BODY_TILT, JOINT_NEAR_LIMIT, BODY_POSE_STALE, ATTACHMENT_LOST)
 REASON_GATE = {BODY_TOO_LOW: G1, BODY_TILT: G2, JOINT_NEAR_LIMIT: G3, BODY_POSE_STALE:
-               POSE_FRESHNESS, 'sim_time_stalled': G5, 'sample_gap': G6}
+               POSE_FRESHNESS, ATTACHMENT_LOST: G8, 'sim_time_stalled': G5, 'sample_gap': G6}
+# m61a_fixed_base sample codes that mean "this is no longer the verified fixed base"
+INTEGRITY_CODES = ('attachment_displaced', 'frame_spawn_not_identity',
+                   'frame_body_link_inconsistent')
+FIXED_BASE_FRAME = ('Gazebo world; base_link = T_world_model * T_model_dummy (Gazebo entry) * '
+                    'T_dummy_base (M6.1-A fixed base)')
+FREE_BASE_FRAME = 'Gazebo world (model "spiderx" = base_link)'
 
 CONTACT_NOTE = ('Not measured: the SpiderX model and world have no contact sensor. Body height '
                 '(G1) and tilt (G2) are proxies only; no contact or slip claim is made.')
@@ -47,9 +61,14 @@ class GateMonitor:
     """G1-G3, G7 and pose freshness over the live streams. Gates are evaluated only when the
     caller says so (gate=True: the goal is running); every sample still feeds the statistics."""
 
-    def __init__(self, limits, joint_limits):
+    def __init__(self, limits, joint_limits, fixed_base=None):
         self.lim = limits
         self.joint_limits = dict(joint_limits)            # {joint: (lower, upper)} URDF
+        self.fb = fixed_base                               # m61a FixedBaseConfig or None (no G8)
+        self._integrity = 0
+        self.fb_samples = self.fb_gated_samples = 0
+        self.fb_codes_seen = {}
+        self.attachment_max = None                         # (translation m, rotation rad)
         self.armed_wall = None
         self.last_pose_wall = None
         self._low = self._tilt = 0
@@ -116,6 +135,30 @@ class GateMonitor:
                            f'roll {roll:.4f} rad, pitch {pitch:.4f} rad')
             reason = reason or r
         return reason
+
+    # ------------------------------------------------------------------ G8 (M6.1-A)
+    def on_fixed_base(self, wall, stamp, codes, attachment, gate):
+        """One fixed-base sample (codes from m61a_fixed_base.evaluate_sample, attachment =
+        (translation m, rotation rad, dz, dxy) or None). Returns a cancel reason (G8) or None."""
+        if self.fb is None:
+            return None
+        self.fb_samples += 1
+        for c in codes or ():
+            self.fb_codes_seen[c] = self.fb_codes_seen.get(c, 0) + 1
+        if attachment is not None and _finite(*attachment[:2]):
+            t, r = float(attachment[0]), float(attachment[1])
+            a = self.attachment_max or (0.0, 0.0)
+            self.attachment_max = (max(a[0], t), max(a[1], r))
+        if not gate:
+            return None
+        self.fb_gated_samples += 1
+        bad = [c for c in (codes or ()) if c in INTEGRITY_CODES]
+        self._integrity = self._integrity + 1 if bad else 0
+        if self._integrity >= self.fb.attachment_debounce_samples:
+            return self._trip(G8, ATTACHMENT_LOST, None if attachment is None else attachment[0],
+                              self.fb.attachment_translation_tol_m, wall, stamp,
+                              f'{self._integrity} consecutive samples: {", ".join(bad)}')
+        return None
 
     # ------------------------------------------------------------------ G3
     def on_joint_state(self, wall, stamp, names, positions, gate):
@@ -204,6 +247,21 @@ class GateMonitor:
             G7: {'active': True, 'report_only': True, 'drift': drift, 'flags': g7_flags,
                  'thresholds': {'lateral_m': lim.drift_lateral_report_m,
                                 'yaw_rad': lim.drift_yaw_report_rad}},
+            G8: row(G8, None if self.fb is None else
+                    {'translation_m': self.fb.attachment_translation_tol_m,
+                     'rotation_rad': self.fb.attachment_rotation_tol_rad},
+                    None if self.attachment_max is None else
+                    {'translation_m': self.attachment_max[0],
+                     'rotation_rad': self.attachment_max[1]},
+                    None if (self.fb is None or self.attachment_max is None) else
+                    {'translation_m': self.fb.attachment_translation_tol_m
+                     - self.attachment_max[0],
+                     'rotation_rad': self.fb.attachment_rotation_tol_rad
+                     - self.attachment_max[1]},
+                    active=self.fb is not None,
+                    note=('M6.1-A fixed base: composed body vs weld, spawn identity, link '
+                          f'consistency; codes seen {self.fb_codes_seen}' if self.fb is not None
+                          else 'inactive: no fixed-base configuration')),
             POSE_FRESHNESS: row(POSE_FRESHNESS, lim.body_pose_stale_s, None, None,
                                 active=lim.body_pose_required),
             'trips_in_order': [dict(t) for t in self.trips],
@@ -215,7 +273,9 @@ class GateMonitor:
                 'z_min_m': self.z_min, 'z_max_m': self.z_max, 'tilt_max_rad': self.tilt_max,
                 'roll_max_abs_rad': self.roll_max_abs, 'pitch_max_abs_rad': self.pitch_max_abs,
                 'start_pose': self.first_pose, 'end_pose': self.last_pose,
-                'drift': self.drift(), 'frame': 'Gazebo world (model "spiderx" = base_link)'}
+                'drift': self.drift(),
+                'frame': FIXED_BASE_FRAME if self.fb is not None else FREE_BASE_FRAME,
+                'fixed_base_samples': self.fb_samples}
 
     def joint_extremes(self):
         return {n: {'min_rad': e[0], 'max_rad': e[1],
@@ -247,4 +307,5 @@ def pose_readiness(latest, now_wall, limits):
 
 
 __all__ = ['GateMonitor', 'pose_readiness', 'GATE_IDS', 'M61_REASONS', 'REASON_GATE',
-           'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'POSE_FRESHNESS', 'CONTACT_NOTE']
+           'G1', 'G2', 'G3', 'G4', 'G5', 'G6', 'G7', 'G8', 'POSE_FRESHNESS', 'CONTACT_NOTE',
+           'ATTACHMENT_LOST', 'INTEGRITY_CODES', 'FIXED_BASE_FRAME', 'FREE_BASE_FRAME']
