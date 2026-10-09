@@ -603,12 +603,15 @@ was sent anywhere.
   M6.1-A Cloud verification at `b910df1`), never by rebasing published history.
 - **After that merge** (`22b8a01`): full suite **1684 tests, 0 errors, 0 failures, 0 skipped** in
   Cloud ([`evidence/m55/cloud_verify_22b8a01/`](evidence/m55/cloud_verify_22b8a01/README.md)).
-- **M6.1-A phase 1** (launch-only fixed-base observation) **passed in Cloud simulation** at
-  `7f4c30f` in three separate launches
-  ([`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md)); it has not run on the owner PC.
-- **Next procedure:** owner review of that evidence (or phase 1 on the owner PC), then the
-  separately approved M6.1 phase 2 fixed-base cycle, then M5.5 phase 1 above (shadow session;
-  this build as is).
+- **M6.1-A phase 1** (launch-only fixed-base observation) in Cloud simulation at `7f4c30f`:
+  every per-run criterion passed in three separate launches. Criterion 6 under its strict
+  per-beam reading, and pose-stream liveness, remain open
+  ([`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md) §8). It has not run on the owner PC.
+- **Next procedure:**
+  1. owner review of that closeout (or phase 1 on the owner PC);
+  2. the separately approved M6.1 phase 2 fixed-base cycle: source-verified Cloud plan
+     [`M61_CLOUD_ONE_CYCLE_PLAN.md`](M61_CLOUD_ONE_CYCLE_PLAN.md), enabling patch unapplied;
+  3. M5.5 phase 1 above (shadow session; this build as is).
   Keyboard walking (M5.5 phases 2–4) comes before the odometry, SLAM and navigation milestones
   (M7–M9).
 
