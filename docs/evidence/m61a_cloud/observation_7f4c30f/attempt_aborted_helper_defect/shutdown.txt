@@ -1,0 +1,5 @@
+SIGINT sent to process group 17910
+process group empty after 6 s
+The daemon has been stopped
+--- remaining (expect nothing):
+17907 [Xvfb] <defunct>

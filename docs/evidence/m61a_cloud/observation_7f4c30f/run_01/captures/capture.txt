@@ -1,0 +1,2 @@
+scans 40 joint_states 644 poses 532 clock 5788 weld {'type': 'fixed', 'parent': 'world', 'child': 'dummy_link', 'xyz': '0.0 0.0 0.125', 'rpy': '0 0 0.0'} own_publishers ['/parameter_events'] command_messages 0 action_status 0 controller_state 0 (None)
+capture exit=0
