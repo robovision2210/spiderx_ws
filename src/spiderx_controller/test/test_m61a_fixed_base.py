@@ -123,6 +123,9 @@ def test_config_freshness_equals_the_existing_monitor_values(cfg):
     assert cfg.pose_stale_s == c61.APPROVED_LIMITS['body_pose_stale_s']
     assert cfg.joint_states_stale_s == m6d.JOINT_STATES_STALE_S
     assert cfg.sim_stall_s == m6d.SIM_STALL_S
+    # readiness sim progress: the freshness window, and a real-time factor of at least 0.1
+    assert cfg.progress_window_s == cfg.pose_stale_s
+    assert 0 < cfg.min_sim_advance_s <= 0.1 * cfg.progress_window_s
 
 
 def _raw():
@@ -140,6 +143,8 @@ def _raw():
     (lambda d: d['attachment'].update(translation_tolerance_m=0.0), '> 0'),
     (lambda d: d['attachment'].update(debounce_samples=True), 'debounce'),
     (lambda d: d.update(schema='x/0'), 'schema'),
+    (lambda d: d['freshness'].pop('min_sim_advance_s'), 'min_sim_advance_s'),
+    (lambda d: d['freshness'].update(progress_window_s=0.0), '> 0'),
 ])
 def test_config_refuses_malformed_values(mutate, needle):
     d = _raw()
@@ -456,6 +461,53 @@ def test_clock_monitor_progress_pause_reset(cfg):
     assert c.check(7.1) == fb.CLOCK_RESET             # latched
 
 
+def test_clock_monitor_needs_an_advance_not_just_messages():
+    """A world paused before the observation: /clock keeps arriving with one time (gz-sim 6
+    publishes it every iteration, paused or not). Messages are not progress; an advance is."""
+    c = fb.ClockMonitor(5.0, 0.001)
+    for i in range(50):
+        c.on_clock(0.02 * i, 100.0)
+    assert c.messages == 50 and c.check(1.0) == fb.CLOCK_NOT_ADVANCING
+    c.on_clock(1.02, 100.001)                         # the first advance
+    assert c.check(1.03) is None
+    assert c.check(6.1) == fb.CLOCK_STALLED          # then no advance for > 5 s of wall
+
+
+def _samples(t0, n, dt, rate):
+    """n (wall, sim) samples every dt of wall from t0, sim advancing at rate (0 = paused)."""
+    return [(t0 + dt * i, 100.0 + rate * dt * i) for i in range(n)]
+
+
+@pytest.mark.parametrize('samples, now, code', [
+    (_samples(9.0, 51, 0.02, 0.7), 10.0, None),                      # Cloud RTF 0.7
+    (_samples(9.0, 51, 0.02, 0.12), 10.0, None),                     # just above the floor
+    (_samples(9.0, 51, 0.02, 0.0), 10.0, fb.POSE_SIM_NOT_ADVANCING),  # paused
+    (_samples(9.0, 51, 0.02, 0.05), 10.0, fb.POSE_SIM_NOT_ADVANCING),  # too slow
+    (_samples(9.0, 51, 0.02, 0.7), 12.5, fb.POSE_SIM_NOT_ADVANCING),  # all outside the window
+    ([(9.98, 100.0)], 10.0, fb.POSE_SIM_NOT_ADVANCING),               # one sample only
+    ([(9.5, 100.0), (9.9, None)], 10.0, fb.POSE_SIM_NOT_ADVANCING),   # sim time unknown
+    ([(9.1, 100.0), (9.5, 101.0), (9.6, 99.0), (9.9, 101.5)], 10.0,
+     fb.POSE_SIM_NOT_ADVANCING),                                     # went backwards
+    (None, 10.0, fb.POSE_SIM_NOT_ADVANCING),
+])
+def test_sim_progress_needs_sim_time_to_advance_while_poses_arrive(samples, now, code):
+    got, detail = fb.check_sim_progress(samples, now, 1.0, 0.1, 0.001)
+    assert got == code, detail
+    assert detail['window_s'] == 1.0 and detail['min_sim_advance_s'] == 0.1
+    if code is None:
+        assert detail['sim_advance_s'] >= 0.1 and detail['samples'] >= 2
+    else:
+        assert detail['reason']
+
+
+def test_sim_progress_uses_only_the_window_ending_now():
+    # advancing long ago, paused for the last second: not advancing now
+    old = _samples(5.0, 100, 0.02, 1.0)
+    paused = [(9.0 + 0.02 * i, old[-1][1]) for i in range(51)]
+    assert fb.check_sim_progress(old + paused, 10.0, 1.0, 0.1)[0] == fb.POSE_SIM_NOT_ADVANCING
+    assert fb.check_sim_progress(old + paused, 7.0, 1.0, 0.1)[0] is None
+
+
 def test_joint_state_and_pose_freshness_are_wall_receipt_times():
     names = ['a', 'b']
     assert fb.check_joint_states(None, 1.0, names, 0.5) == fb.JOINT_STATES_MISSING
@@ -472,6 +524,20 @@ def test_joint_state_and_pose_freshness_are_wall_receipt_times():
 
 
 # ==================================================================== tracker and readiness
+def test_tracker_keeps_recent_usable_samples_for_the_progress_check(cfg, weld):
+    tr = fb.FixedBasePoseTracker(cfg)
+    tr.on_description(fb.minimal_description(cfg.mount), 0.0)
+    for i in range(tr.RECENT_SAMPLES + 10):
+        tr.on_transforms(good(weld), 1.0 + 0.01 * i, 100.0 + 0.007 * i)
+    tr.on_transforms([], 50.0, 200.0)                 # unusable: not a sample
+    rec = tr.snapshot()['recent_usable_samples']
+    assert len(rec) == tr.RECENT_SAMPLES and rec[-1][0] == pytest.approx(1.0 + 0.01 * 1033)
+    assert rec == tr.recent_samples()
+    now = rec[-1][0]
+    assert fb.check_sim_progress(rec, now, cfg.progress_window_s, cfg.min_sim_advance_s)[0] \
+        is None
+
+
 def test_tracker_events_and_invalid_samples(cfg, weld):
     tr = fb.FixedBasePoseTracker(cfg)
     assert tr.on_transforms(good(weld), 1.0, 2.0) == [
@@ -496,6 +562,8 @@ def evidence(cfg, weld, now=10.0, **kw):
     e = fb.Evidence(description=fb.minimal_description(cfg.mount),
                     latest_usable_pose=fb.PoseSample(now - 0.05, 50.1,
                                                      fb.select_entries(good(weld))),
+                    recent_pose_samples=tuple((now - 0.05 * k, 50.1 - 0.035 * k)
+                                              for k in range(19, -1, -1)),
                     latest_joint_states=(now - 0.01, {'j1': 0.0, 'j2': 0.0}), clock=c,
                     controllers={'joint_state_broadcaster': 'active',
                                  'leg_trajectory_controller': 'active'},
@@ -511,8 +579,10 @@ def test_assess_ready_with_complete_evidence(cfg, weld):
     assert rep['checks']['body_pose_xyz_rpy'] == pytest.approx(cfg.mount.xyz_rpy())
     assert {k for k, v in rep['checks'].items() if isinstance(v, dict) and 'ok' in v} == {
         'robot_description', 'frame_body_link', 'spawn_identity', 'attachment',
-        'body_pose_fresh', 'joint_states', 'sim_clock', 'controllers',
+        'body_pose_fresh', 'body_pose_sim_progress', 'joint_states', 'sim_clock', 'controllers',
         'joint_state_publishers', 'command_publishers', 'action_clients'}
+    assert rep['checks']['body_pose_sim_progress']['detail']['sim_advance_s'] == \
+        pytest.approx(19 * 0.035)
 
 
 @pytest.mark.parametrize('kw, code', [
@@ -531,10 +601,27 @@ def test_assess_ready_with_complete_evidence(cfg, weld):
     # unmeasured count (None) is not READY (behaviour change: evidence must now carry the count)
     ({'action_clients': 1}, fb.COMMAND_ACTION_CLIENTS),
     ({'action_clients': None}, fb.COMMAND_ACTION_CLIENTS),
+    # readiness needs sim progress while the pose arrives, not just fresh receipts (paused world)
+    ({'recent_pose_samples': ()}, fb.POSE_SIM_NOT_ADVANCING),
+    ({'recent_pose_samples': tuple((10.0 - 0.05 * k, 50.1) for k in range(20, -1, -1))},
+     fb.POSE_SIM_NOT_ADVANCING),
 ])
 def test_assess_names_each_failure(cfg, weld, kw, code):
     ready, codes, _ = fb.assess(evidence(cfg, weld, **kw), cfg, 10.0, ['j1', 'j2'])
     assert not ready and code in codes
+
+
+def test_assess_paused_world_is_not_ready_although_every_stream_is_fresh(cfg, weld):
+    """The case receipt freshness misses: /clock and pose/info keep arriving, time stands."""
+    c = fb.ClockMonitor(cfg.sim_stall_s, cfg.clock_reset_tol_s)
+    for k in range(200):
+        c.on_clock(9.0 + 0.005 * k, 50.0)
+    e = evidence(cfg, weld, clock=c, recent_pose_samples=tuple(
+        (9.0 + 0.02 * k, 50.0) for k in range(51)))
+    ready, codes, rep = fb.assess(e, cfg, 10.0, ['j1', 'j2'])
+    assert not ready
+    assert fb.CLOCK_NOT_ADVANCING in codes and fb.POSE_SIM_NOT_ADVANCING in codes
+    assert rep['checks']['body_pose_fresh']['ok']        # fresh by receipt, yet not READY
 
 
 def test_assess_stale_pose_and_stalled_clock_are_separate(cfg, weld):

@@ -94,8 +94,9 @@ class FakeObserver(ob.FixedBaseObserver):
     """The real assessment, without ROS: evidence is injected."""
 
     def __init__(self, cfg, joint_names, domain_id, description=None, controllers=None,
-                 open_error=None):
+                 open_error=None, paused=False):
         super().__init__(cfg, joint_names, domain_id)
+        self._paused = paused        # a paused world: /clock and pose/info arrive, time stands
         self._desc = fb.minimal_description(cfg.mount) if description is None else description
         self._ctrl = controllers or {'joint_state_broadcaster': 'active',
                                      'leg_trajectory_controller': 'active'}
@@ -119,10 +120,13 @@ class FakeObserver(ob.FixedBaseObserver):
         weld = fb.parse_robot_description(fb.minimal_description(self.cfg.mount))
         msg = [fb.make_transform('spiderx', fb.Pose()),
                fb.make_transform('dummy_link', weld.model_to_dummy)]
-        self.tracker.on_transforms(msg, now, 1.0)
-        self._sim = getattr(self, '_sim', 1.0) + 0.1
-        self.clock.on_clock(now - 0.2, self._sim)
-        self.clock.on_clock(now, self._sim + 0.05)
+        rate = 0.0 if self._paused else 0.7                      # sim s per wall s
+        self._sim = getattr(self, '_sim', 1.0) + 0.5 * rate
+        for i in range(21):                                      # the last 0.5 s of pose/info
+            w = now - 0.5 + 0.025 * i
+            self.tracker.on_transforms(msg, w, self._sim - rate * (now - w))
+        self.clock.on_clock(now - 0.2, self._sim - 0.2 * rate)
+        self.clock.on_clock(now, self._sim)
         self.latest_joint_states = (now, {j: 0.0 for j in self.joint_names})
 
     def controllers(self, timeout_s=5.0):
@@ -149,6 +153,9 @@ def test_cli_ready_and_evidence_never_overwritten(tmp_path, capsys):
 @pytest.mark.parametrize('kw, code', [
     ({'description': fb.minimal_description(fixed_base=False)}, fb.DESCRIPTION_NOT_FIXED_BASE),
     ({'controllers': {'joint_state_broadcaster': 'active'}}, fb.CONTROLLERS_NOT_ACTIVE),
+    # a paused world: every stream is fresh by receipt, but simulation time does not advance
+    ({'paused': True}, fb.CLOCK_NOT_ADVANCING),
+    ({'paused': True}, fb.POSE_SIM_NOT_ADVANCING),
 ])
 def test_cli_not_ready_names_the_code(kw, code, capsys):
     fac = lambda c, j, d: FakeObserver(c, j, d, **kw)                         # noqa: E731

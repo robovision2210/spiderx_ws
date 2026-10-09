@@ -80,9 +80,23 @@ def codes(traj, plan):
 
 
 # ==================================================================== gate and contract
-def test_m61_gate_is_false_and_pinned():
-    assert c61.M61_LIVE_DISPATCH_ENABLED is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED is False
-    assert 'HARD-DISABLED' in gr.LIVE_STATE
+# Both build modes keep meaningful, passing tests. test/m61_gate.py is the ONE test-side pin of
+# the committed gate (False on this branch; the enabling patch flips the gate and the pin and
+# nothing else). The committed value is checked against the pin; the disabled behaviour is
+# tested with the gate set False explicitly (fixture `disabled`), the enabled wiring with the
+# gate set True explicitly and in-memory fakes only (fixture `enabled`). No test reaches a
+# simulator or a controller in either mode.
+@pytest.fixture
+def disabled(monkeypatch):
+    monkeypatch.setattr(c61, 'M61_LIVE_DISPATCH_ENABLED', False)      # tests only
+
+
+def test_m61_gate_matches_the_single_test_expectation():
+    assert isinstance(m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED, bool)
+    assert c61.M61_LIVE_DISPATCH_ENABLED is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED
+    # the CLI's stated state follows the committed gate (computed at import)
+    assert ('HARD-DISABLED' in gr.LIVE_STATE) is (not c61.M61_LIVE_DISPATCH_ENABLED)
+    assert ('ENABLED for exactly one goal' in gr.LIVE_STATE) is c61.M61_LIVE_DISPATCH_ENABLED
     # the M6.0-D gate is separate and untouched by M6.1
     assert lc.LIVE_DISPATCH_ENABLED is m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED
 
@@ -95,7 +109,7 @@ def _package_sources():
                 yield name, f.read()
 
 
-def test_m61_gate_is_a_single_false_literal():
+def test_m61_gate_is_a_single_literal_equal_to_the_pin():
     hits = [(n, line) for n, src in _package_sources() for line in src.splitlines()
             if re.match(r'\s*(\w+\.)?M61_LIVE_DISPATCH_ENABLED\s*=', line)]
     assert hits == [('m61_live_contract.py',
@@ -103,13 +117,52 @@ def test_m61_gate_is_a_single_false_literal():
                      f'{m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED}')]
 
 
+M61_GATE_FILES = ('m61_live_contract.py', 'm6_gait_replay.py', 'm61_goal.py', 'm61_gates.py',
+                  'm61_trot_cycle.py', 'm61_limits.py', 'm61_live_adapter.py', 'm61_mock.py')
+ENABLERS = ('os.environ', 'getenv', 'DISPATCH_ENABLED or', "add_argument('--enable",
+            "add_argument('--yes'", "add_argument('--force'", 'DISPATCH_ENABLED = True')
+
+
+def _enabler_hits(srcs, expected):
+    """(file, what) for every way the M6.1 sources could enable dispatch other than THE gate
+    line. That line must appear exactly once, in m61_live_contract.py, with the pinned value;
+    only that exact line is exempt from the scan, so the scan means the same in both modes."""
+    gate = f'M61_LIVE_DISPATCH_ENABLED = {expected}'
+    hits = []
+    for name in M61_GATE_FILES:
+        lines = srcs[name].splitlines()
+        if name == 'm61_live_contract.py':
+            n = lines.count(gate)
+            if n != 1:
+                hits.append((name, f'{gate!r} found {n} times'))
+            lines = [line for line in lines if line != gate]
+        text = '\n'.join(lines)
+        hits += [(name, w) for w in ENABLERS if w in text]
+    return hits
+
+
 def test_no_environment_or_flag_can_enable_m61_dispatch():
-    srcs = dict(_package_sources())
-    for name in ('m61_live_contract.py', 'm6_gait_replay.py', 'm61_goal.py', 'm61_gates.py',
-                 'm61_trot_cycle.py', 'm61_limits.py', 'm61_live_adapter.py', 'm61_mock.py'):
-        for w in ('os.environ', 'getenv', 'DISPATCH_ENABLED or', "add_argument('--enable",
-                  "add_argument('--yes'", "add_argument('--force'", 'DISPATCH_ENABLED = True'):
-            assert w not in srcs[name], (name, w)
+    assert _enabler_hits(dict(_package_sources()),
+                         m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED) == []
+
+
+@pytest.mark.parametrize('expected', [False, True])
+def test_the_enabler_scan_has_teeth_in_both_build_modes(expected):
+    gate = f'M61_LIVE_DISPATCH_ENABLED = {expected}'
+    clean = dict({n: 'X = 1\n' for n in M61_GATE_FILES}, **{'m61_live_contract.py': gate})
+    assert _enabler_hits(clean, expected) == []
+    # the gate line with the other value, a missing or a duplicated gate line
+    flipped = f'M61_LIVE_DISPATCH_ENABLED = {not expected}'
+    for text in (flipped, 'X = 1', f'{gate}\n{gate}'):
+        assert _enabler_hits(dict(clean, **{'m61_live_contract.py': text}), expected)
+    # an indented or second assignment is never the exempt line
+    for text in (f'{gate}\n    M61_LIVE_DISPATCH_ENABLED = True',
+                 f'{gate}\nc61.M61_LIVE_DISPATCH_ENABLED = True'):
+        assert ('m61_live_contract.py', 'DISPATCH_ENABLED = True') in _enabler_hits(
+            dict(clean, **{'m61_live_contract.py': text}), expected)
+    for name in M61_GATE_FILES[1:]:
+        for w in ENABLERS:
+            assert (name, w) in _enabler_hits(dict(clean, **{name: f'y = {w}'}), expected)
 
 
 def test_only_the_m61_adapter_imports_rclpy():
@@ -119,7 +172,7 @@ def test_only_the_m61_adapter_imports_rclpy():
         assert 'import rclpy' not in srcs[name] and 'from rclpy' not in srcs[name], name
 
 
-def test_live_cli_refused_exit_3_before_anything(tmp_path, monkeypatch, capsys):
+def test_live_cli_refused_exit_3_before_anything(disabled, tmp_path, monkeypatch, capsys):
     def never(*a, **k):
         raise AssertionError('must not be reached')
     monkeypatch.setattr(tc, 'load_plan', never)
@@ -131,17 +184,22 @@ def test_live_cli_refused_exit_3_before_anything(tmp_path, monkeypatch, capsys):
 
 
 def test_live_cli_with_gate_false_imports_no_ros_client():
+    # the gate is set False inside the child, so this tests the disabled path in either build
+    # mode and can never reach a ROS graph, whatever is running on domain 0
     code = ('import sys; from spiderx_controller import m6_gait_replay as m;'
+            'm.c61.M61_LIVE_DISPATCH_ENABLED = False;'
             'rc = m.main(["m6_gait_replay", "--live", "--domain-id", "0"]);'
             'bad=[x for x in sys.modules if x.split(".")[0] == "rclpy"'
-            ' or x.endswith("m61_live_adapter") or x.endswith("m6_live_adapter")];'
+            ' or x.endswith("m61_live_adapter") or x.endswith("m6_live_adapter")'
+            ' or x.endswith("m61a_live")];'
             'print(rc, bad); sys.exit(0 if rc == 3 and not bad else 1)')
     out = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True,
                          stdin=subprocess.DEVNULL)
     assert out.returncode == 0, out.stdout + out.stderr
+    assert 'REFUSED' in out.stdout and 'HARD-DISABLED' in out.stdout
 
 
-def test_gate_false_blocks_the_live_wiring_too(plan, tmp_path):
+def test_gate_false_blocks_the_live_wiring_too(disabled, plan, tmp_path):
     def never(*a, **k):
         raise AssertionError('must not be reached')
     with pytest.raises(PermissionError):
@@ -591,6 +649,7 @@ EXPECTED = {   # scenario: (state, reason, goals, cancels, gates tripped)
     'competing_publisher': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
     'competing_client': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
     'competing_client_late': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'sim_paused': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
 }
 
 
@@ -626,6 +685,7 @@ FIXED_BASE_REFUSAL_CODES = {
     'spawn_offset': 'frame_spawn_not_identity',
     'description_mismatch': 'frame_body_link_inconsistent',
     'mount_not_approved': 'mount_not_approved',
+    'sim_paused': 'body_pose_sim_time_not_advancing',
 }
 
 
@@ -671,7 +731,8 @@ def test_success_outcome_fields(plan):
     assert out['tracking']['max_inflight_error_rad'] < 0.02
     assert out['tracking']['detail']['uncovered_intervals'] == []
     assert out['base_constraint'] == 'fixed' and out['contact']['status'] == 'not_measured'
-    assert out['m61_live_dispatch_enabled'] is False
+    # the outcome records the committed gate truthfully (False here; True on an enabling branch)
+    assert out['m61_live_dispatch_enabled'] is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED
     assert out['limits']['confirmation_word'] == 'SEND-ONE-TROT-CYCLE'
     assert 'approved_point_times_s' not in out['limits']                 # no M6.0-D content
     assert out['m61_limits'] == c61.APPROVED_LIMITS
@@ -784,7 +845,8 @@ def test_mock_cli_writes_the_evidence_directory(plan, tmp_path):
     assert json.loads((d / 'readiness_after.json').read_text())['when'] == 'after_confirmation'
     g = json.loads((d / 'gates.json').read_text())
     assert set(gates.GATE_IDS) <= set(g['gates']) and g['contact']['status'] == 'not_measured'
-    assert 'm61_live_dispatch_enabled: False' in (d / 'git_state.txt').read_text()
+    assert (f'm61_live_dispatch_enabled: {m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED}'
+            in (d / 'git_state.txt').read_text())
     assert 'ROS_DISTRO' in (d / 'environment.txt').read_text()
 
 
@@ -803,6 +865,17 @@ def test_mock_cli_refusal_still_records_evidence(plan, tmp_path):
     assert json.loads((d / evd.MOCK_OUTCOME).read_text())['goals_sent'] == 0
 
 
+@pytest.mark.parametrize('gate', [False, True])
+def test_evidence_records_the_gate_as_it_is_in_both_modes(gate, plan, tmp_path, monkeypatch):
+    """Offline only (dry run, gate state helper): the recorded gate follows the gate itself."""
+    monkeypatch.setattr(c61, 'M61_LIVE_DISPATCH_ENABLED', gate)        # tests only
+    assert gr._gate_state()['m61_live_dispatch_enabled'] is gate
+    assert c61.as_dict()['m61_live_dispatch_enabled'] is gate
+    assert cli(plan, tmp_path, '--dry-run') == gr.EXIT_OK
+    data = json.loads((tmp_path / 'dry_run' / TRAJECTORY_ID / 'dry_run_report.json').read_text())
+    assert data['m61_live_dispatch_enabled'] is gate and data['goals_sent'] == 0
+
+
 def test_no_write_writes_nothing(plan, tmp_path):
     assert cli(plan, tmp_path, '--mock', '--no-write') == gr.EXIT_OK
     assert cli(plan, tmp_path, '--dry-run', '--no-write') == gr.EXIT_OK
@@ -814,7 +887,7 @@ def test_dry_run_report_is_never_overwritten(plan, tmp_path):
     p = tmp_path / 'dry_run' / TRAJECTORY_ID / 'dry_run_report.json'
     data = json.loads(p.read_text())
     assert data['goal_fingerprint'] == FINGERPRINT and data['goals_sent'] == 0
-    assert data['m61_live_dispatch_enabled'] is False
+    assert data['m61_live_dispatch_enabled'] is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED
     before = p.read_bytes()
     assert cli(plan, tmp_path, '--dry-run') == gr.EXIT_REFUSED
     assert p.read_bytes() == before
@@ -918,6 +991,17 @@ def test_enabled_live_gate_trip_and_refusals(enabled, plan, tmp_path):
     assert f.made[0].sent == []
 
 
+def test_enabled_live_refuses_a_paused_world_before_any_goal(enabled, plan, tmp_path):
+    """Fakes only: /clock and pose/info keep arriving from a paused world, so the body pose is
+    fresh by receipt; readiness still refuses because simulation time does not advance."""
+    f = Factories(plan, **m61_mock.SCENARIOS['sim_paused'])
+    assert run_enabled(plan, tmp_path, f, '20261003T120004Z') == gr.EXIT_REFUSED
+    out = json.loads((tmp_path / '20261003T120004Z' / evd.LIVE_OUTCOME).read_text())
+    assert f.made[0].sent == [] and out['goals_sent'] == 0
+    res = out['readiness'][0]['result']
+    assert res['failure_codes'] == [fb.POSE_SIM_NOT_ADVANCING], res
+
+
 def test_enabled_live_still_needs_domain_and_evidence(enabled, plan, tmp_path):
     f = Factories(plan)
     args = gr.parse_args(['--live', '--out', str(tmp_path)])
@@ -1007,6 +1091,27 @@ def test_a_late_competing_client_is_caught_by_the_pre_dispatch_recheck(plan):
     out, session, _ = gr.run_mock(plan, 'competing_client_late', word())
     assert session.transport.owner_snapshots == 2
     assert out['state'] == lpb.REFUSED and out['goals_sent'] == 0
+
+
+def test_sim_progress_wrapper_needs_advancing_sim_time():
+    cfg = gr.load_fixed_base_config(SRC_CONFIG)
+    base = lambda: rd.ReadinessResult(True, 'compatible', (), (), 0.0)      # noqa: E731
+    running = {'recent_usable_samples': tuple((9.0 + 0.02 * i, 100.0 + 0.014 * i)
+                                              for i in range(51))}           # RTF 0.7
+    paused = {'recent_usable_samples': tuple((9.0 + 0.02 * i, 100.0) for i in range(51))}
+    res = gr.with_sim_progress(base, lambda: running, lambda: 10.0, cfg)()
+    assert res.ready and res.report['m61a_sim_progress']['ok']
+    assert res.report['m61a_sim_progress']['sim_advance_s'] == pytest.approx(0.7)
+    for snap in (paused, {}, {'recent_usable_samples': ()}):
+        res = gr.with_sim_progress(base, lambda: snap, lambda: 10.0, cfg)()
+        assert not res.ready and res.failure_codes == (fb.POSE_SIM_NOT_ADVANCING,)
+    # the same samples one window later are not evidence of progress NOW
+    res = gr.with_sim_progress(base, lambda: running, lambda: 11.5, cfg)()
+    assert not res.ready
+    # a result that is already NOT READY keeps its codes and gains this one
+    bad = lambda: rd.ReadinessResult(False, 'compatible', ('x',), ('joint_states_stale',), 0.0)  # noqa: E731,E501
+    res = gr.with_sim_progress(bad, lambda: paused, lambda: 10.0, cfg)()
+    assert res.failure_codes == ('joint_states_stale', fb.POSE_SIM_NOT_ADVANCING)
 
 
 def test_command_owner_wrapper_unknown_counts_are_not_ready():
