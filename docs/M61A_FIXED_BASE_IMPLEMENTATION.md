@@ -1,9 +1,14 @@
 # M6.1-A – Fixed-Base Simulation and Body-Pose Observability: Implementation
 
 **Status: IMPLEMENTED; verified offline / mock / isolated domain, and in Cloud simulation for
-phase 1.** The §10 phase-1 launch-only observation passed in three separate Cloud launches at
-`7f4c30f` (Gazebo Fortress GUI on Xvfb with software rendering, real-time factor about 0.7; no goal
-sent): [`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md). It has **not** run on the owner
+phase 1.** In three separate Cloud launches at `7f4c30f` (Gazebo Fortress GUI on Xvfb with
+software rendering, real-time factor about 0.7; no goal sent), every per-run §10 phase-1
+criterion passed. Still open:
+- criterion 6 passes as `/scan` pose agreement but fails under a strict per-beam reading;
+- pose-stream liveness is unresolved;
+- run 1's visual check is unmeasured.
+
+Closeout: [`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md) §8. It has **not** run on the owner
 PC. The numbers marked *provisional* are unchanged; phase 2 is not started. Both live gates stay
 `False`:
 - `m6_live_contract.LIVE_DISPATCH_ENABLED = False` (M6.0-D);
@@ -462,10 +467,14 @@ Record the exact commit (`git rev-parse HEAD`) with every result.
 
 ### Phase 1 – launch-only fixed-base observation (dispatch disabled; no goal)
 
-**Cloud result (`7f4c30f`):** passed in three separate launches; criteria table, two non-counted
-launch attempts, the `/scan` cube-map-seam beams and the limits are in
-[`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md) §4. The owner-PC run below is still
-outstanding.
+**Cloud result (`7f4c30f`):** every per-run criterion passed in three separate launches. The
+details are in [`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md) §4 and §8:
+- the requirement-by-run table and the two non-counted launch attempts;
+- the `/scan` masks and the frozen harness;
+- open: criterion 6 under its strict per-beam reading, and pose-stream liveness.
+
+The owner-PC run below is still outstanding. Phase 2 has a source-verified Cloud plan,
+[`M61_CLOUD_ONE_CYCLE_PLAN.md`](M61_CLOUD_ONE_CYCLE_PLAN.md), with an unapplied enabling patch.
 
 ```bash
 cd ~/spiderx_ws && git status --short && git rev-parse HEAD     # clean, record the commit

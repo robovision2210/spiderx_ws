@@ -15,12 +15,19 @@ Both live gates stayed `False` throughout (`m6_live_contract.LIVE_DISPATCH_ENABL
 `m61_live_contract.M61_LIVE_DISPATCH_ENABLED`). No goal and no command was sent to any simulated
 controller. No hardware was involved.
 
-**Outcome (Cloud simulation, `7f4c30f`): M6.1-A phase-1 launch-only observation PASSED in three
-separate launches** against the §10 provisional criteria of
-[`M61A_FIXED_BASE_IMPLEMENTATION.md`](M61A_FIXED_BASE_IMPLEMENTATION.md), with two recorded
-qualifications: the visual criterion is qualitative (run 1 inconclusive, runs 2–3 legs clear), and
-the controller-reference check was not measured in run 1. Two earlier launch attempts did not
-become observation runs and are reported in §4.1. Owner-PC verification is still outstanding.
+**Outcome (Cloud simulation, `7f4c30f`).** Every **per-run** criterion of the §10 provisional list
+of [`M61A_FIXED_BASE_IMPLEMENTATION.md`](M61A_FIXED_BASE_IMPLEMENTATION.md) passed in three separate
+launches (1, 1b, 2a–2e, 3, 4, 7, 8, plus mount and zero commands). The requirement-by-run table is
+in §8.1. The remaining items:
+- **Criterion 5 (visual):** met by runs 2–3; run 1 is UNMEASURED (inconclusive).
+- **Criterion 6 (`/scan`):** passes as **pose agreement** (fitted pose within 0.4 mm). Under the
+  strict per-beam reading of M0 it **fails**: 84–88 % of individual ranges are within ±8 mm,
+  systematically, with a maximum of 18 mm (§8.3). This is an owner decision.
+- **Pose-stream liveness:** UNRESOLVED (§8.2).
+- **Run 1's supplementary controller-hold check:** UNMEASURED.
+
+Two earlier launch attempts did not become observation runs (§4.1). Owner-PC verification is still
+outstanding.
 
 ## 1. The incident (first Cloud attempt, `41fc10f`)
 
@@ -231,8 +238,9 @@ a few milliseconds of runs 1 and 3.
   cube-map seams (lidar-frame −135°, −45°, +45°), where Gazebo returns the range of a
   neighbouring direction. With the eight beams within 1° of the seams excluded (and nothing
   else), the fitted lidar pose is within 0.4 mm and 0.11 mrad of the weld-implied pose (robust
-  1σ ≤ 0.31 mm), and every surface's median residual is within 2.4 mm: the scan agrees with the
-  welded pose well inside ±8 mm. The raw all-beam result is preserved next to it.
+  1σ ≤ 0.31 mm), and every surface's median residual is within 2.4 mm. The **fitted pose**
+  agrees with the welded pose well inside ±8 mm; individual ranges do not all stay within ±8 mm
+  (§8.3). The raw all-beam result is preserved next to it.
 - **Controllers and zero commands.** Both controllers were active at the start and end of every
   observation. Nothing published on `/leg_trajectory_controller/joint_trajectory` and no goal
   status existed; the controller reference stayed constant with a tracking error of about 1e-11
@@ -255,6 +263,7 @@ Each folder holds a README and a `SHA256SUMS` over every file (`sha256sum -c SHA
 | [`evidence/m61a_cloud/m6d_diagnosis/`](evidence/m61a_cloud/m6d_diagnosis/README.md) | Diagnosis runs, experiments and A/B (170 files) | `53bf477f3125dd6a95c929324a4ec70a2712b3d5e008761d7de61450e4a61992` |
 | [`evidence/m61a_cloud/verify_7f4c30f/`](evidence/m61a_cloud/verify_7f4c30f/README.md) | Build, focused and full tests, static checks (96 files) | `6c0345003b19076d47f27261d4267d7ae1c24bfedfd531f3bc71e616a4b7531f` |
 | [`evidence/m61a_cloud/observation_7f4c30f/`](evidence/m61a_cloud/observation_7f4c30f/README.md) | Three runs, two non-counted attempts, tools (190 files) | `4226c0d88525f6061ef7c51673857fc9bf33c0b907973a0005d914980c479e18` |
+| [`evidence/m61a_cloud/closeout/`](evidence/m61a_cloud/closeout/README.md) | Requirement-by-run table, scan masks, frozen harness (6 files; derived, read-only on the observation) | `83eaa442c6776e1db87882d287f1a98c6926c924601cac1addf1432975949b61` |
 
 The incident's original archive (outside the repository) has SHA-256
 `1f6c9ae4aa9fe5e6492046ac02f09f838d8685c13d8cc03bb7ad1d367d99f85b`.
@@ -292,11 +301,180 @@ keyboard Ctrl+C).
   relaunch; the server-only `headless:=true` path avoids the handshake but needs EGL, which this
   conda build lacks.
 - **Visual criterion** is qualitative; run 1 has no foot-level view.
+- **Criterion 6, per-beam reading** fails systematically (§8.3); the owner decides which reading
+  §10 intends.
+- **Pose-stream liveness** is unresolved: nothing moved, so a stale but constant pose stream
+  would have looked the same (§8.2). The phase-2 plan closes it.
 - **Weld exactness.** A world weld cannot show attachment noise; the attachment tolerances still
   need the separately approved phase-2 cycle (motion) for evidence under load.
 - **Not shown by any of this:** walking, contact, balance, odometry or hardware behaviour. No goal
   was sent; both gates stay `False`.
 
-**Before a separately approved fixed-base cycle (M6.1 phase 2):** owner review of this Cloud
-phase-1 evidence (or the same observation on the owner PC), approval of the provisional §10
-criteria as used here, and the separate enabling change described in M6.1. None is done here.
+**Before a separately approved fixed-base cycle (M6.1 phase 2):**
+- owner review of this Cloud phase-1 evidence (or the same observation on the owner PC);
+- approval of the provisional §10 criteria as used here, including the criterion-6 reading;
+- the separate enabling change, prepared only as an unapplied patch.
+
+The source-verified procedure is [`M61_CLOUD_ONE_CYCLE_PLAN.md`](M61_CLOUD_ONE_CYCLE_PLAN.md).
+None of it is done here.
+
+## 8. Closeout of the Cloud observation (after `b910df1`)
+
+The tables are generated from the preserved evidence by
+[`evidence/m61a_cloud/closeout/closeout_tables.py`](evidence/m61a_cloud/closeout/README.md), which only
+reads `observation_7f4c30f/` (its `SHA256SUMS` still verifies). Per-cell evidence paths are in
+`closeout/requirements_by_run.json`.
+
+### 8.1 Requirement by run (PASS / FAIL / UNMEASURED)
+
+| ID | Criterion (M6.1-A §10 and supplementary) | Scope | run_01 | run_02 | run_03 | Evidence in `observation_7f4c30f/run_NN/` |
+|---|---|---|---|---|---|---|
+| 1 | Preflight READY | per run | PASS | PASS | PASS | `observer/<UTC>/observation.json` (preflight), `preflight.txt` |
+| 1b | 120 s observation READY at its end | per run | PASS | PASS | PASS | `observer/<UTC>/observation.json` (observe), `observe.txt` |
+| 2a | Body z mean within 1 mm of 0.125 m; z range ≤ 1 mm | per run | PASS (0.125; 0) | PASS | PASS | observation `statistics.body` |
+| 2b | Attachment ≤ 1 mm and ≤ 0.0033 rad | per run | PASS (0; 0) | PASS | PASS | `statistics.attachment` |
+| 2c/2d/2e | Spawn ≤ 1 mm; link ≤ 0.1 mm; tilt ≤ 0.0033 rad | per run | PASS (0; 0; 0) | PASS | PASS | `statistics` |
+| 3 | Pose receipt max gap < 1.0 s (p99.9 recorded) | per run | PASS (0.076; 0.053 s) | PASS (0.068; 0.052 s) | PASS (0.061; 0.054 s) | `statistics.pose_receipt` |
+| 3 | Joint-state sim gap ≤ 0.25 s | per run | PASS (0.05 s) | PASS (0.02 s) | PASS (0.01 s) | `statistics.joint_state_sim_gap_max_s` |
+| 4 | No unexpected sample codes; `frame_id` recorded | per run | PASS (none; `''`) | PASS | PASS | `statistics.sample_codes`, `header_frame_ids` |
+| 5 | Visual: legs clear of the ground (GUI screenshot) | per campaign | **UNMEASURED** (inconclusive: no foot-level view) | PASS (qualitative) | PASS (qualitative) | `captures/screenshot_gui*.png` |
+| 6a | `/scan` pose agreement, seam beams masked (gated) | per run | PASS (dx 0.38, dy 0.08 mm; 1σ 0.30 mm) | PASS (0.28, 0.03 mm) | PASS (0.17, 0.02 mm) | `captures/scan_check_seams_excluded.json` |
+| 6b | `/scan` per-surface median ≤ ±8 mm, seam beams masked (gated) | per run | PASS (worst 2.4 mm) | PASS (1.6 mm) | PASS (1.9 mm) | same |
+| 6c | Every individual range within ±8 mm (strict per-beam reading; reported) | per run | **FAIL** (85.8 %; max 17.4 mm) | **FAIL** (88.4 %; 18.0 mm) | **FAIL** (84.4 %; 18.9 mm) | `captures/capture.json` → `closeout/scan_masks.json` |
+| 6-raw | Pose agreement with no seam mask (reported) | per run | **FAIL** (fit 0.40 mm, but 1σ 15.5 mm) | **FAIL** | **FAIL** | `captures/scan_check.json` |
+| 7 | Ownership: action clients 0, command publishers 0 (CLI and observer, start and end) | per run | PASS | PASS | PASS | `captures/action_info.txt`, `command_topic_info.txt`, observation `graph` |
+| 8 | Clean shutdown | per run | PASS (3 s) | PASS (3 s) | PASS (4 s) | `shutdown.txt` |
+| M | Mount from the running model: weld world→`dummy_link` (0, 0, 0.125) in `/robot_description` and Gazebo | per run | PASS | PASS | PASS | `captures/capture.json`, `ign_link_dummy_link.txt`, `ign_model_pose.txt` |
+| Z | Zero commands: no goal line, 0 command messages, 0 goal statuses, observer goals 0 / publishers 0 | per run | PASS | PASS | PASS | `launch.log`, `captures/capture.json`, observation |
+| H1 | Supplementary: controller reference constant | per run | **UNMEASURED** (helper defect) | PASS (0.0 rad; 207 msgs) | PASS (0.0 rad; 290) | `captures/capture.json`, `analysis.json` |
+| H2 | Supplementary: joint states unchanged | per run | PASS (4.8e-19 rad) | PASS | PASS | `captures/capture.json` |
+
+**Three complete passes?** §10 makes criteria 1–4, 7 and 8 per-run ("every preflight", "in each
+120 s run"), and all three runs meet them. Criterion 5 asks for "a screenshot from the GUI", which
+runs 2 and 3 supply. H1 and H2 are this session's supplementary checks. Criterion 6 is
+discussed in §8.3; another run would not change 6c, because the error is systematic. **No further
+observation was run.** The harness was frozen anyway (§8.7).
+
+### 8.2 Physical-body / world-frame binding (with empty `frame_id`)
+
+**What the stream contains.** Each `/spiderx/sim/world_poses` message carries:
+- an entry with `child_frame_id` `spiderx`, the model;
+- an entry with `child_frame_id` `dummy_link`.
+
+Both have `header.frame_id` `''` and stamp 0 (the bridge does not fill them), in 532–562 captured
+messages per run. `base_link` and `lidar_link` have **no** entries: sdformat's fixed-joint
+reduction merges them into `dummy_link`. The binding therefore rests on the entry **names**, the
+configured `model_name: spiderx` / `body_link: dummy_link` (`config/m61a_fixed_base.yaml`), and the
+SceneBroadcaster semantics: a top-level model pose is given in the Gazebo world frame, and a link
+pose relative to its model. M3 confirmed the link semantics at run time: Gazebo `lf_foot_1` versus
+FK within 5.4e-11 m.
+
+| Transform in `T_world_body = T_world_model · T_model_dummy · T_dummy_body` | Source | Status |
+|---|---|---|
+| `T_world_model` | Gazebo entry `spiderx` | **Measured** (simulator state): identity in every sample |
+| `T_model_dummy` | Gazebo entry `dummy_link` | **Measured**: (0, 0, 0.125), zero rotation in every sample |
+| `T_dummy_body` (`base_link`) | URDF `dummy_joint`: fixed, no `<origin>`, so identity (`m61a_fixed_base.parse_robot_description`) | **Assumed** from the description; the conversion rule is checked offline (`test_m61a_fixed_base.py`); not reported by Gazebo |
+| `T_body_lidar` (for `/scan` only) | URDF `lidar_joint` (0.051, −0.045, 0.141, yaw π/2) | **Assumed** from the description |
+
+**Independent corroboration.** `/scan` is rendered from the sensor's actual pose in the simulated
+world. Its fitted planar pose (x, y, yaw) of `T_world_body · T_body_lidar` agrees with the
+weld-implied value to ≤ 0.4 mm and ≤ 0.11 mrad. That ties the planar body pose to the world
+geometry independently of `frame_id` and of the pose stream. It checks the measured and the
+assumed transforms **jointly**: two errors that cancel exactly are not excluded.
+
+**Unresolved (marked explicitly):**
+- **U-L1 Liveness of the pose stream.** Each entry had exactly one distinct value over each 10 s
+  capture, and the observer's freshness proves only that messages arrive. A stale but constant
+  stream would have looked identical in a motionless phase. Closing it needs motion: plan E9,
+  leg-link entries versus FK during the cycle.
+- **U-L2 Independent z, roll and pitch.** `pose/info` and `ign model` read the same simulator
+  state, so they are not independent of each other. The horizontal scan cannot see z, roll or
+  pitch, and the screenshots are qualitative. The body height of 0.125 m is therefore a
+  **simulator-state measurement without an independent sensor confirmation**. It is acceptable
+  only if the owner accepts the Gazebo state as ground truth for a welded body.
+
+### 8.3 `/scan`: raw versus seam-filtered, masks, fitted pose versus individual ranges
+
+**Frozen masks**, identical in all three runs (`closeout/scan_masks.json`; `closeout/frozen_harness.json`):
+
+| Mask | Indices (lidar angle) | Justification |
+|---|---|---|
+| Cube-map seams | 45 (−135°), 46 (−134°), 135 (−45°), 136 (−44°), 225 (+45°), 226 (+46°), 315 (+135°), 316 (+136°) | Gazebo renders `gpu_lidar` through 90° camera faces. In every run beams 45, 135 and 225 returned the range of a neighbouring direction (errors −2.56, +2.68 and −2.38 m) while their neighbours were normal. The ±1° float rule also masks one neighbour on one side of each seam and the +135° seam (315), which never deviated; it is frozen as an explicit list |
+| Edge grazing (at the weld pose) | 117, 118, 210, 222, 309, 334 | The expected range changes by more than 5 cm within ±0.5°, so a tiny angular offset switches surfaces |
+
+| Result | run_01 | run_02 | run_03 |
+|---|---|---|---|
+| Raw fit (all 353 usable beams): dx, dy / RMS 1σ (x, y) / max residual | 0.40, 0.16 mm / 15.5, 15.9 mm / 2679 mm | 0.31, 0.11 mm / 15.5, 15.9 mm / 2681 mm | 0.19, 0.08 mm / 15.5, 15.9 mm / 2681 mm |
+| Seam-filtered fit (346 beams): dx, dy, dyaw / robust 1σ | 0.38, 0.08 mm, 0.02 mrad / 0.30 mm | 0.28, 0.03 mm, 0.11 mrad / 0.25 mm | 0.17, 0.02 mm, 0.04 mrad / 0.29 mm |
+| Individual ranges within ±8 mm (346 beams, both masks) | 85.8 % | 88.4 % | 84.4 % |
+| Walls at 0–30° incidence: median / p95 / max \|r\| | 2.6 / 8.8 / 12.5 mm | 2.2 / 8.0 / 15.4 mm | 2.6 / 8.8 / 12.1 mm |
+| Walls at 30–45° incidence: median / p95 / max \|r\| | 7.3 / 14.7 / 17.0 mm | 6.4 / 13.4 / 15.2 mm | 6.5 / 13.3 / 14.8 mm |
+
+**How to read this:**
+- **The fitted pose is one 3-parameter estimate from 346 beams.** It agrees with the weld to
+  sub-millimetre (criterion 6a) and does not depend on any single beam.
+- **Individual ranges carry errors that are systematic, not random.** A 40-scan mean should
+  scatter by about 1.6 mm (σ = 10 mm per scan). The errors also grow with the incidence angle
+  and repeat across runs. They are a property of the simulated `gpu_lidar` (depth sampling at
+  oblique incidence), not of the pose.
+- **Criterion 6's wording** ("the `/scan` ranges … agree … within the M0 ±8 mm") literally
+  describes individual ranges. M0's ±8 mm came from spot checks at expected bearings. Under that
+  literal reading criterion 6 is **FAIL**; as pose agreement it is **PASS**. The owner decides
+  which reading applies before phase 2.
+
+### 8.4 Caveats that stay visible
+
+- **Run 2:** an offline `/scan` re-analysis of run 1 ran during part of its observation, and
+  `run_one.sh` was edited while it executed. Post-processing was regenerated from unchanged
+  captures (`run_02/NOTES.txt`).
+- **Run 1:** H1 not measured (helper defect); visual inconclusive (`run_01/NOTES.txt`).
+- **Two unsuccessful launch attempts** (§4.1, preserved):
+  - 09:02, an evidence-helper defect; the launch itself was fine;
+  - 09:05, the Gazebo GUI→server startup race; no world was loaded.
+
+### 8.5 Commits, tests and builds reconciled
+
+| Commit | Branch | Content | Verified on it |
+|---|---|---|---|
+| `41fc10f` | M6.1-A | docs (previous head) | First Cloud attempt: 1465 tests, **2 failures** (the incident) |
+| `7f91a18` | M6.1-A | evidence only | — |
+| `7f4c30f` | M6.1-A | **test doubles only** (the only code change) | Clean build 08:52; focused 276 passed; full suite 1468 / 0 / 0 / 0; static checks; **all five launches (09:02–09:25) ran this build** |
+| `b910df1` | M6.1-A | docs + evidence only (`git diff 7f4c30f b910df1 -- src/` is empty) | The `7f4c30f` results apply; rebuilt at about 09:42 for the closeout dry run and `--live` exit 3 |
+| closeout commit | M6.1-A | docs, evidence, frozen harness, **unapplied** patch (`src/` unchanged) | dry run identity, `--live` exit 3, `git apply --check` only |
+| `8561ff6` | M5.5 | merge of `b910df1` into `a808b94` | — |
+| `22b8a01` | M5.5 | docs only | Clean build + full suite **1684 / 0 / 0 / 0** |
+| `a826da6` | M5.5 | evidence only | — |
+| closeout merge | M5.5 | merge of the closeout (no `src/` change) | Not re-tested (no code change) |
+
+### 8.6 Diagnosis (unchanged)
+
+Three test-double defects were demonstrated and corrected in `7f4c30f`:
+- overlapping ticks that could reorder stamps;
+- the executor teardown race;
+- the stamp rounding.
+
+The exact readiness failure of the original incident **remains unproven**. The most probable
+cause is `joint_states_stale` through the overlapping ticks (§1.3).
+
+### 8.7 Frozen harness (before any further observation)
+
+[`closeout/frozen_harness.json`](evidence/m61a_cloud/closeout/frozen_harness.json) fixes, before
+any further observation:
+- the SHA-256 of every harness tool;
+- the environment;
+- the procedure;
+- both scan masks as explicit index lists;
+- the fit settings;
+- the gated and reported definitions of every criterion (6a and 6b gated; 6c and 6-raw reported).
+
+A future observation uses these exact tools and re-derives the masks with `closeout_tables.py`.
+A different mask or threshold is a new, reviewed definition, never a retune from the same run.
+
+### 8.8 Next step
+
+ONE fixed-base M6.1 trot cycle in Cloud:
+- the source-verified procedure: [`M61_CLOUD_ONE_CYCLE_PLAN.md`](M61_CLOUD_ONE_CYCLE_PLAN.md);
+- the enabling change, unapplied, for review:
+  [`patches/m61_enable_one_cycle.UNAPPLIED.patch`](patches/m61_enable_one_cycle.UNAPPLIED.patch).
+
+Nothing is enabled or sent.
