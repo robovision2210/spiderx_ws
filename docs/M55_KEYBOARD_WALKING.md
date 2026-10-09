@@ -599,14 +599,25 @@ was sent anywhere.
   (M6.1), from `main` @ `77fd171`.
 - **Pull request:** deferred until M6.1-A is reviewed (one active implementation PR at a time).
   When opened, it targets the M6.1-A branch, or `main` after the dependencies merge.
-- **Parent fixes** are brought in by merge commits (`bdada3a`, `706a3ae`, and the merge of the
-  M6.1-A Cloud verification at `b910df1`), never by rebasing published history.
+- **Parent fixes** are brought in by merge commits, never by rebasing published history:
+  `bdada3a`, `706a3ae`, the M6.1-A Cloud verification (`8561ff6`), its closeout (`ef95674`) and
+  the one-cycle blocker resolution (`c04bba2`).
 - **After that merge** (`22b8a01`): full suite **1684 tests, 0 errors, 0 failures, 0 skipped** in
   Cloud ([`evidence/m55/cloud_verify_22b8a01/`](evidence/m55/cloud_verify_22b8a01/README.md)).
-- **M6.1-A phase 1** (launch-only fixed-base observation) in Cloud simulation at `7f4c30f`:
-  every per-run criterion passed in three separate launches. Criterion 6 under its strict
-  per-beam reading, and pose-stream liveness, remain open
-  ([`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md) §8). It has not run on the owner PC.
+- **M6.1-A phase 1** (launch-only fixed-base observation) in Cloud simulation:
+  - In three launches at `7f4c30f`, criteria 1–5, 7 and 8 passed.
+  - **Criterion 6 as written** (individual `/scan` ranges within ±8 mm) **failed** there and
+    again in a fourth, fresh no-motion run at `b982d8d`. A frozen version-2 proposal (fitted
+    planar pose) passed that single validation run; the owner decides
+    ([`M61A_CRITERION6_V2_PROPOSAL.md`](M61A_CRITERION6_V2_PROPOSAL.md)).
+  - M6.1 readiness now also requires simulation time to advance while the body pose is received
+    (`b982d8d`; a paused world is refused, shown live).
+  - z, roll and pitch have no independent sensor confirmation (U-L2).
+  - Details: [`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md) §8–§9. It has not run on
+    the owner PC.
+- **After the merge of those parent fixes** (`c04bba2`): clean build and full suite
+  **1713 tests, 0 errors, 0 failures, 0 skipped** in Cloud
+  ([`evidence/m55/cloud_verify_c04bba2/`](evidence/m55/cloud_verify_c04bba2/README.md)).
 - **Next procedure:**
   1. owner review of that closeout (or phase 1 on the owner PC);
   2. the separately approved M6.1 phase 2 fixed-base cycle: source-verified Cloud plan
