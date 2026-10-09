@@ -599,10 +599,14 @@ was sent anywhere.
   (M6.1), from `main` @ `77fd171`.
 - **Pull request:** deferred until M6.1-A is reviewed (one active implementation PR at a time).
   When opened, it targets the M6.1-A branch, or `main` after the dependencies merge.
-- **Parent fixes** are brought in by merge commits (`bdada3a`, `706a3ae`), never by rebasing
-  published history.
-- **Next local procedure:** M6.1-A phase 1 (launch-only fixed-base observation, owner-approved;
-  M61A §10), then M6.1 phase 2, then M5.5 phase 1 above (shadow session; this build as is).
+- **Parent fixes** are brought in by merge commits (`bdada3a`, `706a3ae`, and the merge of the
+  M6.1-A Cloud verification at `b910df1`), never by rebasing published history.
+- **M6.1-A phase 1** (launch-only fixed-base observation) **passed in Cloud simulation** at
+  `7f4c30f` in three separate launches
+  ([`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md)); it has not run on the owner PC.
+- **Next procedure:** owner review of that evidence (or phase 1 on the owner PC), then the
+  separately approved M6.1 phase 2 fixed-base cycle, then M5.5 phase 1 above (shadow session;
+  this build as is).
   Keyboard walking (M5.5 phases 2–4) comes before the odometry, SLAM and navigation milestones
   (M7–M9).
 
