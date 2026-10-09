@@ -16,7 +16,7 @@ Expected test delta on the enabling branch: NONE. Every test passes in both buil
   - the source scan exempts only the one pinned gate line.
   Verified 2026-10-09 with this patch applied in a temporary worktree (tests only, no
   simulator): full spiderx_controller suite 1457 passed, 0 failed; the same tree without the
-  patch: see docs/M61A_CLOUD_VERIFICATION.md section 9.3. An earlier header listed five expected
+  patch: see docs/M61A_CLOUD_VERIFICATION.md sections 9.4 and 9.7. An earlier header listed five expected
   failures; the empirical run found three more (outcome, mock evidence and dry-run report
   asserted a recorded gate of False). All eight are now mode-aware.
 Check   : git apply --check docs/patches/m61_enable_one_cycle.UNAPPLIED.patch   (changes nothing)

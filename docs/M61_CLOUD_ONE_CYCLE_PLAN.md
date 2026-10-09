@@ -4,7 +4,7 @@
 - Nothing here is enabled or executed; no goal has been sent.
 - The enabling change exists only as an **unapplied** patch,
   [`patches/m61_enable_one_cycle.UNAPPLIED.patch`](patches/m61_enable_one_cycle.UNAPPLIED.patch)
-  (SHA-256 `ff28f86b5d5f7f280746862340597fa0803bbf57c8caed60917ba46d453872e5`).
+  (SHA-256 `06ce0f5082fdf7ea487d4be3ebf19d91cfbb516f5b7c38cb0cf4c94718719987`).
 - `git apply --check` confirmed it applies cleanly. On this branch it was never applied. It was
   applied only in a temporary worktree to run the tests in the enabled mode; no simulator was
   involved and the worktree was removed (Cloud report §9.4).
@@ -208,7 +208,7 @@ the enabling branch, which was never pushed. Then commit the evidence on the bas
 | E2 | Enabled build: every test of `test_m61_gait_replay.py` passes (no expected failures; any failure stops) | `enabled_tests.log` |
 | E3 | Identity unchanged: `241760e7dfd5ef12` / `94a492c4…` / `9dba1a17…` on the enabled build | dry run; `trajectory.json`, `goal_fingerprint.txt` |
 | E4 | Final state `SUCCEEDED`, exit 0; `goals_sent 1`, `cancels_sent 0`, `retries 0`, `automatic_return_goals 0`; acceptance `accepted`, final goal status 4 | `m61_run/<UTC>/live_outcome.json` (phases reserved → pre_send → final) |
-| E5 | Readiness READY before and after confirmation, each including `m61a_sim_progress` ok (sim time advanced ≥ 0.1 s within the last 1.0 s while the body pose arrived); freshness at the send ≤ 10 s | `readiness_before.json`, `readiness_after.json`, `live_outcome.json` |
+| E5 | Readiness READY before and after confirmation. The readiness composition includes `with_sim_progress`, so READY means sim time advanced ≥ 0.1 s within the last 1.0 s while the body pose arrived (a failure is listed as `body_pose_sim_time_not_advancing`). Freshness at the send ≤ 10 s | `readiness_before.json`, `readiness_after.json` (`ready`, `failure_codes`; the per-layer report is not recorded there), `live_outcome.json` |
 | E6 | Tracking: max in-flight \|error\| < 0.05 rad; goal tolerances passed; no G6 sample gap | `live_outcome.json` (`tracking`, `channels`), `commanded_vs_observed.csv` |
 | E7 | No gate tripped (G1, G2, G3, G5, G6, G8, pose freshness); G7 drift reported only | `gates.json` |
 | E8 | Body stayed welded during the cycle: attachment ≤ 1 mm / 0.0033 rad and z within 1 mm of 0.125 m (the phase-1 rule) | `gates.json` attachment max, `body_pose.csv`, the observer's statistics |
