@@ -1,0 +1,359 @@
+
+Requesting state for world [spiderx_fortress]...
+
+Model: [35]
+  - Name: spiderx
+  - Pose [ XYZ (m) ] [ RPY (rad) ]:
+    [0.000000 0.000000 0.000000]
+    [0.000000 -0.000000 0.000000]
+  - Link [36]
+    - Name: dummy_link
+    - Parent: spiderx [35]
+    - Mass (kg): 2.522103
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.051000 -0.045000 0.087937]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.007746 -0.000000 -0.000000]
+      [-0.000000 0.004751 -0.000000]
+      [-0.000000 -0.000000 0.009654]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.125000]
+      [0.000000 -0.000000 0.000000]
+    - Sensor [51]
+      - Name: lidar
+      - Parent: spiderx [35]
+      - Pose [ XYZ (m) ] [ RPY (rad) ]:
+        [0.051000 -0.045000 0.141000]
+        [0.000000 -0.000000 1.570800]
+      - Range:
+        - Min (m): 0.15
+        - Max (m): 12
+        - Resolution: 0.01
+      - Horizontal scan:
+        - Samples: 360
+        - Resolution: 1
+        - Min angle (rad): -3.14159
+        - Max angle (rad): 3.12414
+      - Vertical scan:
+        - Samples: 1
+        - Resolution: 1
+        - Min angle (rad): 0
+        - Max angle (rad): 0
+      - Noise:
+        - Mean (m): 0
+        - Bias mean (m): 0
+        - Standard deviation (m): 0.01
+        - Bias standard deviation (m): 0
+        - Precision: 0
+        - Dynamic bias standard deviation (m): 0
+        - Dynamic bias correlation time (s): 0
+  - Link [52]
+    - Name: b_s4_c_horn_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.711206
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.009989 0.028255 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000325 0.000006 0.000000]
+      [0.000006 0.000228 0.000001]
+      [0.000000 0.000001 0.000275]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.010000 0.016100 0.202250]
+      [0.000000 -0.000096 0.000000]
+  - Link [59]
+    - Name: lf_c_horn_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.425321
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.009922 -0.031908 -0.031914]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000543 -0.000001 -0.000001]
+      [-0.000001 0.000285 -0.000248]
+      [-0.000001 -0.000248 0.000285]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.023701 0.038850 0.213747]
+      [0.000044 -0.000096 0.000000]
+  - Link [64]
+    - Name: lf_foot_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.097555
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.003000 0.030412 -0.020170]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000178 0.000000 0.000000]
+      [0.000000 0.000061 0.000082]
+      [0.000000 0.000082 0.000118]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.036694 -0.038929 0.135960]
+      [-0.000042 -0.000096 0.000000]
+  - Link [67]
+    - Name: b_s1_c_horn_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.711206
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.009989 -0.028255 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000325 0.000006 -0.000000]
+      [0.000006 0.000228 -0.000001]
+      [-0.000000 -0.000001 0.000275]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.092000 -0.106100 0.202250]
+      [0.000000 0.000096 0.000000]
+  - Link [74]
+    - Name: rr_c_horn_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.425321
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.009922 -0.031914 -0.031908]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000543 0.000001 0.000001]
+      [0.000001 0.000285 -0.000248]
+      [0.000001 -0.000248 0.000285]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.125701 -0.149350 0.213747]
+      [0.000044 0.000096 0.000000]
+  - Link [79]
+    - Name: rr_foot_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.097555
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.003000 0.030412 -0.020170]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000178 0.000000 0.000000]
+      [0.000000 0.000061 0.000082]
+      [0.000000 0.000082 0.000118]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.138694 -0.227129 0.135960]
+      [-0.000042 0.000096 0.000000]
+  - Link [82]
+    - Name: b_s2_c_horn_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.711206
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.009989 0.028255 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000325 -0.000006 -0.000000]
+      [-0.000006 0.000228 -0.000001]
+      [-0.000000 -0.000001 0.000275]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.092000 0.016100 0.202250]
+      [0.000000 0.000096 0.000000]
+  - Link [89]
+    - Name: rf_c_horn_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.425321
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.009922 -0.031914 -0.031908]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000543 0.000001 0.000001]
+      [0.000001 0.000285 -0.000248]
+      [0.000001 -0.000248 0.000285]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.125701 0.038850 0.213747]
+      [0.000044 0.000096 0.000000]
+  - Link [94]
+    - Name: rf_foot_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.097555
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.003000 0.030412 -0.020170]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000178 0.000000 0.000000]
+      [0.000000 0.000061 0.000082]
+      [0.000000 0.000082 0.000118]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.138694 -0.038929 0.135960]
+      [-0.000042 0.000096 0.000000]
+  - Link [97]
+    - Name: b_s3_c_horn_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.711206
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.009989 -0.028255 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000325 -0.000006 0.000000]
+      [-0.000006 0.000228 0.000001]
+      [0.000000 0.000001 0.000275]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.010000 -0.106100 0.202250]
+      [0.000000 -0.000096 0.000000]
+  - Link [104]
+    - Name: lr_c_horn_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.425321
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.009922 -0.031908 -0.031914]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000543 -0.000001 -0.000001]
+      [-0.000001 0.000285 -0.000248]
+      [-0.000001 -0.000248 0.000285]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.023701 -0.149350 0.213747]
+      [0.000044 -0.000096 0.000000]
+  - Link [109]
+    - Name: lr_foot_1
+    - Parent: spiderx [35]
+    - Mass (kg): 0.097555
+    - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.003000 0.030412 -0.020170]
+      [0.000000 -0.000000 0.000000]
+    - Inertial Matrix (kg.m^2):
+      [0.000178 0.000000 0.000000]
+      [0.000000 0.000061 0.000082]
+      [0.000000 0.000082 0.000118]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [-0.030694 -0.227129 0.135961]
+      [-0.000042 -0.000096 0.000000]
+  - Joint [112]
+    - Name: spiderx_fixed_base_weld
+    - Parent: spiderx [35]
+    - Type: fixed
+    - Parent Link: world
+    - Child Link: dummy_link [36]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+  - Joint [113]
+    - Name: lf_hip
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: dummy_link [36]
+    - Child Link: b_s4_c_horn_1 [52]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [0 1 0]
+  - Joint [114]
+    - Name: lf_thigh_joint
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: b_s4_c_horn_1 [52]
+    - Child Link: lf_c_horn_1 [59]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [-1 0 0]
+  - Joint [115]
+    - Name: lf_foot_joint
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: lf_c_horn_1 [59]
+    - Child Link: lf_foot_1 [64]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [1 0 0]
+  - Joint [116]
+    - Name: rr_hip
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: dummy_link [36]
+    - Child Link: b_s1_c_horn_1 [67]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [0 -1 0]
+  - Joint [117]
+    - Name: rr_thigh_joint
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: b_s1_c_horn_1 [67]
+    - Child Link: rr_c_horn_1 [74]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [1 0 0]
+  - Joint [118]
+    - Name: rr_foot_joint
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: rr_c_horn_1 [74]
+    - Child Link: rr_foot_1 [79]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [-1 0 0]
+  - Joint [119]
+    - Name: rf_hip
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: dummy_link [36]
+    - Child Link: b_s2_c_horn_1 [82]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [0 1 0]
+  - Joint [120]
+    - Name: rf_thigh_joint
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: b_s2_c_horn_1 [82]
+    - Child Link: rf_c_horn_1 [89]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [1 0 0]
+  - Joint [121]
+    - Name: rf_foot_joint
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: rf_c_horn_1 [89]
+    - Child Link: rf_foot_1 [94]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [-1 0 0]
+  - Joint [122]
+    - Name: lr_hip
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: dummy_link [36]
+    - Child Link: b_s3_c_horn_1 [97]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [0 -1 0]
+  - Joint [123]
+    - Name: lr_thigh_joint
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: b_s3_c_horn_1 [97]
+    - Child Link: lr_c_horn_1 [104]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [-1 0 0]
+  - Joint [124]
+    - Name: lr_foot_joint
+    - Parent: spiderx [35]
+    - Type: revolute
+    - Parent Link: lr_c_horn_1 [104]
+    - Child Link: lr_foot_1 [109]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.000000 0.000000 0.000000]
+      [0.000000 -0.000000 0.000000]
+    - Axis unit vector [ XYZ ]:
+      [-1 0 0]

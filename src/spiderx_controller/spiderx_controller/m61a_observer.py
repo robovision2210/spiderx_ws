@@ -11,7 +11,8 @@ welded plant is what the M6.1 replay expects (m61a_fixed_base.assess):
     'dummy_link' consistent with the description (identity association), the composed body at
     the weld pose (attachment), fresh by receipt time;
   * /joint_states fresh and complete (12 joints), exactly one publisher;
-  * /clock progressing with no reset;
+  * /clock ADVANCING (an advance seen, not just messages) with no stall or reset, and sim time
+    advancing while the body pose is received (a paused world keeps both streams arriving);
   * both controllers active (controller_manager list_controllers, a read-only service call);
   * NO publisher on the trajectory command topic.
 The long mode also records the stationary distribution the provisional tolerances must be judged
@@ -272,6 +273,7 @@ class FixedBaseObserver:
             description_received_wall=self.tracker.description_wall,
             latest_usable_pose=self.tracker.latest_usable,
             latest_pose_codes=self.tracker.latest_codes,
+            recent_pose_samples=self.tracker.recent_samples(),
             latest_joint_states=self.latest_joint_states, clock=self.clock,
             controllers=controllers,
             joint_state_publishers=graph.get('joint_state_publishers'),
@@ -293,7 +295,8 @@ def run_observation(observer, cfg, duration_s, discovery_s, interrupted=None):
             'controllers': {'start': c0, 'end': c1}, 'graph': {'start': g0, 'end': g1},
             'statistics': observer.stats.summary(cfg),
             'tracker': {k: v for k, v in observer.tracker.snapshot().items()
-                        if k not in ('description', 'latest_usable_pose')}}
+                        if k not in ('description', 'latest_usable_pose',
+                                     'recent_usable_samples')}}
 
 
 def interface_report(cfg, joint_names):

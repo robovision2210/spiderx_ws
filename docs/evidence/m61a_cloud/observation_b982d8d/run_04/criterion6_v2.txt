@@ -1,0 +1,10 @@
+v1 (original, reported): FAIL: single-scan ranges within +-8 mm 53.1 %, 40-scan means 85.5 %, best any planar pose can reach: max |r| 17.7 mm
+v2 (criterion-6 v2 (proposal 2026-10-09)): PASS: |dxy| 0.49 mm (tau 1.95), |dyaw| 0.117 mrad (tau 6.1); sigma used 0.578 mm / 0.260 mrad; prerequisites met
+  counterfactual [0.003, 0.0, 0.0]: FAIL (expected FAIL), recovery error [0.001, 0.001, -0.001] (mm, mm, mrad), within 3 sigma: True
+  counterfactual [0.0, 0.003, 0.0]: FAIL (expected FAIL), recovery error [0.001, 0.001, -0.001] (mm, mm, mrad), within 3 sigma: True
+  counterfactual [-0.0021213203, 0.0021213203, 0.0]: FAIL (expected any; recovery only), recovery error [-0.0, -0.0, 0.0] (mm, mm, mrad), within 3 sigma: True
+  counterfactual [0.0, 0.0, 0.01]: FAIL (expected FAIL), recovery error [-0.003, -0.004, -0.006] (mm, mm, mrad), within 3 sigma: True
+  counterfactual [0.0, 0.0, -0.01]: FAIL (expected FAIL), recovery error [0.07, 0.108, -0.104] (mm, mm, mrad), within 3 sigma: True
+  counterfactual [0.001, 0.0, 0.0]: PASS (expected any; recovery only), recovery error [0.0, 0.0, -0.0] (mm, mm, mrad), within 3 sigma: True
+  counterfactual [0.0, 0.0, 0.002]: PASS (expected any; recovery only), recovery error [-0.001, -0.001, -0.001] (mm, mm, mrad), within 3 sigma: True
+counterfactual all as expected: True

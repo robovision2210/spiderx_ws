@@ -74,6 +74,12 @@ freshness:
   joint_states_stale_s: 0.5           # = m6_live_contract.JOINT_STATES_STALE_S
   sim_stall_s: 5.0                    # = m6_live_contract.SIM_STALL_S
   clock_reset_tolerance_s: 0.001      # /clock going back more than this = reset (latched)
+  # Readiness only: simulation time must ADVANCE while the body pose is received. A paused world
+  # keeps publishing /clock and pose/info (unchanged time), so receipt freshness cannot show it.
+  # Over the last progress_window_s of wall time, the /clock at receipt of the usable pose samples
+  # must rise by >= min_sim_advance_s (real-time factor >= 0.1; Cloud runs at about 0.7).
+  progress_window_s: 1.0              # = pose_stale_s: "fresh" and "advancing" share one window
+  min_sim_advance_s: 0.1
 
 graph:
   controllers: [joint_state_broadcaster, leg_trajectory_controller]

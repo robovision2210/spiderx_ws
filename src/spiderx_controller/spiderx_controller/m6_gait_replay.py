@@ -352,6 +352,31 @@ def with_fixed_base(base_provider, snapshot, cfg):
     return provide
 
 
+def with_sim_progress(base_provider, snapshot, now, cfg):
+    """Wrap a readiness provider: also NOT READY unless simulation time ADVANCED while the body
+    pose was being received (M6.1-A): over the last cfg.progress_window_s of wall time, the
+    transport's /clock at receipt of the usable pose samples rose by at least
+    cfg.min_sim_advance_s (m61a_fixed_base.check_sim_progress). Pose freshness alone cannot show
+    it: a paused Gazebo world keeps publishing /clock and pose/info with an unchanged time.
+    snapshot() -> tracker snapshot dict ('recent_usable_samples'); now() -> monotonic wall."""
+    def provide():
+        res = base_provider()
+        if not isinstance(res, rd.ReadinessResult):
+            return res
+        code, detail = fb.check_sim_progress(snapshot().get('recent_usable_samples'), now(),
+                                             cfg.progress_window_s, cfg.min_sim_advance_s,
+                                             cfg.clock_reset_tol_s)
+        report = dict(res.report or {}, m61a_sim_progress=dict(detail, ok=code is None,
+                                                               code=code))
+        if code is None:
+            return dataclasses.replace(res, report=report)
+        return dataclasses.replace(
+            res, ready=False, failure_codes=tuple(res.failure_codes) + (code,),
+            reasons=tuple(res.reasons) + (f'sim progress: {code}: {detail.get("reason")}',),
+            report=report)
+    return provide
+
+
 def with_command_owner(base_provider, owner_snapshot):
     """Wrap a readiness provider: also NOT READY while another commander is VISIBLE in the graph
     (a publisher on the controller's topic, or another FollowJointTrajectory client).
@@ -405,7 +430,8 @@ def with_body_pose(base_provider, latest_pose, now, limits):
 
 
 __all__ = ['M61Session', 'GATE_TRIPPED', 'M61_TERMINAL', 'OUTCOME_SCHEMA', 'with_body_pose',
-           'with_fixed_base', 'fixed_base_record', 'load_fixed_base_config']
+           'with_fixed_base', 'with_sim_progress', 'with_command_owner', 'fixed_base_record',
+           'load_fixed_base_config']
 
 
 # ==================================================================== CLI
@@ -484,10 +510,11 @@ def run_mock(plan, scenario, reader):
     transport = m61_mock.M61FakeTransport(traj, fp, latch=latch, fixed_base=cfg,
                                           **m61_mock.SCENARIOS[scenario])
     report = m6mock.mock_readiness_report(plan.sources.joint_names, plan.neutral)
-    provide = with_command_owner(with_fixed_base(
+    provide = with_command_owner(with_sim_progress(with_fixed_base(
         with_body_pose(lambda: rd.assess(report, transport.wall_now()),
                        transport.latest_body_pose, transport.wall_now, plan.limits),
-        transport.fixed_base_snapshot, cfg), transport.command_owner_snapshot)
+        transport.fixed_base_snapshot, cfg), transport.fixed_base_snapshot, transport.wall_now,
+        cfg), transport.command_owner_snapshot)
     session = M61Session(transport, plan, provide, reader, latch=latch, fixed_base=cfg)
     out = session.run()
     out.update(mode='mock', scenario=scenario, mock_server_goals_received=len(transport.sent),
@@ -557,9 +584,10 @@ def _run_live(plan, transport_factory, collect_factory, reader, latch, domain_id
     try:
         base = rd.make_readiness_provider(collect_factory(transport), plan.sources.joint_names,
                                           plan.neutral, transport.wall_now)
-        provide = with_command_owner(with_fixed_base(
+        provide = with_command_owner(with_sim_progress(with_fixed_base(
             with_body_pose(base, transport.latest_body_pose, transport.wall_now, plan.limits),
-            transport.fixed_base_snapshot, cfg), transport.command_owner_snapshot)
+            transport.fixed_base_snapshot, cfg), transport.fixed_base_snapshot,
+            transport.wall_now, cfg), transport.command_owner_snapshot)
         session = M61Session(transport, plan, provide, reader, latch=latch,
                              checkpoint=checkpoint, fixed_base=cfg)
         out = session.run()

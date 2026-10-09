@@ -31,13 +31,20 @@ Gazebo world; an entry whose child_frame_id is a link name is that LINK's pose R
 MODEL (M3 compared lf_foot_1 that way to 5.4e-11 m). Per-pose stamps are 0 at the bridge, so
 samples are timed by receipt (monotonic wall) and by the receiving node's /clock.
 
-The physical body is measured as T_world_model * T_model_dummy(Gazebo entry) * T_dummy_body:
-the Gazebo-side dummy_link entry (the canonical link carrying the merged base_link) is used, not
-the robot_description, so a body that moves relative to the model root is still seen whatever
-convention Gazebo uses to update the model pose. The robot_description is only cross-checked
-against that entry (identity association) and never trusted alone.
+The physical body is composed as T_world_model * T_model_dummy(Gazebo entry) * T_dummy_body.
+What each factor is (gz-sim 6.16 Physics.cc, read for this; M2 showed the model entry follow a
+free body to its 0.0545 m rest height):
+  * T_world_model is MEASURED: Physics writes the model pose from the canonical link's physics
+    world pose, X_WM = X_WL * inv(X_ML), each step in which that link moved (> 1e-6);
+  * T_model_dummy is NOT measured: Physics never writes a canonical link's own pose, so the
+    dummy_link entry is X_ML, the SDF value the converter made from the URDF weld origin;
+  * T_dummy_body is the URDF dummy_joint origin: base_link is merged into the same physics body.
+So the composition equals X_WL * T_dummy_body, the physics pose of the merged body, and the
+check of the dummy_link entry against /robot_description is a conversion and association check,
+not a measurement. The robot_description is never trusted alone.
 """
 
+import collections
 from dataclasses import dataclass, field
 import math
 import os
@@ -74,6 +81,8 @@ JOINT_STATES_INCOMPLETE = 'joint_states_incomplete'
 CLOCK_MISSING = 'sim_clock_missing'
 CLOCK_STALLED = 'sim_time_stalled'
 CLOCK_RESET = 'sim_time_reset'
+CLOCK_NOT_ADVANCING = 'sim_time_not_advancing'           # no advance seen since the first /clock
+POSE_SIM_NOT_ADVANCING = 'body_pose_sim_time_not_advancing'   # pose stream without sim progress
 CONTROLLERS_NOT_ACTIVE = 'controllers_not_active'
 CONTROLLERS_UNKNOWN = 'controllers_unknown'
 JOINT_STATE_PUBLISHERS = 'joint_state_publisher_count'
@@ -212,6 +221,8 @@ class FixedBaseConfig:
     joint_states_stale_s: float
     sim_stall_s: float
     clock_reset_tol_s: float
+    progress_window_s: float                     # readiness: wall window for sim progress
+    min_sim_advance_s: float                     # sim time that must pass within it
     controllers: tuple
     joint_state_topic: str
     command_topic: str
@@ -273,6 +284,8 @@ def parse_config(data):
         joint_states_stale_s=_num(fr, 'joint_states_stale_s', 'freshness'),
         sim_stall_s=_num(fr, 'sim_stall_s', 'freshness'),
         clock_reset_tol_s=_num(fr, 'clock_reset_tolerance_s', 'freshness'),
+        progress_window_s=_num(fr, 'progress_window_s', 'freshness'),
+        min_sim_advance_s=_num(fr, 'min_sim_advance_s', 'freshness'),
         controllers=tuple(gr['controllers']),
         joint_state_topic=str(gr['joint_state_topic']),
         command_topic=str(gr['command_topic']),
@@ -593,6 +606,9 @@ class AttachmentMonitor:
 class ClockMonitor:
     """Simulation-clock progress, judged in WALL time (monotonic), never mixed.
 
+    * not advancing: /clock arrives but its time has not advanced once since the first message
+      (a world paused before the observation started; Gazebo keeps publishing /clock while
+      paused). Receiving /clock is not evidence of progress; only an advance is;
     * stalled: /clock has not advanced for sim_stall_s of wall time (pause, freeze, lost bridge);
     * reset:   /clock went backwards by more than clock_reset_tol_s (world reset or restart).
     A reset latches until clear() so that evidence from before it is never reused.
@@ -602,7 +618,7 @@ class ClockMonitor:
         self.sim_stall_s = sim_stall_s
         self.reset_tol_s = reset_tol_s
         self.last_sim = None
-        self.last_advance_wall = None
+        self.last_advance_wall = None      # wall time of the latest ADVANCE (None: none yet)
         self.first_wall = None
         self.reset_seen = False
         self.messages = 0
@@ -614,7 +630,7 @@ class ClockMonitor:
         if self.first_wall is None:
             self.first_wall = wall
         if self.last_sim is None:
-            self.last_sim, self.last_advance_wall = sim, wall
+            self.last_sim = sim
             return
         if sim < self.last_sim - self.reset_tol_s:
             self.reset_seen = True
@@ -629,9 +645,40 @@ class ClockMonitor:
             return CLOCK_RESET
         if self.last_sim is None:
             return CLOCK_MISSING
+        if self.last_advance_wall is None:
+            return CLOCK_NOT_ADVANCING
         if now_wall - self.last_advance_wall > self.sim_stall_s:
             return CLOCK_STALLED
         return None
+
+
+def check_sim_progress(samples, now_wall, window_s, min_advance_s, reset_tol_s=0.0):
+    """(code, detail): did simulation time advance while the body pose was being received?
+
+    samples: (wall, sim) per usable pose sample in receipt order; wall = monotonic receipt time,
+    sim = the receiving node's /clock at receipt. Only samples received in the last window_s of
+    wall time count. No code needs at least two of them, every sim time finite, no step back by
+    more than reset_tol_s, and a sim advance of at least min_advance_s from the first to the last.
+    Receipt freshness cannot show this: a paused Gazebo world keeps publishing /clock and
+    pose/info with an unchanged time (gz-sim 6 SimulationRunner::Step publishes the clock every
+    iteration, SceneBroadcaster::PostUpdate the poses at up to 60 Hz), while joint states stop.
+    """
+    recent = [(w, s) for w, s in (samples or ()) if now_wall - window_s <= w <= now_wall]
+    detail = {'window_s': window_s, 'min_sim_advance_s': min_advance_s, 'samples': len(recent),
+              'sim_advance_s': None}
+    if len(recent) < 2:
+        return POSE_SIM_NOT_ADVANCING, dict(detail, reason='fewer than two usable pose samples '
+                                                            'received in the window')
+    sims = [s for _, s in recent]
+    if not _finite(*sims):
+        return POSE_SIM_NOT_ADVANCING, dict(detail, reason='sim time unknown at receipt')
+    detail['sim_advance_s'] = sims[-1] - sims[0]
+    if any(b < a - reset_tol_s for a, b in zip(sims, sims[1:])):
+        return POSE_SIM_NOT_ADVANCING, dict(detail, reason='sim time went backwards')
+    if not detail['sim_advance_s'] >= min_advance_s:
+        return POSE_SIM_NOT_ADVANCING, dict(detail, reason='sim time did not advance enough '
+                                                            '(paused, frozen or too slow)')
+    return None, detail
 
 
 def check_joint_states(latest, now_wall, joint_names, stale_s):
@@ -671,6 +718,7 @@ class Evidence:
     description_received_wall: float = None
     latest_usable_pose: PoseSample = None      # last sample whose entries were usable
     latest_pose_codes: tuple = ()              # selection codes of the most recent sample (any)
+    recent_pose_samples: tuple = ()            # (wall, sim) of recent usable samples (receipt order)
     latest_joint_states: tuple = None          # (wall, {name: position})
     clock: ClockMonitor = None
     controllers: dict = None                   # {name: state} or None = not queried
@@ -749,8 +797,9 @@ def assess(evidence, cfg, now_wall, joint_names):
     """(ready, failure codes, report) for the read-only observer. Decides nothing about a goal.
 
     Every check is separate. READY needs all of: the plant checks (assess_plant); a fresh usable
-    body pose (wall receipt age); fresh complete joint states; a progressing /clock with no
-    reset; both controllers active; exactly one /joint_states publisher; no other commander
+    body pose (wall receipt age); sim time advancing while that pose stream was received
+    (check_sim_progress); fresh complete joint states; a /clock that has advanced, with no stall
+    or reset; both controllers active; exactly one /joint_states publisher; no other commander
     visible (no publisher on the controller's topic, no FollowJointTrajectory client) in the
     graph snapshot (see command_owner_codes for what a snapshot cannot show).
     """
@@ -766,6 +815,10 @@ def assess(evidence, cfg, now_wall, joint_names):
     put('body_pose_fresh', check_pose_freshness(smp, now_wall, cfg.pose_stale_s),
         {'age_s': None if smp is None else now_wall - smp.wall,
          'latest_sample_codes': list(evidence.latest_pose_codes)})
+    code, detail = check_sim_progress(evidence.recent_pose_samples, now_wall,
+                                      cfg.progress_window_s, cfg.min_sim_advance_s,
+                                      cfg.clock_reset_tol_s)
+    put('body_pose_sim_progress', code, detail)
     put('joint_states', check_joint_states(evidence.latest_joint_states, now_wall, joint_names,
                                            cfg.joint_states_stale_s))
     put('sim_clock', CLOCK_MISSING if evidence.clock is None else evidence.clock.check(now_wall))
@@ -793,8 +846,10 @@ class FixedBasePoseTracker:
       ('fixed_base', wall, stamp, codes, attachment)            the plant checks of that sample
     A sample whose entries are missing, ambiguous or malformed yields no event (so it never
     refreshes pose freshness); without a fixed-base description no body pose can be composed,
-    so only a 'fixed_base' event with the description code is returned.
+    so only a 'fixed_base' event with the description code is returned. The (wall, stamp) of the
+    latest RECENT_SAMPLES usable samples are kept for check_sim_progress.
     """
+    RECENT_SAMPLES = 1024                 # > 15 s at the 60 Hz pose/info rate
 
     def __init__(self, cfg):
         self.cfg = cfg
@@ -806,6 +861,7 @@ class FixedBasePoseTracker:
         self.latest_codes = ()
         self.messages = 0
         self.invalid = {}
+        self.recent = collections.deque(maxlen=self.RECENT_SAMPLES)   # (wall, stamp), usable
 
     def on_description(self, text, wall):
         self.description, self.description_wall = text, wall
@@ -825,6 +881,7 @@ class FixedBasePoseTracker:
                 self.invalid[c] = self.invalid.get(c, 0) + 1
             return []
         self.latest_usable = PoseSample(wall, stamp, sel)
+        self.recent.append((wall, stamp))
         if self.description_code is not None:
             return [('fixed_base', wall, stamp, (self.description_code,), None)]
         obs = evaluate_sample(sel, self.weld, self.cfg, wall, stamp)
@@ -839,10 +896,14 @@ class FixedBasePoseTracker:
         obs = evaluate_sample(smp.selection, self.weld, self.cfg, smp.wall, smp.stamp)
         return (smp.wall, smp.stamp, obs.pose6())
 
+    def recent_samples(self):
+        return tuple(self.recent)
+
     def snapshot(self):
         return {'description': self.description, 'latest_usable_pose': self.latest_usable,
                 'latest_pose_codes': self.latest_codes, 'messages': self.messages,
-                'invalid_samples': dict(self.invalid)}
+                'invalid_samples': dict(self.invalid),
+                'recent_usable_samples': self.recent_samples()}
 
 
 # ---------------------------------------------------------------- message-like helpers (no ROS)

@@ -20,14 +20,31 @@ of [`M61A_FIXED_BASE_IMPLEMENTATION.md`](M61A_FIXED_BASE_IMPLEMENTATION.md) pass
 launches (1, 1b, 2a–2e, 3, 4, 7, 8, plus mount and zero commands). The requirement-by-run table is
 in §8.1. The remaining items:
 - **Criterion 5 (visual):** met by runs 2–3; run 1 is UNMEASURED (inconclusive).
-- **Criterion 6 (`/scan`):** passes as **pose agreement** (fitted pose within 0.4 mm). Under the
-  strict per-beam reading of M0 it **fails**: 84–88 % of individual ranges are within ±8 mm,
-  systematically, with a maximum of 18 mm (§8.3). This is an owner decision.
-- **Pose-stream liveness:** UNRESOLVED (§8.2).
+- **Criterion 6 (`/scan`), as written** (version 1: "the `/scan` ranges … within ±8 mm", i.e.
+  individual ranges) **FAILED** in all three runs: 84–88 % of the 40-scan means and 52–53 % of the
+  single-scan ranges were within ±8 mm (§8.3, §9.6).
+  - The fitted-pose agreement (within 0.4 mm) is a supplementary metric (6a). It is **not**
+    criterion 6.
+  - *Correction:* an earlier version of this summary said criterion 6 "passes as pose agreement".
+    That reinterpreted the criterion.
+  - A frozen version-2 proposal and its single validation run are in §9.6.
+- **Pose-stream liveness and z/roll/pitch:** see §9 (§8.2 is corrected there).
 - **Run 1's supplementary controller-hold check:** UNMEASURED.
 
 Two earlier launch attempts did not become observation runs (§4.1). Owner-PC verification is still
 outstanding.
+
+**After the closeout (§9, `b982d8d`).**
+- **Pose: what is measured.** Only the model entry is measured: the physics pose of the welded
+  body. The `dummy_link` entry is the SDF weld value; §8.2 called it measured, and that is
+  corrected. z, roll and pitch have **no independent confirmation** (U-L2, unresolved).
+- **Readiness correction.** Readiness now requires simulation time to advance while the body pose
+  is received. A paused world, whose streams stay "fresh", is refused. Demonstrated live in
+  `run_05L`.
+- **Gate tests.** Both gate modes pass: enabled build, 1457 passed; disabled, a clean build and
+  1497 tests with 0 failures.
+- **Criterion 6, `run_04`.** Version 1 **FAIL** again; the frozen version-2 proposal **PASS** on
+  its single validation run. Acceptance is the owner's.
 
 ## 1. The incident (first Cloud attempt, `41fc10f`)
 
@@ -349,6 +366,10 @@ reads `observation_7f4c30f/` (its `SHA256SUMS` still verifies). Per-cell evidenc
 | H1 | Supplementary: controller reference constant | per run | **UNMEASURED** (helper defect) | PASS (0.0 rad; 207 msgs) | PASS (0.0 rad; 290) | `captures/capture.json`, `analysis.json` |
 | H2 | Supplementary: joint states unchanged | per run | PASS (4.8e-19 rad) | PASS | PASS | `captures/capture.json` |
 
+**Note on rows 6a and 6b (added in §9.6).** The label "gated" on 6a and 6b was this closeout's
+proposal and was never approved. The criterion of record is version 1, the "individual ranges"
+wording, which is row 6c: it **failed** in every run. A versioned replacement is proposed in §9.6.
+
 **Three complete passes?** §10 makes criteria 1–4, 7 and 8 per-run ("every preflight", "in each
 120 s run"), and all three runs meet them. Criterion 5 asks for "a screenshot from the GUI", which
 runs 2 and 3 supply. H1 and H2 are this session's supplementary checks. Criterion 6 is
@@ -372,7 +393,7 @@ FK within 5.4e-11 m.
 | Transform in `T_world_body = T_world_model · T_model_dummy · T_dummy_body` | Source | Status |
 |---|---|---|
 | `T_world_model` | Gazebo entry `spiderx` | **Measured** (simulator state): identity in every sample |
-| `T_model_dummy` | Gazebo entry `dummy_link` | **Measured**: (0, 0, 0.125), zero rotation in every sample |
+| `T_model_dummy` | Gazebo entry `dummy_link` | ~~Measured~~ **Not measured: corrected in §9.1.** Gazebo never writes a canonical link's pose; this is the SDF value of the URDF weld, (0, 0, 0.125), zero rotation in every sample |
 | `T_dummy_body` (`base_link`) | URDF `dummy_joint`: fixed, no `<origin>`, so identity (`m61a_fixed_base.parse_robot_description`) | **Assumed** from the description; the conversion rule is checked offline (`test_m61a_fixed_base.py`); not reported by Gazebo |
 | `T_body_lidar` (for `/scan` only) | URDF `lidar_joint` (0.051, −0.045, 0.141, yaw π/2) | **Assumed** from the description |
 
@@ -420,7 +441,9 @@ assumed transforms **jointly**: two errors that cancel exactly are not excluded.
 - **Criterion 6's wording** ("the `/scan` ranges … agree … within the M0 ±8 mm") literally
   describes individual ranges. M0's ±8 mm came from spot checks at expected bearings. Under that
   literal reading criterion 6 is **FAIL**; as pose agreement it is **PASS**. The owner decides
-  which reading applies before phase 2.
+  which reading applies before phase 2. *Superseded by §9.6: version 1, the literal reading, is
+  the criterion of record and failed. "As pose agreement" is not a reading of it but a different
+  metric, now proposed as version 2.*
 
 ### 8.4 Caveats that stay visible
 
@@ -478,3 +501,276 @@ ONE fixed-base M6.1 trot cycle in Cloud:
   [`patches/m61_enable_one_cycle.UNAPPLIED.patch`](patches/m61_enable_one_cycle.UNAPPLIED.patch).
 
 Nothing is enabled or sent.
+
+## 9. Remaining one-cycle blockers (after `a2c954f`)
+
+What was asked: criterion 6 resolved honestly; pose and liveness established before dispatch;
+gate-mode test coverage fixed. Commits:
+- `f44c27c`: criterion-6 version-2 proposal, **frozen before** its validation run;
+- `b982d8d`: the only code change (readiness correction and mode-explicit gate tests);
+- this documentation and evidence commit.
+
+Gates stayed `False` and no goal was sent. The two Cloud launches in this section were no-motion
+launches:
+- `run_04` (criterion-6 validation, frozen harness);
+- `run_05L` (liveness and pause demonstration).
+
+### 9.1 Pose: what Gazebo measures and what is inferred (corrects §8.2)
+
+**Sources, read for this purpose.**
+- **gz-sim 6.16.0, the installed version.**
+  - `Physics.cc` `UpdateSim`: the body loop at line 2783 writes the pose of every link **except**
+    the canonical link.
+  - `UpdateModelPose` (line 2567): the model pose is set from the canonical link's physics pose,
+    `X_WM = X_WL · X_ML⁻¹`.
+  - `ChangedLinks` (line 2556): this happens only in a step in which that link's world pose
+    changed (> 1e-6).
+- **The fixed-base SDF** (`ign sdf -p`, sdformat 12) and the runtime entities (`ign model`).
+
+| Factor in `T_world_body = T_world_model · T_model_dummy · T_dummy_body` | Simulator entity | Written by | Status |
+|---|---|---|---|
+| `T_world_model` | model `spiderx`, the `spiderx` entry of `pose/info` | Physics, from the canonical body's world pose, at each change (once at start for an intact weld) | **Measured**: the physics state of the merged body |
+| `T_model_dummy` | canonical link `dummy_link` (first link; no `canonical_link` attribute), the `dummy_link` entry | SDF loader: `<pose relative_to='spiderx_fixed_base_weld'>0 0 0</pose>`, with the weld joint at `<pose relative_to='__model__'>0 0 0.125</pose>`. **Never written by Physics** | **Inferred**: the URDF weld origin through the converter. §8.2 called it "measured"; that was wrong |
+| `T_dummy_body` | none: `base_link` is a `<frame>` attached to `dummy_joint` at identity (fixed-joint reduction) | URDF `dummy_joint` | **Inferred**; the same physics body, so it cannot move at run time |
+| `T_body_lidar` | sensor `lidar` in `dummy_link` at (0.051, −0.045, 0.141, yaw 1.5708); `lidar_link` is a lumped frame | URDF `lidar_joint` | **Inferred**; same body |
+| Weld | joint `spiderx_fixed_base_weld`, fixed, parent `world` (runtime `ign model -j`) | DART weld | **Structure confirmed at run time** |
+
+**Consequence.**
+- The composition equals `X_WL · T_dummy_body`: the **physics** pose of the merged body in all
+  6 DOF, as of its last change.
+- The check of the `dummy_link` entry against `/robot_description` is a **conversion and
+  association check**, not a measurement.
+- The attachment check compares the physics body with the weld assumption. It is not circular,
+  but under an intact weld it can only confirm that DART holds the body where the SDF put it.
+- Runtime evidence that this path writes z in this stack: M2 (free base, same model, canonical
+  link and bridge), where the model entry followed the body to its 0.0545 m rest height.
+
+### 9.2 z, roll and pitch: observability with the actual entities
+
+| Channel | z | roll and pitch | Notes |
+|---|---|---|---|
+| `spiderx` model entry (physics) | ✅ | ✅ | Written on any change > 1e-6 of the canonical body. The only channel |
+| `/scan` (fit) | ❌ | Only as `x + 0.141·pitch`, `y − 0.141·roll` (lidar lever arm) | A horizontal scan of vertical walls cannot separate tilt from translation, and assuming the body did not translate would use the weld to validate the weld |
+| `/scan` (geometry) | Only within (−0.14, 0.26) m | Only below about 0.08 rad (0.055 rad towards a corner) | Scan plane at 0.266 m. Every beam still hits its wall (3.0–4.2 m away) below the 0.5 m top and above the ground; beams on box_b (0.4 m top) bound z from above |
+| `/joint_states` effort | — | — | NaN for all 12 joints: `gz_ros2_control` does not report effort here |
+| Other sensors | — | — | None on the model: no IMU, no camera |
+
+**U-L2 stays UNRESOLVED.** No independent sensor in this model observes z, roll or pitch at the
+1 mm / 0.0033 rad level. What is resolved is *what* the reported values are: physics outputs of
+the merged body, not values inferred from the URDF. Closing U-L2 independently would need an
+added sensor, for example an IMU on the body or a world-fixed range sensor viewing it. That is a
+model change outside this task.
+
+**Independence of `/scan` is limited too.** The `gpu_lidar` is rendered from the same model and
+link pose components that `pose/info` publishes. `/scan` is independent of the SceneBroadcaster →
+bridge path and of our composition, but not of Gazebo's entity-component state.
+
+### 9.3 Freshness and advancing simulation time before dispatch (correction)
+
+**Finding (gz-sim 6.16.0).**
+- `SimulationRunner::Step` publishes the clock every iteration (lines 799, 453) and runs every
+  system's `PostUpdate`, paused or not.
+- `SceneBroadcaster::PostUpdate` publishes `pose/info` at up to 60 Hz (lines 345, 658).
+
+So a paused world keeps `/clock` and `/spiderx/sim/world_poses` arriving, each with an unchanged
+time. Only `/joint_states` stops, because the controller manager updates on sim-time progress.
+
+**Gap before the correction.**
+- M6.1 readiness judged the body pose by receipt age only (≤ 1.0 s).
+- Sim progress was implied only by the M6.0-D joint-state check: ≥ 2 messages with strictly
+  increasing stamps in a 2 s window. That is a different stream.
+- The observer's `sim_clock` check counted the first `/clock` message as an advance. A world paused
+  before a 4 s preflight therefore showed `sim_clock` OK; it was NOT READY only through the
+  joint-state check.
+
+**Correction (smallest change).**
+- **`m61a_fixed_base.check_sim_progress`.** Over the last `progress_window_s` = 1.0 s of wall time,
+  the `/clock` time at receipt of the usable body-pose samples must rise by at least
+  `min_sim_advance_s` = 0.1 s. That is a real-time factor of at least 0.1; Cloud runs at about
+  0.7. A step back by more than 1 ms, an unknown time, or fewer than two samples also fail. The
+  code is `body_pose_sim_time_not_advancing`.
+- **Where it applies.** It is applied in M6.1 readiness as a new layer `with_sim_progress`, before
+  the confirmation and again before the send, in the live and mock paths. It is also applied in the
+  observer.
+- **`ClockMonitor` fix.** Only an actual advance counts. "Messages but no advance" is
+  `sim_time_not_advancing`.
+- **Tests.**
+  - Unit: running, at the floor, paused, too slow, outside the window, one sample, unknown time,
+    and backwards.
+  - Tracker history; config refusal.
+  - A paused world that is NOT READY although every stream is fresh: the observer CLI, the mock
+    `sim_paused` scenario, and the enabled live path with fakes, where nothing is sent and the only
+    code is the new one.
+
+**In flight (unchanged, still required).**
+- `/joint_states` staleness: 0.5 s wall, which is what stops on a pause.
+- G5 sim stall: 5.0 s.
+- G6 sample gap: 0.25 s sim.
+- Body-pose freshness: 1.0 s.
+- G8.
+
+**What remains (U-L1, content liveness).** On a weld the model entry is written once, so before
+motion no stream can show that the *content* is current. The demonstration in §9.5 shows:
+- the gz-side `pose/info` header time advancing with the clock;
+- the stream regenerated at 60 Hz;
+- the readiness correction catching a pause.
+
+Content liveness still needs motion: plan E9 (leg-link entries against FK during the cycle).
+
+### 9.4 Gate-mode tests: both modes pass, meaningfully
+
+**Before.**
+- The patch header listed five tests expected to fail on an enabling branch.
+- Applying the patch in a temporary worktree (tests only, no simulator) and running the whole
+  controller suite found **three more** gate-dependent assertions (`enabled_mode_full_pytest.txt`):
+  - `test_success_outcome_fields`;
+  - `test_mock_cli_writes_the_evidence_directory`;
+  - `test_dry_run_report_is_never_overwritten`.
+
+  Each asserted that the recorded gate was `False`.
+- One of the original five, `test_live_cli_with_gate_false_imports_no_ros_client`, would have run
+  the **real** `--live` path on domain 0 in an enabled build.
+
+**Changes.** Assertions were made mode-explicit; none was weakened.
+
+| Test | Now |
+|---|---|
+| `test_m61_gate_matches_the_single_test_expectation` (was `…is_false_and_pinned`) | The committed gate `is` its pin (`test/m61_gate.py`); `LIVE_STATE` says HARD-DISABLED exactly when the gate is off, and ENABLED exactly when it is on; the M6.0-D gate is unchanged |
+| `test_m61_gate_is_a_single_literal_equal_to_the_pin` (renamed) | Unchanged logic: one assignment, in `m61_live_contract.py`, equal to the pin |
+| `test_no_environment_or_flag_can_enable_m61_dispatch` | Same eight files and forbidden words; only the exact pinned gate line is exempt, and it must occur exactly once |
+| `test_the_enabler_scan_has_teeth_in_both_build_modes` (new, False and True) | The scan flags: a flipped, missing or duplicated gate line; an indented or `c61.`-prefixed assignment; and every forbidden word injected into each file |
+| `test_live_cli_refused_exit_3_before_anything`, `test_gate_false_blocks_the_live_wiring_too` | Fixture `disabled`: the gate is set False explicitly |
+| `test_live_cli_with_gate_false_imports_no_ros_client` | The child process sets the gate False before `main`, so it can never reach a ROS graph in either build; it also checks `REFUSED` and `HARD-DISABLED` |
+| Three recorded-gate tests | Assert the recorded value `is` the pin |
+| `test_evidence_records_the_gate_as_it_is_in_both_modes` (new, False and True) | The dry-run report, `_gate_state()` and `as_dict()` record the gate as it is |
+
+Enabled-path tests use `M61FakeTransport` and fake graph observations only. This now includes the
+paused-world refusal.
+
+**Results.**
+
+| Build | Scope | Result |
+|---|---|---|
+| Disabled (committed) | `test_m61_gait_replay.py`, `test_m61a_fixed_base.py`, `test_m61a_observer.py` | 266 passed |
+| Enabled (patch applied, temporary worktree) | The same three files | 266 passed |
+| Enabled (patch applied, temporary worktree) | Whole `spiderx_controller` suite | **1457 passed, 0 failed** |
+| Disabled | Clean build + full `colcon test` | see §9.7 |
+
+The worktree was removed afterwards; no enabling branch exists. The patch header now states:
+expected test delta **none**.
+
+
+### 9.5 Live demonstration in the simulator (`run_05L`, no motion)
+
+Evidence: [`evidence/m61a_cloud/liveness_b982d8d/`](evidence/m61a_cloud/liveness_b982d8d/README.md).
+It was one launch at `b982d8d`, with the world paused and resumed through Gazebo's
+`WorldControl` service.
+
+| | A running | B paused | C resumed |
+|---|---|---|---|
+| gz `pose/info` header time (captures 1 s apart) | 5.282 → 6.239 s | **14.666 → 14.666 s** | 16.933 → 17.771 s |
+| ROS `/clock` over 5 s | 490 Hz, +2.54 s | **651 Hz, +0.000 s** | 675 Hz, +3.61 s |
+| ROS pose stream over 5 s (node clock at receipt) | 43 Hz, 8.445 → 10.894 s | **52 Hz, 14.666 → 14.666 s** | 57 Hz, 19.079 → 22.682 s |
+| ROS `/joint_states` over 5 s | 52 Hz | **0** | 74 Hz |
+| Observer `--preflight` (corrected) | READY: `body_pose_sim_progress` 0.659 s in 1.0 s (56 samples) | **NOT READY**: `body_pose_sim_time_not_advancing`, `sim_time_not_advancing`, `joint_states_missing`, while **`body_pose_fresh` passed** (age 0.002 s) | READY: 0.668 s (57 samples) |
+
+In `run_04` the corrected preflight was READY with 0.603 s of sim advance in the last 1.0 s (55
+samples).
+
+**Before dispatch, the following are demonstrated:**
+- stream freshness (receipt);
+- advancing simulation time on the dispatching side's clock, while the pose stream is received;
+- the gz-side regeneration of `pose/info` at the current sim time.
+
+**During execution:** the unchanged monitors catch a pause within 0.5 s (`/joint_states`
+staleness).
+
+### 9.6 Criterion 6: decision
+
+Proposal and derivation: [`M61A_CRITERION6_V2_PROPOSAL.md`](M61A_CRITERION6_V2_PROPOSAL.md)
+(frozen at `f44c27c`).
+
+**1. Original wording (version 1, criterion of record).**
+- Text: "the `/scan` ranges to the world walls agree with the welded pose … to within the M0
+  ±8 mm."
+- Measurement: individual ranges, with M0's tolerance from spot checks of individual distances.
+- Objective: the pose.
+
+**2. Version-1 results.**
+- Runs 1–3: retained, **FAIL**.
+- `run_04`: **FAIL** — 53.1 % of 13,840 single-scan ranges and 85.5 % of 346 40-scan means within
+  ±8 mm (max 18.8 mm).
+- The best that **any** planar pose can reach is a maximum |residual| of 17.7 mm, against
+  16.7–17.1 mm in runs 1–3.
+
+**3. Why a revision is justified.** The reason is not that 6a passes:
+- the gpu_lidar's noise (10 mm per scan);
+- its systematic, launch-to-launch identical rendering error of about 5 mm RMS;
+- together these make version 1 unsatisfiable by any pose. It measures the sensor, not the pose.
+
+**4. Version 2** (derived from the G8 objective, the sensor model and the uncertainty; thresholds
+and beam exclusions frozen before `run_04`):
+- the fitted body planar pose compared with the `pose/info` body;
+- τ 1.946 mm / 6.103 mrad;
+- σ_max 0.641 mm / 2.369 mrad;
+- prerequisites, failing which the result is INCONCLUSIVE.
+
+**5. Validation on ONE fresh no-motion observation, `run_04`**
+([`evidence/m61a_cloud/observation_b982d8d/`](evidence/m61a_cloud/observation_b982d8d/README.md)).
+
+| Item | Result |
+|---|---|
+| Frozen harness | Tools byte-identical (checked against `frozen_harness.json`); `crit6_v2` files unchanged since `f44c27c` (`sha256sum -c`), applied once |
+| Reference (`pose/info` body, 430 samples) | (0, 0, 0.125, 0, 0, 0), spread 0 |
+| Fit − reported | dx 0.483 mm, dy 0.046 mm, dyaw 0.117 mrad: **\|dxy\| 0.49 mm ≤ 1.946**, **\|dyaw\| 0.117 mrad ≤ 6.103** |
+| Uncertainty | σ_robust 0.267 / 0.276 mm, 0.134 mrad; σ_jackknife 0.578 / 0.356 mm, 0.260 mrad; **σ_used 0.578 mm ≤ 0.641**, 0.260 mrad ≤ 2.369 |
+| Prerequisites | 40 scans; 346/346 beams; walls 70/75/70/82 beams; `pose/info` constant: all met |
+| **Version 2** | **PASS** |
+| Counterfactual (the measured error pattern on a displaced body) | (+3, 0) mm → \|dxy\| 3.49 mm FAIL; (0, +3) mm → 3.09 FAIL; ±0.01 rad → 10.11 / −9.99 mrad FAIL; (+1, 0) mm → 1.48 PASS; +0.002 rad → 2.12 mrad PASS. Recovery errors ≤ 0.11 mm / 0.10 mrad. The diagonal (−2.12, +2.12) mm case FAILs (2.72 mm); the tool lists it as "recovery only" because the frozen constant puts it 2e-11 m below δ. Recorded, not changed |
+
+**6. Decision.**
+- Version 1 is kept as the criterion of record, and **phase-1 criterion 6 is FAILED under it**
+  (runs 1–3 and `run_04`).
+- Version 2 is a **proposal validated once**: PASS with an xy resolving power at 90 % of its
+  limit.
+- Accepting version 2 for phase 1 is the owner's decision. Nothing is relabelled.
+- The frozen harness's "GATED" labels for 6a/6b (`frozen_harness.json`) were a closeout proposal.
+  Version 2 replaces them; it does not reuse their 8 mm bound.
+
+**`run_04` and the other phase-1 criteria** (`observation_b982d8d/run_04_requirements.md`), all
+**PASS**:
+- 1, 1b, 2a–2e, 4, 7, 8 (clean, 5 s);
+- 3: the pose receipt gap max is **0.340 s**, p99.9 0.058 s. That is below the 1.0 s limit but
+  larger than runs 1–3 (≤ 0.076 s). During the 120 s observation this session read the preflight
+  JSON and wrote one README (light I/O), recorded as a caveat. The joint-state sim gap max is
+  0.02 s;
+- M, Z, Z2, Z3;
+- 5 (foot-level screenshot: feet clear of the floor, qualitative).
+
+### 9.7 Tests, builds and commits
+
+| What | Where | Result |
+|---|---|---|
+| M6.1 / M6.1-A test files (3), disabled | `b982d8d` working tree | 266 passed |
+| Same, enabled (patch applied, temporary worktree) | `b982d8d` + patch | 266 passed |
+| Whole `spiderx_controller` suite, enabled | `b982d8d` + patch | **1457 passed, 0 failed** (an earlier run: 3 failed, see §9.4) |
+| Clean build + full `colcon test`, disabled | `b982d8d` | **1497 tests, 0 errors, 0 failures, 0 skipped** |
+| `crit6_v2` synthetic self-test | `f44c27c` | 5/5 checks pass |
+| Cloud simulation | `b982d8d` | `run_04` (frozen harness) and `run_05L`: no motion, clean shutdowns |
+
+Gates: `M61_LIVE_DISPATCH_ENABLED = False`, `LIVE_DISPATCH_ENABLED = False`. The patch is
+unapplied on every branch, and `git apply --check` passes.
+
+### 9.8 What still blocks the one cycle
+
+1. **Criterion 6.**
+   - Under version 1, phase 1 is FAILED.
+   - Under version 2, validated once, it passes. Only the owner can accept version 2.
+2. **U-L2, z / roll / pitch.**
+   - There is no independent confirmation; they are the physics state of the merged body.
+   - The owner either accepts this or requires an added sensor (a model change).
+3. **U-L1, content liveness.** It closes only in motion (plan E9). Freshness and advancing sim
+   time before dispatch are demonstrated (§9.3, §9.5).
+4. **Approvals:** the phase-2 criteria E1–E11 and the enabling patch (2 lines; no expected test
+   failures).
+5. **Owner PC.** Phase 1 has not run there.

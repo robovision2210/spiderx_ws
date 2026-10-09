@@ -153,8 +153,16 @@ class M61FakeTransport(m6mock.FakeTransport):
         return self.tracker.snapshot()
 
     def _feed_tracker_until(self, wall):
-        """Readiness may look before poll() delivered the samples; feed the latest one."""
+        """Readiness may look before poll() delivered the samples; feed the latest one. The first
+        time, also the pose ticks of the preceding progress window: the world was already running
+        (or paused) when this transport opened, which a live readiness observation also sees."""
         smp = self.tracker.latest_usable
+        if smp is None:
+            n = math.ceil(self.fixed_base.progress_window_s / self.pose_period - 1e-9)
+            for k in range(n, 0, -1):
+                w = wall - k * self.pose_period
+                self.tracker.on_transforms(self._transforms(w), w, self._stamp(w))
+            smp = self.tracker.latest_usable
         if smp is None or smp.wall < wall:
             self.tracker.on_transforms(self._transforms(wall), wall, self._stamp(wall))
 
@@ -183,6 +191,7 @@ SCENARIOS = {
     'body_tilt': {'tilt_at': 5.0},                         # G2
     'joint_near_limit': {'joint_jump_at': 5.0},            # G3
     'sim_stall': {'stamp_freeze_at': 1.0},                 # G5 (re-used M6.0-D monitor)
+    'sim_paused': {'stamp_freeze_at': -10.0},              # paused before readiness: refused
     'joint_state_gap': {'gap_at': 5.0},                    # G6 (re-used M6.0-D monitor)
     'body_pose_stale': {'pose_stop_at': 5.0},              # pose freshness while running
     'no_body_pose': {'no_pose': True},                     # readiness refuses; nothing sent

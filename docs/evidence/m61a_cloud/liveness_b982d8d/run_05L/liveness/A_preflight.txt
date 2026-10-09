@@ -1,0 +1,16 @@
+SpiderX M6.1-A fixed-base observer (READ-ONLY: no goal, no command, no publisher)
+READY: all fixed-base checks pass
+  PASS  action_clients
+  PASS  attachment
+  PASS  body_pose_fresh
+  PASS  body_pose_sim_progress
+  PASS  command_publishers
+  PASS  controllers
+  PASS  frame_body_link
+  PASS  joint_state_publishers
+  PASS  joint_states
+  PASS  robot_description
+  PASS  sim_clock
+  PASS  spawn_identity
+Evidence: /root/spiderx_evidence/liveness_b982d8d/run_05L/liveness/observer_A/20261009T165615Z/observation.json
+preflight exit=0
