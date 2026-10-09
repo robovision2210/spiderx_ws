@@ -1,0 +1,27 @@
+== Packages, installed files and imports
+  [PASS] spiderx_controller
+  [PASS] spiderx_bringup
+  [PASS] spiderx_description
+  [PASS] tf2_ros
+  [PASS] tf2_msgs
+  [PASS] ros_gz_bridge
+  [PASS] installed share/spiderx_controller/config/m4_pose_targets.yaml
+  [PASS] installed lib/spiderx_controller/m4_pose_validation
+  [PASS] M4 modules import
+== Configuration
+  [PASS] validate_controller_config (M1-M3 configs and URDF consistency)
+  [PASS] m4_pose_validation --check-only: Poses ['neutral_stance', 'crouch_10mm', 'lift_lf_15mm'] validated
+== M4 unit tests
+  [PASS] 136 passed in 9.48s
+== Forbidden additions
+  [PASS] M4 files reference no hardware driver
+  [PASS] no wheel, diff-drive, /cmd_vel, /odom or mechaprime logic in M4 files
+== Invalid pose configs are refused before anything is sent (no simulator needed)
+  [PASS] simulation_only: false refused (REFUSED: invalid M4 pose configuration: simulation_only: true is required (M4 poses are simulation-o)
+  [PASS] frame odom refused (REFUSED: invalid M4 pose configuration: frame must be "base_link" (SpiderX body frame), got 'odom')
+  [PASS] crouch_10mm missing rear_left refused (REFUSED: invalid M4 pose configuration: pose crouch_10mm offsets_m: missing legs ['rear_left'] (ever)
+  [PASS] crouch_10mm with an unreachable rear_right refused (REFUSED: pose crouch_10mm refused (ik_failed): rear_right: unreachable_knee (unreachable: knee-plane)
+
+Scope: four-leg static poses (neutral_stance, crouch_10mm, lift_lf_15mm) in simulation.
+Not walking, gait, balance, locomotion, odometry or hardware validation.
+All M4 checks passed.
