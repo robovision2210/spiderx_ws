@@ -1,0 +1,207 @@
+{
+ "pid": 1168,
+ "stack_variant": "original",
+ "loadavg_start": [
+  5.1455078125,
+  1.52001953125,
+  0.52685546875
+ ],
+ "wall_start": "2026-10-09T08:29:21.346215Z",
+ "readiness": [
+  {
+   "index": 1,
+   "observed_monotonic": 422.39890647,
+   "observed_wall_iso": null,
+   "assessed_monotonic": 426.433394929,
+   "collection_s": 4.034461380000039,
+   "loadavg": [
+    5.5849609375,
+    1.73388671875,
+    0.607421875
+   ],
+   "ready": true,
+   "classification": "compatible",
+   "failure_codes": [],
+   "failures": [],
+   "checks": {
+    "probe": "passed",
+    "interface_contract": "passed",
+    "action_server": "passed",
+    "controllers": "passed",
+    "joint_states_source": "passed",
+    "joint_states_fresh": "passed",
+    "joint_names_contract": "passed",
+    "start_pose": "passed"
+   },
+   "observed": {
+    "action_servers": [
+     [
+      "/m6d_test_double_controller_stack",
+      [
+       "control_msgs/action/FollowJointTrajectory"
+      ]
+     ]
+    ],
+    "controllers": [
+     [
+      "joint_state_broadcaster",
+      "joint_state_broadcaster/JointStateBroadcaster",
+      "active"
+     ],
+     [
+      "leg_trajectory_controller",
+      "joint_trajectory_controller/JointTrajectoryController",
+      "active"
+     ]
+    ],
+    "joint_state_publishers": [
+     [
+      "/m6d_test_double_controller_stack",
+      "sensor_msgs/msg/JointState"
+     ]
+    ],
+    "joint_state_messages": 200
+   },
+   "samples": {
+    "count": 200,
+    "first_stamp": 104.368520472,
+    "last_stamp": 108.348818798,
+    "order_violations": 0,
+    "violation_examples": [],
+    "sim_now_at_evaluation": 108.38154635400008,
+    "last_sample_age_sim_s": 0.032727556000082814,
+    "last_sample_age_wall_s": 0.016363778000041407,
+    "span_sim_s": 3.9802983259999962
+   },
+   "peers_visible_to_probe": [
+    "/m6d_live_playback",
+    "/m6d_test_double_controller_stack"
+   ],
+   "probe_collect_s": 4.025151531999995
+  },
+  {
+   "index": 2,
+   "observed_monotonic": 426.434271834,
+   "observed_wall_iso": null,
+   "assessed_monotonic": 430.459113294,
+   "collection_s": 4.024807030999966,
+   "loadavg": [
+    5.5849609375,
+    1.73388671875,
+    0.607421875
+   ],
+   "ready": true,
+   "classification": "compatible",
+   "failure_codes": [],
+   "failures": [],
+   "checks": {
+    "probe": "passed",
+    "interface_contract": "passed",
+    "action_server": "passed",
+    "controllers": "passed",
+    "joint_states_source": "passed",
+    "joint_states_fresh": "passed",
+    "joint_names_contract": "passed",
+    "start_pose": "passed"
+   },
+   "observed": {
+    "action_servers": [
+     [
+      "/m6d_test_double_controller_stack",
+      [
+       "control_msgs/action/FollowJointTrajectory"
+      ]
+     ]
+    ],
+    "controllers": [
+     [
+      "joint_state_broadcaster",
+      "joint_state_broadcaster/JointStateBroadcaster",
+      "active"
+     ],
+     [
+      "leg_trajectory_controller",
+      "joint_trajectory_controller/JointTrajectoryController",
+      "active"
+     ]
+    ],
+    "joint_state_publishers": [
+     [
+      "/m6d_test_double_controller_stack",
+      "sensor_msgs/msg/JointState"
+     ]
+    ],
+    "joint_state_messages": 200
+   },
+   "samples": {
+    "count": 200,
+    "first_stamp": 112.43514067,
+    "last_stamp": 116.408485438,
+    "order_violations": 0,
+    "violation_examples": [],
+    "sim_now_at_evaluation": 116.43296524000004,
+    "last_sample_age_sim_s": 0.024479802000044515,
+    "last_sample_age_wall_s": 0.012239901000022257,
+    "span_sim_s": 3.973344768000004
+   },
+   "peers_visible_to_probe": [
+    "/m6d_live_playback",
+    "/m6d_test_double_controller_stack"
+   ],
+   "probe_collect_s": 4.022131486000035
+  }
+ ],
+ "graph_snapshots": [
+  {
+   "domain": 168,
+   "t": 422.242371428,
+   "result": {
+    "nodes": [],
+    "services": [],
+    "publishers": [],
+    "action_servers": []
+   }
+  },
+  {
+   "domain": 168,
+   "t": 435.676948086,
+   "result": {
+    "nodes": [],
+    "services": [],
+    "publishers": [],
+    "action_servers": []
+   }
+  }
+ ],
+ "stack": {
+  "class_module_file": "/home/user/spiderx_ws/spiderx_evidence/m6d_diag_20261009T082638Z/original_stack/m6d_isolated_stack.py",
+  "ticks": 1167,
+  "tick_overlaps": 0,
+  "max_concurrent_ticks": 1,
+  "published": 1167,
+  "publish_threads": 4,
+  "publish_order_violations": 0,
+  "violation_examples": []
+ },
+ "domain": 168,
+ "outcomes": [
+  {
+   "nodeid": "test/test_m6d_isolated_success.py::test_isolation_preconditions",
+   "outcome": "passed",
+   "duration_s": 0.0001077539999982946,
+   "longrepr_tail": null
+  },
+  {
+   "nodeid": "test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal",
+   "outcome": "failed",
+   "duration_s": 15.105784207,
+   "longrepr_tail": "_diag_20261009T082638Z/runs/orig_load8_4/basetemp/test_gate_enabled_main_succeed0')\n\n    def test_gate_enabled_main_succeeds_end_to_end_with_one_goal(sources, monkeypatch, tmp_path):\n        before = graph_snapshot(DOMAIN)\n        if any(before.values()):\n            pytest.skip(f'isolation not established on ROS domain {DOMAIN}: {before}')\n        monkeypatch.setattr(lc, 'LIVE_DISPATCH_ENABLED', True)         # test-local only\n        traj = m6t.build_trajectory(sources)\n        stack = fake_stack.IsolatedFakeStack(DOMAIN, traj['joint_names'],\n                                             traj['points'][0]['positions'])\n        try:\n            piped_stdin(monkeypatch, lc.CONFIRMATION_WORD + '\\n')\n            rc = lpb.main(['m6_live_playback', '--live', '--domain-id', str(DOMAIN),\n                           '--out', str(tmp_path)], sources=sources)\n            received, results = list(stack.received), list(stack.results)\n            cancels, list_calls = stack.cancel_requests, stack.list_calls\n        finally:\n            stack.stop()\n        after = graph_snapshot(DOMAIN)\n    \n        files = sorted((tmp_path / 'live').glob('*/live_outcome.json'))\n        assert len(files) == 1\n        data = json.loads(files[0].read_text())\n>       assert rc == lpb.EXIT_OK, (data['state'], data['reason'], data['errors'])\nE       AssertionError: ('TRACKING_FAILED', 'sample_gap', [])\nE       assert 1 == 0\nE        +  where 0 = lpb.EXIT_OK\n\ntest/test_m6d_isolated_success.py:130: AssertionError"
+  }
+ ],
+ "loadavg_last": [
+  6.037109375,
+  1.95751953125,
+  0.6923828125
+ ],
+ "wall_end": "2026-10-09T08:29:37.844315Z"
+}

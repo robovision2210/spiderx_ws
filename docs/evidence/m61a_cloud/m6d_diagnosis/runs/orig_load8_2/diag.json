@@ -1,0 +1,207 @@
+{
+ "pid": 990,
+ "stack_variant": "original",
+ "loadavg_start": [
+  2.56005859375,
+  0.65966796875,
+  0.22119140625
+ ],
+ "wall_start": "2026-10-09T08:28:43.255970Z",
+ "readiness": [
+  {
+   "index": 1,
+   "observed_monotonic": 384.137547977,
+   "observed_wall_iso": null,
+   "assessed_monotonic": 388.157224366,
+   "collection_s": 4.01965121500001,
+   "loadavg": [
+    2.99609375,
+    0.78173828125,
+    0.26318359375
+   ],
+   "ready": true,
+   "classification": "compatible",
+   "failure_codes": [],
+   "failures": [],
+   "checks": {
+    "probe": "passed",
+    "interface_contract": "passed",
+    "action_server": "passed",
+    "controllers": "passed",
+    "joint_states_source": "passed",
+    "joint_states_fresh": "passed",
+    "joint_names_contract": "passed",
+    "start_pose": "passed"
+   },
+   "observed": {
+    "action_servers": [
+     [
+      "/m6d_test_double_controller_stack",
+      [
+       "control_msgs/action/FollowJointTrajectory"
+      ]
+     ]
+    ],
+    "controllers": [
+     [
+      "joint_state_broadcaster",
+      "joint_state_broadcaster/JointStateBroadcaster",
+      "active"
+     ],
+     [
+      "leg_trajectory_controller",
+      "joint_trajectory_controller/JointTrajectoryController",
+      "active"
+     ]
+    ],
+    "joint_state_publishers": [
+     [
+      "/m6d_test_double_controller_stack",
+      "sensor_msgs/msg/JointState"
+     ]
+    ],
+    "joint_state_messages": 199
+   },
+   "samples": {
+    "count": 199,
+    "first_stamp": 104.613809466,
+    "last_stamp": 108.58105868,
+    "order_violations": 0,
+    "violation_examples": [],
+    "sim_now_at_evaluation": 108.61480597600007,
+    "last_sample_age_sim_s": 0.033747296000072424,
+    "last_sample_age_wall_s": 0.016873648000036212,
+    "span_sim_s": 3.9672492139999918
+   },
+   "peers_visible_to_probe": [
+    "/m6d_live_playback",
+    "/m6d_test_double_controller_stack"
+   ],
+   "probe_collect_s": 4.0084172929999795
+  },
+  {
+   "index": 2,
+   "observed_monotonic": 388.158179229,
+   "observed_wall_iso": null,
+   "assessed_monotonic": 392.193102372,
+   "collection_s": 4.034897618000002,
+   "loadavg": [
+    3.39697265625,
+    0.90185546875,
+    0.30517578125
+   ],
+   "ready": true,
+   "classification": "compatible",
+   "failure_codes": [],
+   "failures": [],
+   "checks": {
+    "probe": "passed",
+    "interface_contract": "passed",
+    "action_server": "passed",
+    "controllers": "passed",
+    "joint_states_source": "passed",
+    "joint_states_fresh": "passed",
+    "joint_names_contract": "passed",
+    "start_pose": "passed"
+   },
+   "observed": {
+    "action_servers": [
+     [
+      "/m6d_test_double_controller_stack",
+      [
+       "control_msgs/action/FollowJointTrajectory"
+      ]
+     ]
+    ],
+    "controllers": [
+     [
+      "joint_state_broadcaster",
+      "joint_state_broadcaster/JointStateBroadcaster",
+      "active"
+     ],
+     [
+      "leg_trajectory_controller",
+      "joint_trajectory_controller/JointTrajectoryController",
+      "active"
+     ]
+    ],
+    "joint_state_publishers": [
+     [
+      "/m6d_test_double_controller_stack",
+      "sensor_msgs/msg/JointState"
+     ]
+    ],
+    "joint_state_messages": 200
+   },
+   "samples": {
+    "count": 200,
+    "first_stamp": 112.660619878,
+    "last_stamp": 116.633889908,
+    "order_violations": 0,
+    "violation_examples": [],
+    "sim_now_at_evaluation": 116.68655814800002,
+    "last_sample_age_sim_s": 0.05266824000001691,
+    "last_sample_age_wall_s": 0.026334120000008454,
+    "span_sim_s": 3.973270029999995
+   },
+   "peers_visible_to_probe": [
+    "/m6d_live_playback",
+    "/m6d_test_double_controller_stack"
+   ],
+   "probe_collect_s": 4.032547456999964
+  }
+ ],
+ "graph_snapshots": [
+  {
+   "domain": 190,
+   "t": 383.849391911,
+   "result": {
+    "nodes": [],
+    "services": [],
+    "publishers": [],
+    "action_servers": []
+   }
+  },
+  {
+   "domain": 190,
+   "t": 398.992619121,
+   "result": {
+    "nodes": [],
+    "services": [],
+    "publishers": [],
+    "action_servers": []
+   }
+  }
+ ],
+ "stack": {
+  "class_module_file": "/home/user/spiderx_ws/spiderx_evidence/m6d_diag_20261009T082638Z/original_stack/m6d_isolated_stack.py",
+  "ticks": 1320,
+  "tick_overlaps": 0,
+  "max_concurrent_ticks": 1,
+  "published": 1320,
+  "publish_threads": 4,
+  "publish_order_violations": 0,
+  "violation_examples": []
+ },
+ "domain": 190,
+ "outcomes": [
+  {
+   "nodeid": "test/test_m6d_isolated_success.py::test_isolation_preconditions",
+   "outcome": "passed",
+   "duration_s": 0.0002116000000000895,
+   "longrepr_tail": null
+  },
+  {
+   "nodeid": "test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal",
+   "outcome": "passed",
+   "duration_s": 16.747173297000018,
+   "longrepr_tail": null
+  }
+ ],
+ "loadavg_last": [
+  3.92578125,
+  1.05322265625,
+  0.357421875
+ ],
+ "wall_end": "2026-10-09T08:29:00.989948Z"
+}

@@ -1,0 +1,186 @@
+{
+ "automatic_return_goals": 0,
+ "cancel_reason": "controller_lost",
+ "cancel_response": 0,
+ "cancels_sent": 1,
+ "channels": {
+  "action": "failed",
+  "goal_tolerances": "unavailable",
+  "tracking": "unavailable"
+ },
+ "dispatch": {
+  "acceptance": "accepted",
+  "attempted": true,
+  "cancel_attempted": true,
+  "cancel_error": null,
+  "cancel_response_known": true,
+  "final_goal_status": 5,
+  "final_result_known": true,
+  "goal_id": "mock-goal-0001",
+  "goal_may_still_be_executing": false,
+  "send": "sent"
+ },
+ "domain_id": 0,
+ "envelope": {
+  "displacement_epsilon_rad": 1e-09,
+  "goal_time_tolerance_s": 1.0,
+  "max_commanded_displacement_rad": 0.1223,
+  "max_duration_s": 30.0,
+  "max_points": 5,
+  "min_segment_s": 3.0,
+  "speed_factor": 2.0,
+  "start_pose_tolerance_rad": 0.05,
+  "tracking_tolerance_rad": 0.05
+ },
+ "errors": [],
+ "events": [
+  [
+   0.0,
+   "NEW",
+   "session start"
+  ],
+  [
+   0.0,
+   "PREFLIGHTED",
+   "preflighted trajectory 44f0a7ad52e5c330, fingerprint 0d6ef4171f2d338a"
+  ],
+  [
+   0.0,
+   "CONFIRMED",
+   "operator confirmation accepted"
+  ],
+  [
+   0.0,
+   "DISPATCHING",
+   "dispatching the one approved goal"
+  ],
+  [
+   0.0,
+   "GOAL_PENDING",
+   "goal sent (the only goal of this session)"
+  ],
+  [
+   0.15,
+   "ACTIVE",
+   "goal accepted"
+  ],
+  [
+   5.4,
+   "CANCEL_REQUESTED",
+   "one cancel requested (controller_lost); no new goal"
+  ],
+  [
+   5.55,
+   "CANCEL_REQUESTED",
+   "cancel response 0"
+  ],
+  [
+   5.65,
+   "CANCEL_REQUESTED",
+   "result status 5, error 0 (SUCCESSFUL)"
+  ],
+  [
+   5.65,
+   "HELD_ERROR",
+   "cancel confirmed (final status 5); no new goal"
+  ]
+ ],
+ "evidence": {
+  "path": "/home/user/spiderx_ws/spiderx_evidence/m61a_cloud_verify_20261009T085202Z/focused_basetemp/test_enabled_failures_never_re3/live/20261002T000000Z/live_outcome.json",
+  "phase": "final"
+ },
+ "evidence_phases": {
+  "final": "the complete outcome of the run",
+  "pre_send": "every gate passed except the final latch and freshness checks; a send may have followed; if it is the last record, the goal status is UNKNOWN",
+  "reserved": "written before any ROS initialization; if it is the last record, nothing was sent"
+ },
+ "freshness_at_send": {
+  "age_s": 0.0,
+  "code": null,
+  "max_age_s": 10.0,
+  "permitted": true
+ },
+ "goal_fingerprint": "0d6ef4171f2d338a01e76b934be94d1a4386e7c0fc68fe74262fb3c65005ff83",
+ "goals_sent": 1,
+ "limits": {
+  "approved_goal_count": 1,
+  "approved_point_times_s": [
+   3.0,
+   6.0,
+   9.0
+  ],
+  "cancel_response_timeout_s": 5.0,
+  "client_tracking_abort_rad": 0.05,
+  "controller_check_period_s": 1.0,
+  "final_status_after_cancel_s": 5.0,
+  "goal_position_tolerance_rad": 0.05,
+  "goal_response_timeout_s": 10.0,
+  "goal_time_tolerance_s": 1.0,
+  "goal_velocity_tolerance_rad_s": 0.05,
+  "joint_states_stale_s": 0.5,
+  "live_dispatch_enabled": true,
+  "path_position_tolerance_rad": 0.05,
+  "readiness_max_age_s": 10.0,
+  "result_watchdog_s": 120.0,
+  "sample_gap_s": 0.25,
+  "sim_stall_s": 5.0
+ },
+ "mode": "live",
+ "non_claims": [
+  "M6.0 is a trajectory-execution and observability check only.",
+  "It does not show gait playback, walking, locomotion, contact, body support, balance, dynamic stability, navigation, real-time behaviour, actuator capability or hardware readiness."
+ ],
+ "passed": false,
+ "readiness": [
+  {
+   "result": {
+    "age_s": 0.0,
+    "classification": "compatible",
+    "collection_s": 0.0,
+    "failure_codes": [],
+    "observed_wall_iso": null,
+    "ready": true,
+    "reasons": []
+   },
+   "when": "before_confirmation"
+  },
+  {
+   "result": {
+    "age_s": 0.0,
+    "classification": "compatible",
+    "collection_s": 0.0,
+    "failure_codes": [],
+    "observed_wall_iso": null,
+    "ready": true,
+    "reasons": []
+   },
+   "when": "after_confirmation"
+  }
+ ],
+ "reason": "controller_lost",
+ "result": {
+  "error_code": 0,
+  "error_name": "SUCCESSFUL",
+  "error_string": "canceled",
+  "status": 5
+ },
+ "retries": 0,
+ "run_utc": "20261002T000000Z",
+ "schema": "spiderx.m6d.live_outcome/1",
+ "state": "HELD_ERROR",
+ "terminal": true,
+ "tracking": {
+  "accept_sim_s": 100.14999999999986,
+  "detail": {},
+  "feedback_offset_s": -0.05,
+  "feedback_start_estimate_s": 100.10000000000002,
+  "max_inflight_error_rad": 0.0030570363413415583,
+  "samples": 275
+ },
+ "trajectory_id": "44f0a7ad52e5c330",
+ "transport": {
+  "close_error": null,
+  "closed": true,
+  "note": "closing the client releases local ROS resources only; it does not cancel or stop an accepted goal on the controller"
+ }
+}

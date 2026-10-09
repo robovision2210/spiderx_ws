@@ -1,0 +1,153 @@
+..FFF                                                                    [100%]
+=================================== FAILURES ===================================
+____________ test_stack_stamp_never_steps_back_at_a_second_boundary ____________
+
+    def test_stack_stamp_never_steps_back_at_a_second_boundary():
+        # 117.9999999996 s: rounding only the fraction gave nanosec 1e9 -> 0, i.e. 117.0 s
+        for t in (117.9999999996, 117.9999999995, 99.99999999951, 118.0, 118.0000000004):
+            st = fake_stack._stamp(t)
+            assert 0 <= st.nanosec < 1_000_000_000
+>           assert abs(st.sec + st.nanosec * 1e-9 - t) <= 1e-9, t
+E           AssertionError: 117.9999999996
+E           assert 0.9999999996000071 <= 1e-09
+E            +  where 0.9999999996000071 = abs(((117 + (0 * 1e-09)) - 117.9999999996))
+E            +    where 117 = builtin_interfaces.msg.Time(sec=117, nanosec=0).sec
+E            +    and   0 = builtin_interfaces.msg.Time(sec=117, nanosec=0).nanosec
+
+test/test_m6d_isolated_success.py:234: AssertionError
+___________ test_stack_ticks_never_overlap_and_stamps_leave_in_order ___________
+
+sources = Sources(config_dir='/home/user/spiderx_ws/src/spiderx_controller/test/../config', joint_names=('lf_hip', 'lf_thigh_joi...rdf_expanded_xml': '915125596b3dff4bf0af5ed395d04ca0e815455f3ad8db6af3a22927ef81288c'}, m4_config_version=1, errors=())
+
+    def test_stack_ticks_never_overlap_and_stamps_leave_in_order(sources):
+        """A slow publish (0-25 ms between computing a tick's stamp and handing it to DDS, longer than
+        the 10 ms period) must neither overlap two ticks nor reorder their stamps. In a reentrant group
+        rclpy starts the next tick while one is still running, and the later stamp can leave first;
+        in its own mutually exclusive group one tick runs at a time and every received stamp
+        increases."""
+        import random
+    
+        import rclpy
+        from rclpy.context import Context
+        from rclpy.executors import SingleThreadedExecutor
+        from rclpy.signals import SignalHandlerOptions
+        from sensor_msgs.msg import JointState
+    
+        before = graph_snapshot(DOMAIN)
+        if any(before.values()):
+            pytest.skip(f'isolation not established on ROS domain {DOMAIN}: {before}')
+        state = {'active': 0, 'max': 0, 'ticks': 0}
+        lock = threading.Lock()
+        rng = random.Random(7)
+    
+        class SlowPublishStack(fake_stack.IsolatedFakeStack):
+            def __init__(self, *a, **k):
+                super().__init__(*a, **k)
+                real = self.js_pub
+    
+                class SlowPublisher:
+                    def publish(self, msg):
+                        time.sleep(rng.uniform(0.0, 0.025))
+                        real.publish(msg)
+                self.js_pub = SlowPublisher()
+    
+            def _tick(self):
+                with lock:
+                    state['active'] += 1
+                    state['ticks'] += 1
+                    state['max'] = max(state['max'], state['active'])
+                try:
+                    super()._tick()
+                finally:
+                    with lock:
+                        state['active'] -= 1
+    
+        traj = m6t.build_trajectory(sources)
+        stack = SlowPublishStack(DOMAIN, traj['joint_names'], traj['points'][0]['positions'])
+        ctx = Context()
+        rclpy.init(context=ctx, domain_id=DOMAIN, signal_handler_options=SignalHandlerOptions.NO)
+        stamps = []
+        try:
+            node = rclpy.create_node('m6d_stack_order_probe', context=ctx, enable_rosout=False,
+                                     start_parameter_services=False)
+            node.create_subscription(JointState, '/joint_states',
+                                     lambda m: stamps.append(fake_stack._secs(m.header.stamp)), 50)
+            ex = SingleThreadedExecutor(context=ctx)
+            ex.add_node(node)
+            end = time.monotonic() + 2.0
+            while time.monotonic() < end:
+                ex.spin_once(timeout_sec=0.05)
+            ex.shutdown()
+            node.destroy_node()
+        finally:
+            rclpy.try_shutdown(context=ctx)
+            stack.stop()
+        back = [i for i in range(1, len(stamps)) if stamps[i] <= stamps[i - 1]]
+>       assert state['ticks'] >= 20 and state['max'] == 1, state
+E       AssertionError: {'active': 0, 'max': 3, 'ticks': 200}
+E       assert (200 >= 20 and 3 == 1)
+
+test/test_m6d_isolated_success.py:304: AssertionError
+_____ test_stack_stop_leaves_no_callback_running_against_destroyed_handles _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f4714afded0>
+
+    def test_stack_stop_leaves_no_callback_running_against_destroyed_handles(monkeypatch):
+        """Start and stop the stack repeatedly; no rclpy Task may end with an exception nobody
+        retrieves. Before the fix, Humble's executor shutdown destroyed its guard condition while a
+        pool callback could still trigger it (12 such Tasks in 150 cycles in Cloud), which rclpy
+        prints as 'The following exception was never retrieved: cannot use Destroyable ...'."""
+        import gc
+        import random
+    
+        from rclpy import task as rtask
+    
+        before = graph_snapshot(DOMAIN)
+        if any(before.values()):
+            pytest.skip(f'isolation not established on ROS domain {DOMAIN}: {before}')
+        orphans = []
+    
+        def record_orphan(fut):
+            if fut._exception is not None and not fut._exception_fetched:
+                orphans.append(repr(fut._exception))
+        monkeypatch.setattr(rtask.Future, '__del__', record_orphan)
+        rng = random.Random(11)
+        names = [f'j{i}' for i in range(12)]
+        for _ in range(30):
+            stack = fake_stack.IsolatedFakeStack(DOMAIN, names, [0.0] * 12)
+            time.sleep(rng.uniform(0.05, 0.2))
+            stack.stop()
+            del stack
+            gc.collect()
+>       assert orphans == []
+E       assert ["InvalidHand... requested')"] == []
+E         
+E         Left contains one more item: "InvalidHandle('cannot use Destroyable because destruction was requested')"
+E         Use -v to get more diff
+
+test/test_m6d_isolated_success.py:336: AssertionError
+=============================== warnings summary ===============================
+test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+    import sre_parse
+
+test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+    import sre_constants
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+___________ test_gate_enabled_main_succeeds_end_to_end_with_one_goal ___________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.0-D live-playback tool
+M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows motion, tracking, contact, balance or walking.
+Readiness passed (compatible or warning). Type SEND-ONE-CROUCH-GOAL to send ONE goal (neutral -> crouch_10mm -> neutral) to the running simulation on ROS domain 154; anything else, EOF or Ctrl+C refuses:
+Live: final state SUCCEEDED, reason None, goals sent 1, cancels sent 0; no retry, no second goal
+Report: /home/user/spiderx_ws/spiderx_evidence/m6d_diag_20261009T082638Z/ab_tests/original_basetemp/test_gate_enabled_main_succeed0/live/20261009T085023Z/live_outcome.json
+=========================== short test summary info ============================
+PASSED test/test_m6d_isolated_success.py::test_isolation_preconditions
+PASSED test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+FAILED test/test_m6d_isolated_success.py::test_stack_stamp_never_steps_back_at_a_second_boundary
+FAILED test/test_m6d_isolated_success.py::test_stack_ticks_never_overlap_and_stamps_leave_in_order
+FAILED test/test_m6d_isolated_success.py::test_stack_stop_leaves_no_callback_running_against_destroyed_handles
+3 failed, 2 passed, 2 warnings in 26.72s

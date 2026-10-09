@@ -1,0 +1,69 @@
+{
+ "automatic_return_goals": 0,
+ "cancels_sent": 0,
+ "dispatch": {
+  "acceptance": "not_attempted",
+  "attempted": false,
+  "cancel_attempted": false,
+  "cancel_error": null,
+  "cancel_response_known": false,
+  "final_goal_status": "not_applicable",
+  "final_result_known": false,
+  "goal_id": null,
+  "goal_may_still_be_executing": false,
+  "send": "not_attempted"
+ },
+ "domain_id": 0,
+ "errors": [
+  {
+   "message": "rclpy init failed",
+   "type": "TransportError",
+   "where": "setup"
+  }
+ ],
+ "evidence": {
+  "path": "/home/user/spiderx_ws/spiderx_evidence/m61a_cloud_verify_20261009T085202Z/focused_basetemp/test_setup_failure_is_refused_0/live/20261003T000017Z/live_outcome.json",
+  "phase": "final"
+ },
+ "evidence_phases": {
+  "final": "the complete outcome of the run",
+  "pre_send": "every gate passed except the final latch and freshness checks; a send may have followed; if it is the last record, the goal status is UNKNOWN",
+  "reserved": "written before any ROS initialization; if it is the last record, nothing was sent"
+ },
+ "goals_sent": 0,
+ "limits": {
+  "approved_goal_count": 1,
+  "approved_point_times_s": [
+   3.0,
+   6.0,
+   9.0
+  ],
+  "cancel_response_timeout_s": 5.0,
+  "client_tracking_abort_rad": 0.05,
+  "controller_check_period_s": 1.0,
+  "final_status_after_cancel_s": 5.0,
+  "goal_position_tolerance_rad": 0.05,
+  "goal_response_timeout_s": 10.0,
+  "goal_time_tolerance_s": 1.0,
+  "goal_velocity_tolerance_rad_s": 0.05,
+  "joint_states_stale_s": 0.5,
+  "live_dispatch_enabled": true,
+  "path_position_tolerance_rad": 0.05,
+  "readiness_max_age_s": 10.0,
+  "result_watchdog_s": 120.0,
+  "sample_gap_s": 0.25,
+  "sim_stall_s": 5.0
+ },
+ "mode": "live",
+ "non_claims": [
+  "M6.0 is a trajectory-execution and observability check only.",
+  "It does not show gait playback, walking, locomotion, contact, body support, balance, dynamic stability, navigation, real-time behaviour, actuator capability or hardware readiness."
+ ],
+ "passed": false,
+ "reason": "session_setup_failed",
+ "retries": 0,
+ "run_utc": "20261003T000017Z",
+ "schema": "spiderx.m6d.live_outcome/1",
+ "state": "REFUSED",
+ "terminal": true
+}

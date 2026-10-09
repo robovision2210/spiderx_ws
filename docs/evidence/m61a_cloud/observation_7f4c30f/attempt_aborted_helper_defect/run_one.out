@@ -1,0 +1,11 @@
+[09:02:03] start
+launch pid 17910 pgid 17910 xvfb 17907
+[09:02:07] wait controllers
+Terminated
+[09:04:27] CONTROLLERS NOT ACTIVE
+SIGINT sent to process group 17910
+process group empty after 6 s
+The daemon has been stopped
+--- remaining (expect nothing):
+17907 [Xvfb] <defunct>
+RUN_ONE_EXIT=1

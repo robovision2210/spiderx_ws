@@ -1,0 +1,20 @@
+== Packages
+  [PASS] spiderx_controller
+  [PASS] spiderx_bringup
+  [PASS] gz_ros2_control
+  [PASS] controller_manager
+  [PASS] joint_state_broadcaster
+  [PASS] joint_trajectory_controller
+  [PASS] control_msgs
+  [PASS] gz_ros2_control Fortress system plugin: /opt/mm/root/envs/humble/lib/libgz_ros2_control-system.so
+== Static configuration
+  [PASS] controller configs and <ros2_control> block match the URDF
+  [PASS] ros2 launch spiderx_bringup fortress_control.launch.py --show-args
+  [PASS] ros2 launch spiderx_controller controller.launch.py --show-args
+  [PASS] control launch files reference no hardware driver
+== Unsafe commands are refused (no simulator needed)
+  [PASS] unknown joint 'left_wheel_joint' refused
+  [PASS] out-of-limit target (lf_foot_joint 0.6 > 0.436) refused
+
+Scope: joint-position control only. No standing, balance, gait, /cmd_vel or odometry.
+All M1 checks passed.

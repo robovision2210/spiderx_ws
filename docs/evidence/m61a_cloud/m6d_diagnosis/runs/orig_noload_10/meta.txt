@@ -1,0 +1,2 @@
+label=orig_noload_10 stack=original burners=0 start=2026-10-09T08:39:15.818Z loadavg=0.33 1.15 0.89 nproc=4
+rc=0 end=2026-10-09T08:39:33.151Z

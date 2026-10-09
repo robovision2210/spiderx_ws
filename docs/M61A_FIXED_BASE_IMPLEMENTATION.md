@@ -1,8 +1,11 @@
 # M6.1-A – Fixed-Base Simulation and Body-Pose Observability: Implementation
 
-**Status: IMPLEMENTED and verified in Cloud offline / mock / isolated-domain tests only.** Nothing
-here has run in Gazebo. Every number marked *provisional* awaits the local launch-only observation
-(§10). Both live gates stay `False`:
+**Status: IMPLEMENTED; verified offline / mock / isolated domain, and in Cloud simulation for
+phase 1.** The §10 phase-1 launch-only observation passed in three separate Cloud launches at
+`7f4c30f` (Gazebo Fortress GUI on Xvfb with software rendering, real-time factor about 0.7; no goal
+sent): [`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md). It has **not** run on the owner
+PC. The numbers marked *provisional* are unchanged; phase 2 is not started. Both live gates stay
+`False`:
 - `m6_live_contract.LIVE_DISPATCH_ENABLED = False` (M6.0-D);
 - `m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False` (M6.1).
 
@@ -14,12 +17,12 @@ pending. It does not authorize any launch or replay.
 
 | Item | Implemented | Tested offline / mock / isolated (Cloud) | Tested in the simulator | Pending |
 |---|---|---|---|---|
-| Fixed-base wrapper `spiderx_fixed_base.urdf.xacro` (Approach B) | ✅ | ✅ xacro, `check_urdf`, `ign sdf -p`, converter rule | ❌ | Launch-only observation (§10, phase 1) |
-| Dedicated launch `fortress_m61a_fixed_base.launch.py` | ✅ | ✅ loaded with `importlib`, nodes and arguments checked | ❌ | Phase 1 |
-| Frame composition `T_world_body = T_world_model · T_model_body` | ✅ | ✅ numeric (general rotations) and against sdformat output | ❌ | Phase 1 confirms the Gazebo side |
-| Clearance analysis and mounting height **0.125 m** (provisional) | ✅ | ✅ exact meshes, guaranteed bounds | ❌ | Phase 1: no contact, observed height |
-| Body-pose observation, attachment check, G8 | ✅ | ✅ pure + mock + isolated domain | ❌ | Phase 1: noise and gaps decide the tolerances |
-| Read-only observer / preflight `m61a_observe_fixed_base` | ✅ | ✅ fake observer + isolated-domain fake peers | ❌ | Phase 1 |
+| Fixed-base wrapper `spiderx_fixed_base.urdf.xacro` (Approach B) | ✅ | ✅ xacro, `check_urdf`, `ign sdf -p`, converter rule | ✅ Cloud phase 1 (3 runs): weld world→`dummy_link` at 0.125 m in `/robot_description` and in Gazebo | Phase 1 on the owner PC |
+| Dedicated launch `fortress_m61a_fixed_base.launch.py` | ✅ | ✅ loaded with `importlib`, nodes and arguments checked | ✅ Cloud phase 1 (controllers active in 11–14 s; 1 of 5 launches hit a Gazebo startup race, see the Cloud report §4.1) | Phase 1 on the owner PC |
+| Frame composition `T_world_body = T_world_model · T_model_body` | ✅ | ✅ numeric (general rotations) and against sdformat output | ✅ Cloud phase 1: body at (0, 0, 0.125), zero attitude; `/scan` fit within 0.4 mm of the weld-implied pose | Phase 1 on the owner PC |
+| Clearance analysis and mounting height **0.125 m** (provisional) | ✅ | ✅ exact meshes, guaranteed bounds | ✅ Cloud phase 1: observed height 0.125 m; feet visibly clear (qualitative) | Owner approval of the mount |
+| Body-pose observation, attachment check, G8 | ✅ | ✅ pure + mock + isolated domain | ✅ Cloud phase 1: attachment 0, pose gaps < 0.08 s (a world weld shows no noise) | Phase 2 under motion decides the tolerances |
+| Read-only observer / preflight `m61a_observe_fixed_base` | ✅ | ✅ fake observer + isolated-domain fake peers | ✅ Cloud phase 1: preflight READY ×3, 120 s READY ×3, 0 publishers, 0 goals | Phase 1 on the owner PC |
 | M6.1 replay integration (fixed-base readiness, composed pose, G8) | ✅ | ✅ 14 + 5 mock scenarios, isolated domain | ❌ | Phase 2 (separate approval) |
 | Live dispatch | ❌ hard-disabled | ✅ refusal tested | ❌ | Separate owner approval and enabling change |
 
@@ -458,6 +461,11 @@ Every phase keeps both gates `False` unless a separate, reviewed enabling change
 Record the exact commit (`git rev-parse HEAD`) with every result.
 
 ### Phase 1 – launch-only fixed-base observation (dispatch disabled; no goal)
+
+**Cloud result (`7f4c30f`):** passed in three separate launches; criteria table, two non-counted
+launch attempts, the `/scan` cube-map-seam beams and the limits are in
+[`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md) §4. The owner-PC run below is still
+outstanding.
 
 ```bash
 cd ~/spiderx_ws && git status --short && git rev-parse HEAD     # clean, record the commit

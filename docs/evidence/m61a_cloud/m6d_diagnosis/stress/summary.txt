@@ -1,0 +1,2 @@
+stress/original_load8_60s.json {'variant': 'original', 'ticks': 5992, 'tick_overlaps': 2, 'max_concurrent_ticks': 2, 'received': 5986, 'order_violations': 0}
+stress/original_noload_60s.json {'variant': 'original', 'ticks': 6001, 'tick_overlaps': 0, 'max_concurrent_ticks': 1, 'received': 5997, 'order_violations': 0}

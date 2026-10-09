@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="2" time="11.844" timestamp="2026-10-09T07:59:21.625217+00:00" hostname="vm"><testcase classname="spiderx_controller.src.spiderx_controller.test.test_m6d_isolated_success" name="test_isolation_preconditions" time="0.001" /><testcase classname="spiderx_controller.src.spiderx_controller.test.test_m6d_isolated_success" name="test_gate_enabled_main_succeeds_end_to_end_with_one_goal" time="11.543"><failure message="AssertionError: ('REFUSED', 'readiness_not_ready', [])&#10;assert 2 == 0&#10; +  where 0 = lpb.EXIT_OK">sources = Sources(config_dir='/home/user/spiderx_ws/src/spiderx_controller/test/../config', joint_names=('lf_hip', 'lf_thigh_joi...rdf_expanded_xml': '915125596b3dff4bf0af5ed395d04ca0e815455f3ad8db6af3a22927ef81288c'}, m4_config_version=1, errors=())
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7fb6fe435050&gt;
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-599/test_gate_enabled_main_succeed0')
+
+    def test_gate_enabled_main_succeeds_end_to_end_with_one_goal(sources, monkeypatch, tmp_path):
+        before = graph_snapshot(DOMAIN)
+        if any(before.values()):
+            pytest.skip(f'isolation not established on ROS domain {DOMAIN}: {before}')
+        monkeypatch.setattr(lc, 'LIVE_DISPATCH_ENABLED', True)         # test-local only
+        traj = m6t.build_trajectory(sources)
+        stack = fake_stack.IsolatedFakeStack(DOMAIN, traj['joint_names'],
+                                             traj['points'][0]['positions'])
+        try:
+            piped_stdin(monkeypatch, lc.CONFIRMATION_WORD + '\n')
+            rc = lpb.main(['m6_live_playback', '--live', '--domain-id', str(DOMAIN),
+                           '--out', str(tmp_path)], sources=sources)
+            received, results = list(stack.received), list(stack.results)
+            cancels, list_calls = stack.cancel_requests, stack.list_calls
+        finally:
+            stack.stop()
+        after = graph_snapshot(DOMAIN)
+    
+        files = sorted((tmp_path / 'live').glob('*/live_outcome.json'))
+        assert len(files) == 1
+        data = json.loads(files[0].read_text())
+&gt;       assert rc == lpb.EXIT_OK, (data['state'], data['reason'], data['errors'])
+E       AssertionError: ('REFUSED', 'readiness_not_ready', [])
+E       assert 2 == 0
+E        +  where 0 = lpb.EXIT_OK
+
+../../src/spiderx_controller/test/test_m6d_isolated_success.py:130: AssertionError</failure></testcase></testsuite></testsuites>

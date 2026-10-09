@@ -1,0 +1,5 @@
+SIGINT sent to process group 19072
+process group empty after 10 s
+The daemon has been stopped
+--- remaining (expect nothing):
+none

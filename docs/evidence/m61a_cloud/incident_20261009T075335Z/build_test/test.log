@@ -1,0 +1,101 @@
+start 07:54:47
+Starting >>> spiderx_controller
+Finished <<< spiderx_controller [6min 16s]	[ with test failures ]
+Starting >>> spiderx_scripts
+/opt/mm/root/envs/humble/lib/python3.11/site-packages/setuptools/_distutils/dist.py:318: UserWarning: Unknown distribution option: 'tests_require'
+  warnings.warn(msg)
+--- stderr: spiderx_scripts
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.000s
+
+OK
+---
+Finished <<< spiderx_scripts [0.25s]
+
+Summary: 2 packages finished [6min 17s]
+  1 package had stderr output: spiderx_scripts
+  1 package had test failures: spiderx_controller
+colcon test exit=0
+build/spiderx_controller/Testing/20261009-0754/Test.xml: 38 tests, 0 errors, 1 failure, 0 skipped
+- test_m6d_isolated_success
+  <<< failure message
+    -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+     - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_isolated_success.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_isolated_success/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml --junit-prefix=spiderx_controller
+    ============================= test session starts ==============================
+    platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+    cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6d_isolated_success/.cache
+    rootdir: /home/user/spiderx_ws
+    collected 2 items
+    
+    ../../src/spiderx_controller/test/test_m6d_isolated_success.py .F        [100%]
+    
+    =================================== FAILURES ===================================
+    ___________ test_gate_enabled_main_succeeds_end_to_end_with_one_goal ___________
+    
+    sources = Sources(config_dir='/home/user/spiderx_ws/src/spiderx_controller/test/../config', joint_names=('lf_hip', 'lf_thigh_joi...rdf_expanded_xml': '915125596b3dff4bf0af5ed395d04ca0e815455f3ad8db6af3a22927ef81288c'}, m4_config_version=1, errors=())
+    monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb6fe435050>
+    tmp_path = PosixPath('/tmp/pytest-of-root/pytest-599/test_gate_enabled_main_succeed0')
+    
+        def test_gate_enabled_main_succeeds_end_to_end_with_one_goal(sources, monkeypatch, tmp_path):
+            before = graph_snapshot(DOMAIN)
+            if any(before.values()):
+                pytest.skip(f'isolation not established on ROS domain {DOMAIN}: {before}')
+            monkeypatch.setattr(lc, 'LIVE_DISPATCH_ENABLED', True)         # test-local only
+            traj = m6t.build_trajectory(sources)
+            stack = fake_stack.IsolatedFakeStack(DOMAIN, traj['joint_names'],
+                                                 traj['points'][0]['positions'])
+            try:
+                piped_stdin(monkeypatch, lc.CONFIRMATION_WORD + '\n')
+                rc = lpb.main(['m6_live_playback', '--live', '--domain-id', str(DOMAIN),
+                               '--out', str(tmp_path)], sources=sources)
+                received, results = list(stack.received), list(stack.results)
+                cancels, list_calls = stack.cancel_requests, stack.list_calls
+            finally:
+                stack.stop()
+            after = graph_snapshot(DOMAIN)
+        
+            files = sorted((tmp_path / 'live').glob('*/live_outcome.json'))
+            assert len(files) == 1
+            data = json.loads(files[0].read_text())
+    >       assert rc == lpb.EXIT_OK, (data['state'], data['reason'], data['errors'])
+    E       AssertionError: ('REFUSED', 'readiness_not_ready', [])
+    E       assert 2 == 0
+    E        +  where 0 = lpb.EXIT_OK
+    
+    ../../src/spiderx_controller/test/test_m6d_isolated_success.py:130: AssertionError
+    ----------------------------- Captured stdout call -----------------------------
+    SpiderX M6.0-D live-playback tool
+    M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows motion, tracking, contact, balance or walking.
+    Readiness passed (compatible or warning). Type SEND-ONE-CROUCH-GOAL to send ONE goal (neutral -> crouch_10mm -> neutral) to the running simulation on ROS domain 160; anything else, EOF or Ctrl+C refuses:
+    Live: final state REFUSED, reason readiness_not_ready, goals sent 0, cancels sent 0; no retry, no second goal
+    Report: /tmp/pytest-of-root/pytest-599/test_gate_enabled_main_succeed0/live/20261009T075923Z/live_outcome.json
+    =============================== warnings summary ===============================
+    src/spiderx_controller/test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+      /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+        import sre_parse
+    
+    src/spiderx_controller/test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+      /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+        import sre_constants
+    
+    -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+    - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml -
+    =========================== short test summary info ============================
+    FAILED ../../src/spiderx_controller/test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+    =================== 1 failed, 1 passed, 2 warnings in 11.86s ===================
+    The following exception was never retrieved: cannot use Destroyable because destruction was requested
+    -- run_test.py: return code 1
+    -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml'
+  >>>
+build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml: 2 tests, 0 errors, 1 failure, 0 skipped
+- spiderx_controller.src.spiderx_controller.test.test_m6d_isolated_success test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+  <<< failure message
+    AssertionError: ('REFUSED', 'readiness_not_ready', [])
+    assert 2 == 0
+     +  where 0 = lpb.EXIT_OK
+  >>>
+
+Summary: 1465 tests, 0 errors, 2 failures, 0 skipped
+test-result exit=1
+end 08:01:04

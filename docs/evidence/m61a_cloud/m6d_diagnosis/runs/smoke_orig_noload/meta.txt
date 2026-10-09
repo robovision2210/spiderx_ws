@@ -1,0 +1,2 @@
+label=smoke_orig_noload stack=original burners=0 start=2026-10-09T08:27:57.239Z loadavg=0.08 0.08 0.03 nproc=4
+rc=0 end=2026-10-09T08:28:15.631Z

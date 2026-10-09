@@ -1,0 +1,4 @@
+screenshot exit=0
+move_to spiderx screenshot exit=0
+side view screenshot exit=0
+foot-level view screenshot exit=0
