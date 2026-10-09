@@ -5,11 +5,11 @@ test. It is not a controller: it moves nothing, publishes no /joint_states and n
 it only answers the action (goal response, feedback, result, cancel) and records what it got.
 """
 
-import threading
 import time
 
 from builtin_interfaces.msg import Time
 from control_msgs.action import FollowJointTrajectory
+from m6d_isolated_stack import SpinThread
 import rclpy
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -26,6 +26,7 @@ class IsolatedFakeServer:
         self.duration_s, self.feedback_n = duration_s, feedback_n
         self.received = []
         self.cancel_requests = 0
+        self._stopping = False
         self.context = Context()
         rclpy.init(context=self.context, domain_id=domain_id,
                    signal_handler_options=SignalHandlerOptions.NO)
@@ -37,8 +38,7 @@ class IsolatedFakeServer:
                                    callback_group=ReentrantCallbackGroup())
         self.executor = MultiThreadedExecutor(context=self.context)
         self.executor.add_node(self.node)
-        self.thread = threading.Thread(target=self.executor.spin, daemon=True)
-        self.thread.start()
+        self.spinner = SpinThread(self.executor)
 
     def _goal(self, goal_request):
         self.received.append(goal_request)
@@ -61,7 +61,8 @@ class IsolatedFakeServer:
             time.sleep(step)
         if self.mode == 'wait':
             end = time.monotonic() + 10.0
-            while time.monotonic() < end and not goal_handle.is_cancel_requested:
+            while (time.monotonic() < end and not goal_handle.is_cancel_requested and
+                   not self._stopping):
                 time.sleep(0.02)
             if goal_handle.is_cancel_requested:
                 goal_handle.canceled()
@@ -75,8 +76,8 @@ class IsolatedFakeServer:
         return result
 
     def stop(self):
-        self.executor.shutdown(timeout_sec=2.0)
-        self.thread.join(timeout=2.0)
+        self._stopping = True              # a waiting execute callback returns now
+        self.spinner.stop()                # no callback may outlive the server (SpinThread)
         self.server.destroy()
         self.node.destroy_node()
         rclpy.try_shutdown(context=self.context)
