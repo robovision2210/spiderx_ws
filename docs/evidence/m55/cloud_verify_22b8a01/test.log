@@ -1,0 +1,22 @@
+start 09:31:55
+loadavg 0.38 1.78 2.36 1/122 25350
+Starting >>> spiderx_controller
+Finished <<< spiderx_controller [8min 24s]
+Starting >>> spiderx_scripts
+/opt/mm/root/envs/humble/lib/python3.11/site-packages/setuptools/_distutils/dist.py:318: UserWarning: Unknown distribution option: 'tests_require'
+  warnings.warn(msg)
+--- stderr: spiderx_scripts
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.000s
+
+OK
+---
+Finished <<< spiderx_scripts [0.29s]
+
+Summary: 2 packages finished [8min 24s]
+  1 package had stderr output: spiderx_scripts
+colcon test exit=0
+Summary: 1684 tests, 0 errors, 0 failures, 0 skipped
+test-result exit=0
+end 09:40:20

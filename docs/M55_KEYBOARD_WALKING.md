@@ -601,6 +601,8 @@ was sent anywhere.
   When opened, it targets the M6.1-A branch, or `main` after the dependencies merge.
 - **Parent fixes** are brought in by merge commits (`bdada3a`, `706a3ae`, and the merge of the
   M6.1-A Cloud verification at `b910df1`), never by rebasing published history.
+- **After that merge** (`22b8a01`): full suite **1684 tests, 0 errors, 0 failures, 0 skipped** in
+  Cloud ([`evidence/m55/cloud_verify_22b8a01/`](evidence/m55/cloud_verify_22b8a01/README.md)).
 - **M6.1-A phase 1** (launch-only fixed-base observation) **passed in Cloud simulation** at
   `7f4c30f` in three separate launches
   ([`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md)); it has not run on the owner PC.
