@@ -1,0 +1,2 @@
+Publishers [Address, Message Type]:
+  tcp://192.0.2.2:33065, ignition.msgs.Pose_V

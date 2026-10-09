@@ -1,0 +1,17 @@
+SpiderX M6.1-A fixed-base observer (READ-ONLY: no goal, no command, no publisher)
+NOT READY: body_pose_sim_time_not_advancing, joint_states_missing, sim_time_not_advancing
+  PASS  action_clients
+  PASS  attachment
+  PASS  body_pose_fresh
+  FAIL  body_pose_sim_progress  (body_pose_sim_time_not_advancing)
+  PASS  command_publishers
+  PASS  controllers
+  PASS  frame_body_link
+  PASS  joint_state_publishers
+  FAIL  joint_states  (joint_states_missing)
+  PASS  robot_description
+  FAIL  sim_clock  (sim_time_not_advancing)
+  PASS  spawn_identity
+Evidence: /root/spiderx_evidence/liveness_b982d8d/run_05L/liveness/observer_B/20261009T165631Z/observation.json
+[ros2run]: Process exited with failure 1
+preflight exit=1

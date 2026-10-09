@@ -8,14 +8,17 @@ Branch  : apply only on a new, never-merged branch (plan section 4); delete it a
 Changes : 2 lines in 2 files - the gate constant and its test pin (test/m61_gate.py).
 Identity: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461..., goal fingerprint
           9dba1a173e212bfc... are not inputs of the gate and must be unchanged (plan step E3).
-Expected test delta on the enabling branch (source-verified; these guards assert the
-DISABLED build and are left unedited - their failure proves the build is enabled):
-  test_m61_gait_replay.py::test_m61_gate_is_false_and_pinned            ('is False', 'HARD-DISABLED')
-  test_m61_gait_replay.py::test_no_environment_or_flag_can_enable_m61_dispatch ('DISPATCH_ENABLED = True' in source)
-  test_m61_gait_replay.py::test_live_cli_refused_exit_3_before_anything
-  test_m61_gait_replay.py::test_live_cli_with_gate_false_imports_no_ros_client (runs main --live
-      --domain-id 0 in a subprocess: run it ONLY while no simulation is running, plan step E2)
-  test_m61_gait_replay.py::test_gate_false_blocks_the_live_wiring_too
+Expected test delta on the enabling branch: NONE. Every test passes in both build modes:
+  - the committed gate is checked against its pin (test/m61_gate.py), whatever its value;
+  - disabled behaviour is tested with the gate set False explicitly (fixture `disabled`; the
+    --live subprocess test sets it False inside the child, so it never reaches a ROS graph);
+  - the enabled wiring is tested with the gate set True explicitly and in-memory fakes only;
+  - the source scan exempts only the one pinned gate line.
+  Verified 2026-10-09 with this patch applied in a temporary worktree (tests only, no
+  simulator): full spiderx_controller suite 1457 passed, 0 failed; the same tree without the
+  patch: see docs/M61A_CLOUD_VERIFICATION.md section 9.3. An earlier header listed five expected
+  failures; the empirical run found three more (outcome, mock evidence and dry-run report
+  asserted a recorded gate of False). All eight are now mode-aware.
 Check   : git apply --check docs/patches/m61_enable_one_cycle.UNAPPLIED.patch   (changes nothing)
 Revert  : git checkout claude/stoic-shannon-ur2mes && git branch -D <enabling branch>
 

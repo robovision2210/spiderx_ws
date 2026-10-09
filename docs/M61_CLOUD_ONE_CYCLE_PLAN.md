@@ -4,41 +4,54 @@
 - Nothing here is enabled or executed; no goal has been sent.
 - The enabling change exists only as an **unapplied** patch,
   [`patches/m61_enable_one_cycle.UNAPPLIED.patch`](patches/m61_enable_one_cycle.UNAPPLIED.patch)
-  (SHA-256 `4bd59225f333eab661b4c9d0715bf429bd2c1439510064217dfb359f8f6f2484`).
-- `git apply --check` confirmed it applies cleanly; it was never applied.
+  (SHA-256 `ff28f86b5d5f7f280746862340597fa0803bbf57c8caed60917ba46d453872e5`).
+- `git apply --check` confirmed it applies cleanly. On this branch it was never applied. It was
+  applied only in a temporary worktree to run the tests in the enabled mode; no simulator was
+  involved and the worktree was removed (Cloud report §9.4).
 - Running this plan needs the owner approvals in §1.
 
-Every value below was read from the source at `b910df1` (the `src/` tree is identical to the
-tested `7f4c30f`), and file and line references are given. Labels: **[V]** verified in source or
-by a command run on the gate-off build; **[P]** a proposed procedure or threshold.
+Every value below was read from the source at `b982d8d`, which added the sim-progress
+readiness check and mode-explicit gate tests. File and line references are given. Labels:
+**[V]** verified in source or by a command run on the gate-off build; **[P]** a proposed
+procedure or threshold.
 
 ## 1. Preconditions (each is a blocker until done)
 
-1. **Owner review of the Cloud phase-1 closeout**
-   ([`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md) §8). It includes a decision on
-   criterion 6: the aggregate `/scan` pose agreement passes, but under the strict per-beam
-   reading of M0 ("every range within ±8 mm") it fails (84–88 % of beams within, systematic, up to
-   18 mm).
-2. **Owner approval of the phase-2 acceptance criteria** in §6. They extend M6.1-A §10 phase 2.
-3. **Owner approval of the enabling patch** and of running it in Cloud, not on the owner PC. In
+1. **Owner decision on criterion 6** ([`M61A_CRITERION6_V2_PROPOSAL.md`](M61A_CRITERION6_V2_PROPOSAL.md);
+   Cloud report §9.6).
+   - Version 1, "every range within ±8 mm", **failed** in runs 1–3 and again in `run_04`. No pose
+     can satisfy it (minimax 16.7–17.7 mm).
+   - The version-2 proposal (fitted planar pose, τ 1.946 mm / 6.103 mrad, frozen at `f44c27c`)
+     gave **PASS** on its single validation run `run_04`: |dxy| 0.49 mm, |dyaw| 0.12 mrad, with
+     σ 0.58 mm ≤ 0.641 mm.
+   - The owner accepts version 2 or keeps version 1. Under version 1, phase 1 stays failed and this
+     plan stops here.
+2. **Owner decision on z, roll and pitch** (Cloud report §9.2, U-L2).
+   - No independent sensor observes them. The values are the physics state of the welded body,
+     written by Gazebo whenever that body moves.
+   - The owner either accepts the simulator state as ground truth for them or requires an added
+     sensor (a model change).
+3. **Owner approval of the phase-2 acceptance criteria** in §6. They extend M6.1-A §10 phase 2.
+4. **Owner approval of the enabling patch** and of running it in Cloud, not on the owner PC. In
    Cloud, Gazebo runs on Xvfb with software rendering at a real-time factor of about 0.7.
-4. **The pose stream's liveness is unresolved after phase 1** (M61A Cloud report §8.2). This plan
-   closes it during the cycle (§6, E9). If it cannot be shown, the body-pose gates are not
-   considered verified.
+5. **Pose-stream content liveness** (U-L1) closes only in motion (§6, E9).
+   - Before dispatch, readiness now requires simulation time to advance while the body pose is
+     received (§3). A paused world is refused although its streams are fresh (Cloud report §9.5).
+   - If E9 cannot be shown, the body-pose gates are not considered verified.
 
 ## 2. Exact identity [V]
 
 | Item | Value | Where |
 |---|---|---|
-| Base branch | `claude/stoic-shannon-ur2mes` at the commit named in the approval (closeout head or later; `src/` must equal `7f4c30f`: `git diff 7f4c30f HEAD -- src/` empty) | — |
+| Base branch | `claude/stoic-shannon-ur2mes` at the commit named in the approval (`b982d8d` or later; `src/` must equal `b982d8d`: `git diff b982d8d HEAD -- src/` empty) | — |
 | Enabling branch | `local/m61-one-cycle-<UTC>`: **local only, never pushed, never merged**, deleted after the run | §4 |
 | Gate | `m61_live_contract.M61_LIVE_DISPATCH_ENABLED` (line 19), pinned by `test/m61_gate.py` (line 7) | patch |
 | Other gates | M6.0-D `m6_live_contract.LIVE_DISPATCH_ENABLED` stays `False` (not read by M6.1); the M5.5 gate is not on this branch | `m6_gait_replay._gate_state()` |
-| Tool | `ros2 run spiderx_controller m6_gait_replay.py --live --domain-id 0` (`--no-write` is refused with `--live`; the domain must be explicit, 0..232) | `m6_gait_replay.py:571–633` |
+| Tool | `ros2 run spiderx_controller m6_gait_replay.py --live --domain-id 0` (`--no-write` is refused with `--live`; the domain must be explicit, 0..232) | `m6_gait_replay.py:599–661` |
 | Confirmation word | `SEND-ONE-TROT-CYCLE`, read only after readiness #1 passes | `m61_live_contract.py:26`, `m6_gait_replay.py:609–615` |
 | Trajectory | `trajectory_id 241760e7dfd5ef12`; content `94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64`; goal fingerprint `9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a` (dry run on the gate-off build: `Dry run PASS: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461, goal fingerprint 9dba1a17…; nothing sent`) | `M61_IMPLEMENTATION_NOTES.md` §1.1 |
 | Motion | 9 points, 0.5 s segments, 7.0 s sim (3.0 s lead-in + 4.0 s cycle), neutral → pair A (LF+RR) swing → pair B (RF+LR) swing → neutral; hips 0; max \|q − neutral\| 0.1114 rad on the spline (cap 0.1223); peak 0.139 rad/s | same |
-| Configs (SHA-256) | `config/m61_limits.yaml` `0ff8fc9e…70c7`; `config/m61_trot_cycle.yaml` `b91839fc…4f39`; `config/m61a_fixed_base.yaml` `eb04c612…6ddb` (mount 0.125 m, **provisional**); `config/spiderx_ros2_controllers.yaml` `c449f24f…6e01` (hash-pinned) | `sha256sum` |
+| Configs (SHA-256) | `config/m61_limits.yaml` `0ff8fc9e…70c7`; `config/m61_trot_cycle.yaml` `b91839fc…4f39`; `config/m61a_fixed_base.yaml` `1c7966fc…40b9` (mount 0.125 m, **provisional**; adds `progress_window_s` 1.0 and `min_sim_advance_s` 0.1); `config/spiderx_ros2_controllers.yaml` `c449f24f…6e01` (hash-pinned) | `sha256sum` |
 | Launch / model | `fortress_m61a_fixed_base.launch.py` `f8d27e70…2504`; `spiderx_fixed_base.urdf.xacro` `b43b91da…469d` | `sha256sum` |
 | Harness | The frozen phase-1 tools, `docs/evidence/m61a_cloud/observation_7f4c30f/tools/`, hashes in `docs/evidence/m61a_cloud/closeout/frozen_harness.json` | closeout |
 
@@ -46,13 +59,14 @@ by a command run on the gate-off build; **[P]** a proposed procedure or threshol
 
 All of these run **before the confirmation and again after it**. The second result must still be
 fresh at the send (≤ 10 s from the start of its observation, `READINESS_MAX_AGE_S`).
-Assembled in `m6_gait_replay._run_live` (lines 556–563):
+Assembled in `m6_gait_replay._run_live` (lines 584–590):
 
 | Layer | Requires | Source |
 |---|---|---|
 | M6.0-D graph readiness | Exactly one action server at `/leg_trajectory_controller/follow_joint_trajectory` of the right type; both controllers `active` (`list_controllers`); one `/joint_states` publisher with ≥ 2 fresh, strictly increasing stamps; 12 named joints, finite; start pose within 0.05 rad of neutral; installed interface contract | `m6_live_preflight.evaluate` |
 | Body pose (`with_body_pose`) | A ground-truth body pose ≤ 1.0 s old, z ≥ 0.045 m, tilt ≤ 0.26 rad | `m61_limits.yaml` |
-| Fixed base (`with_fixed_base` → `m61a_fixed_base.assess_plant`) | A fixed-base `/robot_description` with the approved mount (0.125 m ≥ the clearance minimum); the Gazebo `dummy_link` entry consistent with it (0.1 mm / 1e-4 rad); model root at the identity spawn (3 mm / 0.01 rad); composed body at the weld pose, attachment ≤ 3 mm / 0.01 rad | `m61a_fixed_base.yaml` |
+| Fixed base (`with_fixed_base` → `m61a_fixed_base.assess_plant`) | A fixed-base `/robot_description` with the approved mount (0.125 m ≥ the clearance minimum); the Gazebo `dummy_link` entry consistent with it (0.1 mm / 1e-4 rad: a conversion and association check, since Gazebo never writes the canonical link's pose); model root at the identity spawn (3 mm / 0.01 rad); composed body (the physics pose of the merged body) at the weld pose, attachment ≤ 3 mm / 0.01 rad | `m61a_fixed_base.yaml` |
+| Sim progress (`with_sim_progress` → `m61a_fixed_base.check_sim_progress`) | Over the last 1.0 s of wall time, the transport's `/clock` at receipt of the usable body-pose samples rose by ≥ 0.1 s (a real-time factor ≥ 0.1), with no step back. A paused world keeps `/clock` and `pose/info` arriving unchanged, so receipt freshness alone cannot show progress. Code `body_pose_sim_time_not_advancing` | `m61a_fixed_base.yaml` `freshness` |
 | Command owner (`with_command_owner`) | 0 publishers on `/leg_trajectory_controller/joint_trajectory`; 0 FollowJointTrajectory clients other than its own (**counted as subscribers of `…/_action/status`**) | `m61a_fixed_base.command_owner_codes` |
 
 **Consequence for evidence recording [V].** Nothing else may subscribe to
@@ -84,7 +98,7 @@ Check the copied tools against `frozen_harness.json` before use. Every shell sou
 
 **A. Gate-off checks on the base commit** (record all output in `$R/pre/`):
 ```bash
-git status --short && git rev-parse HEAD && git diff 7f4c30f HEAD -- src/ | wc -l     # clean; 0
+git status --short && git rev-parse HEAD && git diff b982d8d HEAD -- src/ | wc -l     # clean; 0
 pgrep -af "ign gazebo|gz sim|ros2|parameter_bridge|controller_manager|Xvfb" || echo none
 rm -rf build install && colcon build --symlink-install && source install/setup.bash
 ros2 run spiderx_controller m6_gait_replay.py --dry-run --no-write          # 241760e7dfd5ef12 / 9dba1a17…
@@ -114,11 +128,14 @@ ros2 run spiderx_controller m6_gait_replay.py --dry-run --no-write          # id
 cd src/spiderx_controller && python3 -m pytest test/test_m61_gait_replay.py -p no:cacheprovider \
   --basetemp=$R/enabled_tests -rA > $R/enabled_tests.log; cd -
 ```
-Expected: the five gate-state tests listed in the patch header fail, and every other test passes.
-Any other failure stops the procedure. One of the five,
-`test_live_cli_with_gate_false_imports_no_ros_client`, runs `main --live --domain-id 0` in a
-subprocess with stdin closed. That is why this step runs with no simulation up: with nothing on
-domain 0 it can only end NOT READY / REFUSED, and EOF refuses the confirmation anyway.
+Expected: **every test passes**; any failure stops the procedure.
+- The gate tests are mode-explicit: the pin, the disabled path with the gate set False, the
+  enabled path with fakes only.
+- The `--live` subprocess test sets the gate False inside the child, so no test can reach a ROS
+  graph.
+- The step still runs with no simulation up, as a precaution.
+- Verified in Cloud with the patch applied in a temporary worktree: 1457 passed, 0 failed
+  (Cloud report §9.4).
 
 **D. Launch and preflight** (frozen harness):
 ```bash
@@ -187,11 +204,11 @@ the enabling branch, which was never pushed. Then commit the evidence on the bas
 
 | # | Requirement | Evidence |
 |---|---|---|
-| E1 | Phase-1 checks hold in this launch: preflight READY, ownership 0/0 | `run/observer/*/observation.json` (preflight) |
-| E2 | Enabled build: exactly the five expected gate-state test failures, no others | `enabled_tests.log` |
+| E1 | Phase-1 checks hold in this launch: preflight READY (including `sim_clock` advancing and `body_pose_sim_progress`), ownership 0/0 | `run/observer/*/observation.json` (preflight) |
+| E2 | Enabled build: every test of `test_m61_gait_replay.py` passes (no expected failures; any failure stops) | `enabled_tests.log` |
 | E3 | Identity unchanged: `241760e7dfd5ef12` / `94a492c4…` / `9dba1a17…` on the enabled build | dry run; `trajectory.json`, `goal_fingerprint.txt` |
 | E4 | Final state `SUCCEEDED`, exit 0; `goals_sent 1`, `cancels_sent 0`, `retries 0`, `automatic_return_goals 0`; acceptance `accepted`, final goal status 4 | `m61_run/<UTC>/live_outcome.json` (phases reserved → pre_send → final) |
-| E5 | Readiness READY before and after confirmation; freshness at the send ≤ 10 s | `readiness_before.json`, `readiness_after.json`, `live_outcome.json` |
+| E5 | Readiness READY before and after confirmation, each including `m61a_sim_progress` ok (sim time advanced ≥ 0.1 s within the last 1.0 s while the body pose arrived); freshness at the send ≤ 10 s | `readiness_before.json`, `readiness_after.json`, `live_outcome.json` |
 | E6 | Tracking: max in-flight \|error\| < 0.05 rad; goal tolerances passed; no G6 sample gap | `live_outcome.json` (`tracking`, `channels`), `commanded_vs_observed.csv` |
 | E7 | No gate tripped (G1, G2, G3, G5, G6, G8, pose freshness); G7 drift reported only | `gates.json` |
 | E8 | Body stayed welded during the cycle: attachment ≤ 1 mm / 0.0033 rad and z within 1 mm of 0.125 m (the phase-1 rule) | `gates.json` attachment max, `body_pose.csv`, the observer's statistics |
@@ -209,9 +226,11 @@ dispatched once, tracked and supervised on a welded simulated body, in Cloud.
 
 ## 7. Known Cloud-specific risks
 
-- Real-time factor ≈ 0.7: the 7.0 s sim goal takes ≈ 10 s wall. The wall-time monitors
-  (pose stale 1.0 s, `/joint_states` stale 0.5 s, sim stall 5.0 s) had large margins in phase 1
-  (pose gaps < 0.08 s, joint-state wall gaps < 0.075 s).
+- Real-time factor ≈ 0.7: the 7.0 s sim goal takes ≈ 10 s wall. The wall-time monitors are pose
+  stale 1.0 s, `/joint_states` stale 0.5 s and sim stall 5.0 s.
+  - They had large margins in runs 1–3: pose gaps < 0.08 s, joint-state wall gaps < 0.075 s.
+  - `run_04` had one 0.34 s pose gap (p99.9 0.058 s). That is still below 1.0 s, but a reminder
+    to keep the machine quiet during E.
 - The Gazebo GUI→server startup race (1 of 5 launches): see §4 D.
 - `ros2` CLI daemon fault: the frozen wait helper restarts it.
 - No competing CPU load during E. The M6.0-D diagnosis (finding 2) showed that a starved

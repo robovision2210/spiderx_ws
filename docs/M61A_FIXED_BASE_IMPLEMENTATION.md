@@ -3,9 +3,14 @@
 **Status: IMPLEMENTED; verified offline / mock / isolated domain, and in Cloud simulation for
 phase 1.** In three separate Cloud launches at `7f4c30f` (Gazebo Fortress GUI on Xvfb with
 software rendering, real-time factor about 0.7; no goal sent), every per-run §10 phase-1
-criterion passed. Still open:
-- criterion 6 passes as `/scan` pose agreement but fails under a strict per-beam reading;
-- pose-stream liveness is unresolved;
+criterion passed except criterion 6. Still open:
+- **criterion 6, version 1** ("the `/scan` ranges … within ±8 mm", individual ranges) **failed**
+  in runs 1–3. That result stands. A frozen version-2 proposal (fitted planar pose) gave
+  PASS (|dxy| 0.49 mm ≤ 1.946 mm, |dyaw| 0.12 mrad ≤ 6.103 mrad; σ 0.58 mm ≤ 0.641 mm) on its single validation run `run_04`
+  ([`M61A_CRITERION6_V2_PROPOSAL.md`](M61A_CRITERION6_V2_PROPOSAL.md)); acceptance is the owner's;
+- z, roll and pitch have no independent sensor confirmation (U-L2, unresolved). Pre-dispatch
+  readiness now requires simulation time to advance while the body pose is received. Content
+  liveness closes only in motion (U-L1);
 - run 1's visual check is unmeasured.
 
 Closeout: [`M61A_CLOUD_VERIFICATION.md`](M61A_CLOUD_VERIFICATION.md) §8. It has **not** run on the owner
@@ -192,8 +197,18 @@ does the same.
   M3 compared `lf_foot_1` this way to 5.4e-11 m.
 - Per-pose stamps are 0 at the bridge.
 
-**What measures the physical body.** The body is
-`T_world_model · T_model_dummy(Gazebo entry) · T_dummy_base`:
+**What measures the physical body** (corrected after the Cloud closeout; gz-sim 6.16 `Physics.cc`,
+Cloud report §9.1). The body is `T_world_model · T_model_dummy(Gazebo entry) · T_dummy_base`:
+- `T_world_model` is the only **measured** factor. Gazebo writes the model pose from the canonical
+  link's physics pose, `X_WM = X_WL · X_ML⁻¹`, whenever that link moves.
+- Gazebo **never** writes a canonical link's own pose. The `dummy_link` entry is therefore the SDF
+  value of the weld origin, inferred from the URDF through the converter; it is not a
+  measurement.
+- The composition thus equals `X_WL · T_dummy_base`: the physics pose of the merged body.
+- The consistency check against the description below is a conversion and association check.
+
+The earlier wording follows, kept for the record; read "Gazebo's own `dummy_link` entry" as the
+SDF value:
 - It uses Gazebo's own `dummy_link` entry, not the description, so a body that moves relative to
   the model root is seen whichever way Gazebo updates the model pose.
 - `base_link` is merged into `dummy_link` (no runtime joint), so there is no internal attachment
@@ -237,12 +252,20 @@ lidar's `/scan` ranges to the world walls must match the welded pose (M0 measure
 | Model root not at identity (> 3 mm or 0.01 rad) | `frame_spawn_not_identity` | Not ready; G8 in flight |
 | Composed body away from the weld pose (> 3 mm or 0.01 rad) | `attachment_displaced` | Not ready; G8 in flight |
 | No usable sample for 1.0 s (wall, receipt time) | `body_pose_stale` / `body_pose_missing` | Not ready; pose-freshness cancel in flight |
+| Pose samples arrive but sim time did not advance ≥ 0.1 s over the last 1.0 s (paused or frozen world) | `body_pose_sim_time_not_advancing` | Not ready (readiness only; in flight a pause stops `/joint_states`: 0.5 s cancel) |
+| `/clock` arrives but has never advanced | `sim_time_not_advancing` | Not ready (observer) |
 
 **Time.**
 - Pose and joint-state freshness are judged by **monotonic wall receipt time**, because the bridge
   stamps are zero.
 - Simulation-clock progress is judged by how long, in wall time, `/clock` has not advanced:
   `sim_time_stalled` after 5.0 s (pause, freeze, lost bridge).
+- **Readiness additionally needs positive progress** (correction, Cloud report §9.3). A paused
+  Gazebo world keeps publishing `/clock` and `pose/info` with an unchanged time, so receipt
+  freshness cannot show progress:
+  - `sim_time_not_advancing`: `/clock` arrived but never advanced;
+  - `body_pose_sim_time_not_advancing`: over the last 1.0 s of wall time, the `/clock` at receipt
+    of the usable pose samples rose by less than 0.1 s, or went back.
 - `/clock` going back by more than 1 ms is `sim_time_reset` and **latches**, so evidence from
   before a world reset is never reused.
 - The two clocks are never mixed in one comparison.
@@ -296,7 +319,8 @@ this.
 - link consistency, spawn identity and attachment within tolerance;
 - a fresh pose;
 - fresh, complete 12-joint `/joint_states` from exactly one publisher;
-- a progressing `/clock` with no reset;
+- a `/clock` that has advanced (not merely arrived), with no stall or reset, and sim time
+  advancing while the body pose was received (`body_pose_sim_progress`);
 - both controllers `active`;
 - **no other commander visible**: no publisher on `/leg_trajectory_controller/joint_trajectory`
   and no FollowJointTrajectory client (counted as subscribers of
@@ -358,6 +382,9 @@ usual and **hold** their positions. The observer sends them nothing.
 - **Readiness** (`m6_gait_replay.with_fixed_base`, before and after the confirmation): adds
   `m61a_fixed_base.assess_plant` to the existing M6.0-D readiness and body-pose readiness. That
   covers the description and mount, link consistency, spawn identity and attachment.
+- **Sim progress** (`m6_gait_replay.with_sim_progress`, also before and after the confirmation):
+  sim time must advance while the body pose is received (§4, Time). Mock scenario `sim_paused`:
+  REFUSED, 0 goals.
 - **Body pose** for G1, G2 and G7 is the **composed** body (live: `M61AFixedBaseTransport`; mock:
   the same tracker).
 - **G8** runs in flight. The outcome gains `fixed_base`: the config and its SHA-256, the
@@ -513,6 +540,12 @@ mkdir -p ~/spiderx_evidence && cp -a log/m61a_observation log/m61a_phase1_* ~/sp
    the welded pose (0, 0, 0.125 m, yaw 0) to within the M0 ±8 mm. A disagreement means
    `pose/info` does not describe the simulated body, and nothing else in this list can be
    trusted.
+
+   *Status (Cloud).* This wording, version 1, is unchanged and stays the criterion of record. It
+   measures individual ranges and **failed** in runs 1–3: no pose can satisfy it, because the
+   simulated `gpu_lidar` has a systematic per-beam error. A frozen version-2 proposal, a fitted
+   planar pose against the G8 tolerance, awaits the owner's decision:
+   [`M61A_CRITERION6_V2_PROPOSAL.md`](M61A_CRITERION6_V2_PROPOSAL.md).
 7. Command ownership: `Action clients: 0` and `Publisher count: 0` above, and the observer's
    `action_clients` and `command_publishers` are 0 (a snapshot; see §6).
 8. Clean shutdown: no leftover process.
@@ -547,7 +580,7 @@ If a criterion fails, record it and stop; do not tune a tolerance from the same 
 |---|---|---|
 | D-M61A-1 | Technique (Approach B weld via the wrapper + dedicated launch) | **Implemented** on the evidence of the M6.1-A frame study; the owner confirms on review |
 | D-M61A-1 | Mount 0.125 m | **Provisional**, derived (§3). Confirm in phase 1 |
-| D-M61A-2 | Pose source and freshness | Source as designed (composed); freshness 1.0 s kept. **Phase 1 measures the gaps** |
+| D-M61A-2 | Pose source and freshness | Source as designed (composed); freshness 1.0 s kept. **Phase 1 measures the gaps.** Since `b982d8d`, readiness also needs sim time to advance while the pose is received (a paused world keeps the streams "fresh"; Cloud report §9.3, §9.5) |
 | D-M61A-3 | Implementation | Done for the files in §1. No live run |
 | D-M61A-4 | Phase 1 acceptance criteria | Proposed in §10; owner to approve |
 | – | Attachment / spawn / link tolerances | **Provisional** (§5) |

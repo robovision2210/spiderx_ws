@@ -1,0 +1,12 @@
+
+Requesting state for world [spiderx_fortress]...
+
+- Joint [112]
+  - Name: spiderx_fixed_base_weld
+  - Parent: spiderx [35]
+  - Type: fixed
+  - Parent Link: world
+  - Child Link: dummy_link [36]
+  - Pose [ XYZ (m) ] [ RPY (rad) ]:
+    [0.000000 0.000000 0.000000]
+    [0.000000 -0.000000 0.000000]
