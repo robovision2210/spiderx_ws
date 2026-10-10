@@ -5,7 +5,11 @@ and /joint_states stream on a fake wall clock) with:
   - the M6.1 reference (cubic Hermite with the waypoint velocities) for the simulated joints;
   - the result time derived from the M6.1 trajectory duration (7.0 s), not the M6.0-D 9 s;
   - a scripted ground-truth body-pose stream ('body_pose' events, latest_body_pose());
-  - gait-gate scenarios: body too low, tilt, joint near its limit, body-pose loss, drift.
+  - gait-gate scenarios: body too low, tilt, joint near its limit, body-pose loss, drift;
+  - streams_now() for the M6.1 pre-send check (the scripted streams at the current fake time)
+    and server_wait_s, a server wait during which fake time passes and nothing is delivered (as
+    rclpy wait_for_server, which does not spin): streams that stop, or a world that pauses,
+    after readiness and before the send.
 Every goal and cancel it receives is recorded, so tests can prove what was (not) dispatched.
 
 M6.1-A fixed-base mode (fixed_base=<FixedBaseConfig>, what the CLI --mock uses): the mock plays
@@ -35,14 +39,17 @@ class M61FakeTransport(m6mock.FakeTransport):
                  jump_joint='rf_foot_joint', jump_to=0.60, fixed_base=None,
                  description='fixed_base', spawn_offset=None, link_offset=None,
                  mount_override=None, command_publishers=0, foreign_clients=0,
-                 competing_after_calls=None, **kw):
+                 competing_after_calls=None, server_wait_s=0.0, **kw):
         latency = kw.get('response_latency', 0.1)
         rtf = kw.get('rtf', 1.0)
         duration = trajectory['points'][-1]['time_from_start_s']
+        self._result_after_send = None
         if kw.get('result_at') is None and kw.get('result', 'success') is not None:
-            # the fake clock does not advance before the send, so this is relative to the send
-            kw['result_at'] = latency + duration / rtf + 0.05
+            # relative to the send; send_goal re-anchors it if fake time passed before the send
+            self._result_after_send = latency + duration / rtf + 0.05
+            kw['result_at'] = self._result_after_send
         super().__init__(trajectory, expected_fp, **kw)
+        self.server_wait_s = server_wait_s
         self.fixed_base = fixed_base
         self.tracker = None
         self.spawn_offset = spawn_offset          # model root offset (a non-identity spawn)
@@ -71,6 +78,47 @@ class M61FakeTransport(m6mock.FakeTransport):
         self.command_publishers, self.foreign_clients = command_publishers, foreign_clients
         self.competing_after_calls = competing_after_calls
         self.owner_snapshots = 0
+
+    # ---------------------------------------------------------------- server wait and send
+    def server_ready(self, timeout_s):
+        """As rclpy wait_for_server: time passes (server_wait_s) and nothing is delivered."""
+        ok = super().server_ready(timeout_s)
+        self.t += min(self.server_wait_s, timeout_s)
+        return ok
+
+    def send_goal(self, goal, binding):
+        if self._result_after_send is not None:
+            self.result_at = self.t - self.t_start + self._result_after_send
+        return super().send_goal(goal, binding)
+
+    # ---------------------------------------------------------------- streams now (pre-send)
+    def _js_skipped(self, rel):
+        return (self.js_stop_at is not None and rel >= self.js_stop_at) or (
+            self.gap_at is not None and self.gap_at <= rel < self.gap_at + 0.4)
+
+    def _latest_joint_states(self, horizon_s=60.0):
+        """(wall, {name: position}) of the latest scripted joint state at or before now."""
+        k = math.floor((self.t - self.t_start) / self.js_period + 1e-9)
+        for _ in range(int(horizon_s / self.js_period)):
+            w = self.t_start + k * self.js_period
+            if not self._js_skipped(w - self.t_start):
+                return w, dict(zip(self.traj['joint_names'], self._positions(w)))
+            k -= 1
+        return None
+
+    def streams_now(self, settle_s=0.0):
+        """The scripted streams at the current fake time, for the pre-send check: the latest
+        joint state and the tracker snapshot. The fake clock is not advanced; what a live spin
+        would have received before now is consumed and dropped (as the live transport does), so
+        tracking still starts at the dispatch. A scripted timeline has no backlog, so there is
+        no since_wall: the readiness window ending now applies. Read-only."""
+        out = {'now': self.t, 'joint_states': self._latest_joint_states(),
+               'tracker': self.fixed_base_snapshot()}
+        while self.next_js < self.t:
+            self.next_js += self.js_period
+        while self.next_pose < self.t:
+            self.next_pose += self.pose_period
+        return out
 
     def command_owner_snapshot(self):
         self.owner_snapshots += 1
@@ -163,6 +211,15 @@ class M61FakeTransport(m6mock.FakeTransport):
                 w = wall - k * self.pose_period
                 self.tracker.on_transforms(self._transforms(w), w, self._stamp(w))
             smp = self.tracker.latest_usable
+        elif smp.wall < wall - self.pose_period:
+            # fake time passed without poll() (a server wait): the window's ticks since then
+            first = max(smp.wall, wall - self.fixed_base.progress_window_s)
+            k = math.floor((first - self.t_start) / self.pose_period + 1e-9) + 1
+            while self.t_start + k * self.pose_period < wall - 1e-9:
+                w = self.t_start + k * self.pose_period
+                self.tracker.on_transforms(self._transforms(w), w, self._stamp(w))
+                k += 1
+            smp = self.tracker.latest_usable
         if smp is None or smp.wall < wall:
             self.tracker.on_transforms(self._transforms(wall), wall, self._stamp(wall))
 
@@ -203,6 +260,11 @@ SCENARIOS = {
     'competing_publisher': {'command_publishers': 1},     # readiness refuses; nothing sent
     'competing_client': {'foreign_clients': 1},           # readiness refuses; nothing sent
     'competing_client_late': {'competing_after_calls': 1},  # appears before the final check
+    # Pre-send check (plan E5): a 2 s server wait after readiness, then the send.
+    'slow_server': {'server_wait_s': 2.0},                       # streams current: sent
+    'joint_states_stop_before_send': {'server_wait_s': 2.0, 'js_stop_at': 1.0},   # refused
+    'body_pose_stops_before_send': {'server_wait_s': 2.0, 'pose_stop_at': 0.5},   # refused
+    'sim_pauses_before_send': {'server_wait_s': 2.0, 'stamp_freeze_at': 0.5},     # refused
 }
 # Fixed-base scenarios need the fixed-base mode; G7 report-only drift is a free-base behaviour
 # (on a weld, any drift G7 could flag is first an attachment failure, G8).

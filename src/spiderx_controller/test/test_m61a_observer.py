@@ -401,6 +401,41 @@ def test_fixed_base_transport_composes_the_body_on_an_isolated_domain(isolated_e
     assert t.node is None and t.description_sub is None and t.pose_sub is None
 
 
+def test_fixed_base_transport_streams_now_on_an_isolated_domain(isolated_env, cfg):
+    """The live input of the M6.1 pre-send check: a short spin delivers what is current, the
+    stream events it received are dropped (tracking starts at the dispatch), nothing is sent.
+    When the peers stop, the same check names the stale streams."""
+    from spiderx_controller import m61a_live
+    t = m61a_live.M61AFixedBaseTransport('x' * 64, DOMAIN, cfg, node_name='m61a_transport_test',
+                                         use_sim_time=False).open()
+    peers = None
+    try:
+        t.poll(1.0)
+        names = t.node.get_node_names_and_namespaces()
+        if names != [('m61a_transport_test', '/')]:
+            pytest.skip(f'isolation not established on ROS domain {DOMAIN}: {names}')
+        peers = FakePeers(DOMAIN, fb.minimal_description(cfg.mount), cfg)
+        codes, end = None, time.monotonic() + 15.0
+        while time.monotonic() < end and codes != []:
+            cur = t.streams_now()
+            codes, _ = fb.streams_at_send(cur['tracker'], cur['joint_states'], cur['now'],
+                                          JOINTS, cfg)
+        assert codes == [], codes
+        assert not [e for e in t._events if e[0] in m61a_live.STREAM_EVENT_KINDS]
+        peers.stop()
+        peers = None
+        time.sleep(1.2)
+        cur = t.streams_now()
+        codes, _ = fb.streams_at_send(cur['tracker'], cur['joint_states'], cur['now'], JOINTS,
+                                      cfg)
+        assert {fb.JOINT_STATES_STALE, fb.POSE_STALE, fb.POSE_SIM_NOT_ADVANCING} <= set(codes)
+        assert not t._goal_sent and not t._cancel_sent
+    finally:
+        if peers is not None:
+            peers.stop()
+        t.close()
+
+
 def test_observer_script_interface_only_runs_without_ros(tmp_path):
     """The installed entry point, in a subprocess: --interface-only creates no node."""
     exe = os.path.join(os.path.dirname(get_package_share_directory('spiderx_controller')), '..',

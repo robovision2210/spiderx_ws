@@ -70,6 +70,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m61a_clearance test/test_m61a_clearance.py TIMEOUT 600)
   ament_add_pytest_test(test_m61a_observer test/test_m61a_observer.py TIMEOUT 300)
   ament_add_pytest_test(test_m61a_link_check test/test_m61a_link_check.py TIMEOUT 600)
+  ament_add_pytest_test(test_m61_restore_script test/test_m61_restore_script.py TIMEOUT 300)
 endif()
 
 ament_package()

@@ -629,6 +629,81 @@ def test_assess_stale_pose_and_stalled_clock_are_separate(cfg, weld):
     assert fb.POSE_STALE in codes and fb.CLOCK_STALLED in codes and fb.JOINT_STATES_STALE in codes
 
 
+def at_send(cfg, weld, now=10.0, since_wall=None, **kw):
+    """streams_at_send on the evidence() streams, as the transport hands them over."""
+    e = evidence(cfg, weld, 10.0, **kw)
+    snap = {'description': e.description, 'latest_usable_pose': e.latest_usable_pose,
+            'recent_usable_samples': e.recent_pose_samples}
+    return fb.streams_at_send(snap, e.latest_joint_states, now, ['j1', 'j2'], cfg,
+                              since_wall=since_wall)
+
+
+def test_streams_at_send_accepts_current_streams(cfg, weld):
+    codes, checks = at_send(cfg, weld)
+    assert codes == []
+    assert {k for k, v in checks.items() if isinstance(v, dict) and 'ok' in v} == {
+        'robot_description', 'frame_body_link', 'spawn_identity', 'attachment',
+        'body_pose_fresh', 'body_pose_sim_progress', 'joint_states'}
+    assert checks['joint_states']['detail'] == {
+        'age_s': pytest.approx(0.01), 'max_age_s': cfg.joint_states_stale_s, 'since_wall': None}
+    assert checks['body_pose_fresh']['detail']['age_s'] == pytest.approx(0.05)
+
+
+def _displaced(weld, dz):
+    t = good(weld)
+    t[1] = tf('spiderx', fb.Pose.from_xyz_rpy(z=dz))
+    return fb.PoseSample(9.95, 50.1, fb.select_entries(t))
+
+
+@pytest.mark.parametrize('kw, expected', [
+    ({'latest_joint_states': None}, [fb.JOINT_STATES_MISSING]),
+    ({'latest_joint_states': (9.4, {'j1': 0.0, 'j2': 0.0})}, [fb.JOINT_STATES_STALE]),
+    ({'latest_joint_states': (9.99, {'j1': 0.0})}, [fb.JOINT_STATES_INCOMPLETE]),
+    ({'latest_usable_pose': None}, [fb.POSE_NEVER_RECEIVED]),
+    ({'recent_pose_samples': tuple((10.0 - 0.05 * k, 50.1) for k in range(20, -1, -1))},
+     [fb.POSE_SIM_NOT_ADVANCING]),
+    ({'recent_pose_samples': ()}, [fb.POSE_SIM_NOT_ADVANCING]),
+])
+def test_streams_at_send_names_each_stream_that_is_not_current(cfg, weld, kw, expected):
+    codes, _ = at_send(cfg, weld, **kw)
+    assert codes == expected
+
+
+def test_streams_at_send_stale_pose_and_lost_attachment(cfg, weld):
+    sel = fb.select_entries(good(weld))
+    codes, checks = at_send(cfg, weld, latest_usable_pose=fb.PoseSample(8.9, 50.1, sel))
+    assert codes == [fb.POSE_STALE] and checks['body_pose_fresh']['detail']['age_s'] > 1.0
+    codes, _ = at_send(cfg, weld, latest_usable_pose=_displaced(weld, -0.005))
+    assert fb.ATTACHMENT_DISPLACED in codes
+
+
+def test_streams_at_send_counts_only_what_arrived_in_the_window(cfg, weld):
+    """A backlog processed late gets the processing time as its receipt time. With since_wall
+    (the end of the transport's drain), only samples received from then on count, and progress
+    is judged over [since_wall, now]."""
+    assert at_send(cfg, weld, since_wall=9.0)[0] == []
+    codes, checks = at_send(cfg, weld, since_wall=9.999)     # all received before the window
+    assert codes == [fb.POSE_STALE, fb.POSE_SIM_NOT_ADVANCING, fb.JOINT_STATES_STALE]
+    assert checks['joint_states']['detail']['age_s'] < cfg.joint_states_stale_s
+    # a dead world's leftovers processed in a burst at the start of the window: by receipt the
+    # pose is still within 1 s, but sim time did not advance across the window
+    sel = fb.select_entries(good(weld))
+    burst = tuple((9.0 + 0.0005 * k, 50.0 + 0.0001 * k) for k in range(10))
+    codes, _ = at_send(cfg, weld, since_wall=9.0, recent_pose_samples=burst,
+                       latest_usable_pose=fb.PoseSample(9.0045, 50.0009, sel),
+                       latest_joint_states=(9.0045, {'j1': 0.0, 'j2': 0.0}))
+    assert codes == [fb.POSE_SIM_NOT_ADVANCING, fb.JOINT_STATES_STALE]
+
+
+def test_streams_at_send_uses_the_readiness_thresholds(cfg, weld):
+    """No new numbers: the same freshness and progress limits as readiness (cfg)."""
+    edge = cfg.joint_states_stale_s
+    assert at_send(cfg, weld, latest_joint_states=(10.0 - edge, {'j1': 0, 'j2': 0}))[0] == []
+    assert at_send(cfg, weld, latest_joint_states=(10.0 - edge - 1e-3,
+                                                   {'j1': 0, 'j2': 0}))[0] == \
+        [fb.JOINT_STATES_STALE]
+
+
 def test_assess_plant_frame_codes(cfg, weld):
     t = good(weld)
     t[1] = tf('spiderx', fb.Pose.from_xyz_rpy(z=0.075))
