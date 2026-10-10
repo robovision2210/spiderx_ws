@@ -1,0 +1,2 @@
+scans 40 joint_states 715 poses 562 clock 6435 weld {'type': 'fixed', 'parent': 'world', 'child': 'dummy_link', 'xyz': '0.0 0.0 0.125', 'rpy': '0 0 0.0'} own_publishers ['/parameter_events'] command_messages 0 action_status 0 controller_state [('/leg_trajectory_controller/controller_state', 290), ('/leg_trajectory_controller/state', 290)]
+capture exit=0

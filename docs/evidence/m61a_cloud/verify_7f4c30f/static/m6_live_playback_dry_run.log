@@ -1,0 +1,3 @@
+SpiderX M6.0-D live-playback tool
+M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows motion, tracking, contact, balance or walking.
+Dry run PASS: trajectory 44f0a7ad52e5c330, goal fingerprint 0d6ef4171f2d338a01e76b934be94d1a4386e7c0fc68fe74262fb3c65005ff83; goal velocity tolerance 0.05 rad/s; nothing sent

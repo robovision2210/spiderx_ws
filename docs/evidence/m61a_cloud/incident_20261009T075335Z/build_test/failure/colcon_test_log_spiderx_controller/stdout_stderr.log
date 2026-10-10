@@ -1,0 +1,956 @@
+SetCTestConfiguration:BuildDirectory:/home/user/spiderx_ws/build/spiderx_controller
+UpdateCTestConfiguration  from :/home/user/spiderx_ws/build/spiderx_controller/CTestConfiguration.ini
+Parse Config file:/home/user/spiderx_ws/build/spiderx_controller/CTestConfiguration.ini
+SetCMakeVariable:CTEST_SITE:vm
+SetCMakeVariable:CTEST_SOURCE_DIRECTORY:/home/user/spiderx_ws/src/spiderx_controller
+SetCMakeVariable:CTEST_BINARY_DIRECTORY:/home/user/spiderx_ws/build/spiderx_controller
+SetCMakeVariable:CTEST_CONFIGURE_COMMAND:"/opt/mm/root/envs/humble/bin/cmake" "/home/user/spiderx_ws/src/spiderx_controller"
+SetCMakeVariable:CTEST_TEST_TIMEOUT:10000000
+UpdateCTestConfiguration  from :/home/user/spiderx_ws/build/spiderx_controller/CTestConfiguration.ini
+Parse Config file:/home/user/spiderx_ws/build/spiderx_controller/CTestConfiguration.ini
+SetCMakeVariable:CTEST_SITE:vm
+SetCMakeVariable:CTEST_SOURCE_DIRECTORY:/home/user/spiderx_ws/src/spiderx_controller
+SetCMakeVariable:CTEST_BINARY_DIRECTORY:/home/user/spiderx_ws/build/spiderx_controller
+SetCMakeVariable:CTEST_CONFIGURE_COMMAND:"/opt/mm/root/envs/humble/bin/cmake" "/home/user/spiderx_ws/src/spiderx_controller"
+SetCTestConfiguration:BuildDirectory:/home/user/spiderx_ws/build/spiderx_controller
+SetCTestConfiguration:SourceDirectory:/home/user/spiderx_ws/src/spiderx_controller
+Test project /home/user/spiderx_ws/build/spiderx_controller
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+      Start  1: test_config_check
+
+1: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_config_check.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_config_check.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_config_check.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_config_check/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_config_check.xunit.xml" "--junit-prefix=spiderx_controller"
+1: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+1: Test timeout computed to be: 60
+1: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+1:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_config_check.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_config_check/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_config_check.xunit.xml --junit-prefix=spiderx_controller
+1: ============================= test session starts ==============================
+1: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+1: cachedir: build/spiderx_controller/ament_cmake_pytest/test_config_check/.cache
+1: rootdir: /home/user/spiderx_ws
+1: collected 5 items
+1: 
+1: ../../src/spiderx_controller/test/test_config_check.py .....             [100%]
+1: 
+1: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_config_check.xunit.xml -
+1: ============================== 5 passed in 1.97s ===============================
+1: -- run_test.py: return code 0
+1: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_config_check.xunit.xml'
+ 1/38 Test  #1: test_config_check .................   Passed    3.66 sec
+test 2
+      Start  2: test_joint_safety
+
+2: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_joint_safety.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_joint_safety.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_joint_safety.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_joint_safety/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_joint_safety.xunit.xml" "--junit-prefix=spiderx_controller"
+2: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+2: Test timeout computed to be: 60
+2: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+2:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_joint_safety.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_joint_safety/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_joint_safety.xunit.xml --junit-prefix=spiderx_controller
+2: ============================= test session starts ==============================
+2: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+2: cachedir: build/spiderx_controller/ament_cmake_pytest/test_joint_safety/.cache
+2: rootdir: /home/user/spiderx_ws
+2: collected 13 items
+2: 
+2: ../../src/spiderx_controller/test/test_joint_safety.py .............     [100%]
+2: 
+2: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_joint_safety.xunit.xml -
+2: ============================== 13 passed in 0.09s ==============================
+2: -- run_test.py: return code 0
+2: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_joint_safety.xunit.xml'
+ 2/38 Test  #2: test_joint_safety .................   Passed    0.43 sec
+test 3
+      Start  3: test_posture_config
+
+3: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_config.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_posture_config.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_posture_config.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_posture_config/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_config.xunit.xml" "--junit-prefix=spiderx_controller"
+3: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+3: Test timeout computed to be: 60
+3: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+3:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_posture_config.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_posture_config/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_config.xunit.xml --junit-prefix=spiderx_controller
+3: ============================= test session starts ==============================
+3: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+3: cachedir: build/spiderx_controller/ament_cmake_pytest/test_posture_config/.cache
+3: rootdir: /home/user/spiderx_ws
+3: collected 39 items
+3: 
+3: ../../src/spiderx_controller/test/test_posture_config.py ............... [ 38%]
+3: ........................                                                 [100%]
+3: 
+3: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_config.xunit.xml -
+3: ============================== 39 passed in 6.74s ==============================
+3: -- run_test.py: return code 0
+3: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_config.xunit.xml'
+ 3/38 Test  #3: test_posture_config ...............   Passed    7.09 sec
+test 4
+      Start  4: test_posture_metrics
+
+4: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_metrics.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_posture_metrics.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_posture_metrics.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_posture_metrics/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_metrics.xunit.xml" "--junit-prefix=spiderx_controller"
+4: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+4: Test timeout computed to be: 60
+4: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+4:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_posture_metrics.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_posture_metrics/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_metrics.xunit.xml --junit-prefix=spiderx_controller
+4: ============================= test session starts ==============================
+4: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+4: cachedir: build/spiderx_controller/ament_cmake_pytest/test_posture_metrics/.cache
+4: rootdir: /home/user/spiderx_ws
+4: collected 23 items
+4: 
+4: ../../src/spiderx_controller/test/test_posture_metrics.py .............. [ 60%]
+4: .........                                                                [100%]
+4: 
+4: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_metrics.xunit.xml -
+4: ============================== 23 passed in 0.06s ==============================
+4: -- run_test.py: return code 0
+4: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_posture_metrics.xunit.xml'
+ 4/38 Test  #4: test_posture_metrics ..............   Passed    0.35 sec
+test 5
+      Start  5: test_leg_kinematics
+
+5: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_leg_kinematics.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_leg_kinematics.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_leg_kinematics.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_leg_kinematics/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_leg_kinematics.xunit.xml" "--junit-prefix=spiderx_controller"
+5: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+5: Test timeout computed to be: 60
+5: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+5:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_leg_kinematics.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_leg_kinematics/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_leg_kinematics.xunit.xml --junit-prefix=spiderx_controller
+5: ============================= test session starts ==============================
+5: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+5: cachedir: build/spiderx_controller/ament_cmake_pytest/test_leg_kinematics/.cache
+5: rootdir: /home/user/spiderx_ws
+5: collected 55 items
+5: 
+5: ../../src/spiderx_controller/test/test_leg_kinematics.py ............... [ 27%]
+5: ........................................                                 [100%]
+5: 
+5: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_leg_kinematics.xunit.xml -
+5: ============================== 55 passed in 2.98s ==============================
+5: -- run_test.py: return code 0
+5: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_leg_kinematics.xunit.xml'
+ 5/38 Test  #5: test_leg_kinematics ...............   Passed    3.38 sec
+test 6
+      Start  6: test_kinematics_targets
+
+6: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_kinematics_targets.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_kinematics_targets.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_kinematics_targets.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_kinematics_targets/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_kinematics_targets.xunit.xml" "--junit-prefix=spiderx_controller"
+6: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+6: Test timeout computed to be: 60
+6: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+6:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_kinematics_targets.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_kinematics_targets/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_kinematics_targets.xunit.xml --junit-prefix=spiderx_controller
+6: ============================= test session starts ==============================
+6: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+6: cachedir: build/spiderx_controller/ament_cmake_pytest/test_kinematics_targets/.cache
+6: rootdir: /home/user/spiderx_ws
+6: collected 29 items
+6: 
+6: ../../src/spiderx_controller/test/test_kinematics_targets.py ........... [ 37%]
+6: ..................                                                       [100%]
+6: 
+6: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_kinematics_targets.xunit.xml -
+6: ============================== 29 passed in 2.29s ==============================
+6: -- run_test.py: return code 0
+6: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_kinematics_targets.xunit.xml'
+ 6/38 Test  #6: test_kinematics_targets ...........   Passed    2.65 sec
+test 7
+      Start  7: test_all_leg_kinematics
+
+7: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_all_leg_kinematics.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_all_leg_kinematics.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_all_leg_kinematics.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_all_leg_kinematics/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_all_leg_kinematics.xunit.xml" "--junit-prefix=spiderx_controller"
+7: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+7: Test timeout computed to be: 60
+7: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+7:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_all_leg_kinematics.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_all_leg_kinematics/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_all_leg_kinematics.xunit.xml --junit-prefix=spiderx_controller
+7: ============================= test session starts ==============================
+7: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+7: cachedir: build/spiderx_controller/ament_cmake_pytest/test_all_leg_kinematics/.cache
+7: rootdir: /home/user/spiderx_ws
+7: collected 70 items
+7: 
+7: ../../src/spiderx_controller/test/test_all_leg_kinematics.py ........... [ 15%]
+7: ...........................................................              [100%]
+7: 
+7: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_all_leg_kinematics.xunit.xml -
+7: ============================== 70 passed in 6.45s ==============================
+7: -- run_test.py: return code 0
+7: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_all_leg_kinematics.xunit.xml'
+ 7/38 Test  #7: test_all_leg_kinematics ...........   Passed    6.77 sec
+test 8
+      Start  8: test_m4_pose_targets
+
+8: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_targets.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m4_pose_targets.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m4_pose_targets.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m4_pose_targets/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_targets.xunit.xml" "--junit-prefix=spiderx_controller"
+8: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+8: Test timeout computed to be: 60
+8: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+8:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m4_pose_targets.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m4_pose_targets/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_targets.xunit.xml --junit-prefix=spiderx_controller
+8: ============================= test session starts ==============================
+8: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+8: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m4_pose_targets/.cache
+8: rootdir: /home/user/spiderx_ws
+8: collected 48 items
+8: 
+8: ../../src/spiderx_controller/test/test_m4_pose_targets.py .............. [ 29%]
+8: ..................................                                       [100%]
+8: 
+8: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_targets.xunit.xml -
+8: ============================== 48 passed in 2.84s ==============================
+8: -- run_test.py: return code 0
+8: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_targets.xunit.xml'
+ 8/38 Test  #8: test_m4_pose_targets ..............   Passed    3.16 sec
+test 9
+      Start  9: test_m4_pose_validation
+
+9: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_validation.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m4_pose_validation.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m4_pose_validation.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m4_pose_validation/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_validation.xunit.xml" "--junit-prefix=spiderx_controller"
+9: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+9: Test timeout computed to be: 60
+9: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+9:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m4_pose_validation.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m4_pose_validation/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_validation.xunit.xml --junit-prefix=spiderx_controller
+9: ============================= test session starts ==============================
+9: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+9: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m4_pose_validation/.cache
+9: rootdir: /home/user/spiderx_ws
+9: collected 18 items
+9: 
+9: ../../src/spiderx_controller/test/test_m4_pose_validation.py ........... [ 61%]
+9: .......                                                                  [100%]
+9: 
+9: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_validation.xunit.xml -
+9: ============================== 18 passed in 1.13s ==============================
+9: -- run_test.py: return code 0
+9: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m4_pose_validation.xunit.xml'
+ 9/38 Test  #9: test_m4_pose_validation ...........   Passed    1.45 sec
+test 10
+      Start 10: test_controller_launch
+
+10: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_controller_launch.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_controller_launch.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_controller_launch.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_controller_launch/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_controller_launch.xunit.xml" "--junit-prefix=spiderx_controller"
+10: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+10: Test timeout computed to be: 60
+10: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+10:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_controller_launch.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_controller_launch/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_controller_launch.xunit.xml --junit-prefix=spiderx_controller
+10: ============================= test session starts ==============================
+10: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+10: cachedir: build/spiderx_controller/ament_cmake_pytest/test_controller_launch/.cache
+10: rootdir: /home/user/spiderx_ws
+10: collected 28 items
+10: 
+10: ../../src/spiderx_controller/test/test_controller_launch.py ............ [ 42%]
+10: ................                                                         [100%]
+10: 
+10: =============================== warnings summary ===============================
+10: ../../../../../opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163
+10:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+10:     import sre_parse
+10: 
+10: ../../../../../opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164
+10:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+10:     import sre_constants
+10: 
+10: -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+10: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_controller_launch.xunit.xml -
+10: ======================== 28 passed, 2 warnings in 3.68s ========================
+10: -- run_test.py: return code 0
+10: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_controller_launch.xunit.xml'
+10/38 Test #10: test_controller_launch ............   Passed    4.03 sec
+test 11
+      Start 11: test_validator_state_checks
+
+11: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_validator_state_checks.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_validator_state_checks.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_validator_state_checks.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_validator_state_checks/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_validator_state_checks.xunit.xml" "--junit-prefix=spiderx_controller"
+11: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+11: Test timeout computed to be: 60
+11: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+11:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_validator_state_checks.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_validator_state_checks/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_validator_state_checks.xunit.xml --junit-prefix=spiderx_controller
+11: ============================= test session starts ==============================
+11: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+11: cachedir: build/spiderx_controller/ament_cmake_pytest/test_validator_state_checks/.cache
+11: rootdir: /home/user/spiderx_ws
+11: collected 44 items
+11: 
+11: ../../src/spiderx_controller/test/test_validator_state_checks.py ....... [ 15%]
+11: .....................................                                    [100%]
+11: 
+11: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_validator_state_checks.xunit.xml -
+11: ============================== 44 passed in 0.74s ==============================
+11: -- run_test.py: return code 0
+11: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_validator_state_checks.xunit.xml'
+11/38 Test #11: test_validator_state_checks .......   Passed    1.02 sec
+test 12
+      Start 12: test_gait_config
+
+12: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_config.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_config.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_gait_config.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_config/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_config.xunit.xml" "--junit-prefix=spiderx_controller"
+12: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+12: Test timeout computed to be: 60
+12: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+12:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_gait_config.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_config/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_config.xunit.xml --junit-prefix=spiderx_controller
+12: ============================= test session starts ==============================
+12: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+12: cachedir: build/spiderx_controller/ament_cmake_pytest/test_gait_config/.cache
+12: rootdir: /home/user/spiderx_ws
+12: collected 52 items
+12: 
+12: ../../src/spiderx_controller/test/test_gait_config.py .................. [ 34%]
+12: ..................................                                       [100%]
+12: 
+12: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_config.xunit.xml -
+12: ============================== 52 passed in 1.09s ==============================
+12: -- run_test.py: return code 0
+12: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_config.xunit.xml'
+12/38 Test #12: test_gait_config ..................   Passed    1.41 sec
+test 13
+      Start 13: test_gait_trajectory
+
+13: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_trajectory.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_trajectory.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_gait_trajectory.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_trajectory/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_trajectory.xunit.xml" "--junit-prefix=spiderx_controller"
+13: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+13: Test timeout computed to be: 60
+13: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+13:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_gait_trajectory.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_trajectory/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_trajectory.xunit.xml --junit-prefix=spiderx_controller
+13: ============================= test session starts ==============================
+13: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+13: cachedir: build/spiderx_controller/ament_cmake_pytest/test_gait_trajectory/.cache
+13: rootdir: /home/user/spiderx_ws
+13: collected 78 items
+13: 
+13: ../../src/spiderx_controller/test/test_gait_trajectory.py .............. [ 17%]
+13: ................................................................         [100%]
+13: 
+13: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_trajectory.xunit.xml -
+13: ============================== 78 passed in 0.37s ==============================
+13: -- run_test.py: return code 0
+13: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_trajectory.xunit.xml'
+13/38 Test #13: test_gait_trajectory ..............   Passed    0.69 sec
+test 14
+      Start 14: test_gait_kinematics
+
+14: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_kinematics.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_kinematics.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_gait_kinematics.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_kinematics/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_kinematics.xunit.xml" "--junit-prefix=spiderx_controller"
+14: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+14: Test timeout computed to be: 60
+14: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+14:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_gait_kinematics.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_kinematics/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_kinematics.xunit.xml --junit-prefix=spiderx_controller
+14: ============================= test session starts ==============================
+14: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+14: cachedir: build/spiderx_controller/ament_cmake_pytest/test_gait_kinematics/.cache
+14: rootdir: /home/user/spiderx_ws
+14: collected 12 items
+14: 
+14: ../../src/spiderx_controller/test/test_gait_kinematics.py ............   [100%]
+14: 
+14: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_kinematics.xunit.xml -
+14: ============================== 12 passed in 7.78s ==============================
+14: -- run_test.py: return code 0
+14: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_kinematics.xunit.xml'
+14/38 Test #14: test_gait_kinematics ..............   Passed    8.10 sec
+test 15
+      Start 15: test_gait_metrics
+
+15: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_metrics.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_metrics.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_gait_metrics.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_metrics/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_metrics.xunit.xml" "--junit-prefix=spiderx_controller"
+15: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+15: Test timeout computed to be: 60
+15: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+15:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_gait_metrics.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_metrics/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_metrics.xunit.xml --junit-prefix=spiderx_controller
+15: ============================= test session starts ==============================
+15: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+15: cachedir: build/spiderx_controller/ament_cmake_pytest/test_gait_metrics/.cache
+15: rootdir: /home/user/spiderx_ws
+15: collected 21 items
+15: 
+15: ../../src/spiderx_controller/test/test_gait_metrics.py ................. [ 80%]
+15: ....                                                                     [100%]
+15: 
+15: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_metrics.xunit.xml -
+15: ============================= 21 passed in 19.07s ==============================
+15: -- run_test.py: return code 0
+15: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_metrics.xunit.xml'
+15/38 Test #15: test_gait_metrics .................   Passed   19.39 sec
+test 16
+      Start 16: test_gait_report
+
+16: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_report.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_report.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_gait_report.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_report/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_report.xunit.xml" "--junit-prefix=spiderx_controller"
+16: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+16: Test timeout computed to be: 60
+16: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+16:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_gait_report.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_report/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_report.xunit.xml --junit-prefix=spiderx_controller
+16: ============================= test session starts ==============================
+16: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+16: cachedir: build/spiderx_controller/ament_cmake_pytest/test_gait_report/.cache
+16: rootdir: /home/user/spiderx_ws
+16: collected 19 items
+16: 
+16: ../../src/spiderx_controller/test/test_gait_report.py .................. [ 94%]
+16: .                                                                        [100%]
+16: 
+16: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_report.xunit.xml -
+16: ============================= 19 passed in 29.97s ==============================
+16: -- run_test.py: return code 0
+16: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_report.xunit.xml'
+16/38 Test #16: test_gait_report ..................   Passed   30.43 sec
+test 17
+      Start 17: test_gait_regression
+
+17: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_regression.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_regression.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_gait_regression.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_regression/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_regression.xunit.xml" "--junit-prefix=spiderx_controller"
+17: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+17: Test timeout computed to be: 60
+17: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+17:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_gait_regression.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_gait_regression/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_regression.xunit.xml --junit-prefix=spiderx_controller
+17: ============================= test session starts ==============================
+17: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+17: cachedir: build/spiderx_controller/ament_cmake_pytest/test_gait_regression/.cache
+17: rootdir: /home/user/spiderx_ws
+17: collected 20 items
+17: 
+17: ../../src/spiderx_controller/test/test_gait_regression.py .............. [ 70%]
+17: ......                                                                   [100%]
+17: 
+17: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_regression.xunit.xml -
+17: ============================= 20 passed in 15.99s ==============================
+17: -- run_test.py: return code 0
+17: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_gait_regression.xunit.xml'
+17/38 Test #17: test_gait_regression ..............   Passed   16.30 sec
+test 18
+      Start 18: test_eval_study
+
+18: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_study.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_study.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_eval_study.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_study/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_study.xunit.xml" "--junit-prefix=spiderx_controller"
+18: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+18: Test timeout computed to be: 60
+18: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+18:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_eval_study.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_study/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_study.xunit.xml --junit-prefix=spiderx_controller
+18: ============================= test session starts ==============================
+18: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+18: cachedir: build/spiderx_controller/ament_cmake_pytest/test_eval_study/.cache
+18: rootdir: /home/user/spiderx_ws
+18: collected 41 items
+18: 
+18: ../../src/spiderx_controller/test/test_eval_study.py ................... [ 46%]
+18: ......................                                                   [100%]
+18: 
+18: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_study.xunit.xml -
+18: ============================== 41 passed in 5.95s ==============================
+18: -- run_test.py: return code 0
+18: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_study.xunit.xml'
+18/38 Test #18: test_eval_study ...................   Passed    6.29 sec
+test 19
+      Start 19: test_eval_runner
+
+19: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_runner.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_runner.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_eval_runner.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_runner/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_runner.xunit.xml" "--junit-prefix=spiderx_controller"
+19: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+19: Test timeout computed to be: 60
+19: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+19:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_eval_runner.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_runner/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_runner.xunit.xml --junit-prefix=spiderx_controller
+19: ============================= test session starts ==============================
+19: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+19: cachedir: build/spiderx_controller/ament_cmake_pytest/test_eval_runner/.cache
+19: rootdir: /home/user/spiderx_ws
+19: collected 22 items
+19: 
+19: ../../src/spiderx_controller/test/test_eval_runner.py .................. [ 81%]
+19: ....                                                                     [100%]
+19: 
+19: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_runner.xunit.xml -
+19: ============================= 22 passed in 43.01s ==============================
+19: -- run_test.py: return code 0
+19: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_runner.xunit.xml'
+19/38 Test #19: test_eval_runner ..................   Passed   43.36 sec
+test 20
+      Start 20: test_eval_records
+
+20: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_records.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_records.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_eval_records.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_records/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_records.xunit.xml" "--junit-prefix=spiderx_controller"
+20: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+20: Test timeout computed to be: 60
+20: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+20:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_eval_records.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_records/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_records.xunit.xml --junit-prefix=spiderx_controller
+20: ============================= test session starts ==============================
+20: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+20: cachedir: build/spiderx_controller/ament_cmake_pytest/test_eval_records/.cache
+20: rootdir: /home/user/spiderx_ws
+20: collected 14 items
+20: 
+20: ../../src/spiderx_controller/test/test_eval_records.py ..............    [100%]
+20: 
+20: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_records.xunit.xml -
+20: ============================= 14 passed in 31.96s ==============================
+20: -- run_test.py: return code 0
+20: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_records.xunit.xml'
+20/38 Test #20: test_eval_records .................   Passed   32.26 sec
+test 21
+      Start 21: test_eval_tables
+
+21: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_tables.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_tables.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_eval_tables.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_tables/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_tables.xunit.xml" "--junit-prefix=spiderx_controller"
+21: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+21: Test timeout computed to be: 60
+21: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+21:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_eval_tables.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_tables/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_tables.xunit.xml --junit-prefix=spiderx_controller
+21: ============================= test session starts ==============================
+21: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+21: cachedir: build/spiderx_controller/ament_cmake_pytest/test_eval_tables/.cache
+21: rootdir: /home/user/spiderx_ws
+21: collected 14 items
+21: 
+21: ../../src/spiderx_controller/test/test_eval_tables.py ..............     [100%]
+21: 
+21: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_tables.xunit.xml -
+21: ============================= 14 passed in 33.22s ==============================
+21: -- run_test.py: return code 0
+21: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_tables.xunit.xml'
+21/38 Test #21: test_eval_tables ..................   Passed   33.52 sec
+test 22
+      Start 22: test_eval_regression
+
+22: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_regression.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_regression.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_eval_regression.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_regression/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_regression.xunit.xml" "--junit-prefix=spiderx_controller"
+22: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+22: Test timeout computed to be: 60
+22: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+22:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_eval_regression.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_eval_regression/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_regression.xunit.xml --junit-prefix=spiderx_controller
+22: ============================= test session starts ==============================
+22: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+22: cachedir: build/spiderx_controller/ament_cmake_pytest/test_eval_regression/.cache
+22: rootdir: /home/user/spiderx_ws
+22: collected 11 items
+22: 
+22: ../../src/spiderx_controller/test/test_eval_regression.py ...........    [100%]
+22: 
+22: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_regression.xunit.xml -
+22: ============================= 11 passed in 18.95s ==============================
+22: -- run_test.py: return code 0
+22: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_eval_regression.xunit.xml'
+22/38 Test #22: test_eval_regression ..............   Passed   19.31 sec
+test 23
+      Start 23: test_m6_trajectory
+
+23: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_trajectory.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_trajectory.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6_trajectory.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_trajectory/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_trajectory.xunit.xml" "--junit-prefix=spiderx_controller"
+23: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+23: Test timeout computed to be: 60
+23: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+23:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6_trajectory.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_trajectory/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_trajectory.xunit.xml --junit-prefix=spiderx_controller
+23: ============================= test session starts ==============================
+23: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+23: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6_trajectory/.cache
+23: rootdir: /home/user/spiderx_ws
+23: collected 109 items
+23: 
+23: ../../src/spiderx_controller/test/test_m6_trajectory.py ................ [ 14%]
+23: ........................................................................ [ 80%]
+23: .....................                                                    [100%]
+23: 
+23: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_trajectory.xunit.xml -
+23: ============================= 109 passed in 3.48s ==============================
+23: -- run_test.py: return code 0
+23: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_trajectory.xunit.xml'
+23/38 Test #23: test_m6_trajectory ................   Passed    3.87 sec
+test 24
+      Start 24: test_m6_offline_preflight
+
+24: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_offline_preflight.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_offline_preflight.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6_offline_preflight.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_offline_preflight/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_offline_preflight.xunit.xml" "--junit-prefix=spiderx_controller"
+24: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+24: Test timeout computed to be: 60
+24: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+24:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6_offline_preflight.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_offline_preflight/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_offline_preflight.xunit.xml --junit-prefix=spiderx_controller
+24: ============================= test session starts ==============================
+24: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+24: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6_offline_preflight/.cache
+24: rootdir: /home/user/spiderx_ws
+24: collected 14 items
+24: 
+24: ../../src/spiderx_controller/test/test_m6_offline_preflight.py ......... [ 64%]
+24: .....                                                                    [100%]
+24: 
+24: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_offline_preflight.xunit.xml -
+24: ============================== 14 passed in 0.46s ==============================
+24: -- run_test.py: return code 0
+24: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_offline_preflight.xunit.xml'
+24/38 Test #24: test_m6_offline_preflight .........   Passed    0.79 sec
+test 25
+      Start 25: test_m6_action_client
+
+25: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_action_client.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_action_client.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6_action_client.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_action_client/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_action_client.xunit.xml" "--junit-prefix=spiderx_controller"
+25: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+25: Test timeout computed to be: 60
+25: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+25:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6_action_client.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_action_client/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_action_client.xunit.xml --junit-prefix=spiderx_controller
+25: ============================= test session starts ==============================
+25: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+25: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6_action_client/.cache
+25: rootdir: /home/user/spiderx_ws
+25: collected 63 items
+25: 
+25: ../../src/spiderx_controller/test/test_m6_action_client.py ............. [ 20%]
+25: ..................................................                       [100%]
+25: 
+25: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_action_client.xunit.xml -
+25: ============================== 63 passed in 0.64s ==============================
+25: -- run_test.py: return code 0
+25: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_action_client.xunit.xml'
+25/38 Test #25: test_m6_action_client .............   Passed    0.99 sec
+test 26
+      Start 26: test_m6_live_preflight
+
+26: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_live_preflight.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_live_preflight.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6_live_preflight.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_live_preflight/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_live_preflight.xunit.xml" "--junit-prefix=spiderx_controller"
+26: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+26: Test timeout computed to be: 60
+26: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+26:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6_live_preflight.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6_live_preflight/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_live_preflight.xunit.xml --junit-prefix=spiderx_controller
+26: ============================= test session starts ==============================
+26: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+26: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6_live_preflight/.cache
+26: rootdir: /home/user/spiderx_ws
+26: collected 42 items
+26: 
+26: ../../src/spiderx_controller/test/test_m6_live_preflight.py ............ [ 28%]
+26: ..............................                                           [100%]
+26: 
+26: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_live_preflight.xunit.xml -
+26: ============================== 42 passed in 0.37s ==============================
+26: -- run_test.py: return code 0
+26: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6_live_preflight.xunit.xml'
+26/38 Test #26: test_m6_live_preflight ............   Passed    0.71 sec
+test 27
+      Start 27: test_m6d_contract
+
+27: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_contract.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_contract.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_contract.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_contract/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_contract.xunit.xml" "--junit-prefix=spiderx_controller"
+27: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+27: Test timeout computed to be: 60
+27: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+27:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_contract.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_contract/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_contract.xunit.xml --junit-prefix=spiderx_controller
+27: ============================= test session starts ==============================
+27: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+27: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6d_contract/.cache
+27: rootdir: /home/user/spiderx_ws
+27: collected 83 items
+27: 
+27: ../../src/spiderx_controller/test/test_m6d_contract.py ................. [ 20%]
+27: ..................................................................       [100%]
+27: 
+27: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_contract.xunit.xml -
+27: ============================== 83 passed in 0.62s ==============================
+27: -- run_test.py: return code 0
+27: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_contract.xunit.xml'
+27/38 Test #27: test_m6d_contract .................   Passed    1.00 sec
+test 28
+      Start 28: test_m6d_session
+
+28: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_session.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_session.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_session.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_session/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_session.xunit.xml" "--junit-prefix=spiderx_controller"
+28: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+28: Test timeout computed to be: 60
+28: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+28:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_session.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_session/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_session.xunit.xml --junit-prefix=spiderx_controller
+28: ============================= test session starts ==============================
+28: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+28: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6d_session/.cache
+28: rootdir: /home/user/spiderx_ws
+28: collected 58 items
+28: 
+28: ../../src/spiderx_controller/test/test_m6d_session.py .................. [ 31%]
+28: ........................................                                 [100%]
+28: 
+28: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_session.xunit.xml -
+28: ============================== 58 passed in 1.26s ==============================
+28: -- run_test.py: return code 0
+28: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_session.xunit.xml'
+28/38 Test #28: test_m6d_session ..................   Passed    1.59 sec
+test 29
+      Start 29: test_m6d_adapter_isolated
+
+29: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_adapter_isolated.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_adapter_isolated.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_adapter_isolated.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_adapter_isolated/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_adapter_isolated.xunit.xml" "--junit-prefix=spiderx_controller"
+29: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+29: Test timeout computed to be: 60
+29: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+29:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_adapter_isolated.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_adapter_isolated/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_adapter_isolated.xunit.xml --junit-prefix=spiderx_controller
+29: ============================= test session starts ==============================
+29: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+29: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6d_adapter_isolated/.cache
+29: rootdir: /home/user/spiderx_ws
+29: collected 15 items
+29: 
+29: ../../src/spiderx_controller/test/test_m6d_adapter_isolated.py ......... [ 60%]
+29: ......                                                                   [100%]
+29: 
+29: =============================== warnings summary ===============================
+29: src/spiderx_controller/test/test_m6d_adapter_isolated.py::test_no_external_node_or_endpoint_is_visible
+29:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+29:     import sre_parse
+29: 
+29: src/spiderx_controller/test/test_m6d_adapter_isolated.py::test_no_external_node_or_endpoint_is_visible
+29:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+29:     import sre_constants
+29: 
+29: -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+29: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_adapter_isolated.xunit.xml -
+29: ======================= 15 passed, 2 warnings in 10.81s ========================
+29: -- run_test.py: return code 0
+29: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_adapter_isolated.xunit.xml'
+29/38 Test #29: test_m6d_adapter_isolated .........   Passed   11.40 sec
+test 30
+      Start 30: test_m6d_cli_readiness
+
+30: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_cli_readiness.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_cli_readiness.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_cli_readiness.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_cli_readiness/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_cli_readiness.xunit.xml" "--junit-prefix=spiderx_controller"
+30: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+30: Test timeout computed to be: 60
+30: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+30:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_cli_readiness.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_cli_readiness/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_cli_readiness.xunit.xml --junit-prefix=spiderx_controller
+30: ============================= test session starts ==============================
+30: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+30: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6d_cli_readiness/.cache
+30: rootdir: /home/user/spiderx_ws
+30: collected 29 items
+30: 
+30: ../../src/spiderx_controller/test/test_m6d_cli_readiness.py ............ [ 41%]
+30: .................                                                        [100%]
+30: 
+30: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_cli_readiness.xunit.xml -
+30: ============================== 29 passed in 1.70s ==============================
+30: -- run_test.py: return code 0
+30: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_cli_readiness.xunit.xml'
+30/38 Test #30: test_m6d_cli_readiness ............   Passed    2.10 sec
+test 31
+      Start 31: test_m6d_live_enabling
+
+31: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_live_enabling.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_live_enabling.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_live_enabling.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_live_enabling/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_live_enabling.xunit.xml" "--junit-prefix=spiderx_controller"
+31: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+31: Test timeout computed to be: 60
+31: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+31:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_live_enabling.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_live_enabling/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_live_enabling.xunit.xml --junit-prefix=spiderx_controller
+31: ============================= test session starts ==============================
+31: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+31: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6d_live_enabling/.cache
+31: rootdir: /home/user/spiderx_ws
+31: collected 33 items
+31: 
+31: ../../src/spiderx_controller/test/test_m6d_live_enabling.py ............ [ 36%]
+31: .....................                                                    [100%]
+31: 
+31: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_live_enabling.xunit.xml -
+31: ============================== 33 passed in 1.36s ==============================
+31: -- run_test.py: return code 0
+31: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_live_enabling.xunit.xml'
+31/38 Test #31: test_m6d_live_enabling ............   Passed    1.72 sec
+test 32
+      Start 32: test_m6d_evidence_safety
+
+32: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_evidence_safety.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_evidence_safety.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_evidence_safety.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_evidence_safety/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_evidence_safety.xunit.xml" "--junit-prefix=spiderx_controller"
+32: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+32: Test timeout computed to be: 60
+32: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+32:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_evidence_safety.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_evidence_safety/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_evidence_safety.xunit.xml --junit-prefix=spiderx_controller
+32: ============================= test session starts ==============================
+32: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+32: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6d_evidence_safety/.cache
+32: rootdir: /home/user/spiderx_ws
+32: collected 23 items
+32: 
+32: ../../src/spiderx_controller/test/test_m6d_evidence_safety.py .......... [ 43%]
+32: .............                                                            [100%]
+32: 
+32: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_evidence_safety.xunit.xml -
+32: ============================== 23 passed in 0.93s ==============================
+32: -- run_test.py: return code 0
+32: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_evidence_safety.xunit.xml'
+32/38 Test #32: test_m6d_evidence_safety ..........   Passed    1.33 sec
+test 33
+      Start 33: test_m6d_freshness_confirmation
+
+33: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_freshness_confirmation.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_freshness_confirmation.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_freshness_confirmation.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_freshness_confirmation/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_freshness_confirmation.xunit.xml" "--junit-prefix=spiderx_controller"
+33: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+33: Test timeout computed to be: 60
+33: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+33:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_freshness_confirmation.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_freshness_confirmation/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_freshness_confirmation.xunit.xml --junit-prefix=spiderx_controller
+33: ============================= test session starts ==============================
+33: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+33: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6d_freshness_confirmation/.cache
+33: rootdir: /home/user/spiderx_ws
+33: collected 30 items
+33: 
+33: ../../src/spiderx_controller/test/test_m6d_freshness_confirmation.py ... [ 10%]
+33: ...........................                                              [100%]
+33: 
+33: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_freshness_confirmation.xunit.xml -
+33: ============================== 30 passed in 1.37s ==============================
+33: -- run_test.py: return code 0
+33: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_freshness_confirmation.xunit.xml'
+33/38 Test #33: test_m6d_freshness_confirmation ...   Passed    1.72 sec
+test 34
+      Start 34: test_m6d_isolated_success
+
+34: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_isolated_success.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_isolated_success.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_isolated_success/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml" "--junit-prefix=spiderx_controller"
+34: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+34: Test timeout computed to be: 60
+34: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+34:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m6d_isolated_success.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m6d_isolated_success/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml --junit-prefix=spiderx_controller
+34: ============================= test session starts ==============================
+34: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+34: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m6d_isolated_success/.cache
+34: rootdir: /home/user/spiderx_ws
+34: collected 2 items
+34: 
+34: ../../src/spiderx_controller/test/test_m6d_isolated_success.py .F        [100%]
+34: 
+34: =================================== FAILURES ===================================
+34: ___________ test_gate_enabled_main_succeeds_end_to_end_with_one_goal ___________
+34: 
+34: sources = Sources(config_dir='/home/user/spiderx_ws/src/spiderx_controller/test/../config', joint_names=('lf_hip', 'lf_thigh_joi...rdf_expanded_xml': '915125596b3dff4bf0af5ed395d04ca0e815455f3ad8db6af3a22927ef81288c'}, m4_config_version=1, errors=())
+34: monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fb6fe435050>
+34: tmp_path = PosixPath('/tmp/pytest-of-root/pytest-599/test_gate_enabled_main_succeed0')
+34: 
+34:     def test_gate_enabled_main_succeeds_end_to_end_with_one_goal(sources, monkeypatch, tmp_path):
+34:         before = graph_snapshot(DOMAIN)
+34:         if any(before.values()):
+34:             pytest.skip(f'isolation not established on ROS domain {DOMAIN}: {before}')
+34:         monkeypatch.setattr(lc, 'LIVE_DISPATCH_ENABLED', True)         # test-local only
+34:         traj = m6t.build_trajectory(sources)
+34:         stack = fake_stack.IsolatedFakeStack(DOMAIN, traj['joint_names'],
+34:                                              traj['points'][0]['positions'])
+34:         try:
+34:             piped_stdin(monkeypatch, lc.CONFIRMATION_WORD + '\n')
+34:             rc = lpb.main(['m6_live_playback', '--live', '--domain-id', str(DOMAIN),
+34:                            '--out', str(tmp_path)], sources=sources)
+34:             received, results = list(stack.received), list(stack.results)
+34:             cancels, list_calls = stack.cancel_requests, stack.list_calls
+34:         finally:
+34:             stack.stop()
+34:         after = graph_snapshot(DOMAIN)
+34:     
+34:         files = sorted((tmp_path / 'live').glob('*/live_outcome.json'))
+34:         assert len(files) == 1
+34:         data = json.loads(files[0].read_text())
+34: >       assert rc == lpb.EXIT_OK, (data['state'], data['reason'], data['errors'])
+34: E       AssertionError: ('REFUSED', 'readiness_not_ready', [])
+34: E       assert 2 == 0
+34: E        +  where 0 = lpb.EXIT_OK
+34: 
+34: ../../src/spiderx_controller/test/test_m6d_isolated_success.py:130: AssertionError
+34: ----------------------------- Captured stdout call -----------------------------
+34: SpiderX M6.0-D live-playback tool
+34: M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows motion, tracking, contact, balance or walking.
+34: Readiness passed (compatible or warning). Type SEND-ONE-CROUCH-GOAL to send ONE goal (neutral -> crouch_10mm -> neutral) to the running simulation on ROS domain 160; anything else, EOF or Ctrl+C refuses:
+34: Live: final state REFUSED, reason readiness_not_ready, goals sent 0, cancels sent 0; no retry, no second goal
+34: Report: /tmp/pytest-of-root/pytest-599/test_gate_enabled_main_succeed0/live/20261009T075923Z/live_outcome.json
+34: =============================== warnings summary ===============================
+34: src/spiderx_controller/test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+34:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+34:     import sre_parse
+34: 
+34: src/spiderx_controller/test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+34:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+34:     import sre_constants
+34: 
+34: -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+34: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml -
+34: =========================== short test summary info ============================
+34: FAILED ../../src/spiderx_controller/test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+34: =================== 1 failed, 1 passed, 2 warnings in 11.86s ===================
+34: The following exception was never retrieved: cannot use Destroyable because destruction was requested
+34: -- run_test.py: return code 1
+34: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml'
+34/38 Test #34: test_m6d_isolated_success .........***Failed   12.38 sec
+test 35
+      Start 35: test_m61_gait_replay
+
+35: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61_gait_replay.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61_gait_replay.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m61_gait_replay.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61_gait_replay/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61_gait_replay.xunit.xml" "--junit-prefix=spiderx_controller"
+35: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+35: Test timeout computed to be: 60
+35: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+35:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m61_gait_replay.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61_gait_replay/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61_gait_replay.xunit.xml --junit-prefix=spiderx_controller
+35: ============================= test session starts ==============================
+35: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+35: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m61_gait_replay/.cache
+35: rootdir: /home/user/spiderx_ws
+35: collected 137 items
+35: 
+35: ../../src/spiderx_controller/test/test_m61_gait_replay.py .............. [ 10%]
+35: ........................................................................ [ 62%]
+35: ...................................................                      [100%]
+35: 
+35: =============================== warnings summary ===============================
+35: src/spiderx_controller/test/test_m61_gait_replay.py::test_rclpy_transport_reads_the_body_pose_read_only
+35:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+35:     import sre_parse
+35: 
+35: src/spiderx_controller/test/test_m61_gait_replay.py::test_rclpy_transport_reads_the_body_pose_read_only
+35:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+35:     import sre_constants
+35: 
+35: -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+35: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61_gait_replay.xunit.xml -
+35: ======================= 137 passed, 2 warnings in 30.78s =======================
+35: -- run_test.py: return code 0
+35: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61_gait_replay.xunit.xml'
+35/38 Test #35: test_m61_gait_replay ..............   Passed   31.37 sec
+test 36
+      Start 36: test_m61a_fixed_base
+
+36: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_fixed_base.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61a_fixed_base.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m61a_fixed_base.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61a_fixed_base/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_fixed_base.xunit.xml" "--junit-prefix=spiderx_controller"
+36: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+36: Test timeout computed to be: 600
+36: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+36:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m61a_fixed_base.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61a_fixed_base/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_fixed_base.xunit.xml --junit-prefix=spiderx_controller
+36: ============================= test session starts ==============================
+36: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+36: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m61a_fixed_base/.cache
+36: rootdir: /home/user/spiderx_ws
+36: collected 78 items
+36: 
+36: ../../src/spiderx_controller/test/test_m61a_fixed_base.py .............. [ 17%]
+36: ................................................................         [100%]
+36: 
+36: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_fixed_base.xunit.xml -
+36: ============================== 78 passed in 5.11s ==============================
+36: -- run_test.py: return code 0
+36: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_fixed_base.xunit.xml'
+36/38 Test #36: test_m61a_fixed_base ..............   Passed    5.45 sec
+test 37
+      Start 37: test_m61a_clearance
+
+37: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_clearance.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61a_clearance.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m61a_clearance.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61a_clearance/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_clearance.xunit.xml" "--junit-prefix=spiderx_controller"
+37: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+37: Test timeout computed to be: 600
+37: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+37:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m61a_clearance.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61a_clearance/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_clearance.xunit.xml --junit-prefix=spiderx_controller
+37: ============================= test session starts ==============================
+37: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+37: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m61a_clearance/.cache
+37: rootdir: /home/user/spiderx_ws
+37: collected 11 items
+37: 
+37: ../../src/spiderx_controller/test/test_m61a_clearance.py ...........     [100%]
+37: 
+37: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_clearance.xunit.xml -
+37: ============================= 11 passed in 37.47s ==============================
+37: -- run_test.py: return code 0
+37: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_clearance.xunit.xml'
+37/38 Test #37: test_m61a_clearance ...............   Passed   37.80 sec
+test 38
+      Start 38: test_m61a_observer
+
+38: Test command: /opt/mm/root/envs/humble/bin/python3 "-u" "/opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py" "/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_observer.xunit.xml" "--package-name" "spiderx_controller" "--output-file" "/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61a_observer.txt" "--command" "/opt/mm/root/envs/humble/bin/python3" "-u" "-m" "pytest" "/home/user/spiderx_ws/src/spiderx_controller/test/test_m61a_observer.py" "-o" "cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61a_observer/.cache" "--junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_observer.xunit.xml" "--junit-prefix=spiderx_controller"
+38: Working Directory: /home/user/spiderx_ws/build/spiderx_controller
+38: Test timeout computed to be: 300
+38: -- run_test.py: invoking following command in '/home/user/spiderx_ws/build/spiderx_controller':
+38:  - /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m61a_observer.py -o cache_dir=/home/user/spiderx_ws/build/spiderx_controller/ament_cmake_pytest/test_m61a_observer/.cache --junit-xml=/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_observer.xunit.xml --junit-prefix=spiderx_controller
+38: ============================= test session starts ==============================
+38: platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+38: cachedir: build/spiderx_controller/ament_cmake_pytest/test_m61a_observer/.cache
+38: rootdir: /home/user/spiderx_ws
+38: collected 24 items
+38: 
+38: ../../src/spiderx_controller/test/test_m61a_observer.py ................ [ 66%]
+38: ........                                                                 [100%]
+38: 
+38: =============================== warnings summary ===============================
+38: ../../../../../opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163
+38:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+38:     import sre_parse
+38: 
+38: ../../../../../opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164
+38:   /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+38:     import sre_constants
+38: 
+38: -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+38: - generated xml file: /home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_observer.xunit.xml -
+38: ======================= 24 passed, 2 warnings in 15.14s ========================
+38: -- run_test.py: return code 0
+38: -- run_test.py: verify result file '/home/user/spiderx_ws/build/spiderx_controller/test_results/spiderx_controller/test_m61a_observer.xunit.xml'
+38/38 Test #38: test_m61a_observer ................   Passed   15.68 sec
+
+97% tests passed, 1 tests failed out of 38
+
+Label Time Summary:
+pytest    = 374.98 sec*proc (38 tests)
+
+Total Test time (real) = 375.00 sec
+
+The following tests FAILED:
+	 34 - test_m6d_isolated_success (Failed)                pytest

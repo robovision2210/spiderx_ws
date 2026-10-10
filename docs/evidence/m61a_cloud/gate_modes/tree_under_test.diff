@@ -1,0 +1,789 @@
+diff --git a/src/spiderx_controller/config/m61a_fixed_base.yaml b/src/spiderx_controller/config/m61a_fixed_base.yaml
+index 025f470..ea2d8b7 100644
+--- a/src/spiderx_controller/config/m61a_fixed_base.yaml
++++ b/src/spiderx_controller/config/m61a_fixed_base.yaml
+@@ -74,6 +74,12 @@ freshness:
+   joint_states_stale_s: 0.5           # = m6_live_contract.JOINT_STATES_STALE_S
+   sim_stall_s: 5.0                    # = m6_live_contract.SIM_STALL_S
+   clock_reset_tolerance_s: 0.001      # /clock going back more than this = reset (latched)
++  # Readiness only: simulation time must ADVANCE while the body pose is received. A paused world
++  # keeps publishing /clock and pose/info (unchanged time), so receipt freshness cannot show it.
++  # Over the last progress_window_s of wall time, the /clock at receipt of the usable pose samples
++  # must rise by >= min_sim_advance_s (real-time factor >= 0.1; Cloud runs at about 0.7).
++  progress_window_s: 1.0              # = pose_stale_s: "fresh" and "advancing" share one window
++  min_sim_advance_s: 0.1
+ 
+ graph:
+   controllers: [joint_state_broadcaster, leg_trajectory_controller]
+diff --git a/src/spiderx_controller/spiderx_controller/m61_mock.py b/src/spiderx_controller/spiderx_controller/m61_mock.py
+index 9b167f0..ebc36ac 100644
+--- a/src/spiderx_controller/spiderx_controller/m61_mock.py
++++ b/src/spiderx_controller/spiderx_controller/m61_mock.py
+@@ -153,8 +153,16 @@ class M61FakeTransport(m6mock.FakeTransport):
+         return self.tracker.snapshot()
+ 
+     def _feed_tracker_until(self, wall):
+-        """Readiness may look before poll() delivered the samples; feed the latest one."""
++        """Readiness may look before poll() delivered the samples; feed the latest one. The first
++        time, also the pose ticks of the preceding progress window: the world was already running
++        (or paused) when this transport opened, which a live readiness observation also sees."""
+         smp = self.tracker.latest_usable
++        if smp is None:
++            n = math.ceil(self.fixed_base.progress_window_s / self.pose_period - 1e-9)
++            for k in range(n, 0, -1):
++                w = wall - k * self.pose_period
++                self.tracker.on_transforms(self._transforms(w), w, self._stamp(w))
++            smp = self.tracker.latest_usable
+         if smp is None or smp.wall < wall:
+             self.tracker.on_transforms(self._transforms(wall), wall, self._stamp(wall))
+ 
+@@ -183,6 +191,7 @@ SCENARIOS = {
+     'body_tilt': {'tilt_at': 5.0},                         # G2
+     'joint_near_limit': {'joint_jump_at': 5.0},            # G3
+     'sim_stall': {'stamp_freeze_at': 1.0},                 # G5 (re-used M6.0-D monitor)
++    'sim_paused': {'stamp_freeze_at': -10.0},              # paused before readiness: refused
+     'joint_state_gap': {'gap_at': 5.0},                    # G6 (re-used M6.0-D monitor)
+     'body_pose_stale': {'pose_stop_at': 5.0},              # pose freshness while running
+     'no_body_pose': {'no_pose': True},                     # readiness refuses; nothing sent
+diff --git a/src/spiderx_controller/spiderx_controller/m61a_fixed_base.py b/src/spiderx_controller/spiderx_controller/m61a_fixed_base.py
+index ff8a8b5..896a19b 100644
+--- a/src/spiderx_controller/spiderx_controller/m61a_fixed_base.py
++++ b/src/spiderx_controller/spiderx_controller/m61a_fixed_base.py
+@@ -31,13 +31,20 @@ Gazebo world; an entry whose child_frame_id is a link name is that LINK's pose R
+ MODEL (M3 compared lf_foot_1 that way to 5.4e-11 m). Per-pose stamps are 0 at the bridge, so
+ samples are timed by receipt (monotonic wall) and by the receiving node's /clock.
+ 
+-The physical body is measured as T_world_model * T_model_dummy(Gazebo entry) * T_dummy_body:
+-the Gazebo-side dummy_link entry (the canonical link carrying the merged base_link) is used, not
+-the robot_description, so a body that moves relative to the model root is still seen whatever
+-convention Gazebo uses to update the model pose. The robot_description is only cross-checked
+-against that entry (identity association) and never trusted alone.
++The physical body is composed as T_world_model * T_model_dummy(Gazebo entry) * T_dummy_body.
++What each factor is (gz-sim 6.16 Physics.cc, read for this; M2 showed the model entry follow a
++free body to its 0.0545 m rest height):
++  * T_world_model is MEASURED: Physics writes the model pose from the canonical link's physics
++    world pose, X_WM = X_WL * inv(X_ML), each step in which that link moved (> 1e-6);
++  * T_model_dummy is NOT measured: Physics never writes a canonical link's own pose, so the
++    dummy_link entry is X_ML, the SDF value the converter made from the URDF weld origin;
++  * T_dummy_body is the URDF dummy_joint origin: base_link is merged into the same physics body.
++So the composition equals X_WL * T_dummy_body, the physics pose of the merged body, and the
++check of the dummy_link entry against /robot_description is a conversion and association check,
++not a measurement. The robot_description is never trusted alone.
+ """
+ 
++import collections
+ from dataclasses import dataclass, field
+ import math
+ import os
+@@ -74,6 +81,8 @@ JOINT_STATES_INCOMPLETE = 'joint_states_incomplete'
+ CLOCK_MISSING = 'sim_clock_missing'
+ CLOCK_STALLED = 'sim_time_stalled'
+ CLOCK_RESET = 'sim_time_reset'
++CLOCK_NOT_ADVANCING = 'sim_time_not_advancing'           # no advance seen since the first /clock
++POSE_SIM_NOT_ADVANCING = 'body_pose_sim_time_not_advancing'   # pose stream without sim progress
+ CONTROLLERS_NOT_ACTIVE = 'controllers_not_active'
+ CONTROLLERS_UNKNOWN = 'controllers_unknown'
+ JOINT_STATE_PUBLISHERS = 'joint_state_publisher_count'
+@@ -212,6 +221,8 @@ class FixedBaseConfig:
+     joint_states_stale_s: float
+     sim_stall_s: float
+     clock_reset_tol_s: float
++    progress_window_s: float                     # readiness: wall window for sim progress
++    min_sim_advance_s: float                     # sim time that must pass within it
+     controllers: tuple
+     joint_state_topic: str
+     command_topic: str
+@@ -273,6 +284,8 @@ def parse_config(data):
+         joint_states_stale_s=_num(fr, 'joint_states_stale_s', 'freshness'),
+         sim_stall_s=_num(fr, 'sim_stall_s', 'freshness'),
+         clock_reset_tol_s=_num(fr, 'clock_reset_tolerance_s', 'freshness'),
++        progress_window_s=_num(fr, 'progress_window_s', 'freshness'),
++        min_sim_advance_s=_num(fr, 'min_sim_advance_s', 'freshness'),
+         controllers=tuple(gr['controllers']),
+         joint_state_topic=str(gr['joint_state_topic']),
+         command_topic=str(gr['command_topic']),
+@@ -593,6 +606,9 @@ class AttachmentMonitor:
+ class ClockMonitor:
+     """Simulation-clock progress, judged in WALL time (monotonic), never mixed.
+ 
++    * not advancing: /clock arrives but its time has not advanced once since the first message
++      (a world paused before the observation started; Gazebo keeps publishing /clock while
++      paused). Receiving /clock is not evidence of progress; only an advance is;
+     * stalled: /clock has not advanced for sim_stall_s of wall time (pause, freeze, lost bridge);
+     * reset:   /clock went backwards by more than clock_reset_tol_s (world reset or restart).
+     A reset latches until clear() so that evidence from before it is never reused.
+@@ -602,7 +618,7 @@ class ClockMonitor:
+         self.sim_stall_s = sim_stall_s
+         self.reset_tol_s = reset_tol_s
+         self.last_sim = None
+-        self.last_advance_wall = None
++        self.last_advance_wall = None      # wall time of the latest ADVANCE (None: none yet)
+         self.first_wall = None
+         self.reset_seen = False
+         self.messages = 0
+@@ -614,7 +630,7 @@ class ClockMonitor:
+         if self.first_wall is None:
+             self.first_wall = wall
+         if self.last_sim is None:
+-            self.last_sim, self.last_advance_wall = sim, wall
++            self.last_sim = sim
+             return
+         if sim < self.last_sim - self.reset_tol_s:
+             self.reset_seen = True
+@@ -629,11 +645,42 @@ class ClockMonitor:
+             return CLOCK_RESET
+         if self.last_sim is None:
+             return CLOCK_MISSING
++        if self.last_advance_wall is None:
++            return CLOCK_NOT_ADVANCING
+         if now_wall - self.last_advance_wall > self.sim_stall_s:
+             return CLOCK_STALLED
+         return None
+ 
+ 
++def check_sim_progress(samples, now_wall, window_s, min_advance_s, reset_tol_s=0.0):
++    """(code, detail): did simulation time advance while the body pose was being received?
++
++    samples: (wall, sim) per usable pose sample in receipt order; wall = monotonic receipt time,
++    sim = the receiving node's /clock at receipt. Only samples received in the last window_s of
++    wall time count. No code needs at least two of them, every sim time finite, no step back by
++    more than reset_tol_s, and a sim advance of at least min_advance_s from the first to the last.
++    Receipt freshness cannot show this: a paused Gazebo world keeps publishing /clock and
++    pose/info with an unchanged time (gz-sim 6 SimulationRunner::Step publishes the clock every
++    iteration, SceneBroadcaster::PostUpdate the poses at up to 60 Hz), while joint states stop.
++    """
++    recent = [(w, s) for w, s in (samples or ()) if now_wall - window_s <= w <= now_wall]
++    detail = {'window_s': window_s, 'min_sim_advance_s': min_advance_s, 'samples': len(recent),
++              'sim_advance_s': None}
++    if len(recent) < 2:
++        return POSE_SIM_NOT_ADVANCING, dict(detail, reason='fewer than two usable pose samples '
++                                                            'received in the window')
++    sims = [s for _, s in recent]
++    if not _finite(*sims):
++        return POSE_SIM_NOT_ADVANCING, dict(detail, reason='sim time unknown at receipt')
++    detail['sim_advance_s'] = sims[-1] - sims[0]
++    if any(b < a - reset_tol_s for a, b in zip(sims, sims[1:])):
++        return POSE_SIM_NOT_ADVANCING, dict(detail, reason='sim time went backwards')
++    if not detail['sim_advance_s'] >= min_advance_s:
++        return POSE_SIM_NOT_ADVANCING, dict(detail, reason='sim time did not advance enough '
++                                                            '(paused, frozen or too slow)')
++    return None, detail
++
++
+ def check_joint_states(latest, now_wall, joint_names, stale_s):
+     """Code for the latest (wall, {name: position}) joint-state sample, or None."""
+     if latest is None:
+@@ -671,6 +718,7 @@ class Evidence:
+     description_received_wall: float = None
+     latest_usable_pose: PoseSample = None      # last sample whose entries were usable
+     latest_pose_codes: tuple = ()              # selection codes of the most recent sample (any)
++    recent_pose_samples: tuple = ()            # (wall, sim) of recent usable samples (receipt order)
+     latest_joint_states: tuple = None          # (wall, {name: position})
+     clock: ClockMonitor = None
+     controllers: dict = None                   # {name: state} or None = not queried
+@@ -749,8 +797,9 @@ def assess(evidence, cfg, now_wall, joint_names):
+     """(ready, failure codes, report) for the read-only observer. Decides nothing about a goal.
+ 
+     Every check is separate. READY needs all of: the plant checks (assess_plant); a fresh usable
+-    body pose (wall receipt age); fresh complete joint states; a progressing /clock with no
+-    reset; both controllers active; exactly one /joint_states publisher; no other commander
++    body pose (wall receipt age); sim time advancing while that pose stream was received
++    (check_sim_progress); fresh complete joint states; a /clock that has advanced, with no stall
++    or reset; both controllers active; exactly one /joint_states publisher; no other commander
+     visible (no publisher on the controller's topic, no FollowJointTrajectory client) in the
+     graph snapshot (see command_owner_codes for what a snapshot cannot show).
+     """
+@@ -766,6 +815,10 @@ def assess(evidence, cfg, now_wall, joint_names):
+     put('body_pose_fresh', check_pose_freshness(smp, now_wall, cfg.pose_stale_s),
+         {'age_s': None if smp is None else now_wall - smp.wall,
+          'latest_sample_codes': list(evidence.latest_pose_codes)})
++    code, detail = check_sim_progress(evidence.recent_pose_samples, now_wall,
++                                      cfg.progress_window_s, cfg.min_sim_advance_s,
++                                      cfg.clock_reset_tol_s)
++    put('body_pose_sim_progress', code, detail)
+     put('joint_states', check_joint_states(evidence.latest_joint_states, now_wall, joint_names,
+                                            cfg.joint_states_stale_s))
+     put('sim_clock', CLOCK_MISSING if evidence.clock is None else evidence.clock.check(now_wall))
+@@ -793,8 +846,10 @@ class FixedBasePoseTracker:
+       ('fixed_base', wall, stamp, codes, attachment)            the plant checks of that sample
+     A sample whose entries are missing, ambiguous or malformed yields no event (so it never
+     refreshes pose freshness); without a fixed-base description no body pose can be composed,
+-    so only a 'fixed_base' event with the description code is returned.
++    so only a 'fixed_base' event with the description code is returned. The (wall, stamp) of the
++    latest RECENT_SAMPLES usable samples are kept for check_sim_progress.
+     """
++    RECENT_SAMPLES = 1024                 # > 15 s at the 60 Hz pose/info rate
+ 
+     def __init__(self, cfg):
+         self.cfg = cfg
+@@ -806,6 +861,7 @@ class FixedBasePoseTracker:
+         self.latest_codes = ()
+         self.messages = 0
+         self.invalid = {}
++        self.recent = collections.deque(maxlen=self.RECENT_SAMPLES)   # (wall, stamp), usable
+ 
+     def on_description(self, text, wall):
+         self.description, self.description_wall = text, wall
+@@ -825,6 +881,7 @@ class FixedBasePoseTracker:
+                 self.invalid[c] = self.invalid.get(c, 0) + 1
+             return []
+         self.latest_usable = PoseSample(wall, stamp, sel)
++        self.recent.append((wall, stamp))
+         if self.description_code is not None:
+             return [('fixed_base', wall, stamp, (self.description_code,), None)]
+         obs = evaluate_sample(sel, self.weld, self.cfg, wall, stamp)
+@@ -839,10 +896,14 @@ class FixedBasePoseTracker:
+         obs = evaluate_sample(smp.selection, self.weld, self.cfg, smp.wall, smp.stamp)
+         return (smp.wall, smp.stamp, obs.pose6())
+ 
++    def recent_samples(self):
++        return tuple(self.recent)
++
+     def snapshot(self):
+         return {'description': self.description, 'latest_usable_pose': self.latest_usable,
+                 'latest_pose_codes': self.latest_codes, 'messages': self.messages,
+-                'invalid_samples': dict(self.invalid)}
++                'invalid_samples': dict(self.invalid),
++                'recent_usable_samples': self.recent_samples()}
+ 
+ 
+ # ---------------------------------------------------------------- message-like helpers (no ROS)
+diff --git a/src/spiderx_controller/spiderx_controller/m61a_observer.py b/src/spiderx_controller/spiderx_controller/m61a_observer.py
+index aab6667..60156e2 100644
+--- a/src/spiderx_controller/spiderx_controller/m61a_observer.py
++++ b/src/spiderx_controller/spiderx_controller/m61a_observer.py
+@@ -11,7 +11,8 @@ welded plant is what the M6.1 replay expects (m61a_fixed_base.assess):
+     'dummy_link' consistent with the description (identity association), the composed body at
+     the weld pose (attachment), fresh by receipt time;
+   * /joint_states fresh and complete (12 joints), exactly one publisher;
+-  * /clock progressing with no reset;
++  * /clock ADVANCING (an advance seen, not just messages) with no stall or reset, and sim time
++    advancing while the body pose is received (a paused world keeps both streams arriving);
+   * both controllers active (controller_manager list_controllers, a read-only service call);
+   * NO publisher on the trajectory command topic.
+ The long mode also records the stationary distribution the provisional tolerances must be judged
+@@ -272,6 +273,7 @@ class FixedBaseObserver:
+             description_received_wall=self.tracker.description_wall,
+             latest_usable_pose=self.tracker.latest_usable,
+             latest_pose_codes=self.tracker.latest_codes,
++            recent_pose_samples=self.tracker.recent_samples(),
+             latest_joint_states=self.latest_joint_states, clock=self.clock,
+             controllers=controllers,
+             joint_state_publishers=graph.get('joint_state_publishers'),
+@@ -293,7 +295,8 @@ def run_observation(observer, cfg, duration_s, discovery_s, interrupted=None):
+             'controllers': {'start': c0, 'end': c1}, 'graph': {'start': g0, 'end': g1},
+             'statistics': observer.stats.summary(cfg),
+             'tracker': {k: v for k, v in observer.tracker.snapshot().items()
+-                        if k not in ('description', 'latest_usable_pose')}}
++                        if k not in ('description', 'latest_usable_pose',
++                                     'recent_usable_samples')}}
+ 
+ 
+ def interface_report(cfg, joint_names):
+diff --git a/src/spiderx_controller/spiderx_controller/m6_gait_replay.py b/src/spiderx_controller/spiderx_controller/m6_gait_replay.py
+index ecf9d28..1d4251a 100644
+--- a/src/spiderx_controller/spiderx_controller/m6_gait_replay.py
++++ b/src/spiderx_controller/spiderx_controller/m6_gait_replay.py
+@@ -352,6 +352,31 @@ def with_fixed_base(base_provider, snapshot, cfg):
+     return provide
+ 
+ 
++def with_sim_progress(base_provider, snapshot, now, cfg):
++    """Wrap a readiness provider: also NOT READY unless simulation time ADVANCED while the body
++    pose was being received (M6.1-A): over the last cfg.progress_window_s of wall time, the
++    transport's /clock at receipt of the usable pose samples rose by at least
++    cfg.min_sim_advance_s (m61a_fixed_base.check_sim_progress). Pose freshness alone cannot show
++    it: a paused Gazebo world keeps publishing /clock and pose/info with an unchanged time.
++    snapshot() -> tracker snapshot dict ('recent_usable_samples'); now() -> monotonic wall."""
++    def provide():
++        res = base_provider()
++        if not isinstance(res, rd.ReadinessResult):
++            return res
++        code, detail = fb.check_sim_progress(snapshot().get('recent_usable_samples'), now(),
++                                             cfg.progress_window_s, cfg.min_sim_advance_s,
++                                             cfg.clock_reset_tol_s)
++        report = dict(res.report or {}, m61a_sim_progress=dict(detail, ok=code is None,
++                                                               code=code))
++        if code is None:
++            return dataclasses.replace(res, report=report)
++        return dataclasses.replace(
++            res, ready=False, failure_codes=tuple(res.failure_codes) + (code,),
++            reasons=tuple(res.reasons) + (f'sim progress: {code}: {detail.get("reason")}',),
++            report=report)
++    return provide
++
++
+ def with_command_owner(base_provider, owner_snapshot):
+     """Wrap a readiness provider: also NOT READY while another commander is VISIBLE in the graph
+     (a publisher on the controller's topic, or another FollowJointTrajectory client).
+@@ -405,7 +430,8 @@ def with_body_pose(base_provider, latest_pose, now, limits):
+ 
+ 
+ __all__ = ['M61Session', 'GATE_TRIPPED', 'M61_TERMINAL', 'OUTCOME_SCHEMA', 'with_body_pose',
+-           'with_fixed_base', 'fixed_base_record', 'load_fixed_base_config']
++           'with_fixed_base', 'with_sim_progress', 'with_command_owner', 'fixed_base_record',
++           'load_fixed_base_config']
+ 
+ 
+ # ==================================================================== CLI
+@@ -484,10 +510,11 @@ def run_mock(plan, scenario, reader):
+     transport = m61_mock.M61FakeTransport(traj, fp, latch=latch, fixed_base=cfg,
+                                           **m61_mock.SCENARIOS[scenario])
+     report = m6mock.mock_readiness_report(plan.sources.joint_names, plan.neutral)
+-    provide = with_command_owner(with_fixed_base(
++    provide = with_command_owner(with_sim_progress(with_fixed_base(
+         with_body_pose(lambda: rd.assess(report, transport.wall_now()),
+                        transport.latest_body_pose, transport.wall_now, plan.limits),
+-        transport.fixed_base_snapshot, cfg), transport.command_owner_snapshot)
++        transport.fixed_base_snapshot, cfg), transport.fixed_base_snapshot, transport.wall_now,
++        cfg), transport.command_owner_snapshot)
+     session = M61Session(transport, plan, provide, reader, latch=latch, fixed_base=cfg)
+     out = session.run()
+     out.update(mode='mock', scenario=scenario, mock_server_goals_received=len(transport.sent),
+@@ -557,9 +584,10 @@ def _run_live(plan, transport_factory, collect_factory, reader, latch, domain_id
+     try:
+         base = rd.make_readiness_provider(collect_factory(transport), plan.sources.joint_names,
+                                           plan.neutral, transport.wall_now)
+-        provide = with_command_owner(with_fixed_base(
++        provide = with_command_owner(with_sim_progress(with_fixed_base(
+             with_body_pose(base, transport.latest_body_pose, transport.wall_now, plan.limits),
+-            transport.fixed_base_snapshot, cfg), transport.command_owner_snapshot)
++            transport.fixed_base_snapshot, cfg), transport.fixed_base_snapshot,
++            transport.wall_now, cfg), transport.command_owner_snapshot)
+         session = M61Session(transport, plan, provide, reader, latch=latch,
+                              checkpoint=checkpoint, fixed_base=cfg)
+         out = session.run()
+diff --git a/src/spiderx_controller/test/test_m61_gait_replay.py b/src/spiderx_controller/test/test_m61_gait_replay.py
+index 1acb267..9087c65 100644
+--- a/src/spiderx_controller/test/test_m61_gait_replay.py
++++ b/src/spiderx_controller/test/test_m61_gait_replay.py
+@@ -80,9 +80,23 @@ def codes(traj, plan):
+ 
+ 
+ # ==================================================================== gate and contract
+-def test_m61_gate_is_false_and_pinned():
+-    assert c61.M61_LIVE_DISPATCH_ENABLED is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED is False
+-    assert 'HARD-DISABLED' in gr.LIVE_STATE
++# Both build modes keep meaningful, passing tests. test/m61_gate.py is the ONE test-side pin of
++# the committed gate (False on this branch; the enabling patch flips the gate and the pin and
++# nothing else). The committed value is checked against the pin; the disabled behaviour is
++# tested with the gate set False explicitly (fixture `disabled`), the enabled wiring with the
++# gate set True explicitly and in-memory fakes only (fixture `enabled`). No test reaches a
++# simulator or a controller in either mode.
++@pytest.fixture
++def disabled(monkeypatch):
++    monkeypatch.setattr(c61, 'M61_LIVE_DISPATCH_ENABLED', False)      # tests only
++
++
++def test_m61_gate_matches_the_single_test_expectation():
++    assert isinstance(m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED, bool)
++    assert c61.M61_LIVE_DISPATCH_ENABLED is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED
++    # the CLI's stated state follows the committed gate (computed at import)
++    assert ('HARD-DISABLED' in gr.LIVE_STATE) is (not c61.M61_LIVE_DISPATCH_ENABLED)
++    assert ('ENABLED for exactly one goal' in gr.LIVE_STATE) is c61.M61_LIVE_DISPATCH_ENABLED
+     # the M6.0-D gate is separate and untouched by M6.1
+     assert lc.LIVE_DISPATCH_ENABLED is m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED
+ 
+@@ -95,7 +109,7 @@ def _package_sources():
+                 yield name, f.read()
+ 
+ 
+-def test_m61_gate_is_a_single_false_literal():
++def test_m61_gate_is_a_single_literal_equal_to_the_pin():
+     hits = [(n, line) for n, src in _package_sources() for line in src.splitlines()
+             if re.match(r'\s*(\w+\.)?M61_LIVE_DISPATCH_ENABLED\s*=', line)]
+     assert hits == [('m61_live_contract.py',
+@@ -103,13 +117,52 @@ def test_m61_gate_is_a_single_false_literal():
+                      f'{m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED}')]
+ 
+ 
++M61_GATE_FILES = ('m61_live_contract.py', 'm6_gait_replay.py', 'm61_goal.py', 'm61_gates.py',
++                  'm61_trot_cycle.py', 'm61_limits.py', 'm61_live_adapter.py', 'm61_mock.py')
++ENABLERS = ('os.environ', 'getenv', 'DISPATCH_ENABLED or', "add_argument('--enable",
++            "add_argument('--yes'", "add_argument('--force'", 'DISPATCH_ENABLED = True')
++
++
++def _enabler_hits(srcs, expected):
++    """(file, what) for every way the M6.1 sources could enable dispatch other than THE gate
++    line. That line must appear exactly once, in m61_live_contract.py, with the pinned value;
++    only that exact line is exempt from the scan, so the scan means the same in both modes."""
++    gate = f'M61_LIVE_DISPATCH_ENABLED = {expected}'
++    hits = []
++    for name in M61_GATE_FILES:
++        lines = srcs[name].splitlines()
++        if name == 'm61_live_contract.py':
++            n = lines.count(gate)
++            if n != 1:
++                hits.append((name, f'{gate!r} found {n} times'))
++            lines = [line for line in lines if line != gate]
++        text = '\n'.join(lines)
++        hits += [(name, w) for w in ENABLERS if w in text]
++    return hits
++
++
+ def test_no_environment_or_flag_can_enable_m61_dispatch():
+-    srcs = dict(_package_sources())
+-    for name in ('m61_live_contract.py', 'm6_gait_replay.py', 'm61_goal.py', 'm61_gates.py',
+-                 'm61_trot_cycle.py', 'm61_limits.py', 'm61_live_adapter.py', 'm61_mock.py'):
+-        for w in ('os.environ', 'getenv', 'DISPATCH_ENABLED or', "add_argument('--enable",
+-                  "add_argument('--yes'", "add_argument('--force'", 'DISPATCH_ENABLED = True'):
+-            assert w not in srcs[name], (name, w)
++    assert _enabler_hits(dict(_package_sources()),
++                         m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED) == []
++
++
++@pytest.mark.parametrize('expected', [False, True])
++def test_the_enabler_scan_has_teeth_in_both_build_modes(expected):
++    gate = f'M61_LIVE_DISPATCH_ENABLED = {expected}'
++    clean = dict({n: 'X = 1\n' for n in M61_GATE_FILES}, **{'m61_live_contract.py': gate})
++    assert _enabler_hits(clean, expected) == []
++    # the gate line with the other value, a missing or a duplicated gate line
++    flipped = f'M61_LIVE_DISPATCH_ENABLED = {not expected}'
++    for text in (flipped, 'X = 1', f'{gate}\n{gate}'):
++        assert _enabler_hits(dict(clean, **{'m61_live_contract.py': text}), expected)
++    # an indented or second assignment is never the exempt line
++    for text in (f'{gate}\n    M61_LIVE_DISPATCH_ENABLED = True',
++                 f'{gate}\nc61.M61_LIVE_DISPATCH_ENABLED = True'):
++        assert ('m61_live_contract.py', 'DISPATCH_ENABLED = True') in _enabler_hits(
++            dict(clean, **{'m61_live_contract.py': text}), expected)
++    for name in M61_GATE_FILES[1:]:
++        for w in ENABLERS:
++            assert (name, w) in _enabler_hits(dict(clean, **{name: f'y = {w}'}), expected)
+ 
+ 
+ def test_only_the_m61_adapter_imports_rclpy():
+@@ -119,7 +172,7 @@ def test_only_the_m61_adapter_imports_rclpy():
+         assert 'import rclpy' not in srcs[name] and 'from rclpy' not in srcs[name], name
+ 
+ 
+-def test_live_cli_refused_exit_3_before_anything(tmp_path, monkeypatch, capsys):
++def test_live_cli_refused_exit_3_before_anything(disabled, tmp_path, monkeypatch, capsys):
+     def never(*a, **k):
+         raise AssertionError('must not be reached')
+     monkeypatch.setattr(tc, 'load_plan', never)
+@@ -131,17 +184,22 @@ def test_live_cli_refused_exit_3_before_anything(tmp_path, monkeypatch, capsys):
+ 
+ 
+ def test_live_cli_with_gate_false_imports_no_ros_client():
++    # the gate is set False inside the child, so this tests the disabled path in either build
++    # mode and can never reach a ROS graph, whatever is running on domain 0
+     code = ('import sys; from spiderx_controller import m6_gait_replay as m;'
++            'm.c61.M61_LIVE_DISPATCH_ENABLED = False;'
+             'rc = m.main(["m6_gait_replay", "--live", "--domain-id", "0"]);'
+             'bad=[x for x in sys.modules if x.split(".")[0] == "rclpy"'
+-            ' or x.endswith("m61_live_adapter") or x.endswith("m6_live_adapter")];'
++            ' or x.endswith("m61_live_adapter") or x.endswith("m6_live_adapter")'
++            ' or x.endswith("m61a_live")];'
+             'print(rc, bad); sys.exit(0 if rc == 3 and not bad else 1)')
+     out = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True,
+                          stdin=subprocess.DEVNULL)
+     assert out.returncode == 0, out.stdout + out.stderr
++    assert 'REFUSED' in out.stdout and 'HARD-DISABLED' in out.stdout
+ 
+ 
+-def test_gate_false_blocks_the_live_wiring_too(plan, tmp_path):
++def test_gate_false_blocks_the_live_wiring_too(disabled, plan, tmp_path):
+     def never(*a, **k):
+         raise AssertionError('must not be reached')
+     with pytest.raises(PermissionError):
+@@ -591,6 +649,7 @@ EXPECTED = {   # scenario: (state, reason, goals, cancels, gates tripped)
+     'competing_publisher': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+     'competing_client': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+     'competing_client_late': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
++    'sim_paused': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+ }
+ 
+ 
+@@ -626,6 +685,7 @@ FIXED_BASE_REFUSAL_CODES = {
+     'spawn_offset': 'frame_spawn_not_identity',
+     'description_mismatch': 'frame_body_link_inconsistent',
+     'mount_not_approved': 'mount_not_approved',
++    'sim_paused': 'body_pose_sim_time_not_advancing',
+ }
+ 
+ 
+@@ -671,7 +731,8 @@ def test_success_outcome_fields(plan):
+     assert out['tracking']['max_inflight_error_rad'] < 0.02
+     assert out['tracking']['detail']['uncovered_intervals'] == []
+     assert out['base_constraint'] == 'fixed' and out['contact']['status'] == 'not_measured'
+-    assert out['m61_live_dispatch_enabled'] is False
++    # the outcome records the committed gate truthfully (False here; True on an enabling branch)
++    assert out['m61_live_dispatch_enabled'] is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED
+     assert out['limits']['confirmation_word'] == 'SEND-ONE-TROT-CYCLE'
+     assert 'approved_point_times_s' not in out['limits']                 # no M6.0-D content
+     assert out['m61_limits'] == c61.APPROVED_LIMITS
+@@ -784,7 +845,8 @@ def test_mock_cli_writes_the_evidence_directory(plan, tmp_path):
+     assert json.loads((d / 'readiness_after.json').read_text())['when'] == 'after_confirmation'
+     g = json.loads((d / 'gates.json').read_text())
+     assert set(gates.GATE_IDS) <= set(g['gates']) and g['contact']['status'] == 'not_measured'
+-    assert 'm61_live_dispatch_enabled: False' in (d / 'git_state.txt').read_text()
++    assert (f'm61_live_dispatch_enabled: {m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED}'
++            in (d / 'git_state.txt').read_text())
+     assert 'ROS_DISTRO' in (d / 'environment.txt').read_text()
+ 
+ 
+@@ -803,6 +865,17 @@ def test_mock_cli_refusal_still_records_evidence(plan, tmp_path):
+     assert json.loads((d / evd.MOCK_OUTCOME).read_text())['goals_sent'] == 0
+ 
+ 
++@pytest.mark.parametrize('gate', [False, True])
++def test_evidence_records_the_gate_as_it_is_in_both_modes(gate, plan, tmp_path, monkeypatch):
++    """Offline only (dry run, gate state helper): the recorded gate follows the gate itself."""
++    monkeypatch.setattr(c61, 'M61_LIVE_DISPATCH_ENABLED', gate)        # tests only
++    assert gr._gate_state()['m61_live_dispatch_enabled'] is gate
++    assert c61.as_dict()['m61_live_dispatch_enabled'] is gate
++    assert cli(plan, tmp_path, '--dry-run') == gr.EXIT_OK
++    data = json.loads((tmp_path / 'dry_run' / TRAJECTORY_ID / 'dry_run_report.json').read_text())
++    assert data['m61_live_dispatch_enabled'] is gate and data['goals_sent'] == 0
++
++
+ def test_no_write_writes_nothing(plan, tmp_path):
+     assert cli(plan, tmp_path, '--mock', '--no-write') == gr.EXIT_OK
+     assert cli(plan, tmp_path, '--dry-run', '--no-write') == gr.EXIT_OK
+@@ -814,7 +887,7 @@ def test_dry_run_report_is_never_overwritten(plan, tmp_path):
+     p = tmp_path / 'dry_run' / TRAJECTORY_ID / 'dry_run_report.json'
+     data = json.loads(p.read_text())
+     assert data['goal_fingerprint'] == FINGERPRINT and data['goals_sent'] == 0
+-    assert data['m61_live_dispatch_enabled'] is False
++    assert data['m61_live_dispatch_enabled'] is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED
+     before = p.read_bytes()
+     assert cli(plan, tmp_path, '--dry-run') == gr.EXIT_REFUSED
+     assert p.read_bytes() == before
+@@ -918,6 +991,17 @@ def test_enabled_live_gate_trip_and_refusals(enabled, plan, tmp_path):
+     assert f.made[0].sent == []
+ 
+ 
++def test_enabled_live_refuses_a_paused_world_before_any_goal(enabled, plan, tmp_path):
++    """Fakes only: /clock and pose/info keep arriving from a paused world, so the body pose is
++    fresh by receipt; readiness still refuses because simulation time does not advance."""
++    f = Factories(plan, **m61_mock.SCENARIOS['sim_paused'])
++    assert run_enabled(plan, tmp_path, f, '20261003T120004Z') == gr.EXIT_REFUSED
++    out = json.loads((tmp_path / '20261003T120004Z' / evd.LIVE_OUTCOME).read_text())
++    assert f.made[0].sent == [] and out['goals_sent'] == 0
++    res = out['readiness'][0]['result']
++    assert res['failure_codes'] == [fb.POSE_SIM_NOT_ADVANCING], res
++
++
+ def test_enabled_live_still_needs_domain_and_evidence(enabled, plan, tmp_path):
+     f = Factories(plan)
+     args = gr.parse_args(['--live', '--out', str(tmp_path)])
+@@ -1009,6 +1093,27 @@ def test_a_late_competing_client_is_caught_by_the_pre_dispatch_recheck(plan):
+     assert out['state'] == lpb.REFUSED and out['goals_sent'] == 0
+ 
+ 
++def test_sim_progress_wrapper_needs_advancing_sim_time():
++    cfg = gr.load_fixed_base_config(SRC_CONFIG)
++    base = lambda: rd.ReadinessResult(True, 'compatible', (), (), 0.0)      # noqa: E731
++    running = {'recent_usable_samples': tuple((9.0 + 0.02 * i, 100.0 + 0.014 * i)
++                                              for i in range(51))}           # RTF 0.7
++    paused = {'recent_usable_samples': tuple((9.0 + 0.02 * i, 100.0) for i in range(51))}
++    res = gr.with_sim_progress(base, lambda: running, lambda: 10.0, cfg)()
++    assert res.ready and res.report['m61a_sim_progress']['ok']
++    assert res.report['m61a_sim_progress']['sim_advance_s'] == pytest.approx(0.7)
++    for snap in (paused, {}, {'recent_usable_samples': ()}):
++        res = gr.with_sim_progress(base, lambda: snap, lambda: 10.0, cfg)()
++        assert not res.ready and res.failure_codes == (fb.POSE_SIM_NOT_ADVANCING,)
++    # the same samples one window later are not evidence of progress NOW
++    res = gr.with_sim_progress(base, lambda: running, lambda: 11.5, cfg)()
++    assert not res.ready
++    # a result that is already NOT READY keeps its codes and gains this one
++    bad = lambda: rd.ReadinessResult(False, 'compatible', ('x',), ('joint_states_stale',), 0.0)  # noqa: E731,E501
++    res = gr.with_sim_progress(bad, lambda: paused, lambda: 10.0, cfg)()
++    assert res.failure_codes == ('joint_states_stale', fb.POSE_SIM_NOT_ADVANCING)
++
++
+ def test_command_owner_wrapper_unknown_counts_are_not_ready():
+     base = lambda: rd.ReadinessResult(True, 'compatible', (), (), 0.0)      # noqa: E731
+     res = gr.with_command_owner(base, lambda: {'command_publishers': None,
+diff --git a/src/spiderx_controller/test/test_m61a_fixed_base.py b/src/spiderx_controller/test/test_m61a_fixed_base.py
+index e2b26cb..5ff3782 100644
+--- a/src/spiderx_controller/test/test_m61a_fixed_base.py
++++ b/src/spiderx_controller/test/test_m61a_fixed_base.py
+@@ -123,6 +123,9 @@ def test_config_freshness_equals_the_existing_monitor_values(cfg):
+     assert cfg.pose_stale_s == c61.APPROVED_LIMITS['body_pose_stale_s']
+     assert cfg.joint_states_stale_s == m6d.JOINT_STATES_STALE_S
+     assert cfg.sim_stall_s == m6d.SIM_STALL_S
++    # readiness sim progress: the freshness window, and a real-time factor of at least 0.1
++    assert cfg.progress_window_s == cfg.pose_stale_s
++    assert 0 < cfg.min_sim_advance_s <= 0.1 * cfg.progress_window_s
+ 
+ 
+ def _raw():
+@@ -140,6 +143,8 @@ def _raw():
+     (lambda d: d['attachment'].update(translation_tolerance_m=0.0), '> 0'),
+     (lambda d: d['attachment'].update(debounce_samples=True), 'debounce'),
+     (lambda d: d.update(schema='x/0'), 'schema'),
++    (lambda d: d['freshness'].pop('min_sim_advance_s'), 'min_sim_advance_s'),
++    (lambda d: d['freshness'].update(progress_window_s=0.0), '> 0'),
+ ])
+ def test_config_refuses_malformed_values(mutate, needle):
+     d = _raw()
+@@ -456,6 +461,53 @@ def test_clock_monitor_progress_pause_reset(cfg):
+     assert c.check(7.1) == fb.CLOCK_RESET             # latched
+ 
+ 
++def test_clock_monitor_needs_an_advance_not_just_messages():
++    """A world paused before the observation: /clock keeps arriving with one time (gz-sim 6
++    publishes it every iteration, paused or not). Messages are not progress; an advance is."""
++    c = fb.ClockMonitor(5.0, 0.001)
++    for i in range(50):
++        c.on_clock(0.02 * i, 100.0)
++    assert c.messages == 50 and c.check(1.0) == fb.CLOCK_NOT_ADVANCING
++    c.on_clock(1.02, 100.001)                         # the first advance
++    assert c.check(1.03) is None
++    assert c.check(6.1) == fb.CLOCK_STALLED          # then no advance for > 5 s of wall
++
++
++def _samples(t0, n, dt, rate):
++    """n (wall, sim) samples every dt of wall from t0, sim advancing at rate (0 = paused)."""
++    return [(t0 + dt * i, 100.0 + rate * dt * i) for i in range(n)]
++
++
++@pytest.mark.parametrize('samples, now, code', [
++    (_samples(9.0, 51, 0.02, 0.7), 10.0, None),                      # Cloud RTF 0.7
++    (_samples(9.0, 51, 0.02, 0.12), 10.0, None),                     # just above the floor
++    (_samples(9.0, 51, 0.02, 0.0), 10.0, fb.POSE_SIM_NOT_ADVANCING),  # paused
++    (_samples(9.0, 51, 0.02, 0.05), 10.0, fb.POSE_SIM_NOT_ADVANCING),  # too slow
++    (_samples(9.0, 51, 0.02, 0.7), 12.5, fb.POSE_SIM_NOT_ADVANCING),  # all outside the window
++    ([(9.98, 100.0)], 10.0, fb.POSE_SIM_NOT_ADVANCING),               # one sample only
++    ([(9.5, 100.0), (9.9, None)], 10.0, fb.POSE_SIM_NOT_ADVANCING),   # sim time unknown
++    ([(9.1, 100.0), (9.5, 101.0), (9.6, 99.0), (9.9, 101.5)], 10.0,
++     fb.POSE_SIM_NOT_ADVANCING),                                     # went backwards
++    (None, 10.0, fb.POSE_SIM_NOT_ADVANCING),
++])
++def test_sim_progress_needs_sim_time_to_advance_while_poses_arrive(samples, now, code):
++    got, detail = fb.check_sim_progress(samples, now, 1.0, 0.1, 0.001)
++    assert got == code, detail
++    assert detail['window_s'] == 1.0 and detail['min_sim_advance_s'] == 0.1
++    if code is None:
++        assert detail['sim_advance_s'] >= 0.1 and detail['samples'] >= 2
++    else:
++        assert detail['reason']
++
++
++def test_sim_progress_uses_only_the_window_ending_now():
++    # advancing long ago, paused for the last second: not advancing now
++    old = _samples(5.0, 100, 0.02, 1.0)
++    paused = [(9.0 + 0.02 * i, old[-1][1]) for i in range(51)]
++    assert fb.check_sim_progress(old + paused, 10.0, 1.0, 0.1)[0] == fb.POSE_SIM_NOT_ADVANCING
++    assert fb.check_sim_progress(old + paused, 7.0, 1.0, 0.1)[0] is None
++
++
+ def test_joint_state_and_pose_freshness_are_wall_receipt_times():
+     names = ['a', 'b']
+     assert fb.check_joint_states(None, 1.0, names, 0.5) == fb.JOINT_STATES_MISSING
+@@ -472,6 +524,20 @@ def test_joint_state_and_pose_freshness_are_wall_receipt_times():
+ 
+ 
+ # ==================================================================== tracker and readiness
++def test_tracker_keeps_recent_usable_samples_for_the_progress_check(cfg, weld):
++    tr = fb.FixedBasePoseTracker(cfg)
++    tr.on_description(fb.minimal_description(cfg.mount), 0.0)
++    for i in range(tr.RECENT_SAMPLES + 10):
++        tr.on_transforms(good(weld), 1.0 + 0.01 * i, 100.0 + 0.007 * i)
++    tr.on_transforms([], 50.0, 200.0)                 # unusable: not a sample
++    rec = tr.snapshot()['recent_usable_samples']
++    assert len(rec) == tr.RECENT_SAMPLES and rec[-1][0] == pytest.approx(1.0 + 0.01 * 1033)
++    assert rec == tr.recent_samples()
++    now = rec[-1][0]
++    assert fb.check_sim_progress(rec, now, cfg.progress_window_s, cfg.min_sim_advance_s)[0] \
++        is None
++
++
+ def test_tracker_events_and_invalid_samples(cfg, weld):
+     tr = fb.FixedBasePoseTracker(cfg)
+     assert tr.on_transforms(good(weld), 1.0, 2.0) == [
+@@ -496,6 +562,8 @@ def evidence(cfg, weld, now=10.0, **kw):
+     e = fb.Evidence(description=fb.minimal_description(cfg.mount),
+                     latest_usable_pose=fb.PoseSample(now - 0.05, 50.1,
+                                                      fb.select_entries(good(weld))),
++                    recent_pose_samples=tuple((now - 0.05 * k, 50.1 - 0.035 * k)
++                                              for k in range(19, -1, -1)),
+                     latest_joint_states=(now - 0.01, {'j1': 0.0, 'j2': 0.0}), clock=c,
+                     controllers={'joint_state_broadcaster': 'active',
+                                  'leg_trajectory_controller': 'active'},
+@@ -511,8 +579,10 @@ def test_assess_ready_with_complete_evidence(cfg, weld):
+     assert rep['checks']['body_pose_xyz_rpy'] == pytest.approx(cfg.mount.xyz_rpy())
+     assert {k for k, v in rep['checks'].items() if isinstance(v, dict) and 'ok' in v} == {
+         'robot_description', 'frame_body_link', 'spawn_identity', 'attachment',
+-        'body_pose_fresh', 'joint_states', 'sim_clock', 'controllers',
++        'body_pose_fresh', 'body_pose_sim_progress', 'joint_states', 'sim_clock', 'controllers',
+         'joint_state_publishers', 'command_publishers', 'action_clients'}
++    assert rep['checks']['body_pose_sim_progress']['detail']['sim_advance_s'] == \
++        pytest.approx(19 * 0.035)
+ 
+ 
+ @pytest.mark.parametrize('kw, code', [
+@@ -531,12 +601,29 @@ def test_assess_ready_with_complete_evidence(cfg, weld):
+     # unmeasured count (None) is not READY (behaviour change: evidence must now carry the count)
+     ({'action_clients': 1}, fb.COMMAND_ACTION_CLIENTS),
+     ({'action_clients': None}, fb.COMMAND_ACTION_CLIENTS),
++    # readiness needs sim progress while the pose arrives, not just fresh receipts (paused world)
++    ({'recent_pose_samples': ()}, fb.POSE_SIM_NOT_ADVANCING),
++    ({'recent_pose_samples': tuple((10.0 - 0.05 * k, 50.1) for k in range(20, -1, -1))},
++     fb.POSE_SIM_NOT_ADVANCING),
+ ])
+ def test_assess_names_each_failure(cfg, weld, kw, code):
+     ready, codes, _ = fb.assess(evidence(cfg, weld, **kw), cfg, 10.0, ['j1', 'j2'])
+     assert not ready and code in codes
+ 
+ 
++def test_assess_paused_world_is_not_ready_although_every_stream_is_fresh(cfg, weld):
++    """The case receipt freshness misses: /clock and pose/info keep arriving, time stands."""
++    c = fb.ClockMonitor(cfg.sim_stall_s, cfg.clock_reset_tol_s)
++    for k in range(200):
++        c.on_clock(9.0 + 0.005 * k, 50.0)
++    e = evidence(cfg, weld, clock=c, recent_pose_samples=tuple(
++        (9.0 + 0.02 * k, 50.0) for k in range(51)))
++    ready, codes, rep = fb.assess(e, cfg, 10.0, ['j1', 'j2'])
++    assert not ready
++    assert fb.CLOCK_NOT_ADVANCING in codes and fb.POSE_SIM_NOT_ADVANCING in codes
++    assert rep['checks']['body_pose_fresh']['ok']        # fresh by receipt, yet not READY
++
++
+ def test_assess_stale_pose_and_stalled_clock_are_separate(cfg, weld):
+     ready, codes, _ = fb.assess(evidence(cfg, weld), cfg, 16.0, ['j1', 'j2'])
+     assert fb.POSE_STALE in codes and fb.CLOCK_STALLED in codes and fb.JOINT_STATES_STALE in codes
+diff --git a/src/spiderx_controller/test/test_m61a_observer.py b/src/spiderx_controller/test/test_m61a_observer.py
+index 8d0b358..077ed06 100644
+--- a/src/spiderx_controller/test/test_m61a_observer.py
++++ b/src/spiderx_controller/test/test_m61a_observer.py
+@@ -94,8 +94,9 @@ class FakeObserver(ob.FixedBaseObserver):
+     """The real assessment, without ROS: evidence is injected."""
+ 
+     def __init__(self, cfg, joint_names, domain_id, description=None, controllers=None,
+-                 open_error=None):
++                 open_error=None, paused=False):
+         super().__init__(cfg, joint_names, domain_id)
++        self._paused = paused        # a paused world: /clock and pose/info arrive, time stands
+         self._desc = fb.minimal_description(cfg.mount) if description is None else description
+         self._ctrl = controllers or {'joint_state_broadcaster': 'active',
+                                      'leg_trajectory_controller': 'active'}
+@@ -119,10 +120,13 @@ class FakeObserver(ob.FixedBaseObserver):
+         weld = fb.parse_robot_description(fb.minimal_description(self.cfg.mount))
+         msg = [fb.make_transform('spiderx', fb.Pose()),
+                fb.make_transform('dummy_link', weld.model_to_dummy)]
+-        self.tracker.on_transforms(msg, now, 1.0)
+-        self._sim = getattr(self, '_sim', 1.0) + 0.1
+-        self.clock.on_clock(now - 0.2, self._sim)
+-        self.clock.on_clock(now, self._sim + 0.05)
++        rate = 0.0 if self._paused else 0.7                      # sim s per wall s
++        self._sim = getattr(self, '_sim', 1.0) + 0.5 * rate
++        for i in range(21):                                      # the last 0.5 s of pose/info
++            w = now - 0.5 + 0.025 * i
++            self.tracker.on_transforms(msg, w, self._sim - rate * (now - w))
++        self.clock.on_clock(now - 0.2, self._sim - 0.2 * rate)
++        self.clock.on_clock(now, self._sim)
+         self.latest_joint_states = (now, {j: 0.0 for j in self.joint_names})
+ 
+     def controllers(self, timeout_s=5.0):
+@@ -149,6 +153,9 @@ def test_cli_ready_and_evidence_never_overwritten(tmp_path, capsys):
+ @pytest.mark.parametrize('kw, code', [
+     ({'description': fb.minimal_description(fixed_base=False)}, fb.DESCRIPTION_NOT_FIXED_BASE),
+     ({'controllers': {'joint_state_broadcaster': 'active'}}, fb.CONTROLLERS_NOT_ACTIVE),
++    # a paused world: every stream is fresh by receipt, but simulation time does not advance
++    ({'paused': True}, fb.CLOCK_NOT_ADVANCING),
++    ({'paused': True}, fb.POSE_SIM_NOT_ADVANCING),
+ ])
+ def test_cli_not_ready_names_the_code(kw, code, capsys):
+     fac = lambda c, j, d: FakeObserver(c, j, d, **kw)                         # noqa: E731

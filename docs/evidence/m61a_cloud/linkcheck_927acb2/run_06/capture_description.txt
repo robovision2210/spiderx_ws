@@ -1,0 +1,2 @@
+/robot_description: 46144 bytes
+exit=0

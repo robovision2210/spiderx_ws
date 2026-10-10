@@ -1,0 +1,93 @@
+# M6.1-A - fixed-base (welded) SpiderX for the M6.1 protected trot replay (SIMULATION ONLY).
+#
+# Read by spiderx_controller/m61a_fixed_base.py (strict loader: unknown, missing or non-finite
+# values are refused). Design and evidence: docs/M61A_FIXED_BASE_IMPLEMENTATION.md.
+#
+# EVERY NUMBER BELOW IS PROVISIONAL. They were derived offline (Cloud) from the model geometry
+# and the existing M6.0-D / M6.1 monitor values. None has runtime evidence yet; the launch-only
+# fixed-base observation (acceptance phase 1) must confirm them before any approved replay.
+#
+# This file describes the PLANT and its observation, not the commanded trajectory: it is NOT an
+# input of the M6.1 trajectory_id / goal fingerprint (those stay 241760e7dfd5ef12 / 9dba1a17...).
+# Its SHA-256 is recorded in every observation and replay evidence file instead.
+#
+# Frames: world = Gazebo world "spiderx_fortress" (= the URDF/TF root "world", because the model
+# is spawned at identity); body = base_link (+x right, +y front, +z up). Units: m, rad, s.
+
+schema: spiderx.m61a.fixed_base/1
+milestone: M6.1-A
+simulation_only: true
+status: provisional
+
+model:
+  model_name: spiderx                 # Gazebo model name (create -name spiderx)
+  world_name: spiderx_fortress        # <world name> in worlds/spiderx_fortress.sdf
+  body_link: dummy_link               # canonical Gazebo link; base_link is merged into it
+  body_frame: base_link               # the body frame every height/tilt check refers to
+  weld_joint: spiderx_fixed_base_weld # the ONE world -> dummy_link joint of the wrapper
+  pose_topic: /spiderx/sim/world_poses
+
+# T_world_body of the weld (Approach B: carried by the weld joint origin; spawn is identity).
+# Must equal the defaults of spiderx_description/urdf/spiderx_fixed_base.urdf.xacro (tested).
+mount:
+  x_m: 0.0
+  y_m: 0.0
+  z_m: 0.125      # PROVISIONAL: see clearance below
+  yaw_rad: 0.0
+
+# Ground clearance (m61a_clearance, offline, exact collision meshes; ground plane z = 0):
+#   guaranteed lowest collision point over EVERY joint configuration within the URDF limits
+#   widened by 0.02 rad = 0.10906 m below base_link (rr/rf_foot_1; branch and bound, gap <= 1 mm)
+#   + margin 0.015 m (weld-check tolerance 0.003 m, contact surface layer, limit softness, model
+#   error), rounded UP to 5 mm -> 0.125 m. A description with a lower weld is refused.
+clearance:
+  min_mount_height_m: 0.125
+  passive_bound_min_z_body_m: -0.10906
+  margin_m: 0.015
+
+# Attachment integrity: composed body pose (T_world_model * T_model_dummy(Gazebo) * T_dummy_body)
+# versus the expected weld pose. A detached body would fall about 0.07 m (0.125 -> ~0.0545 m rest
+# height), far beyond these; a welded body is expected to stay within micrometres. Provisional
+# until the stationary observation measures the real distribution (accept if the observed maximum
+# stays below one third of each tolerance).
+attachment:
+  translation_tolerance_m: 0.003
+  rotation_tolerance_rad: 0.01
+  debounce_samples: 2
+
+# The model root must stay at the identity spawn pose. Catches a non-identity spawn (the
+# fortress.launch.py default -z 0.075 would be a 0.075 m error: double counting).
+spawn_identity:
+  translation_tolerance_m: 0.003
+  rotation_tolerance_rad: 0.01
+
+# Gazebo's dummy_link entry (relative to the model) must equal the weld origin parsed from
+# /robot_description: this is the evidence that the description and the spawned model agree.
+link_consistency:
+  translation_tolerance_m: 0.0001
+  rotation_tolerance_rad: 0.0001
+
+# Separate freshness/progress checks. Pose and joint-state ages are WALL (monotonic receipt) times;
+# simulation-clock progress is judged per wall interval. Values = the existing M6.1 / M6.0-D ones.
+freshness:
+  pose_stale_s: 1.0                   # = m61_limits.yaml body_pose_stale_s
+  joint_states_stale_s: 0.5           # = m6_live_contract.JOINT_STATES_STALE_S
+  sim_stall_s: 5.0                    # = m6_live_contract.SIM_STALL_S
+  clock_reset_tolerance_s: 0.001      # /clock going back more than this = reset (latched)
+  # Readiness only: simulation time must ADVANCE while the body pose is received. A paused world
+  # keeps publishing /clock and pose/info (unchanged time), so receipt freshness cannot show it.
+  # Over the last progress_window_s of wall time, the /clock at receipt of the usable pose samples
+  # must rise by >= min_sim_advance_s (real-time factor >= 0.1; Cloud runs at about 0.7).
+  progress_window_s: 1.0              # = pose_stale_s: "fresh" and "advancing" share one window
+  min_sim_advance_s: 0.1
+
+graph:
+  controllers: [joint_state_broadcaster, leg_trajectory_controller]
+  joint_state_topic: /joint_states
+  command_topic: /leg_trajectory_controller/joint_trajectory   # must have NO publisher
+
+# Read-only observation defaults (m61a_observe_fixed_base).
+observation:
+  window_s: 120.0
+  readiness_window_s: 2.0
+  discovery_s: 2.0

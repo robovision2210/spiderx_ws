@@ -1,0 +1,25 @@
+M6.1 restore and verify, 20261010T064126Z, workspace <scratchpad>/e11_enabled, base 1732c32
+base commit 1732c3262a9839150bd0486d86155d4c65dc66fb
+--- 1. stop
+ok: no simulation process
+--- 2. preserve
+uncommitted src/ changes saved: uncommitted_src_20261010T064126Z.diff
+FAIL: uncommitted src/ changes (saved); re-run with --discard-uncommitted-src to discard them
+--- 3. restore
+HEAD 1732c3262a9839150bd0486d86155d4c65dc66fb (HEAD)
+FAIL: src/ differs from the base 1732c3262a9839150bd0486d86155d4c65dc66fb:
+ src/spiderx_controller/spiderx_controller/m61_live_contract.py | 2 +-
+ src/spiderx_controller/test/m61_gate.py                        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+--- 4. rebuild
+skipped
+--- 5. verify (fresh environment)
+spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED = True imported from <scratchpad>/e11_enabled/src/spiderx_controller/spiderx_controller/m61_live_contract.py (inside the workspace: True)
+spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED = False imported from <scratchpad>/e11_enabled/src/spiderx_controller/spiderx_controller/m6_live_contract.py (inside the workspace: True)
+FAIL: a. imported gate module enabled, unreadable or from outside the workspace
+ok: b. ros2 pkg prefix spiderx_controller = <scratchpad>/e11_enabled/install/spiderx_controller
+FAIL: c. --live NOT run: the gate is not verified disabled
+ok: d. the calling environment cannot import spiderx_controller (not sourced)
+--- 6. enabling branch
+kept (no --delete-enabling-branch)
+VERDICT: NOT VERIFIED - do not continue; fix and re-run

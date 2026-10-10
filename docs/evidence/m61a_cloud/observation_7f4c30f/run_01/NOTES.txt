@@ -1,0 +1,12 @@
+run_01 notes (written after the run; the raw outputs are unchanged):
+- Z3 (controller reference constant) was NOT MEASURED in this run: the capture helper looked the
+  controller-state type up by graph discovery for 2 s and found none, so it never subscribed.
+  The topics exist (captures/topics.txt: /leg_trajectory_controller/controller_state and /state,
+  control_msgs/msg/JointTrajectoryControllerState). run_one.out shows the helper's original
+  "FAIL Z3"; analysis.txt/json were regenerated with the corrected rule ("n/m"). Holding is shown
+  independently by captures/capture.json: 644 /joint_states samples, max position change over the
+  capture 4.8e-19 rad, max |velocity| 2.8e-17 rad/s. Fixed for run_02/03 (subscribes to both
+  topics with the known type).
+- Visual: screenshot_gui.png and screenshot_gui_side.png are real renders of this run's GUI. At
+  this camera distance the expected foot clearance (~16 mm, M6.1-A section 3) is not resolvable;
+  the visual criterion is recorded as inconclusive for run_01. run_02/03 add a foot-level view.

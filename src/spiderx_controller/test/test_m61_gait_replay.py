@@ -40,6 +40,8 @@ from spiderx_controller import m61_limits
 from spiderx_controller import m61_live_contract as c61
 from spiderx_controller import m61_mock
 from spiderx_controller import m61_trot_cycle as tc
+from spiderx_controller import m61a_fixed_base as fb
+from spiderx_controller import m6_live_readiness as rd
 from spiderx_controller.config_check import load_urdf
 
 PKG = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
@@ -78,9 +80,23 @@ def codes(traj, plan):
 
 
 # ==================================================================== gate and contract
-def test_m61_gate_is_false_and_pinned():
-    assert c61.M61_LIVE_DISPATCH_ENABLED is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED is False
-    assert 'HARD-DISABLED' in gr.LIVE_STATE
+# Both build modes keep meaningful, passing tests. test/m61_gate.py is the ONE test-side pin of
+# the committed gate (False on this branch; the enabling patch flips the gate and the pin and
+# nothing else). The committed value is checked against the pin; the disabled behaviour is
+# tested with the gate set False explicitly (fixture `disabled`), the enabled wiring with the
+# gate set True explicitly and in-memory fakes only (fixture `enabled`). No test reaches a
+# simulator or a controller in either mode.
+@pytest.fixture
+def disabled(monkeypatch):
+    monkeypatch.setattr(c61, 'M61_LIVE_DISPATCH_ENABLED', False)      # tests only
+
+
+def test_m61_gate_matches_the_single_test_expectation():
+    assert isinstance(m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED, bool)
+    assert c61.M61_LIVE_DISPATCH_ENABLED is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED
+    # the CLI's stated state follows the committed gate (computed at import)
+    assert ('HARD-DISABLED' in gr.LIVE_STATE) is (not c61.M61_LIVE_DISPATCH_ENABLED)
+    assert ('ENABLED for exactly one goal' in gr.LIVE_STATE) is c61.M61_LIVE_DISPATCH_ENABLED
     # the M6.0-D gate is separate and untouched by M6.1
     assert lc.LIVE_DISPATCH_ENABLED is m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED
 
@@ -93,7 +109,7 @@ def _package_sources():
                 yield name, f.read()
 
 
-def test_m61_gate_is_a_single_false_literal():
+def test_m61_gate_is_a_single_literal_equal_to_the_pin():
     hits = [(n, line) for n, src in _package_sources() for line in src.splitlines()
             if re.match(r'\s*(\w+\.)?M61_LIVE_DISPATCH_ENABLED\s*=', line)]
     assert hits == [('m61_live_contract.py',
@@ -101,13 +117,52 @@ def test_m61_gate_is_a_single_false_literal():
                      f'{m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED}')]
 
 
+M61_GATE_FILES = ('m61_live_contract.py', 'm6_gait_replay.py', 'm61_goal.py', 'm61_gates.py',
+                  'm61_trot_cycle.py', 'm61_limits.py', 'm61_live_adapter.py', 'm61_mock.py')
+ENABLERS = ('os.environ', 'getenv', 'DISPATCH_ENABLED or', "add_argument('--enable",
+            "add_argument('--yes'", "add_argument('--force'", 'DISPATCH_ENABLED = True')
+
+
+def _enabler_hits(srcs, expected):
+    """(file, what) for every way the M6.1 sources could enable dispatch other than THE gate
+    line. That line must appear exactly once, in m61_live_contract.py, with the pinned value;
+    only that exact line is exempt from the scan, so the scan means the same in both modes."""
+    gate = f'M61_LIVE_DISPATCH_ENABLED = {expected}'
+    hits = []
+    for name in M61_GATE_FILES:
+        lines = srcs[name].splitlines()
+        if name == 'm61_live_contract.py':
+            n = lines.count(gate)
+            if n != 1:
+                hits.append((name, f'{gate!r} found {n} times'))
+            lines = [line for line in lines if line != gate]
+        text = '\n'.join(lines)
+        hits += [(name, w) for w in ENABLERS if w in text]
+    return hits
+
+
 def test_no_environment_or_flag_can_enable_m61_dispatch():
-    srcs = dict(_package_sources())
-    for name in ('m61_live_contract.py', 'm6_gait_replay.py', 'm61_goal.py', 'm61_gates.py',
-                 'm61_trot_cycle.py', 'm61_limits.py', 'm61_live_adapter.py', 'm61_mock.py'):
-        for w in ('os.environ', 'getenv', 'DISPATCH_ENABLED or', "add_argument('--enable",
-                  "add_argument('--yes'", "add_argument('--force'", 'DISPATCH_ENABLED = True'):
-            assert w not in srcs[name], (name, w)
+    assert _enabler_hits(dict(_package_sources()),
+                         m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED) == []
+
+
+@pytest.mark.parametrize('expected', [False, True])
+def test_the_enabler_scan_has_teeth_in_both_build_modes(expected):
+    gate = f'M61_LIVE_DISPATCH_ENABLED = {expected}'
+    clean = dict({n: 'X = 1\n' for n in M61_GATE_FILES}, **{'m61_live_contract.py': gate})
+    assert _enabler_hits(clean, expected) == []
+    # the gate line with the other value, a missing or a duplicated gate line
+    flipped = f'M61_LIVE_DISPATCH_ENABLED = {not expected}'
+    for text in (flipped, 'X = 1', f'{gate}\n{gate}'):
+        assert _enabler_hits(dict(clean, **{'m61_live_contract.py': text}), expected)
+    # an indented or second assignment is never the exempt line
+    for text in (f'{gate}\n    M61_LIVE_DISPATCH_ENABLED = True',
+                 f'{gate}\nc61.M61_LIVE_DISPATCH_ENABLED = True'):
+        assert ('m61_live_contract.py', 'DISPATCH_ENABLED = True') in _enabler_hits(
+            dict(clean, **{'m61_live_contract.py': text}), expected)
+    for name in M61_GATE_FILES[1:]:
+        for w in ENABLERS:
+            assert (name, w) in _enabler_hits(dict(clean, **{name: f'y = {w}'}), expected)
 
 
 def test_only_the_m61_adapter_imports_rclpy():
@@ -117,7 +172,7 @@ def test_only_the_m61_adapter_imports_rclpy():
         assert 'import rclpy' not in srcs[name] and 'from rclpy' not in srcs[name], name
 
 
-def test_live_cli_refused_exit_3_before_anything(tmp_path, monkeypatch, capsys):
+def test_live_cli_refused_exit_3_before_anything(disabled, tmp_path, monkeypatch, capsys):
     def never(*a, **k):
         raise AssertionError('must not be reached')
     monkeypatch.setattr(tc, 'load_plan', never)
@@ -129,17 +184,22 @@ def test_live_cli_refused_exit_3_before_anything(tmp_path, monkeypatch, capsys):
 
 
 def test_live_cli_with_gate_false_imports_no_ros_client():
+    # the gate is set False inside the child, so this tests the disabled path in either build
+    # mode and can never reach a ROS graph, whatever is running on domain 0
     code = ('import sys; from spiderx_controller import m6_gait_replay as m;'
+            'm.c61.M61_LIVE_DISPATCH_ENABLED = False;'
             'rc = m.main(["m6_gait_replay", "--live", "--domain-id", "0"]);'
             'bad=[x for x in sys.modules if x.split(".")[0] == "rclpy"'
-            ' or x.endswith("m61_live_adapter") or x.endswith("m6_live_adapter")];'
+            ' or x.endswith("m61_live_adapter") or x.endswith("m6_live_adapter")'
+            ' or x.endswith("m61a_live")];'
             'print(rc, bad); sys.exit(0 if rc == 3 and not bad else 1)')
     out = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True,
                          stdin=subprocess.DEVNULL)
     assert out.returncode == 0, out.stdout + out.stderr
+    assert 'REFUSED' in out.stdout and 'HARD-DISABLED' in out.stdout
 
 
-def test_gate_false_blocks_the_live_wiring_too(plan, tmp_path):
+def test_gate_false_blocks_the_live_wiring_too(disabled, plan, tmp_path):
     def never(*a, **k):
         raise AssertionError('must not be reached')
     with pytest.raises(PermissionError):
@@ -560,21 +620,41 @@ def test_g7_drift_is_report_only(monitor):
 
 
 # ==================================================================== session (mock)
-EXPECTED = {   # scenario: (state, reason, goals, cancels, gate tripped)
+# M6.1-A: run_mock (the CLI --mock) now plays the WELDED plant through m61a_fixed_base, because
+# M6.1 is only valid on the fixed base. Two physical consequences changed this table:
+#  * a body that drops (body_too_low) or tilts (body_tilt) on a weld has left the weld pose, so
+#    G8 (attachment) trips too - after G1/G2, whose reason still ends the run (one cancel);
+#  * 'body_drift_report_only' (a 30 mm slide, G7 report only) cannot happen on an intact weld:
+#    it is now 'attachment_drift' (G8 trips, one cancel). G7 report-only behaviour is still tested
+#    on the free-base mock (test_g7_drift_report_only_on_the_free_base_mock).
+EXPECTED = {   # scenario: (state, reason, goals, cancels, gates tripped)
     'success': (lpb.SUCCEEDED, None, 1, 0, None),
-    'body_drift_report_only': (lpb.SUCCEEDED, None, 1, 0, None),
+    'attachment_drift': (gr.GATE_TRIPPED, 'attachment_lost', 1, 1, (gates.G8,)),
+    'not_fixed_base': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'spawn_offset': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'description_mismatch': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'mount_not_approved': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
     'interrupt': (lpb.CANCEL_CONFIRMED, 'operator_interrupt', 1, 1, None),
     'tracking_error': (lpb.TRACKING_FAILED, 'tracking_error', 1, 1, None),
     'stale_joint_states': (lpb.READINESS_LOST, 'joint_states_stale', 1, 1, None),
     'controller_lost': (lpb.HELD_ERROR, 'controller_lost', 1, 1, None),
     'rejected': (lpb.REJECTED, 'goal_rejected', 1, 0, None),
-    'body_too_low': (gr.GATE_TRIPPED, 'body_too_low', 1, 1, gates.G1),
-    'body_tilt': (gr.GATE_TRIPPED, 'body_tilt', 1, 1, gates.G2),
-    'joint_near_limit': (gr.GATE_TRIPPED, 'joint_near_limit', 1, 1, gates.G3),
-    'sim_stall': (lpb.READINESS_LOST, 'sim_time_stalled', 1, 1, gates.G5),
-    'joint_state_gap': (lpb.TRACKING_FAILED, 'sample_gap', 1, 1, gates.G6),
-    'body_pose_stale': (gr.GATE_TRIPPED, 'body_pose_stale', 1, 1, gates.POSE_FRESHNESS),
+    'body_too_low': (gr.GATE_TRIPPED, 'body_too_low', 1, 1, (gates.G1, gates.G8)),
+    'body_tilt': (gr.GATE_TRIPPED, 'body_tilt', 1, 1, (gates.G2, gates.G8)),
+    'joint_near_limit': (gr.GATE_TRIPPED, 'joint_near_limit', 1, 1, (gates.G3,)),
+    'sim_stall': (lpb.READINESS_LOST, 'sim_time_stalled', 1, 1, (gates.G5,)),
+    'joint_state_gap': (lpb.TRACKING_FAILED, 'sample_gap', 1, 1, (gates.G6,)),
+    'body_pose_stale': (gr.GATE_TRIPPED, 'body_pose_stale', 1, 1, (gates.POSE_FRESHNESS,)),
     'no_body_pose': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'competing_publisher': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'competing_client': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'competing_client_late': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'sim_paused': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    # pre-send check (plan E5): READY after confirmation, then a 2 s server wait
+    'slow_server': (lpb.SUCCEEDED, None, 1, 0, None),
+    'joint_states_stop_before_send': (lpb.REFUSED, fb.JOINT_STATES_STALE, 0, 0, None),
+    'body_pose_stops_before_send': (lpb.REFUSED, fb.POSE_STALE, 0, 0, None),
+    'sim_pauses_before_send': (lpb.REFUSED, fb.POSE_SIM_NOT_ADVANCING, 0, 0, None),
 }
 
 
@@ -596,11 +676,105 @@ def test_mock_scenario_outcomes(scenario, plan):
     if goals:
         assert out['trajectory_id'] == TRAJECTORY_ID and out['goal_fingerprint'] == FINGERPRINT
     if gate is not None:
-        assert out['gates'][gate]['tripped'], out['gates']
+        assert out['gates'][gate[0]]['tripped'], out['gates']
+        if gate[0] not in (gates.G5, gates.G6):      # re-used M6.0-D monitor: no gate trip record
+            assert out['gates']['trips_in_order'][0]['gate'] == gate[0]
     tripped = [g for g in gates.GATE_IDS if g != gates.G7 and out['gates']
                and out['gates'][g].get('tripped')]
-    assert tripped == ([gate] if gate else [])
+    assert tripped == (list(gate) if gate else [])
     json.dumps(out, allow_nan=False)
+
+
+FIXED_BASE_REFUSAL_CODES = {
+    'not_fixed_base': 'robot_description_not_fixed_base',
+    'spawn_offset': 'frame_spawn_not_identity',
+    'description_mismatch': 'frame_body_link_inconsistent',
+    'mount_not_approved': 'mount_not_approved',
+    'sim_paused': 'body_pose_sim_time_not_advancing',
+}
+
+
+@pytest.mark.parametrize('scenario', sorted(FIXED_BASE_REFUSAL_CODES))
+def test_fixed_base_readiness_refusals_send_nothing(scenario, plan):
+    out, _, _ = gr.run_mock(plan, scenario, word())
+    codes = out['readiness'][0]['result']['failure_codes']
+    assert FIXED_BASE_REFUSAL_CODES[scenario] in codes, codes
+    assert out['goals_sent'] == 0 and out['mock_server_goals_received'] == 0
+
+
+PRE_SEND_REFUSALS = {
+    'joint_states_stop_before_send': [fb.JOINT_STATES_STALE],
+    'body_pose_stops_before_send': [fb.POSE_STALE, fb.POSE_SIM_NOT_ADVANCING],
+    'sim_pauses_before_send': [fb.POSE_SIM_NOT_ADVANCING],
+}
+
+
+@pytest.mark.parametrize('scenario', sorted(PRE_SEND_REFUSALS))
+def test_streams_that_stop_after_readiness_are_refused_at_the_send(scenario, plan):
+    """Readiness was READY after the confirmation and its result is only 2 s old at the send
+    (M6.0-D D3 permits it), but the streams are no longer current: nothing is sent."""
+    out, session, _ = gr.run_mock(plan, scenario, word())
+    assert [r['result']['ready'] for r in out['readiness']] == [True, True]
+    f = out['freshness_at_send']
+    assert f['permitted'] is True and f['age_s'] == pytest.approx(2.0)      # D3 alone: allowed
+    assert f['streams_now']['ok'] is False
+    assert f['streams_now']['codes'] == PRE_SEND_REFUSALS[scenario]
+    assert out['reason'] == PRE_SEND_REFUSALS[scenario][0]
+    assert out['goals_sent'] == 0 and out['mock_server_goals_received'] == 0
+    calls = session.transport.inner.calls          # reached the send point, sent nothing
+    assert ('server_ready', lc.SERVER_WAIT_S) in calls and ('send_goal',) not in calls
+
+
+@pytest.mark.parametrize('scenario, age', [('success', 0.0), ('slow_server', 2.0)])
+def test_the_streams_now_are_recorded_when_the_goal_is_sent(scenario, age, plan):
+    out, _, _ = gr.run_mock(plan, scenario, word())
+    f = out['freshness_at_send']
+    assert f['permitted'] is True and f['age_s'] == pytest.approx(age)
+    sn = f['streams_now']
+    assert sn['ok'] is True and sn['codes'] == []
+    c = sn['checks']
+    assert c['joint_states']['ok'] and c['joint_states']['detail']['age_s'] <= 0.5
+    assert c['body_pose_fresh']['ok'] and c['body_pose_fresh']['detail']['age_s'] <= 1.0
+    assert c['body_pose_sim_progress']['ok']
+    assert c['body_pose_sim_progress']['detail']['sim_advance_s'] >= 0.1
+    assert c['attachment']['ok']
+    assert out['state'] == lpb.SUCCEEDED and out['goals_sent'] == 1
+    json.dumps(out, allow_nan=False)
+
+
+def test_a_slow_server_does_not_shift_the_result_before_the_trajectory_end(plan):
+    """The mock re-anchors its result at the actual send: a 2 s server wait must not make the
+    result arrive before the 7 s trajectory has run."""
+    out, session, _ = gr.run_mock(plan, 'slow_server', word())
+    fast, _, _ = gr.run_mock(plan, 'success', word())
+    assert out['state'] == fast['state'] == lpb.SUCCEEDED
+    assert out['tracking']['samples'] == fast['tracking']['samples']
+
+
+def test_fixed_base_success_records_the_plant_apart_from_the_trajectory(plan):
+    out, _, _ = gr.run_mock(plan, 'success', word())
+    f = out['fixed_base']
+    assert f['plant']['ok'] and f['plant']['codes'] == []
+    assert f['mount_xyz_rpy'] == pytest.approx([0, 0, 0.125, 0, 0, 0])
+    assert re.fullmatch(r'[0-9a-f]{64}', f['config_sha256'])
+    assert re.fullmatch(r'[0-9a-f]{64}', f['robot_description_sha256'])
+    assert out['trajectory_id'] == TRAJECTORY_ID and out['goal_fingerprint'] == FINGERPRINT
+    g8 = out['gates'][gates.G8]
+    assert g8['active'] and not g8['tripped'] and g8['worst_observed']['translation_m'] < 1e-9
+    assert out['body']['frame'] == gates.FIXED_BASE_FRAME
+
+
+def test_g8_integrity_codes_match_the_fixed_base_module():
+    from spiderx_controller import m61a_fixed_base as fb
+    assert set(gates.INTEGRITY_CODES) == set(fb.INTEGRITY_CODES)
+    assert gates.REASON_GATE[gates.ATTACHMENT_LOST] == gates.G8
+
+
+def test_g7_drift_report_only_on_the_free_base_mock(plan):
+    s, t = _session(plan, **m61_mock.FREE_BASE_SCENARIOS['body_drift_report_only'])
+    out = s.run()
+    assert out['state'] == lpb.SUCCEEDED and out['cancels_sent'] == 0
+    assert len(out['gates'][gates.G7]['flags']) == 1 and not out['gates'][gates.G8]['active']
 
 
 def test_success_outcome_fields(plan):
@@ -611,14 +785,16 @@ def test_success_outcome_fields(plan):
     assert out['tracking']['max_inflight_error_rad'] < 0.02
     assert out['tracking']['detail']['uncovered_intervals'] == []
     assert out['base_constraint'] == 'fixed' and out['contact']['status'] == 'not_measured'
-    assert out['m61_live_dispatch_enabled'] is False
+    # the outcome records the committed gate truthfully (False here; True on an enabling branch)
+    assert out['m61_live_dispatch_enabled'] is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED
     assert out['limits']['confirmation_word'] == 'SEND-ONE-TROT-CYCLE'
     assert 'approved_point_times_s' not in out['limits']                 # no M6.0-D content
     assert out['m61_limits'] == c61.APPROVED_LIMITS
     assert out['gait']['step_length_m'] == 0.02 and out['gait']['num_cycles'] == 1
     assert out['trajectory_content_sha256'] == CONTENT_SHA256
-    assert out['preflight']['ok'] and out['body']['z_min_m'] == pytest.approx(0.0545)
-    assert out['gates'][gates.G1]['margin'] == pytest.approx(0.0095)
+    # M6.1-A: the mock body is the welded body at the provisional mount (was 0.0545 m free base)
+    assert out['preflight']['ok'] and out['body']['z_min_m'] == pytest.approx(0.125)
+    assert out['gates'][gates.G1]['margin'] == pytest.approx(0.125 - 0.045)
     assert out['joint_extremes_observed']['rf_thigh_joint']['min_rad'] < -0.1
     assert [r['when'] for r in out['readiness']] == ['before_confirmation',
                                                      'after_confirmation']
@@ -710,7 +886,7 @@ def test_mock_cli_writes_the_evidence_directory(plan, tmp_path):
     bp = (d / 'body_pose.csv').read_text().splitlines()
     assert bp[0] == 'time_s,x,y,z,roll,pitch,yaw'
     assert len(bp) - 1 == out['evidence_rows']['body_pose'] > 100
-    assert float(bp[1].split(',')[3]) == pytest.approx(0.0545)
+    assert float(bp[1].split(',')[3]) == pytest.approx(0.125)        # M6.1-A welded body
     cov = (d / 'commanded_vs_observed.csv').read_text().splitlines()
     assert cov[0].startswith('time_s,ref_time_s,lf_hip_cmd,lf_hip_obs,lf_hip_err')
     assert cov[0].endswith('max_abs_err_rad') and len(cov) > 200
@@ -723,7 +899,8 @@ def test_mock_cli_writes_the_evidence_directory(plan, tmp_path):
     assert json.loads((d / 'readiness_after.json').read_text())['when'] == 'after_confirmation'
     g = json.loads((d / 'gates.json').read_text())
     assert set(gates.GATE_IDS) <= set(g['gates']) and g['contact']['status'] == 'not_measured'
-    assert 'm61_live_dispatch_enabled: False' in (d / 'git_state.txt').read_text()
+    assert (f'm61_live_dispatch_enabled: {m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED}'
+            in (d / 'git_state.txt').read_text())
     assert 'ROS_DISTRO' in (d / 'environment.txt').read_text()
 
 
@@ -742,6 +919,17 @@ def test_mock_cli_refusal_still_records_evidence(plan, tmp_path):
     assert json.loads((d / evd.MOCK_OUTCOME).read_text())['goals_sent'] == 0
 
 
+@pytest.mark.parametrize('gate', [False, True])
+def test_evidence_records_the_gate_as_it_is_in_both_modes(gate, plan, tmp_path, monkeypatch):
+    """Offline only (dry run, gate state helper): the recorded gate follows the gate itself."""
+    monkeypatch.setattr(c61, 'M61_LIVE_DISPATCH_ENABLED', gate)        # tests only
+    assert gr._gate_state()['m61_live_dispatch_enabled'] is gate
+    assert c61.as_dict()['m61_live_dispatch_enabled'] is gate
+    assert cli(plan, tmp_path, '--dry-run') == gr.EXIT_OK
+    data = json.loads((tmp_path / 'dry_run' / TRAJECTORY_ID / 'dry_run_report.json').read_text())
+    assert data['m61_live_dispatch_enabled'] is gate and data['goals_sent'] == 0
+
+
 def test_no_write_writes_nothing(plan, tmp_path):
     assert cli(plan, tmp_path, '--mock', '--no-write') == gr.EXIT_OK
     assert cli(plan, tmp_path, '--dry-run', '--no-write') == gr.EXIT_OK
@@ -753,7 +941,7 @@ def test_dry_run_report_is_never_overwritten(plan, tmp_path):
     p = tmp_path / 'dry_run' / TRAJECTORY_ID / 'dry_run_report.json'
     data = json.loads(p.read_text())
     assert data['goal_fingerprint'] == FINGERPRINT and data['goals_sent'] == 0
-    assert data['m61_live_dispatch_enabled'] is False
+    assert data['m61_live_dispatch_enabled'] is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED
     before = p.read_bytes()
     assert cli(plan, tmp_path, '--dry-run') == gr.EXIT_REFUSED
     assert p.read_bytes() == before
@@ -803,8 +991,9 @@ class Factories:
     def __init__(self, plan, **kw):
         self.plan, self.kw, self.made = plan, kw, []
 
-    def transport(self, fp, domain_id):
-        t = m61_mock.M61FakeTransport(tc.build_trajectory(self.plan), fp, **self.kw)
+    def transport(self, fp, domain_id, fixed_base):     # M6.1-A: the live path is fixed base
+        t = m61_mock.M61FakeTransport(tc.build_trajectory(self.plan), fp, fixed_base=fixed_base,
+                                      **self.kw)
         self.made.append(t)
         return t
 
@@ -854,6 +1043,33 @@ def test_enabled_live_gate_trip_and_refusals(enabled, plan, tmp_path):
     assert run_enabled(plan, tmp_path, f, '20261003T120003Z',
                        lambda: lc.CONFIRMATION_WORD + '\n') == gr.EXIT_REFUSED
     assert f.made[0].sent == []
+
+
+def test_enabled_live_refuses_a_paused_world_before_any_goal(enabled, plan, tmp_path):
+    """Fakes only: /clock and pose/info keep arriving from a paused world, so the body pose is
+    fresh by receipt; readiness still refuses because simulation time does not advance."""
+    f = Factories(plan, **m61_mock.SCENARIOS['sim_paused'])
+    assert run_enabled(plan, tmp_path, f, '20261003T120004Z') == gr.EXIT_REFUSED
+    out = json.loads((tmp_path / '20261003T120004Z' / evd.LIVE_OUTCOME).read_text())
+    assert f.made[0].sent == [] and out['goals_sent'] == 0
+    res = out['readiness'][0]['result']
+    assert res['failure_codes'] == [fb.POSE_SIM_NOT_ADVANCING], res
+
+
+def test_enabled_live_checks_the_streams_immediately_before_the_send(enabled, plan, tmp_path):
+    """Fakes only: the live path wires the pre-send check. Joint states that stop after the
+    readiness observation are refused at the send, with the D3 snapshot still permitted."""
+    f = Factories(plan, **m61_mock.SCENARIOS['joint_states_stop_before_send'])
+    assert run_enabled(plan, tmp_path, f, '20261003T120005Z') == gr.EXIT_REFUSED
+    out = json.loads((tmp_path / '20261003T120005Z' / evd.LIVE_OUTCOME).read_text())
+    assert f.made[0].sent == [] and out['goals_sent'] == 0
+    assert out['reason'] == fb.JOINT_STATES_STALE
+    assert out['freshness_at_send']['permitted'] is True
+    assert out['freshness_at_send']['streams_now']['codes'] == [fb.JOINT_STATES_STALE]
+    f = Factories(plan)
+    assert run_enabled(plan, tmp_path, f, '20261003T120006Z') == gr.EXIT_OK
+    out = json.loads((tmp_path / '20261003T120006Z' / evd.LIVE_OUTCOME).read_text())
+    assert out['freshness_at_send']['streams_now']['ok'] is True and len(f.made[0].sent) == 1
 
 
 def test_enabled_live_still_needs_domain_and_evidence(enabled, plan, tmp_path):
@@ -923,3 +1139,56 @@ def test_rclpy_transport_reads_the_body_pose_read_only(isolated_env):
             rclpy.try_shutdown(context=ctx)
         t.close()
     assert t.node is None and t.pose_sub is None
+
+
+# ============================================================ command owner (M6.1-A review)
+@pytest.mark.parametrize('scenario, code', [
+    ('competing_publisher', fb.COMMAND_PUBLISHERS),
+    ('competing_client', fb.COMMAND_ACTION_CLIENTS),
+    ('competing_client_late', fb.COMMAND_ACTION_CLIENTS),
+])
+def test_a_visible_competing_commander_refuses_before_any_goal(plan, scenario, code):
+    out, session, _ = gr.run_mock(plan, scenario, word())
+    assert out['goals_sent'] == 0 and out['mock_server_goals_received'] == 0
+    assert code in json.dumps(out)
+
+
+def test_a_late_competing_client_is_caught_by_the_pre_dispatch_recheck(plan):
+    """Readiness #1 sees no other commander; the client appears before the re-observation that
+    immediately precedes dispatch, which refuses. A client appearing after that re-check is not
+    seen by readiness at all (point-in-time graph observation); the controller would then
+    preempt our goal, which ends not SUCCEEDED."""
+    out, session, _ = gr.run_mock(plan, 'competing_client_late', word())
+    assert session.transport.owner_snapshots == 2
+    assert out['state'] == lpb.REFUSED and out['goals_sent'] == 0
+
+
+def test_sim_progress_wrapper_needs_advancing_sim_time():
+    cfg = gr.load_fixed_base_config(SRC_CONFIG)
+    base = lambda: rd.ReadinessResult(True, 'compatible', (), (), 0.0)      # noqa: E731
+    running = {'recent_usable_samples': tuple((9.0 + 0.02 * i, 100.0 + 0.014 * i)
+                                              for i in range(51))}           # RTF 0.7
+    paused = {'recent_usable_samples': tuple((9.0 + 0.02 * i, 100.0) for i in range(51))}
+    res = gr.with_sim_progress(base, lambda: running, lambda: 10.0, cfg)()
+    assert res.ready and res.report['m61a_sim_progress']['ok']
+    assert res.report['m61a_sim_progress']['sim_advance_s'] == pytest.approx(0.7)
+    for snap in (paused, {}, {'recent_usable_samples': ()}):
+        res = gr.with_sim_progress(base, lambda: snap, lambda: 10.0, cfg)()
+        assert not res.ready and res.failure_codes == (fb.POSE_SIM_NOT_ADVANCING,)
+    # the same samples one window later are not evidence of progress NOW
+    res = gr.with_sim_progress(base, lambda: running, lambda: 11.5, cfg)()
+    assert not res.ready
+    # a result that is already NOT READY keeps its codes and gains this one
+    bad = lambda: rd.ReadinessResult(False, 'compatible', ('x',), ('joint_states_stale',), 0.0)  # noqa: E731,E501
+    res = gr.with_sim_progress(bad, lambda: paused, lambda: 10.0, cfg)()
+    assert res.failure_codes == ('joint_states_stale', fb.POSE_SIM_NOT_ADVANCING)
+
+
+def test_command_owner_wrapper_unknown_counts_are_not_ready():
+    base = lambda: rd.ReadinessResult(True, 'compatible', (), (), 0.0)      # noqa: E731
+    res = gr.with_command_owner(base, lambda: {'command_publishers': None,
+                                               'foreign_action_clients': 0})()
+    assert not res.ready and fb.COMMAND_OWNER_UNKNOWN in res.failure_codes
+    res = gr.with_command_owner(base, lambda: {'command_publishers': 0,
+                                               'foreign_action_clients': 0})()
+    assert res.ready and res.report['m61a_command_owner']['ok']

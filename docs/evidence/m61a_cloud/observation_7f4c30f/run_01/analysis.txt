@@ -1,0 +1,20 @@
+PASS 1   preflight READY                                                        [[]]
+PASS 1b  120 s observation READY at its end                                     []
+PASS 2a  body z mean within 1 mm of 0.125 m                                     0.125
+PASS 2a  body z range <= 1 mm                                                   0
+PASS 2b  attachment max translation <= 1 mm                                     0
+PASS 2b  attachment max rotation <= 0.0033 rad                                  0
+PASS 2c  spawn deviation <= 1 mm                                                0
+PASS 2d  link deviation <= 0.1 mm                                               0
+PASS 2e  tilt <= 0.0033 rad                                                     0
+PASS 3   pose receipt max gap < 1.0 s (wall)                                    {"count": 6846, "mean_s": 0.01782366791132213, "p99_s": 0.03843878199995743, "p999_s": 0.05305320200022834, "m
+PASS 3   joint-state sim gap max <= 0.25 s                                      0.05
+PASS 4   no unexpected pose sample codes                                        {}
+PASS 7   command ownership: no other commander visible                          {"ros2_action_info_clients": 0, "ros2_topic_info_publishers": 0, "observer_start": {"command_publishers": 0, "
+PASS M   running /robot_description weld = world->dummy_link (0, 0, 0.125, rpy 0) {"type": "fixed", "parent": "world", "child": "dummy_link", "xyz": "0.0 0.0 0.125", "rpy": "0 0 0.0"}
+PASS Z2  capture: 0 messages on the command topic and no action goal status     {"command_messages": 0, "status_messages": 0, "goal_statuses": []}
+n/m  Z3  controller reference constant over the capture (holding, no new command) {"(not subscribed: helper looked up the type by discovery and found none)": {"messages": 0, "max_ref_change_ra
+PASS Z   no trajectory goal or topic command reached the controller (launch log) 0
+PASS 6   /scan: per-surface median residual within +-8 mm (supplementary)       {"box_a/link": -0.0010264919724174426, "box_b/link": 0.002420947001931628, "pillar/link": 0.000459652320937919
+PASS 6   /scan: fitted lidar planar pose within 8 mm of the weld-implied pose (8 cube-map seam beams excluded) {"fit_minus_expected_m_m_rad": [0.000383745899296524, 7.814404676597525e-05, 2.306899286530495e-05], "one_sigm
+PASS 8   clean shutdown: launch group empty, nothing left                       "none"

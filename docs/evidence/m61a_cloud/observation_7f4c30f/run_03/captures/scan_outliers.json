@@ -1,0 +1,67 @@
+{
+ "outliers_gt_2cm": [
+  {
+   "beam": 45,
+   "angle_lidar_deg": -135.0,
+   "bearing_world_deg": -45.0,
+   "expected_m": 4.1705,
+   "measured_mean_m": 1.6079,
+   "measured_std_m": 0.0121,
+   "valid_scans": 40,
+   "surface": "walls/wall_east",
+   "edge_grazing": false
+  },
+  {
+   "beam": 118,
+   "angle_lidar_deg": -62.0,
+   "bearing_world_deg": 28.0,
+   "expected_m": 1.6736,
+   "measured_mean_m": 1.5723,
+   "measured_std_m": 0.0086,
+   "valid_scans": 40,
+   "surface": "box_a/link",
+   "edge_grazing": true
+  },
+  {
+   "beam": 135,
+   "angle_lidar_deg": -45.0,
+   "bearing_world_deg": 45.0,
+   "expected_m": 1.6096,
+   "measured_mean_m": 4.2902,
+   "measured_std_m": 0.0121,
+   "valid_scans": 40,
+   "surface": "box_a/link",
+   "edge_grazing": false
+  },
+  {
+   "beam": 210,
+   "angle_lidar_deg": 30.0,
+   "bearing_world_deg": 120.0,
+   "expected_m": 1.7078,
+   "measured_mean_m": 1.7456,
+   "measured_std_m": 0.0098,
+   "valid_scans": 40,
+   "surface": "pillar/link",
+   "edge_grazing": true
+  },
+  {
+   "beam": 225,
+   "angle_lidar_deg": 45.0,
+   "bearing_world_deg": 135.0,
+   "expected_m": 4.3063,
+   "measured_mean_m": 1.9241,
+   "measured_std_m": 0.011,
+   "valid_scans": 40,
+   "surface": "walls/wall_north",
+   "edge_grazing": false
+  }
+ ],
+ "n_outliers": 5,
+ "inliers": {
+  "beams": 350,
+  "median_m": -3.641180735103333e-05,
+  "mad_m": 0.0030596962022956253,
+  "abs_p95_m": 0.011860849896351723,
+  "abs_max_m": 0.01888733716305202
+ }
+}

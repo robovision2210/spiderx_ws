@@ -1,0 +1,39 @@
+[INFO] [1791537910.741109074] [_ros2cli_22904]: waiting for service /controller_manager/list_hardware_interfaces to become available...
+command interfaces
+	[94mlf_foot_joint/position [available] [claimed][0m
+	[94mlf_hip/position [available] [claimed][0m
+	[94mlf_thigh_joint/position [available] [claimed][0m
+	[94mlr_foot_joint/position [available] [claimed][0m
+	[94mlr_hip/position [available] [claimed][0m
+	[94mlr_thigh_joint/position [available] [claimed][0m
+	[94mrf_foot_joint/position [available] [claimed][0m
+	[94mrf_hip/position [available] [claimed][0m
+	[94mrf_thigh_joint/position [available] [claimed][0m
+	[94mrr_foot_joint/position [available] [claimed][0m
+	[94mrr_hip/position [available] [claimed][0m
+	[94mrr_thigh_joint/position [available] [claimed][0m
+state interfaces
+	lf_foot_joint/position
+	lf_foot_joint/velocity
+	lf_hip/position
+	lf_hip/velocity
+	lf_thigh_joint/position
+	lf_thigh_joint/velocity
+	lr_foot_joint/position
+	lr_foot_joint/velocity
+	lr_hip/position
+	lr_hip/velocity
+	lr_thigh_joint/position
+	lr_thigh_joint/velocity
+	rf_foot_joint/position
+	rf_foot_joint/velocity
+	rf_hip/position
+	rf_hip/velocity
+	rf_thigh_joint/position
+	rf_thigh_joint/velocity
+	rr_foot_joint/position
+	rr_foot_joint/velocity
+	rr_hip/position
+	rr_hip/velocity
+	rr_thigh_joint/position
+	rr_thigh_joint/velocity

@@ -1,0 +1,3 @@
+06:18:14 ros2 CLI daemon fault; restarting it
+The daemon has been stopped
+The daemon has been started

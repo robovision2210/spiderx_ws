@@ -1,0 +1,1 @@
+NOT PERFORMED: a required test failed before simulator observation (see ../REPORT.md section 3). No launch was started for this run.

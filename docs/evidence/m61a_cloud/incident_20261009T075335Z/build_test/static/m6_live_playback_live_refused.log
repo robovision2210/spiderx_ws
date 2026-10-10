@@ -1,0 +1,4 @@
+SpiderX M6.0-D live-playback tool
+M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows motion, tracking, contact, balance or walking.
+REFUSED: Live M6.0-D dispatch is HARD-DISABLED in this build. Sending the one live goal needs a separate owner authorization and an enabling code change after a final audit (docs/M6D_LIVE_PLAYBACK_PLAN.md section 16). Nothing was sent.
+[ros2run]: Process exited with failure 3

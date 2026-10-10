@@ -1,0 +1,93 @@
+{
+ "schema": "spiderx.m61a.cloud_phase1_frozen_harness/1",
+ "frozen_utc": "2026-10-09T10:13:21Z",
+ "frozen_before_any_further_observation": true,
+ "harness": {
+  "source": "docs/evidence/m61a_cloud/observation_7f4c30f/tools/ (the files used by run_03; run_02 used them after a mid-run edit)",
+  "sha256": {
+   "capture.py": "4e5f21560dc4ae9de5a130eebf259d6f15a02253a8224fba03a5225203c246f3",
+   "env.sh": "40920b3a52c76c2bbf8cff6c3cd6fb24491bab8d2d9205d9148eaced13df620b",
+   "run_analysis.py": "6de062737579b41054cd47b97edd488061b6c852142e009f4fd5e71366230765",
+   "run_one.sh": "e4fdfe501b9070bc23563120047c6f1a547c9b2564b7abd95134c4bb58370c3b",
+   "scan_check.py": "b7758cab70d46d75b4fa3da6533b77e4384e10ba84a134059690267510049eef",
+   "scan_outliers.py": "507d45c669dba9da5c3f0d03b3fb07600041ef84a7d5d29359eb0c513a40944f",
+   "stage_capture.sh": "8aa9c4201335614ea951d1db0784cdfa2031b3f4a0940acfa85dfdc882659c21",
+   "stage_observe.sh": "a9a6c72cd36d99b72e8a5db37bdf1b9e70237f5dda9bc9c7e0957e97a0876999",
+   "stage_start.sh": "863b2b9ff3c21298c5c311b4982381c8f5e6089a59d80d95a678cb602e26239b",
+   "stage_stop.sh": "df11517189b99a81c4aab425db3c0fbd8ec034a09da7c5b9170811fd5a84f64e",
+   "stage_views.sh": "842f36db7e9e35ee8174375cb90dc0ef649fa235ae8e30384b133bde749bc664",
+   "stage_wait_controllers.sh": "19e84c9160d7c545b706ab2404b326685a4ba5b308e9fbea4629d5f84cb45470",
+   "static_checks.sh": "ec68f9cc32870acbc47dc46dc4e64799406697a87355ca01cfbaf7025a9f3681",
+   "summarize_runs.py": "39bec0a64e13d3f6addd25816b98ceba09126c2afeda15e301c80cc8549df20a"
+  }
+ },
+ "environment": {
+  "ROS_DOMAIN_ID": 0,
+  "ROS_LOCALHOST_ONLY": 1,
+  "RMW_IMPLEMENTATION": "unset (rmw_fastrtps_cpp)",
+  "discovery_server": "unset",
+  "display": "Xvfb :77 1600x900x24 (Cloud only)"
+ },
+ "procedure": {
+  "launch": "ros2 launch spiderx_bringup fortress_m61a_fixed_base.launch.py (defaults)",
+  "wait": "both controllers active in ros2 control list_controllers (ANSI stripped) + 3 s",
+  "preflight": "ros2 run spiderx_controller m61a_observe_fixed_base --domain-id 0 --preflight",
+  "observe": "ros2 run spiderx_controller m61a_observe_fixed_base --domain-id 0 --duration 120 (wall)",
+  "capture": "tools/capture.py --domain-id 0 --seconds 10 --scans 40 (read-only)",
+  "stop": "SIGINT to the launch process group, ros2 daemon stop, Xvfb stop, leftover check"
+ },
+ "scan": {
+  "beams": 360,
+  "angle_min_rad": -3.1415927410125732,
+  "angle_increment_rad": 0.01745329238474369,
+  "mount_assumed_world_base_xyz_yaw": [
+   0.0,
+   0.0,
+   0.125,
+   0.0
+  ],
+  "lidar_in_base_xyz_yaw": [
+   0.051,
+   -0.045,
+   0.141,
+   1.5707963267948966
+  ],
+  "seam_mask_indices": [
+   45,
+   46,
+   135,
+   136,
+   225,
+   226,
+   315,
+   316
+  ],
+  "seam_mask_rule": "beams within 1 deg (float <= 1.0) of the gpu_lidar cube-map seams at lidar-frame -135, -45, +45, +135 deg; justification: in all three runs beams 45, 135 and 225 returned the range of a neighbouring direction (errors 2.38-2.68 m) while their neighbours were normal; Gazebo renders gpu_lidar through 90 deg camera faces whose seams are at these angles",
+  "seam_mask_note": "float rounding makes the mask asymmetric (46/136/226/316 masked, 44/134/224/314 not); 315 is masked but was never an outlier. Frozen as an explicit index list; any change is a new, reviewed definition",
+  "edge_grazing_rule": "exclude a beam whose expected range changes > 0.05 m within +-0.5 deg (at the evaluated pose); at the weld pose this excludes indices [117, 118, 210, 222, 309, 334]",
+  "averaging": "per-beam mean of 40 consecutive scans",
+  "fit": "robust Gauss-Newton of the lidar planar pose: beams re-selected each iterate, Huber weight 0.02 m, step clip 0.05, <= 40 iterations; 1 sigma from MAD (robust) and from RMS (reported)"
+ },
+ "criteria": {
+  "1": "preflight READY (exit 0)",
+  "1b": "120 s observation READY at its end",
+  "2a": "|z_mean - 0.125| <= 0.001 m and z_range <= 0.001 m",
+  "2b": "attachment <= 0.001 m and <= 0.0033 rad",
+  "2c": "spawn deviation <= 0.001 m",
+  "2d": "link deviation <= 0.0001 m",
+  "2e": "tilt <= 0.0033 rad",
+  "3": "pose receipt max gap < 1.0 s wall (p99.9 recorded); joint-state sim gap max <= 0.25 s",
+  "4": "no unexpected pose sample codes; header.frame_id recorded, not gated",
+  "5": "GUI screenshot shows the feet clear of the floor (foot-level view: eye 8 mm above the floor, 0.4 m to the side); qualitative",
+  "6a": "GATED: seam-masked robust fit |dxy| <= 0.008 m and robust 1 sigma |xy| < 0.008 m",
+  "6b": "GATED: seam-masked per-surface median residual |median| <= 0.008 m",
+  "6c": "REPORTED: fraction of individual seam- and grazing-masked beams within +-0.008 m, by incidence band; the strict per-beam reading of M0 is an owner decision",
+  "6-raw": "REPORTED: the same fit with no seam mask",
+  "7": "ros2 action info clients 0, ros2 topic info publishers 0, observer action_clients and command_publishers 0 at start and end",
+  "8": "launch process group empty after SIGINT; no leftover process",
+  "M": "/robot_description weld world->dummy_link xyz 0 0 0.125 rpy 0; Gazebo dummy_link pose (0, 0, 0.125)",
+  "Z": "no goal line in the launch log; 0 command-topic messages and 0 goal statuses in the capture; observer goals_sent 0 and publishers_created 0",
+  "H1": "supplementary: controller reference (controller_state reference / state desired) change <= 1e-9 rad over the capture",
+  "H2": "supplementary: joint-state positions change <= 1e-9 rad over the capture"
+ }
+}

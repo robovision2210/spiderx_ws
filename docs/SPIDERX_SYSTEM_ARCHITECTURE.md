@@ -50,6 +50,10 @@ Dependency direction:
 
 - `map → odom` would come from SLAM or AMCL, and `odom → dummy_link` from odometry. **Neither exists yet.**
 - The odometry must target `dummy_link`, the URDF root. Targeting `base_link` would give it two parents.
+- **Fixed-base simulation only (M6.1-A, `fortress_m61a_fixed_base.launch.py`).** The wrapper adds a
+  root `world` and a static `world → dummy_link` at the mounting transform (provisionally z 0.125 m).
+  The model is spawned at the identity, so this `world` IS the Gazebo world. That launch must never
+  run with a future odometry stack.
 
 ## 4. Topics
 

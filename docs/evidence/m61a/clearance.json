@@ -1,0 +1,243 @@
+{
+ "commanded": {
+  "bound_limiting_link": "rf_foot_1",
+  "bound_min_z_body_m": -0.05463301864239074,
+  "box_rad": 0.0,
+  "per_link_bound_min_z_body_m": {
+   "b_s1_1": 0.04,
+   "b_s1_c_horn_1": 0.067251121521,
+   "b_s2_1": 0.04,
+   "b_s2_c_horn_1": 0.067251121521,
+   "b_s3_1": 0.04,
+   "b_s3_c_horn_1": 0.067251121521,
+   "b_s4_1": 0.04,
+   "b_s4_c_horn_1": 0.067251121521,
+   "base_link": 0.04,
+   "lf_c_horn_1": 0.07874849407233969,
+   "lf_foot_1": -0.05460733253933889,
+   "lf_holder_1": 0.051250000000000004,
+   "lf_holder_suppor1_1": 0.051250000000000004,
+   "lf_thigh_1": -0.00537386879981574,
+   "lidar_link": 0.11099999999999997,
+   "lr_c_horn_1": 0.07874825361021337,
+   "lr_foot_1": -0.05463296531619627,
+   "lr_holder_1": 0.051250000000000004,
+   "lr_holder_suppor1_1": 0.051250000000000004,
+   "lr_thigh_1": 0.0009506553231579617,
+   "rf_c_horn_1": 0.07874825412487631,
+   "rf_foot_1": -0.05463301864239074,
+   "rf_holder_1": 0.051250000000000004,
+   "rf_holder_suppor1_1": 0.051250000000000004,
+   "rf_thigh_1": 0.0009506553236965246,
+   "rr_c_horn_1": 0.07874849231970879,
+   "rr_foot_1": -0.05460733218264406,
+   "rr_holder_1": 0.051250000000000004,
+   "rr_holder_suppor1_1": 0.051250000000000004,
+   "rr_thigh_1": -0.0053738691720510426,
+   "top_1": 0.107
+  },
+  "per_link_sampled_min_z_body_m": {
+   "b_s1_1": 0.04,
+   "b_s1_c_horn_1": 0.067251121521,
+   "b_s2_1": 0.04,
+   "b_s2_c_horn_1": 0.067251121521,
+   "b_s3_1": 0.04,
+   "b_s3_c_horn_1": 0.067251121521,
+   "b_s4_1": 0.04,
+   "b_s4_c_horn_1": 0.067251121521,
+   "base_link": 0.04,
+   "lf_c_horn_1": 0.07875000147720287,
+   "lf_foot_1": -0.05457085465323403,
+   "lf_holder_1": 0.051250000000000004,
+   "lf_holder_suppor1_1": 0.051250000000000004,
+   "lf_thigh_1": -0.005362457191621456,
+   "lidar_link": 0.11099999999999997,
+   "lr_c_horn_1": 0.07874999915153721,
+   "lr_foot_1": -0.054593316598650854,
+   "lr_holder_1": 0.051250000000000004,
+   "lr_holder_suppor1_1": 0.051250000000000004,
+   "lr_thigh_1": 0.0009682540890000035,
+   "rf_c_horn_1": 0.07874999966457835,
+   "rf_foot_1": -0.05459331684384461,
+   "rf_holder_1": 0.051250000000000004,
+   "rf_holder_suppor1_1": 0.051250000000000004,
+   "rf_thigh_1": 0.0009682540890000035,
+   "rr_c_horn_1": 0.078749999725159,
+   "rr_foot_1": -0.05457085429590156,
+   "rr_holder_1": 0.051250000000000004,
+   "rr_holder_suppor1_1": 0.051250000000000004,
+   "rr_thigh_1": -0.005362457563607481,
+   "top_1": 0.107
+  },
+  "sampled_limiting_link": "rf_foot_1",
+  "sampled_limiting_time_s": 5.0025,
+  "sampled_min_z_body_m": -0.05459331684384461,
+  "samples_per_segment": 200
+ },
+ "commanded_with_tracking_box": {
+  "bound_min_z_body_m": -0.06227376734014931,
+  "box_rad": 0.05,
+  "evaluated_per_segment": 20,
+  "limiting_link": "rr_foot_1",
+  "limiting_time_s": 4.975,
+  "sampled_min_z_body_m": -0.060910827229947215
+ },
+ "config_check": [],
+ "config_mount_z_m": 0.125,
+ "content_sha256": "94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64",
+ "frame": "base_link (+x right, +y front, +z up); world z = h + z_body (zero roll/pitch)",
+ "geometry": {
+  "b_s1_1": [
+   "mesh b_s1_1.stl (328 unique vertices)"
+  ],
+  "b_s1_c_horn_1": [
+   "mesh b_s1_c_horn_1.stl (936 unique vertices)"
+  ],
+  "b_s2_1": [
+   "mesh b_s2_1.stl (328 unique vertices)"
+  ],
+  "b_s2_c_horn_1": [
+   "mesh b_s2_c_horn_1.stl (936 unique vertices)"
+  ],
+  "b_s3_1": [
+   "mesh b_s3_1.stl (328 unique vertices)"
+  ],
+  "b_s3_c_horn_1": [
+   "mesh b_s3_c_horn_1.stl (936 unique vertices)"
+  ],
+  "b_s4_1": [
+   "mesh b_s4_1.stl (328 unique vertices)"
+  ],
+  "b_s4_c_horn_1": [
+   "mesh b_s4_c_horn_1.stl (936 unique vertices)"
+  ],
+  "base_link": [
+   "mesh base_link.stl (916 unique vertices)"
+  ],
+  "lf_c_horn_1": [
+   "mesh lf_c_horn_1.stl (936 unique vertices)"
+  ],
+  "lf_foot_1": [
+   "mesh lf_foot_1.stl (1402 unique vertices)"
+  ],
+  "lf_holder_1": [
+   "mesh lf_holder_1.stl (636 unique vertices)"
+  ],
+  "lf_holder_suppor1_1": [
+   "mesh lf_holder_suppor1_1.stl (854 unique vertices)"
+  ],
+  "lf_thigh_1": [
+   "mesh lf_thigh_1.stl (1046 unique vertices)"
+  ],
+  "lidar_link": [
+   "cylinder r=0.035 l=0.040"
+  ],
+  "lr_c_horn_1": [
+   "mesh lr_c_horn_1.stl (936 unique vertices)"
+  ],
+  "lr_foot_1": [
+   "mesh lr_foot_1.stl (1402 unique vertices)"
+  ],
+  "lr_holder_1": [
+   "mesh lr_holder_1.stl (636 unique vertices)"
+  ],
+  "lr_holder_suppor1_1": [
+   "mesh lr_holder_suppor1_1.stl (854 unique vertices)"
+  ],
+  "lr_thigh_1": [
+   "mesh lr_thigh_1.stl (1046 unique vertices)"
+  ],
+  "rf_c_horn_1": [
+   "mesh rf_c_horn_1.stl (936 unique vertices)"
+  ],
+  "rf_foot_1": [
+   "mesh rf_foot_1.stl (1402 unique vertices)"
+  ],
+  "rf_holder_1": [
+   "mesh rf_holder_1.stl (636 unique vertices)"
+  ],
+  "rf_holder_suppor1_1": [
+   "mesh rf_holder_suppor1_1.stl (854 unique vertices)"
+  ],
+  "rf_thigh_1": [
+   "mesh rf_thigh_1.stl (1046 unique vertices)"
+  ],
+  "rr_c_horn_1": [
+   "mesh rr_c_horn_1.stl (936 unique vertices)"
+  ],
+  "rr_foot_1": [
+   "mesh rr_foot_1.stl (1402 unique vertices)"
+  ],
+  "rr_holder_1": [
+   "mesh rr_holder_1.stl (636 unique vertices)"
+  ],
+  "rr_holder_suppor1_1": [
+   "mesh rr_holder_suppor1_1.stl (854 unique vertices)"
+  ],
+  "rr_thigh_1": [
+   "mesh rr_thigh_1.stl (1046 unique vertices)"
+  ],
+  "top_1": [
+   "mesh top_1.stl (452 unique vertices)"
+  ]
+ },
+ "ground": "spiderx_fortress.sdf ground_plane, z = 0, normal +z",
+ "joint_limit_box": {
+  "bound_limiting_link": "rf_foot_1",
+  "bound_min_z_body_m": -0.10906270785061736,
+  "eps_m": 0.001,
+  "method": "branch and bound per leg (Lipschitz node bounds)",
+  "nodes": 100718,
+  "overshoot_rad": 0.02,
+  "proven_within_m": 0.000999996453055027,
+  "sampled_limiting_configuration": {
+   "rr_foot_joint": 0.715838125,
+   "rr_hip": -0.25014221386718755,
+   "rr_thigh_joint": 0.2956434599609375
+  },
+  "sampled_limiting_link": "rr_foot_1",
+  "sampled_min_z_body_m": -0.10806273941002786
+ },
+ "lead_in_start_box": {
+  "bound_min_z_body_m": -0.06702895552332329,
+  "box_rad": 0.1,
+  "configuration": {
+   "lf_foot_joint": -0.096875,
+   "lf_hip": -0.09921875000000001,
+   "lf_thigh_joint": -0.0140625
+  },
+  "limiting_link": "lf_foot_1",
+  "sampled_min_z_body_m": -0.06602944980042848
+ },
+ "neutral": {
+  "limiting_link": "rf_foot_1",
+  "min_z_body_m": -0.05454296875000002
+ },
+ "recommendation": {
+  "basis": "joint_limit_box bound + margin, rounded up",
+  "clearance_at_recommended_m": {
+   "commanded_bound": 0.070367,
+   "commanded_sampled": 0.070407,
+   "joint_limit_box_bound": 0.015937,
+   "neutral": 0.070457,
+   "run_envelope_bound": 0.057971
+  },
+  "margin_m": 0.015,
+  "previous_candidate_0_075_m": {
+   "joint_limit_box_bound": -0.034063,
+   "neutral": 0.020457,
+   "run_envelope_bound": 0.007971
+  },
+  "recommended_height_m": 0.125,
+  "required_min_height_m": 0.12406270785061736
+ },
+ "run_envelope_bound_min_z_body_m": -0.06702895552332329,
+ "schema": "spiderx.m61a.clearance/1",
+ "tolerances_rad": {
+  "limit_overshoot": 0.02,
+  "start_pose": 0.05,
+  "tracking": 0.05
+ },
+ "trajectory_id": "241760e7dfd5ef12",
+ "units": "m, rad, s"
+}

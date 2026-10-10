@@ -1,0 +1,19 @@
+{
+ "variant": "original",
+ "stack_file": "/home/user/spiderx_ws/spiderx_evidence/m6d_diag_20261009T082638Z/original_stack/m6d_isolated_stack.py",
+ "domain": 197,
+ "wall_s": 60.009367088999966,
+ "loadavg": [
+  5.42333984375,
+  2.306640625,
+  1.10302734375
+ ],
+ "ticks": 5992,
+ "tick_overlaps": 2,
+ "max_concurrent_ticks": 2,
+ "received": 5986,
+ "order_violations": 0,
+ "windows_of_200": 29,
+ "windows_with_violation": 0,
+ "examples": []
+}
