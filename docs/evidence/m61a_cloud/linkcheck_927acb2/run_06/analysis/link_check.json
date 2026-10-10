@@ -1,0 +1,232 @@
+{
+  "analysis_sha256": "649b0c4fba9ad84cb4fca9157474ed990163dc759d8d78ef83011d4cf7059e31",
+  "e8_body_pose": {
+    "dummy_entry_first_xyz_rpy": [
+      0.0,
+      0.0,
+      0.125,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "dummy_entry_max_change": {
+      "rotation_rad": 0.0,
+      "translation_m": 0.0
+    },
+    "expected_world_body_xyz_rpy": [
+      0.0,
+      0.0,
+      0.125,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "last_world_body_xyz_rpy": [
+      0.0,
+      0.0,
+      0.125,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "limits": {
+      "abs_dz_m": 0.001,
+      "rotation_rad": 0.0033333333333333335,
+      "translation_m": 0.001
+    },
+    "max_deviation": {
+      "abs_dz_m": 0.0,
+      "rotation_rad": 0.0,
+      "translation_m": 0.0
+    },
+    "model_entry_first_xyz_rpy": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "model_entry_max_change": {
+      "rotation_rad": 0.0,
+      "translation_m": 0.0
+    },
+    "samples": 678,
+    "verdict": "PASS"
+  },
+  "e8_provenance": {
+    "discriminating_samples": 678,
+    "first_mismatches": [],
+    "max_fk_q_vs_fk_0_rotation_rad": 0.00010655874421660954,
+    "max_residual_vs_fk_q_by_link": {
+      "b_s1_c_horn_1": {
+        "rotation_rad": 6.821513441826196e-07,
+        "translation_m": 1.3877787807814457e-17
+      },
+      "b_s2_c_horn_1": {
+        "rotation_rad": 6.821513441838393e-07,
+        "translation_m": 1.3877787807814457e-17
+      },
+      "b_s3_c_horn_1": {
+        "rotation_rad": 6.821499093759055e-07,
+        "translation_m": 1.3877787807814457e-17
+      },
+      "b_s4_c_horn_1": {
+        "rotation_rad": 6.821499093745096e-07,
+        "translation_m": 1.3877787807814457e-17
+      },
+      "lf_c_horn_1": {
+        "rotation_rad": 7.496665479388711e-07,
+        "translation_m": 2.429009297968437e-08
+      },
+      "lf_foot_1": {
+        "rotation_rad": 7.446495773812821e-07,
+        "translation_m": 7.595963152109426e-08
+      },
+      "lr_c_horn_1": {
+        "rotation_rad": 7.496665479406697e-07,
+        "translation_m": 2.4290092978564194e-08
+      },
+      "lr_foot_1": {
+        "rotation_rad": 7.446495773815228e-07,
+        "translation_m": 7.299240158555513e-08
+      },
+      "rf_c_horn_1": {
+        "rotation_rad": 7.496842918146542e-07,
+        "translation_m": 2.4290144063517327e-08
+      },
+      "rf_foot_1": {
+        "rotation_rad": 7.446466608077768e-07,
+        "translation_m": 7.59629934586335e-08
+      },
+      "rr_c_horn_1": {
+        "rotation_rad": 7.49684291813609e-07,
+        "translation_m": 2.4290144063517327e-08
+      },
+      "rr_foot_1": {
+        "rotation_rad": 7.446466608054991e-07,
+        "translation_m": 7.596299346747144e-08
+      }
+    },
+    "min_residual_vs_fk_0_on_discriminating_links_rad": 9.627738703347851e-05,
+    "mismatch_samples": 0,
+    "reason": "every leg-link entry equals FK at the measured joints and differs from the SDF initial value: written by Physics in this launch, after UpdateModelPose wrote the model entry from DART",
+    "samples_matching_fk_0": 0,
+    "samples_used": 678,
+    "server_log_checked": true,
+    "server_log_hits": [],
+    "skipped": {
+      "incomplete": 0,
+      "not_steady": 0,
+      "outside_joint_track": 0
+    },
+    "verdict": "PASS"
+  },
+  "e9_link_consistency": {
+    "claim_scope": "dynamic link/kinematic consistency of the pose stream relative to the body; not an independent measurement of global body height or tilt",
+    "first_unexplained": [],
+    "foot_link_max_turn_from_first_rad": {
+      "lf_foot_1": 4.903529156213487e-21,
+      "lr_foot_1": 4.9035308616434766e-21,
+      "rf_foot_1": 4.774747217340696e-21,
+      "rr_foot_1": 4.774751747537727e-21
+    },
+    "gaps_over_limit": [],
+    "reason": "consistent, but the foot links did not turn by 0.02 rad: E9 not satisfied (it needs motion)",
+    "samples_used": 678,
+    "skipped": {
+      "incomplete": 0,
+      "outside_joint_track": 0
+    },
+    "span_s": 8.375,
+    "stale_stream_counterfactual_worst_score": 0.00014993685836290997,
+    "unexplained_samples": 0,
+    "verdict": "NO_MOTION",
+    "worst": {
+      "max_rotation_link": "rf_c_horn_1",
+      "max_rotation_rad": 7.4968429181455e-07,
+      "max_translation_link": "rr_foot_1",
+      "max_translation_m": 7.596299346747144e-08,
+      "score": 0.00014993685836290997,
+      "shift_s": -0.02,
+      "t": 11.21
+    }
+  },
+  "frozen": {
+    "e9": {
+      "align_step_s": 0.001,
+      "align_window_s": 0.025,
+      "foot_links": [
+        "lf_foot_1",
+        "rf_foot_1",
+        "lr_foot_1",
+        "rr_foot_1"
+      ],
+      "max_gap_s": 1.0,
+      "min_foot_span_rad": 0.02,
+      "min_samples": 100,
+      "position_tol_m": 0.001,
+      "rotation_tol_rad": 0.005
+    },
+    "log_patterns": [
+      "Internal error",
+      "does not have a world pose"
+    ],
+    "provenance": {
+      "match_position_m": 1e-05,
+      "match_rotation_rad": 1e-05,
+      "min_samples": 20,
+      "min_separation_rad": 5e-05,
+      "steady_q_rad": 1e-06,
+      "steady_window_s": 0.25
+    },
+    "report_tol": 1e-06
+  },
+  "inputs": {
+    "bag": "/home/user/spiderx_ws/docs/evidence/m61a_cloud/linkcheck_927acb2/run_06/bag",
+    "clock_messages": 10181,
+    "joint_samples": 869,
+    "joint_track_s": [
+      10.91,
+      19.59
+    ],
+    "joints": [
+      "lf_foot_joint",
+      "lf_hip",
+      "lf_thigh_joint",
+      "lr_foot_joint",
+      "lr_hip",
+      "lr_thigh_joint",
+      "rf_foot_joint",
+      "rf_hip",
+      "rf_thigh_joint",
+      "rr_foot_joint",
+      "rr_hip",
+      "rr_thigh_joint"
+    ],
+    "links": [
+      "b_s1_c_horn_1",
+      "b_s2_c_horn_1",
+      "b_s3_c_horn_1",
+      "b_s4_c_horn_1",
+      "lf_c_horn_1",
+      "lf_foot_1",
+      "lr_c_horn_1",
+      "lr_foot_1",
+      "rf_c_horn_1",
+      "rf_foot_1",
+      "rr_c_horn_1",
+      "rr_foot_1"
+    ],
+    "pose_messages": 678,
+    "pose_sample_codes": {},
+    "topic_types": {
+      "clock": "rosgraph_msgs/msg/Clock",
+      "description": "std_msgs/msg/String",
+      "joints": "sensor_msgs/msg/JointState",
+      "poses": "tf2_msgs/msg/TFMessage"
+    },
+    "urdf_source": "bag /robot_description"
+  },
+  "schema": "spiderx.m61a.link_check/1"
+}

@@ -95,7 +95,8 @@ from goal acceptance.
    - It re-uses as is:
      - the one-shot dispatch latch;
      - readiness before and after confirmation;
-     - freshness at the send;
+     - freshness at the send. M6.1-A adds a check of the streams *now* at that point:
+       `M61Session._fresh_at_send`, `m61a_fixed_base.streams_at_send`;
      - the supervision loop (stream monitor, controller presence, watchdogs);
      - the single guarded cancel;
      - interrupt handling and `EvidenceFile`.

@@ -404,6 +404,34 @@ usual and **hold** their positions. The observer sends them nothing.
   | `description_mismatch` | REFUSED, 0 goals |
   | `mount_not_approved` | REFUSED, 0 goals |
 
+**The streams at the send** (`1732c32`; one-cycle plan E5).
+- **What the 10 s rule misses.** The M6.0-D check at the send bounds only the age of the
+  readiness result (10 s). Nothing spins during the prompt or the server wait.
+- **The added check.** `M61Session._fresh_at_send` adds `m61a_fixed_base.streams_at_send` on
+  `M61AFixedBaseTransport.streams_now()`:
+  1. drain what was queued, because a backlog processed late looks freshly received;
+  2. observe for one progress window (1.0 s);
+  3. require, with the readiness thresholds of `m61a_fixed_base.yaml`:
+     - joint states and a usable body pose received in the window, ≤ 0.5 s and ≤ 1.0 s old;
+     - sim time advancing ≥ 0.1 s;
+     - the plant and attachment checks.
+- **On failure.** Nothing is sent. The detail is in `freshness_at_send.streams_now`.
+- **Mock scenarios:**
+
+  | Scenario | Result |
+  |---|---|
+  | `slow_server` | sent |
+  | `joint_states_stop_before_send` | REFUSED at the send, 0 goals |
+  | `body_pose_stops_before_send` | REFUSED at the send, 0 goals |
+  | `sim_pauses_before_send` | REFUSED at the send, 0 goals |
+
+**Link-pose check** (`m61a_link_check`, `927acb2`; read-only and offline, on a rosbag2 recording).
+- **E8 provenance.** The 12 leg-link entries, relative to `dummy_link`, must equal URDF FK at the
+  measured joints and differ from FK(0). In gz-sim 6.16 that requires the model entry to have
+  been written from DART first.
+- **E9.** Dynamic link/kinematic consistency in motion. It says nothing about body height or tilt.
+- **Freezing.** Its thresholds are frozen module constants (Cloud report §10.2–§10.3).
+
 ---
 
 ## 8. Behaviour changes in existing tests (explained, not weakened)

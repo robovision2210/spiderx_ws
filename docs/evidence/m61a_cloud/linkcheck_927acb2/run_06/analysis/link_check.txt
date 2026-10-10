@@ -1,0 +1,8 @@
+analysis sha256 649b0c4fba9ad84cb4fca9157474ed990163dc759d8d78ef83011d4cf7059e31
+inputs: 678 pose messages, 869 joint samples, 10181 clock messages
+E8 body pose (physics composition vs weld origin): PASS
+  max deviation 0.000e+00 m, 0.000e+00 rad, |dz| 0.000e+00 m (limits 1.000e-03 m, 3.333e-03 rad); model entry max change 0.000e+00 m
+E8 provenance (leg links written by Physics): PASS - every leg-link entry equals FK at the measured joints and differs from the SDF initial value: written by Physics in this launch, after UpdateModelPose wrote the model entry from DART
+  678 samples, 678 discriminating; FK(q) vs FK(0) up to 1.066e-04 rad; min residual vs FK(0) on those links 9.627738703347851e-05
+  max residual vs FK(q): 7.596e-08 m, 7.497e-07 rad
+E9 link/kinematic consistency: NO_MOTION - consistent, but the foot links did not turn by 0.02 rad: E9 not satisfied (it needs motion)

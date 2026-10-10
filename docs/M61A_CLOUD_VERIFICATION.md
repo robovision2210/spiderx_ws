@@ -46,6 +46,17 @@ outstanding.
 - **Criterion 6, `run_04`.** Version 1 **FAIL** again; the frozen version-2 proposal **PASS** on
   its single validation run. Acceptance is the owner's.
 
+**One-cycle prerequisites (§10: `927acb2`, `1732c32`).**
+- **E8, the pose source.** It is traced to DART and shown in a fresh no-motion launch (`run_06`):
+  the model entry in this launch is DART's pose of the merged body, and the composition cancels
+  the SDF factor. That is enough for simulation, without an added sensor. The trust boundary is
+  DART.
+- **E9.** Corrected to dynamic link/kinematic consistency, which says nothing about body height or
+  tilt. Its analysis was frozen before any motion run.
+- **E5.** The streams are now checked *at the send*, after a drain, over a 1 s window.
+- **E11.** A restore-and-verify script, validated against a running launch (`DISABLED AND
+  VERIFIED`) and against an enabled build (`NOT VERIFIED`, `--live` never run).
+
 ## 1. The incident (first Cloud attempt, `41fc10f`)
 
 The first Cloud phase-1 attempt stopped before any launch because one required test failed
@@ -773,4 +784,251 @@ unapplied on every branch, and `git apply --check` passes.
    time before dispatch are demonstrated (§9.3, §9.5).
 4. **Approvals:** the phase-2 criteria E1–E11 and the enabling patch (2 lines; no expected test
    failures).
+5. **Owner PC.** Phase 1 has not run there.
+
+Superseded by §10.7.
+
+## 10. One-cycle prerequisites closed in Cloud (after `76a868b`)
+
+**Commits** (each pushed before the run that uses it):
+- `927acb2`: `m61a_link_check`, the E8 and E9 analysis, frozen. Its SHA-256 is
+  `649b0c4fba9ad84cb4fca9157474ed990163dc759d8d78ef83011d4cf7059e31`;
+- `1732c32`: the E5 check of the streams at the send, and the E11 restore-and-verify script;
+- the documentation and evidence commit that follows.
+
+**Launches.** Two Cloud launches, both no motion:
+- `run_06`: the E8 provenance recording;
+- `run_07`: the E11 validation, in which the script stopped the running launch itself.
+
+No goal was sent. Both gates stayed `False`, except in one temporary, detached test worktree
+(§10.5), which was removed.
+
+### 10.1 Criterion 6: what 53.1 % and 85.5 % count, and a recommendation
+
+Both figures come from `run_04` (`observation_b982d8d/run_04/criterion6_v2.json`). Each
+compares `/scan` ranges with those ray-cast from the welded pose, at ±8 mm.
+
+| Population | n | Aggregation | Within ±8 mm | Max \|error\| |
+|---|---|---|---|---|
+| Single-scan ranges | 13,840 = 40 scans × 346 beams | none | **53.1 %** (7,346) | 48.0 mm |
+| Per-beam means | 346 beams | mean of each beam over the 40 scans | **85.5 %** (296) | 18.8 mm |
+| Best planar body pose (minimax over x, y, yaw) | — | — | — | 17.7 mm |
+
+**Why they differ.**
+- **Single ranges.** Each one carries the sensor noise (σ 10 mm) plus a per-beam systematic
+  error: rendering, about 4–5 mm RMS, and 4.0 mm robust σ after the fit. With a total σ of about
+  11 mm, a Gaussian puts 53 % within ±8 mm, as observed.
+- **Per-beam means.** Averaging 40 scans cuts the noise to 1.6 mm but leaves the systematic part.
+  A few beams near edges carry up to 18.8 mm.
+- **Neither is a pose result.** No pose satisfies version 1: the best still leaves 17.7 mm.
+  Version 1 stays **FAIL** on record.
+
+**Recommendation: adopt version 2** as a separately versioned planar-pose check. Version 2 tests
+what version 1 meant: the scan-fitted body (x, y, yaw) against `pose/info`, with δ = G8, a 1 %
+false-fail rate and a 5 % miss rate. **Its limitations:**
+1. **Planar only.** z, roll and pitch are not tested; they rest on E8 (§10.2).
+2. **One validation run** (`run_04`).
+3. **Not independent of Gazebo's entity state.** `/scan` is rendered from it, so version 2 checks
+   the reporting and composition chain, not the physics.
+4. **Static only.** It needs 40 scans of a stationary body.
+5. **Little margin.** σ_used was 0.578 mm against σ_max 0.641 mm (90 %). A noisier run can be
+   INCONCLUSIVE.
+6. **Small offsets pass by design.** Offsets well below 3 mm / 0.01 rad pass; the miss rate at δ
+   is 5 %.
+
+### 10.2 E8: the pose source, traced to DART and shown at run time
+
+**Source** (installed versions, read for this):
+- **Re-report rule.** gz-physics 5.3.2 dartsim, `SimulationFeatures::Write` (lines 82–118):
+  - after each step it reports every link whose DART world pose differs from its **last reported**
+    pose by more than 1e-6 in any position axis or quaternion component;
+  - every link is reported on the first step;
+  - so an unreported change never accumulates beyond that bound.
+- **Model pose.** gz-sim 6.16.0, `Physics.cc` `UpdateModelPose` (lines 2567–2679):
+  - X_WM = X_WL · X_ML⁻¹, with X_WL from DART;
+  - it is cached in `modelWorldPoses` (line 2612) and written to the model's pose (line 2625);
+  - no other code fills that cache.
+- **Other model-pose write.** Lines 2111–2121 apply to static models on a pose command only.
+- **Non-canonical links** (lines 2785–2802):
+  - X_M,link = `modelWorldPoses`⁻¹ · X_W,link, from DART;
+  - without a cached model pose the link is skipped, with `Internal error: parent model […] does
+    not have a world pose available`;
+  - the canonical link's own pose (X_ML) is never written.
+- **Composition.**
+  - The `spiderx` entry times the `dummy_link` entry equals X_WL(DART) exactly. The `dummy_link`
+    entry is the same X_ML that Physics divided by.
+  - Then T_dummy_body: `base_link` is a URDF frame at identity inside the same rigid body.
+  - **Physics-derived:** the model entry.
+  - **Fixed transforms:** X_ML from the SDF, which cancels, and T_dummy_body from the URDF.
+  - The weld origin is used only as the specification compared against.
+
+**Measurement** (`run_06`, `927acb2`; the analysis was frozen and pushed before the launch).
+Evidence: [`evidence/m61a_cloud/linkcheck_927acb2/`](evidence/m61a_cloud/linkcheck_927acb2/README.md).
+The 15 s rosbag2 recording held 678 pose messages (all 68 entries), 869 joint states and 10,181
+clock messages.
+
+| Check | Result |
+|---|---|
+| Body pose: composition against the weld origin (limits 1 mm, 3.33 mrad, \|dz\| 1 mm) | **PASS**, deviation 0 (exact) in 678 of 678 messages; the model entry stayed the identity |
+| Provenance: 12 leg-link entries relative to `dummy_link`, against URDF FK at the measured joints and against FK(0) | **PASS** in 678 of 678. Residual against FK(q): ≤ 7.6e-8 m, 7.5e-7 rad (limits 1e-5). FK(q) and FK(0) differ by up to 1.07e-4 rad. Entries differ from FK(0) by ≥ 9.6e-5 rad |
+| Server log | No `Internal error` and no `does not have a world pose` line |
+| Joints | Held at 4.4e-5 to 9.7e-5 rad (gravity sag), constant to about 1e-19 rad: the values of `run_04` |
+
+**What this shows.**
+- The leg-link entries are DART's poses relative to the body at the measured joints. They are not
+  the SDF initial values, so Physics wrote them in this launch.
+- By the source, that needed `UpdateModelPose` to write the model entry from DART first. So the
+  composed body pose is DART's pose of the merged body, within 1e-6 per axis and reported on
+  every change.
+- E8's comparison with the weld origin is therefore a measurement compared with a specification.
+  The weld is not assumed.
+- A separate sensor is not needed for this in simulation.
+
+**Unproven.**
+1. **DART is trusted** as the ground truth (WeldJoint rigidity, the integrator). That is the
+   trust boundary.
+2. **The canonical re-report after the first write** was exercised at run time only in the
+   free-base M2 launches: the model entry followed the body to 0.0545 m. A welded body never
+   moves.
+3. **The first write is shown only indirectly,** through the leg entries and the source, because
+   its value equals the SDF default.
+4. **Motion is not covered.** That is E9 (§10.3).
+
+**U-L2.** It is resolved *if* the owner accepts the simulator physics state as ground truth, which
+is recommended.
+
+### 10.3 E9 corrected, and its analysis frozen
+
+**Correction.** The leg-link entries are expressed relative to the body. Matching them to
+joint-state FK while they change shows **dynamic link/kinematic consistency**: the stream's content
+is live and the URDF chain matches DART's. It is **not** an independent measurement of global body
+height or tilt. A synthetic test shows the point: a body displaced by 5 cm and tilted 0.1 rad
+passes E9, while E8 fails.
+
+**Frozen** in `927acb2`, before any motion run, as module constants pinned by a test:
+- **Alignment.** Each pose message gets the latest `/clock` received before it.
+- **Match.** It must match FK(q(t')) for some |t' − t| ≤ 25 ms (1 ms grid) within 1 mm / 5 mrad
+  on all 12 links.
+- **Coverage.** At least 100 samples, and no gap over 1.0 s.
+- **Motion.** Every foot link turns ≥ 0.02 rad relative to the body. Otherwise the verdict is
+  `NO_MOTION`: E9 not satisfied.
+- **Counterfactual.** The same stream frozen at its first sample must fail.
+
+The earlier wording (5 mm / 0.05 rad) was too loose for a cycle that moves joints by at most
+0.11 rad: a stale stream would have passed for much of the cycle.
+
+**No-motion check.** On `run_06` the verdict is `NO_MOTION`, with 0 unexplained samples.
+
+### 10.4 E5: the streams at the send
+
+**The gap.**
+- The M6.0-D check at the send (D3) bounds only the *age* of the readiness result: 10 s.
+- Nothing spins during the confirmation prompt or the server wait (rclpy `wait_for_server` does
+  not spin).
+- The in-flight monitors start at acceptance.
+- So nothing showed that the joint states, the body pose and the clock were current at the send.
+
+**Change** (`1732c32`; the M6.0-D modules are unchanged).
+- `M61Session._fresh_at_send` runs D3, then `streams_check`.
+- `M61AFixedBaseTransport.streams_now()`:
+  1. drains what was queued;
+  2. spins for one progress window (1.0 s);
+  3. returns what arrived after the drain.
+- `m61a_fixed_base.streams_at_send` then applies the readiness thresholds:
+  - joint states received in the window, ≤ 0.5 s old and complete;
+  - a usable body pose received in the window, ≤ 1.0 s old;
+  - sim time advancing ≥ 0.1 s over the window;
+  - the plant and attachment checks.
+- **On failure.** The code becomes the refusal reason and is recorded in
+  `freshness_at_send.streams_now`. Nothing is sent and there is no retry.
+
+**Found while testing (isolated domain).** The first version had no drain. After the publishers
+stopped, the transport processed the queued messages (up to each subscription's depth) only at its
+next spin. They were stamped with the processing time, so a joint state looked 0.25 s old when the
+stream had stopped 1.45 s earlier. With the drain and the window, the same test reports
+`joint_states_stale`, `body_pose_stale` and `body_pose_sim_time_not_advancing`.
+
+The M6.0-D joint-state readiness window could in principle be satisfied by such a backlog after a
+long prompt. The M6.1 check now covers the send regardless.
+
+**Tests.**
+- Unit tests of `streams_at_send`, the window included.
+- Four mock scenarios:
+  - `slow_server`: sent;
+  - `joint_states_stop_before_send`, `body_pose_stops_before_send`, `sim_pauses_before_send`:
+    refused at the send, with readiness READY twice and D3 permitting.
+- The enabled live path with fakes.
+- The transport on an isolated domain.
+- The mock re-anchors its result time at the actual send, so a slow server does not shorten the
+  goal.
+
+### 10.5 E11: restore and verify, whatever happened
+
+`scripts/m61_restore_and_verify_disabled.sh` (`1732c32`) runs these steps:
+1. **Stop.** SIGINT to the launch group, SIGTERM to Xvfb, stop the CLI daemon. Then no simulation
+   process may remain; the script's own process chain is excluded.
+2. **Preserve, before any checkout or deletion.** The enabling commit's id, `show`,
+   `format-patch` and the SHA-256 of its `src/` diff. Uncommitted `src/` changes are saved, and
+   discarded only on request.
+3. **Restore.** Check out the base, and require `src/` to equal it (no diff, no untracked file).
+4. **Rebuild** cleanly.
+5. **Verify, in a fresh `env -i` environment run from `/`:**
+   - the imported `m61_live_contract` and `m6_live_contract` come from this workspace and are both
+     `False`;
+   - `ros2 pkg prefix` points to this workspace;
+   - **only then**, `--live` exits 3 with HARD-DISABLED;
+   - the operator's shell imports nothing enabled.
+6. **Delete the enabling branch** only on request, and only after 1–5 pass.
+
+**Found while testing.**
+- **The current directory.** Python resolves a package from the current directory first. Run from
+  `src/spiderx_controller`, the check imported the source tree instead of the install. The checks
+  now run from `/`.
+- **Self-matching.** The leftover check no longer matches its own invoking shell; earlier stop
+  scripts did.
+
+**Hermetic tests** (8: a fake workspace and a fake `ros2`, nothing real touched) cover:
+- the disabled case;
+- an enabled checkout, where the live path is never reached;
+- a full restore, checking that preservation comes before restore and deletion comes after
+  verification;
+- a broken install, where the branch is kept;
+- a shadowing calling environment;
+- a leftover process with a pattern-bearing invoking shell;
+- an interrupted apply;
+- usage errors.
+
+**Cloud validation** ([`evidence/m61a_cloud/restore_1732c32/`](evidence/m61a_cloud/restore_1732c32/README.md)):
+
+| Case | Result |
+|---|---|
+| A. `run_07`: a running no-motion launch, then the script with the launch and Xvfb pid files | Launch group stopped by SIGINT, Xvfb stopped, no leftover; `src/` = base `1732c32`; clean rebuild (8 packages); imported gates `False` from this workspace; `--live` exit 3, HARD-DISABLED; **`DISABLED AND VERIFIED`, exit 0** |
+| B. Temporary detached worktree at `1732c32` with the patch applied and built (tests only, no simulator) | `src/` differs from the base (2 files); imported `M61_LIVE_DISPATCH_ENABLED = True`; **`--live` NOT run**; **`NOT VERIFIED`, exit 1**. No `log/m61_run` directory exists in that worktree, so the live path never started. The worktree was removed afterwards |
+
+### 10.6 Tests, builds and commits
+
+| What | Where | Result |
+|---|---|---|
+| `m61a_link_check` tests (synthetic Physics-rule streams, rosbag2 round trip) | `927acb2` | 30 passed; 4 deliberate mutants each caught |
+| M6.1 / M6.1-A focused files (fixed base, gait replay, observer, link check), disabled | `1732c32` | 318 passed |
+| Restore-script tests | `1732c32` | 8 passed |
+| Whole `spiderx_controller` suite, **enabled** (patch applied, temporary worktree, tests only) | `1732c32` + patch | **1517 passed, 0 failed** (7 min 49 s) |
+| Clean build + full `colcon test`, disabled | `1732c32` | **1559 tests, 0 errors, 0 failures, 0 skipped** (+60 new tests, +2 new test files). A first attempt without `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1` ran no test: every file stopped at pytest start-up on the `launch_testing` plugin incompatibility; recorded in `restore_1732c32/disabled_mode/` |
+| M5.5 after merging these commits | M5.5 branch | Recorded there (`docs/M55_KEYBOARD_WALKING.md` §14) and in robovision2210/spiderx_ws#17 |
+| Cloud simulation | `927acb2`, `1732c32` | `run_06`, `run_07`: no motion, clean shutdowns |
+
+Gates: `M61_LIVE_DISPATCH_ENABLED = False` and `LIVE_DISPATCH_ENABLED = False` on every
+branch. The patch is unapplied, and `git apply --check` passes.
+
+### 10.7 What still blocks the one cycle
+
+1. **Owner: criterion 6.** Adopt version 2 as a versioned planar check (recommended, with the
+   limitations of §10.1). Version 1 stays FAIL.
+2. **Owner: z, roll and pitch.** Accept the simulator physics state as ground truth (recommended;
+   §10.2). The alternative is an added sensor, which is a model change.
+3. **Approvals.**
+   - The revised E1–E11 (E5, E8, E9 and E11 changed).
+   - The enabling patch: 2 lines, header updated to point to the restore script.
+   - One Cloud run, not on the owner PC.
+4. **E9 needs the motion run itself.** It cannot be shown beforehand.
 5. **Owner PC.** Phase 1 has not run there.
