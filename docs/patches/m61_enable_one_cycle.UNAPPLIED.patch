@@ -19,8 +19,13 @@ Expected test delta on the enabling branch: NONE. Every test passes in both buil
   patch: see docs/M61A_CLOUD_VERIFICATION.md sections 9.4 and 9.7. An earlier header listed five expected
   failures; the empirical run found three more (outcome, mock evidence and dry-run report
   asserted a recorded gate of False). All eight are now mode-aware.
+  Re-verified 2026-10-10 on 1732c32 + this patch (temporary worktree, tests only):
+  full spiderx_controller suite 1517 passed, 0 failed (docs/M61A_CLOUD_VERIFICATION.md section 10.6).
 Check   : git apply --check docs/patches/m61_enable_one_cycle.UNAPPLIED.patch   (changes nothing)
-Revert  : git checkout claude/stoic-shannon-ur2mes && git branch -D <enabling branch>
+Revert  : NOT a branch switch alone. Run scripts/m61_restore_and_verify_disabled.sh (plan
+          section 4 G). It preserves the enabling commit, restores and rebuilds the base, and
+          proves in a fresh environment that the IMPORTED gate is False and that --live exits 3.
+          Only then is the local branch deleted (--delete-enabling-branch).
 
 diff --git a/src/spiderx_controller/spiderx_controller/m61_live_contract.py b/src/spiderx_controller/spiderx_controller/m61_live_contract.py
 index 3a9a869..6a0d32c 100644

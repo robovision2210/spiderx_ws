@@ -650,6 +650,11 @@ EXPECTED = {   # scenario: (state, reason, goals, cancels, gates tripped)
     'competing_client': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
     'competing_client_late': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
     'sim_paused': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    # pre-send check (plan E5): READY after confirmation, then a 2 s server wait
+    'slow_server': (lpb.SUCCEEDED, None, 1, 0, None),
+    'joint_states_stop_before_send': (lpb.REFUSED, fb.JOINT_STATES_STALE, 0, 0, None),
+    'body_pose_stops_before_send': (lpb.REFUSED, fb.POSE_STALE, 0, 0, None),
+    'sim_pauses_before_send': (lpb.REFUSED, fb.POSE_SIM_NOT_ADVANCING, 0, 0, None),
 }
 
 
@@ -695,6 +700,55 @@ def test_fixed_base_readiness_refusals_send_nothing(scenario, plan):
     codes = out['readiness'][0]['result']['failure_codes']
     assert FIXED_BASE_REFUSAL_CODES[scenario] in codes, codes
     assert out['goals_sent'] == 0 and out['mock_server_goals_received'] == 0
+
+
+PRE_SEND_REFUSALS = {
+    'joint_states_stop_before_send': [fb.JOINT_STATES_STALE],
+    'body_pose_stops_before_send': [fb.POSE_STALE, fb.POSE_SIM_NOT_ADVANCING],
+    'sim_pauses_before_send': [fb.POSE_SIM_NOT_ADVANCING],
+}
+
+
+@pytest.mark.parametrize('scenario', sorted(PRE_SEND_REFUSALS))
+def test_streams_that_stop_after_readiness_are_refused_at_the_send(scenario, plan):
+    """Readiness was READY after the confirmation and its result is only 2 s old at the send
+    (M6.0-D D3 permits it), but the streams are no longer current: nothing is sent."""
+    out, session, _ = gr.run_mock(plan, scenario, word())
+    assert [r['result']['ready'] for r in out['readiness']] == [True, True]
+    f = out['freshness_at_send']
+    assert f['permitted'] is True and f['age_s'] == pytest.approx(2.0)      # D3 alone: allowed
+    assert f['streams_now']['ok'] is False
+    assert f['streams_now']['codes'] == PRE_SEND_REFUSALS[scenario]
+    assert out['reason'] == PRE_SEND_REFUSALS[scenario][0]
+    assert out['goals_sent'] == 0 and out['mock_server_goals_received'] == 0
+    calls = session.transport.inner.calls          # reached the send point, sent nothing
+    assert ('server_ready', lc.SERVER_WAIT_S) in calls and ('send_goal',) not in calls
+
+
+@pytest.mark.parametrize('scenario, age', [('success', 0.0), ('slow_server', 2.0)])
+def test_the_streams_now_are_recorded_when_the_goal_is_sent(scenario, age, plan):
+    out, _, _ = gr.run_mock(plan, scenario, word())
+    f = out['freshness_at_send']
+    assert f['permitted'] is True and f['age_s'] == pytest.approx(age)
+    sn = f['streams_now']
+    assert sn['ok'] is True and sn['codes'] == []
+    c = sn['checks']
+    assert c['joint_states']['ok'] and c['joint_states']['detail']['age_s'] <= 0.5
+    assert c['body_pose_fresh']['ok'] and c['body_pose_fresh']['detail']['age_s'] <= 1.0
+    assert c['body_pose_sim_progress']['ok']
+    assert c['body_pose_sim_progress']['detail']['sim_advance_s'] >= 0.1
+    assert c['attachment']['ok']
+    assert out['state'] == lpb.SUCCEEDED and out['goals_sent'] == 1
+    json.dumps(out, allow_nan=False)
+
+
+def test_a_slow_server_does_not_shift_the_result_before_the_trajectory_end(plan):
+    """The mock re-anchors its result at the actual send: a 2 s server wait must not make the
+    result arrive before the 7 s trajectory has run."""
+    out, session, _ = gr.run_mock(plan, 'slow_server', word())
+    fast, _, _ = gr.run_mock(plan, 'success', word())
+    assert out['state'] == fast['state'] == lpb.SUCCEEDED
+    assert out['tracking']['samples'] == fast['tracking']['samples']
 
 
 def test_fixed_base_success_records_the_plant_apart_from_the_trajectory(plan):
@@ -1000,6 +1054,22 @@ def test_enabled_live_refuses_a_paused_world_before_any_goal(enabled, plan, tmp_
     assert f.made[0].sent == [] and out['goals_sent'] == 0
     res = out['readiness'][0]['result']
     assert res['failure_codes'] == [fb.POSE_SIM_NOT_ADVANCING], res
+
+
+def test_enabled_live_checks_the_streams_immediately_before_the_send(enabled, plan, tmp_path):
+    """Fakes only: the live path wires the pre-send check. Joint states that stop after the
+    readiness observation are refused at the send, with the D3 snapshot still permitted."""
+    f = Factories(plan, **m61_mock.SCENARIOS['joint_states_stop_before_send'])
+    assert run_enabled(plan, tmp_path, f, '20261003T120005Z') == gr.EXIT_REFUSED
+    out = json.loads((tmp_path / '20261003T120005Z' / evd.LIVE_OUTCOME).read_text())
+    assert f.made[0].sent == [] and out['goals_sent'] == 0
+    assert out['reason'] == fb.JOINT_STATES_STALE
+    assert out['freshness_at_send']['permitted'] is True
+    assert out['freshness_at_send']['streams_now']['codes'] == [fb.JOINT_STATES_STALE]
+    f = Factories(plan)
+    assert run_enabled(plan, tmp_path, f, '20261003T120006Z') == gr.EXIT_OK
+    out = json.loads((tmp_path / '20261003T120006Z' / evd.LIVE_OUTCOME).read_text())
+    assert out['freshness_at_send']['streams_now']['ok'] is True and len(f.made[0].sent) == 1
 
 
 def test_enabled_live_still_needs_domain_and_evidence(enabled, plan, tmp_path):

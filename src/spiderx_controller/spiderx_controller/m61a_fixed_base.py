@@ -793,6 +793,57 @@ def assess_plant(description, latest_usable_pose, cfg):
     return not codes, codes, checks
 
 
+def streams_at_send(snapshot, latest_joint_states, now_wall, joint_names, cfg,
+                    since_wall=None):
+    """(codes, checks) for the streams NOW, immediately before the one send (M6.1, plan E5).
+
+    The readiness result that permits the send may be up to READINESS_MAX_AGE_S (10 s) old
+    (M6.0-D D3), and the in-flight monitors start only at acceptance, so neither shows that the
+    streams are still current at the send. This repeats the stream checks of assess() on what the
+    transport received in the last moments, with the same thresholds (cfg): the plant (attachment
+    included), a fresh usable body pose, sim time advancing while it was received, and fresh,
+    complete joint states. No graph query. snapshot = FixedBasePoseTracker.snapshot();
+    latest_joint_states = (wall, {name: position}) or None.
+
+    since_wall: the start of the observation window. A message processed from a backlog (queued
+    while nothing spun) gets the processing time as its receipt time, so only samples received at
+    or after since_wall count as current; the progress window is then [since_wall, now].
+    """
+    snapshot = snapshot or {}
+    smp = snapshot.get('latest_usable_pose')
+    _, codes, checks = assess_plant(snapshot.get('description'), smp, cfg)
+    codes = list(codes)
+
+    def put(name, code, detail):
+        checks[name] = {'ok': code is None, 'code': code, 'detail': detail}
+        if code is not None and code not in codes:
+            codes.append(code)
+
+    def before(wall):
+        return since_wall is not None and wall < since_wall
+
+    code = check_pose_freshness(smp, now_wall, cfg.pose_stale_s)
+    if code is None and before(smp.wall):
+        code = POSE_STALE
+    put('body_pose_fresh', code, {'age_s': None if smp is None else now_wall - smp.wall,
+                                  'max_age_s': cfg.pose_stale_s, 'since_wall': since_wall})
+    samples = snapshot.get('recent_usable_samples') or ()
+    window = cfg.progress_window_s
+    if since_wall is not None:
+        samples = tuple(x for x in samples if not before(x[0]))
+        window = now_wall - since_wall
+    code, detail = check_sim_progress(samples, now_wall, window, cfg.min_sim_advance_s,
+                                      cfg.clock_reset_tol_s)
+    put('body_pose_sim_progress', code, detail)
+    js = latest_joint_states
+    code = check_joint_states(js, now_wall, joint_names, cfg.joint_states_stale_s)
+    if code is None and before(js[0]):
+        code = JOINT_STATES_STALE
+    put('joint_states', code, {'age_s': None if js is None else now_wall - js[0],
+                               'max_age_s': cfg.joint_states_stale_s, 'since_wall': since_wall})
+    return codes, checks
+
+
 def assess(evidence, cfg, now_wall, joint_names):
     """(ready, failure codes, report) for the read-only observer. Decides nothing about a goal.
 

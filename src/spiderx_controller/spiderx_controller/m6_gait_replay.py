@@ -21,7 +21,10 @@ handling and EvidenceFile persistence. M6.1 replaces only what is gait specific:
     it, identity spawn, body at the weld pose), the body pose is COMPOSED
     (T_world_model * T_model_dummy * T_dummy_base, never the bare model root), and G8 cancels if
     the attachment is lost in flight. The plant evidence is recorded separately from the
-    trajectory provenance, which is unchanged.
+    trajectory provenance, which is unchanged;
+  - the streams NOW, immediately before the send (plan E5): the M6.0-D freshness check at the
+    send only bounds the age of the readiness result (10 s), so M6.1 also requires current joint
+    states, a current attached body pose and advancing sim time (send_streams_check).
 
 LIVE M6.1 DISPATCH IS HARD-DISABLED (m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False).
 
@@ -73,12 +76,13 @@ class M61Session(lp.LiveSession):
     """One approved trot-cycle goal, at most once. Use run(); it returns a structured outcome."""
 
     def __init__(self, transport, plan, readiness_provider, confirm_reader, latch=None,
-                 checkpoint=None, fixed_base=None):
+                 checkpoint=None, fixed_base=None, streams_check=None):
         super().__init__(_TickTransport(transport), plan.sources, readiness_provider,
                          confirm_reader, latch=latch, checkpoint=checkpoint)
         self.plan = plan
         self.limits = plan.limits
         self.fixed_base = fixed_base             # m61a FixedBaseConfig (G8 active) or None
+        self.streams_check = streams_check       # () -> (codes, detail), just before the send
         self.gates = None
         self._preflight = None
         self._tracking_verdict = None
@@ -141,8 +145,8 @@ class M61Session(lp.LiveSession):
             return self._refuse('operator_interrupt', 'interrupted before dispatch')
         ok, code = self._fresh_at_send()
         if not ok:
-            return self._refuse(code, 'readiness evidence no longer permitted at the send; '
-                                      'no new observation, no retry')
+            return self._refuse(code, 'readiness evidence too old, or the streams not current, '
+                                      'at the send; nothing sent, no retry')
         try:
             self._dispatch(goal)
         except gf.FingerprintError as e:
@@ -157,6 +161,20 @@ class M61Session(lp.LiveSession):
                                      'reached the server; acceptance unknown; no retry')
             return self.outcome()
         return self._supervise()
+
+    def _fresh_at_send(self):
+        """D3 (M6.0-D, unchanged): the readiness result is at most 10 s old. That bounds the age
+        of the evidence, not the streams now, and the in-flight monitors start only at acceptance.
+        So M6.1 also checks, immediately before the send, that joint states and the attached body
+        pose are current and that sim time advances (streams_check; recorded, never retried)."""
+        ok, code = super()._fresh_at_send()
+        if not ok or self.streams_check is None:
+            return ok, code
+        codes, detail = self.streams_check()
+        self._freshness_at_send['streams_now'] = dict(detail, ok=not codes, codes=list(codes))
+        if codes:
+            return False, codes[0]
+        return ok, code
 
     # ------------------------------------------------------------ gates (M6.1)
     def _gating(self):
@@ -401,6 +419,21 @@ def with_command_owner(base_provider, owner_snapshot):
     return provide
 
 
+def send_streams_check(transport, cfg, joint_names):
+    """The M6.1 pre-send check (plan E5): () -> (codes, detail). transport.streams_now() drains
+    what was queued and observes for one progress window (live), or reads the scripted state
+    (mock); m61a_fixed_base.streams_at_send applies the readiness thresholds of cfg to what
+    arrived in that window. No graph query, no retry."""
+    def check():
+        cur = transport.streams_now()
+        codes, checks = fb.streams_at_send(cur.get('tracker'), cur.get('joint_states'),
+                                           cur.get('now'), joint_names, cfg,
+                                           since_wall=cur.get('since_wall'))
+        return codes, {'checked_at_wall': cur.get('now'), 'since_wall': cur.get('since_wall'),
+                       'checks': checks}
+    return check
+
+
 def load_fixed_base_config(config_dir=None):
     """The M6.1-A config with its file SHA-256 recorded (raw['_sha256'])."""
     import hashlib
@@ -431,7 +464,7 @@ def with_body_pose(base_provider, latest_pose, now, limits):
 
 __all__ = ['M61Session', 'GATE_TRIPPED', 'M61_TERMINAL', 'OUTCOME_SCHEMA', 'with_body_pose',
            'with_fixed_base', 'with_sim_progress', 'with_command_owner', 'fixed_base_record',
-           'load_fixed_base_config']
+           'load_fixed_base_config', 'send_streams_check']
 
 
 # ==================================================================== CLI
@@ -515,7 +548,9 @@ def run_mock(plan, scenario, reader):
                        transport.latest_body_pose, transport.wall_now, plan.limits),
         transport.fixed_base_snapshot, cfg), transport.fixed_base_snapshot, transport.wall_now,
         cfg), transport.command_owner_snapshot)
-    session = M61Session(transport, plan, provide, reader, latch=latch, fixed_base=cfg)
+    session = M61Session(transport, plan, provide, reader, latch=latch, fixed_base=cfg,
+                         streams_check=send_streams_check(transport, cfg,
+                                                          plan.sources.joint_names))
     out = session.run()
     out.update(mode='mock', scenario=scenario, mock_server_goals_received=len(transport.sent),
                mock_server_cancels_received=transport.cancels)
@@ -589,7 +624,9 @@ def _run_live(plan, transport_factory, collect_factory, reader, latch, domain_id
             transport.fixed_base_snapshot, cfg), transport.fixed_base_snapshot,
             transport.wall_now, cfg), transport.command_owner_snapshot)
         session = M61Session(transport, plan, provide, reader, latch=latch,
-                             checkpoint=checkpoint, fixed_base=cfg)
+                             checkpoint=checkpoint, fixed_base=cfg,
+                             streams_check=send_streams_check(transport, cfg,
+                                                              plan.sources.joint_names))
         out = session.run()
         return out, session
     finally:
