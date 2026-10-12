@@ -283,7 +283,8 @@ Every item must be true, and each run needs a separate owner approval. Status at
 | 9 | Owner-side offline / mock / isolated verification on the Ubuntu PC | ⏳ | Items 1–4, then `--mock --scenario success` and one gate scenario |
 | 10 | Read-only graph preflight on the M6.1 launch (no goal) | ⏳ | Separate approval |
 | 11 | Final audit, then the enabling change on a never-merged branch (flips `M61_LIVE_DISPATCH_ENABLED` and `test/m61_gate.py` only) | ⏳ | Separate approval |
-| 12 | One owner live run, results document, gate re-disabled | ⏳ | Separate approval |
+| 12 | One owner live run, results document, gate re-disabled | ⏳; the Cloud attempt of 2026-10-12 was REFUSED before dispatch with 0 goals ([Cloud report](M61A_CLOUD_VERIFICATION.md) §11) | Separate approval |
+| 13 | Bounded action-server discovery before readiness #1, and a READY read-only rehearsal on the disabled build | ✅ cloud at `61f3ffc`: 8 of 8 rehearsals READY; the pre-fix refusal reproduced read-only ([Cloud report](M61A_CLOUD_VERIFICATION.md) §12) | `ros2 run spiderx_controller m61_readiness_rehearsal --domain-id 0` with the launch up: `READY`, 0 goals, 0 dispatch calls |
 
 Offline and mock commands (no simulation is needed, and nothing is sent to any graph):
 
@@ -296,6 +297,29 @@ ros2 run spiderx_controller m6_gait_replay.py --live --domain-id 0     # REFUSED
 ```
 
 ---
+
+### 5.1 Readiness: bounded action-server discovery and the complete record (`61f3ffc`)
+
+- **Why.** The M6.0-B probe asks for the action servers once, by node, after a fixed 2.0 s spin
+  of a just-created node. In Cloud that missed a running server: the attempt of 2026-10-12 was
+  refused with `action_server_missing`, and the refusal was reproduced read-only with the pre-fix
+  code (Cloud report §12.1).
+- **What.**
+  - `m61_discovery.wait_for_action_server` repeats the same query every 0.25 s, bounded by
+    `SERVER_WAIT_S` (10 s).
+  - `m6_gait_replay.with_action_discovery` is the innermost readiness layer, so the observation
+    starts after the wait (expiry unchanged) and every check is observed afresh.
+  - Not seen by the bound means refused (`action_server_missing` + `action_discovery_timeout`),
+    with a classification of what the graph showed. An interrupt ends the wait early.
+- **One composition.** `compose_readiness` builds readiness for `--live`, `--mock` and the
+  rehearsal.
+- **Evidence.** `readiness_before/after.json` carry the complete per-check report, monotonic
+  timestamps, the discovery polls, domain, action and node.
+- **Read-only rehearsal.** `m61_readiness_rehearsal` runs the production readiness path and the
+  pre-send streams check on a transport whose send and cancel raise. It has no session and no
+  goal, reads no gate, and runs on the disabled build.
+- **Tests.** `test/test_m61_discovery.py` (fake clocks, mock sessions, both gate modes with
+  fakes, isolated ROS domain).
 
 ## 6. Allowed claim and non-claims
 

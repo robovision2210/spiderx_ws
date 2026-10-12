@@ -1,0 +1,971 @@
+[
+ {
+  "trial": 0,
+  "first_seen": {
+   "t_s": 0.254,
+   "by": [
+    [
+     "leg_trajectory_controller",
+     "/",
+     [
+      "control_msgs/action/FollowJointTrajectory"
+     ]
+    ]
+   ]
+  },
+  "seen_by_2_0_s": true,
+  "log": [
+   {
+    "t_s": 0.05,
+    "nodes": 3,
+    "server_seen": false
+   },
+   {
+    "t_s": 0.254,
+    "nodes": 7,
+    "server_seen": true
+   },
+   {
+    "t_s": 0.507,
+    "nodes": 7,
+    "server_seen": true
+   },
+   {
+    "t_s": 0.76,
+    "nodes": 7,
+    "server_seen": true
+   },
+   {
+    "t_s": 1.013,
+    "nodes": 7,
+    "server_seen": true
+   },
+   {
+    "t_s": 1.265,
+    "nodes": 7,
+    "server_seen": true
+   },
+   {
+    "t_s": 1.517,
+    "nodes": 7,
+    "server_seen": true
+   },
+   {
+    "t_s": 1.788,
+    "nodes": 7,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.006,
+    "nodes": 7,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.258,
+    "nodes": 8,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.511,
+    "nodes": 8,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.766,
+    "nodes": 8,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.018,
+    "nodes": 8,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.272,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.524,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.776,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.03,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.283,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.536,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.789,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.042,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.298,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.55,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.752,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.006,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.259,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.512,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.764,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.019,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.271,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.523,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.776,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.028,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.28,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.535,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.787,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.039,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.292,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.544,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.798,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.051,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.252,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.507,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.759,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.012,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.264,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.516,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.771,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.025,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.279,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.531,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.783,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.036,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.289,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.542,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.795,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.047,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.3,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.502,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.754,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 15.007,
+    "nodes": 9,
+    "server_seen": true
+   }
+  ]
+ },
+ {
+  "trial": 1,
+  "first_seen": {
+   "t_s": 0.505,
+   "by": [
+    [
+     "leg_trajectory_controller",
+     "/",
+     [
+      "control_msgs/action/FollowJointTrajectory"
+     ]
+    ]
+   ]
+  },
+  "seen_by_2_0_s": true,
+  "log": [
+   {
+    "t_s": 0.05,
+    "nodes": 1,
+    "server_seen": false
+   },
+   {
+    "t_s": 0.252,
+    "nodes": 1,
+    "server_seen": false
+   },
+   {
+    "t_s": 0.505,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 0.758,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 1.011,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 1.263,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 1.515,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 1.768,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.022,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.274,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.526,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.78,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.032,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.285,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.537,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.791,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.046,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.298,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.5,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.752,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.004,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.257,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.514,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.766,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.018,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.271,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.523,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.776,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.029,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.282,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.534,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.787,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.039,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.295,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.548,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.8,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.002,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.254,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.51,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.762,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.015,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.268,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.521,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.777,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.029,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.282,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.534,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.786,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.039,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.293,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.545,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.798,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.0,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.253,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.506,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.758,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.013,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.265,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.518,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.771,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 15.023,
+    "nodes": 9,
+    "server_seen": true
+   }
+  ]
+ },
+ {
+  "trial": 2,
+  "first_seen": {
+   "t_s": 1.518,
+   "by": [
+    [
+     "leg_trajectory_controller",
+     "/",
+     [
+      "control_msgs/action/FollowJointTrajectory"
+     ]
+    ]
+   ]
+  },
+  "seen_by_2_0_s": true,
+  "log": [
+   {
+    "t_s": 0.051,
+    "nodes": 1,
+    "server_seen": false
+   },
+   {
+    "t_s": 0.254,
+    "nodes": 3,
+    "server_seen": false
+   },
+   {
+    "t_s": 0.506,
+    "nodes": 4,
+    "server_seen": false
+   },
+   {
+    "t_s": 0.759,
+    "nodes": 4,
+    "server_seen": false
+   },
+   {
+    "t_s": 1.014,
+    "nodes": 4,
+    "server_seen": false
+   },
+   {
+    "t_s": 1.266,
+    "nodes": 4,
+    "server_seen": false
+   },
+   {
+    "t_s": 1.518,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 1.771,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.026,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.252,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.508,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 2.76,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.012,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.265,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.517,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 3.77,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.022,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.276,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.529,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 4.781,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.033,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.285,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.541,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 5.793,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.046,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.3,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.503,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 6.755,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.008,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.26,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.515,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 7.77,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.022,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.274,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.526,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 8.779,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.033,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.285,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.538,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 9.794,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.047,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.3,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.502,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 10.756,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.008,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.261,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.53,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 11.782,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.034,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.29,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.542,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 12.795,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.047,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.3,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.502,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 13.756,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.009,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.261,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.513,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 14.766,
+    "nodes": 9,
+    "server_seen": true
+   },
+   {
+    "t_s": 15.018,
+    "nodes": 9,
+    "server_seen": true
+   }
+  ]
+ }
+]

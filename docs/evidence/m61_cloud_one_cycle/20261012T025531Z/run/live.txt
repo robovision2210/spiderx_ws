@@ -1,0 +1,6 @@
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Live: final state REFUSED, reason stack_incompatible, goals sent 0, cancels sent 0; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T025531Z/run/m61_run/20261012T030023Z/live_outcome.json
+[ros2run]: Process exited with failure 2
+exit=2

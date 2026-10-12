@@ -1,0 +1,5 @@
+HEAD 61f3ffcd2666ea090e24833221b84c90773e1f0d (claude/stoic-shannon-ur2mes)
+origin 61f3ffcd2666ea090e24833221b84c90773e1f0d
+status entries: 0
+src/spiderx_controller/spiderx_controller/m61_live_contract.py:19:M61_LIVE_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m6_live_contract.py:18:LIVE_DISPATCH_ENABLED = False

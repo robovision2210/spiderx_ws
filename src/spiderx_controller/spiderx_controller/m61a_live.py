@@ -11,7 +11,9 @@ transport + one ground-truth pose subscription) with:
   - streams_now(): immediately before the send, a drain of what was queued, then a 1 s spin of
     its own executor, so the M6.1 pre-send check (m61a_fixed_base.streams_at_send) sees what
     arrives NOW (joint states, body pose, sim progress), not a readiness result that may be up
-    to 10 s old, and not a backlog that only looks fresh.
+    to 10 s old, and not a backlog that only looks fresh;
+  - action_discovery_snapshot() and spin_for() for the bounded action-server discovery that
+    precedes the first readiness observation (m61_discovery; read-only graph queries).
 It publishes nothing, creates no action client beyond the M6.0-D one, and sends no goal of its
 own. Importing this module starts nothing. Live use stays HARD-DISABLED by the M6.1 CLI
 (m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False).
@@ -96,6 +98,36 @@ class M61AFixedBaseTransport(la.M61RclpyLiveTransport):
 
     def fixed_base_snapshot(self):
         return self.tracker.snapshot()
+
+    def action_discovery_snapshot(self):
+        """What this node's graph shows of the approved action NOW (m61_discovery). Read-only.
+
+        'servers' is the readiness probe's own per-node query (GraphProbe.action_servers), so a
+        server it reports is one the readiness observation can see. 'nodes', the status-topic
+        publishers and whether this transport's client is matched to a server let a timeout be
+        classified (absent on a discovered host, endpoints without a node, not discovered)."""
+        from spiderx_controller import m6_live_adapter as m6la
+        from spiderx_controller import m6_live_preflight as lpf
+        self._require_open()
+        probe = lpf.GraphProbe(self.node, m6la._OwnExecutorRosApi(self))
+        nodes = [lpf._fqn(n, ns) for n, ns in self.node.get_node_names_and_namespaces()]
+        return {'servers': probe.action_servers(),
+                'nodes': nodes,
+                'status_publishers': self.node.count_publishers(
+                    action_status_topic(self.action_name)),
+                'client_matched': bool(self.client.server_is_ready())}
+
+    def spin_for(self, seconds):
+        """Spin this transport's own executor for `seconds` (discovery and stream callbacks).
+        Stream events received meanwhile stay queued and are dropped by the readiness collection
+        that follows, as during the collection itself."""
+        self._require_open()
+        end = time.monotonic() + max(0.0, float(seconds))
+        while True:
+            remaining = end - time.monotonic()
+            if remaining <= 0:
+                break
+            self.executor.spin_once(timeout_sec=remaining)
 
     def streams_now(self, settle_s=None):
         """The streams NOW, for the check immediately before the send (M6.1, plan E5).

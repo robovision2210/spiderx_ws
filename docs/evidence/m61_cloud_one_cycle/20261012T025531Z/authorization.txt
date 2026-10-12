@@ -1,0 +1,13 @@
+Owner authorization (2026-10-12), for ONE M6.1 fixed-base trot cycle in Cloud Gazebo only:
+- Criterion 6 v2 approved as a limited planar check; v1 retained as FAIL.
+- Verified simulator physics state accepted for z/roll/pitch.
+- E1-E11 as documented at base commit 8025668 (docs/M61_CLOUD_ONE_CYCLE_PLAN.md).
+- Only the reviewed two-line enabling patch, on a new local, never-pushed, never-merged branch.
+- Enabled-build tests required; any failure blocks dispatch.
+- fortress_m61a_fixed_base.launch.py, localhost only, no foreign commanders; one relaunch only for
+  the documented startup race, before any goal.
+- After READY and the final pre-send freshness/sim-progress check: ONE confirmation, ONE goal
+  (trajectory 241760e7dfd5ef12 with matching full hashes). No retry, no second goal, no
+  automatic return; at most one cancel; any gate trip = cancel + failed-run report.
+- Restore script after success, failure or interruption: DISABLED AND VERIFIED required.
+- No free-base or M5.5 dispatch. PR #17 stays draft and unmerged.

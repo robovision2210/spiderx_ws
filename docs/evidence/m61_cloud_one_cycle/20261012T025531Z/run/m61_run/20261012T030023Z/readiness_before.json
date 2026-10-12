@@ -1,0 +1,16 @@
+{
+ "result": {
+  "age_s": 4.781673,
+  "classification": "incompatible",
+  "collection_s": 4.780034,
+  "failure_codes": [
+   "action_server_missing"
+  ],
+  "observed_wall_iso": null,
+  "ready": false,
+  "reasons": [
+   "contract failure: action_server_missing"
+  ]
+ },
+ "when": "before_confirmation"
+}

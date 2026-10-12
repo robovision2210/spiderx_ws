@@ -29,6 +29,7 @@ install(PROGRAMS
   scripts/m55_locomotion_node
   scripts/m55_teleop_keyboard
   scripts/m55_gait_feasibility
+  scripts/m61_readiness_rehearsal
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -79,6 +80,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m55_gait test/test_m55_gait.py TIMEOUT 900)
   ament_add_pytest_test(test_m55_ros test/test_m55_ros.py TIMEOUT 300)
   ament_add_pytest_test(test_m55_review test/test_m55_review.py TIMEOUT 300)
+  ament_add_pytest_test(test_m61_discovery test/test_m61_discovery.py TIMEOUT 600)
 endif()
 
 ament_package()

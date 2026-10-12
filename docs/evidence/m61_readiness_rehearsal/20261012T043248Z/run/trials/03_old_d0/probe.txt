@@ -1,0 +1,3 @@
+old path: permitted True (None); failure codes []; first query at node age 2.107163 s; server first seen at node age 4.139666 s; dispatch calls 0
+{"action_queries": [{"servers": [["/leg_trajectory_controller", ["control_msgs/action/FollowJointTrajectory"]]], "error": null}]}
+exit=0

@@ -149,7 +149,7 @@ protected replay (not implemented). Odometry is now M7 (see the numbering note a
 - [x] M6.1: protected replay of ONE offline-validated trot cycle — design `7b8798c`, implementation `6a7f1f0` (offline/mock/isolated-domain verified; live dispatch hard-disabled) — [notes](M61_IMPLEMENTATION_NOTES.md)
 - [x] M6.1-A: fixed-base simulation and body-pose observability — Approach B weld via a wrapper xacro and a dedicated launch, provisional 0.125 m mount from a guaranteed clearance bound, composed body pose, attachment gate G8, read-only observer; Cloud offline/mock/isolated verified ([implementation](M61A_FIXED_BASE_IMPLEMENTATION.md))
 - [ ] M6.1-A phase 1: launch-only fixed-base observation on the owner's PC (confirms the height, tolerances and pose gaps)
-- [ ] M6.1 phase 2: one approved fixed-base trot cycle (separate approval and enabling change)
+- [ ] M6.1 phase 2: one approved fixed-base trot cycle (separate approval and enabling change). It was attempted once in Cloud on 2026-10-12 and refused before dispatch, with 0 goals ([Cloud report §11](M61A_CLOUD_VERIFICATION.md)); the readiness refusal was fixed at `61f3ffc` and rehearsed without motion (§12); a new authorization is needed
 
 ## Future — Gait playback and walking in simulation (unscheduled; formerly the M4.5 goal)
 
