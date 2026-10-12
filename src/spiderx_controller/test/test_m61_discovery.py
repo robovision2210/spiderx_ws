@@ -410,8 +410,10 @@ def live(plan, tmp_path, f, utc):
                          collect_factory=f.collect, utc_stamp=utc)
 
 
-def test_disabled_build_refuses_live_before_any_discovery(plan, tmp_path):
-    assert c61.M61_LIVE_DISPATCH_ENABLED is False
+def test_disabled_gate_refuses_live_before_any_discovery(plan, tmp_path, monkeypatch):
+    """Mode-explicit: the gate is set False here (tests only), whatever this build carries;
+    the build's own value is pinned by test/m61_gate.py."""
+    monkeypatch.setattr(c61, 'M61_LIVE_DISPATCH_ENABLED', False)
     f = LateFactories(plan, action_server_at=3.0)
     rc = gr.main(['m6_gait_replay', '--live', '--domain-id', '42', '--out', str(tmp_path)],
                  plan=plan, reader=word())
