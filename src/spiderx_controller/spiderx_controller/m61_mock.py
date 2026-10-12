@@ -16,7 +16,10 @@ and /joint_states stream on a fake wall clock) with:
     without a node (action_endpoints_only); readiness_report() then observes the server as it is
     at the observation time;
   - a competing action client that appears at a fake time (foreign_client_at), e.g. during the
-    discovery wait.
+    discovery wait;
+  - action feedback whose desired.time_from_start is always 0 (feedback_tfs_zero), as
+    joint_trajectory_controller 2.48.0 (the Cloud image) reports it; the base fake reports the
+    true elapsed time, as 2.49.0 and later (the owner PC's 2.54.0) do.
 Every goal and cancel it receives is recorded, so tests can prove what was (not) dispatched.
 
 M6.1-A fixed-base mode (fixed_base=<FixedBaseConfig>, what the CLI --mock uses): the mock plays
@@ -49,7 +52,7 @@ class M61FakeTransport(m6mock.FakeTransport):
                  mount_override=None, command_publishers=0, foreign_clients=0,
                  competing_after_calls=None, server_wait_s=0.0, action_server_at=0.0,
                  action_host_visible=True, action_endpoints_only=False, foreign_client_at=None,
-                 **kw):
+                 feedback_tfs_zero=False, **kw):
         latency = kw.get('response_latency', 0.1)
         rtf = kw.get('rtf', 1.0)
         duration = trajectory['points'][-1]['time_from_start_s']
@@ -97,6 +100,7 @@ class M61FakeTransport(m6mock.FakeTransport):
         self.foreign_client_at = foreign_client_at
         self.discovery_snapshots = 0
         self.spun_s = 0.0
+        self.feedback_tfs_zero = feedback_tfs_zero
 
     # ---------------------------------------------------------------- server wait and send
     def server_ready(self, timeout_s):
@@ -279,6 +283,9 @@ class M61FakeTransport(m6mock.FakeTransport):
 
     def poll(self, timeout_s):
         events = list(super().poll(timeout_s))          # advances the fake clock to self.t
+        if self.feedback_tfs_zero:                      # JTC 2.48.0: the field stays 0
+            events = [('feedback', dict(e[1], desired_time_from_start=0.0))
+                      if e and e[0] == 'feedback' else e for e in events]
         while self.next_pose <= self.t:
             if self._pose_flowing(self.next_pose - self.t_start):
                 w = self.next_pose
@@ -347,6 +354,10 @@ SCENARIOS = {
     'late_server_competing_client': {'action_server_at': 3.0, 'foreign_clients': 1},  # refused
     'client_appears_during_discovery': {'action_server_at': 3.0,
                                         'foreign_client_at': 1.0},          # refused
+    # Feedback desired.time_from_start = 0 (JTC 2.48.0, the Cloud image; m61_tracking).
+    'feedback_tfs_zero': {'feedback_tfs_zero': True},           # tracks from acceptance: OK
+    'tracking_error_tfs_zero': {'feedback_tfs_zero': True, 'error_after': 4.0,
+                                'error_value': 0.06},             # a real error still cancels
 }
 # Fixed-base scenarios need the fixed-base mode; G7 report-only drift is a free-base behaviour
 # (on a weld, any drift G7 could flag is first an attachment failure, G8).

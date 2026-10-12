@@ -1,0 +1,2 @@
+verdict PASS; no_goal_in_action_status=True, no_command_messages=True, probe_has_no_action_client=True, robot_held_neutral=True, live_time_from_start_zero=True, anchor_is_acceptance=True, fallback_recorded_once=True, tracked_from_3s=True, non_moving_robot_trips_as_predicted=True, m6d_rule_estimate_drifted=True
+exit=0

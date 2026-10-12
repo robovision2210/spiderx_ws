@@ -54,6 +54,7 @@ from spiderx_controller import m61_evidence as evd
 from spiderx_controller import m61_gates as gates
 from spiderx_controller import m61_goal as goal61
 from spiderx_controller import m61_live_contract as c61
+from spiderx_controller import m61_tracking as trk
 from spiderx_controller import m61_trot_cycle as tc
 from spiderx_controller import m61a_fixed_base as fb
 
@@ -96,6 +97,10 @@ class M61Session(lp.LiveSession):
         self._tracking_verdict = None
         self._js_rows = []
         self._pose_rows = []
+        self._feedback_timing = []               # (stamp, desired.time_from_start) per feedback
+        self._anchor_cache = None                # ((accept, n feedback), (t0, record))
+        self._fallback_inflight = 0              # in-flight checks made on the fallback anchor
+        self._fallback_logged = False
 
     # ------------------------------------------------------------ pre-dispatch (M6.1 content)
     def _run(self):
@@ -235,15 +240,45 @@ class M61Session(lp.LiveSession):
                                                gate=self._observing())
             if reason and self._gating():
                 self._request_cancel(reason)            # before the tracking check below
+        if kind == 'feedback':
+            self._feedback_timing.append(feedback_timing(ev[1] if len(ev) > 1 else None))
         done = super()._on_event(ev, monitor)
         if kind == 'goal_response' and self.gates is not None and self._acceptance:
             self.gates.arm(self._now())
         return done
 
+    # ------------------------------------------------------------ tracking reference (M6.1)
+    def _anchor(self):
+        """(t0, record) of the reference start (m61_tracking.tracking_anchor), cached per
+        acceptance and feedback count."""
+        key = (self._t_accept_sim, len(self._feedback_timing))
+        if self._anchor_cache is None or self._anchor_cache[0] != key:
+            self._anchor_cache = (key, trk.tracking_anchor(self._t_accept_sim,
+                                                           self._feedback_timing))
+        return self._anchor_cache[1]
+
+    def _start_estimate(self):
+        """Only feedback with an informative desired.time_from_start forms an estimate; the
+        M6.0-D median of `stamp - time_from_start` over ALL feedback is the bare stamp median when
+        the controller reports 0, and is not a start time."""
+        return self._anchor()[1]['feedback_estimate_s']
+
+    def _ref_time(self, stamp):
+        t0, rec = self._anchor()
+        if rec['fallback_time_from_start_zero'] and not self._fallback_logged:
+            self._fallback_logged = True
+            self._event(f'tracking reference: {trk.FALLBACK_NOTE} '
+                        f'(t0 = acceptance {t0}; {rec["feedback_samples"]} feedback, '
+                        f'{rec["informative_samples"]} informative)')
+        return stamp - t0
+
     def _inflight_tracking(self, stamp, names, positions):
         if self._t_accept_sim is None:
             return None
-        ref = tc.reference_positions(self._trajectory, self._ref_time(stamp))
+        rt = self._ref_time(stamp)
+        if self._anchor()[1]['fallback_time_from_start_zero']:
+            self._fallback_inflight += 1
+        ref = tc.reference_positions(self._trajectory, rt)
         if ref is None:
             return None
         pos = dict(zip(names, positions))
@@ -340,8 +375,32 @@ class M61Session(lp.LiveSession):
                               'body_pose': len(self._pose_rows)},
             'm61_live_dispatch_enabled': c61.M61_LIVE_DISPATCH_ENABLED,
             'fixed_base': fixed_base_record(self.fixed_base, self.transport),
+            'tracking_reference': self.tracking_reference(),
         })
         return out
+
+    def tracking_reference(self):
+        """How the reference start was chosen (m61_tracking): the anchor, the feedback counts,
+        whether the acceptance anchor was a time_from_start=0 FALLBACK and how many in-flight
+        checks used it, and for comparison the unfiltered M6.0-D stamp median."""
+        rec = dict(self._anchor()[1])
+        rec.update({'fallback_inflight_checks': self._fallback_inflight,
+                    'fallback_logged': self._fallback_logged,
+                    'unfiltered_m6d_estimate_s': lp.LiveSession._start_estimate(self),
+                    'abort_threshold_rad': (None if self.limits is None
+                                            else self.limits.client_tracking_abort_rad)})
+        return rec
+
+
+def feedback_timing(fb):
+    """(stamp, desired.time_from_start) of one action-feedback event, as floats; a missing or
+    unreadable field becomes NaN (counted, never an estimate)."""
+    def num(key):
+        try:
+            return float(fb[key])
+        except (KeyError, TypeError, ValueError):
+            return math.nan
+    return num('stamp'), num('desired_time_from_start')
 
 
 def fixed_base_record(cfg, transport):
@@ -574,7 +633,8 @@ def with_body_pose(base_provider, latest_pose, now, limits):
     return provide
 
 
-__all__ = ['M61Session', 'GATE_TRIPPED', 'M61_TERMINAL', 'OUTCOME_SCHEMA', 'with_body_pose',
+__all__ = ['M61Session', 'GATE_TRIPPED', 'M61_TERMINAL', 'OUTCOME_SCHEMA', 'feedback_timing',
+           'with_body_pose',
            'with_fixed_base', 'with_sim_progress', 'with_command_owner', 'fixed_base_record',
            'load_fixed_base_config', 'send_streams_check', 'with_action_discovery',
            'with_readiness_record', 'compose_readiness', 'live_readiness_provider',

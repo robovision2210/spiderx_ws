@@ -1,0 +1,5 @@
+both controllers active after 10 s of polling
+[INFO] [1791784475.601008404] [_ros2cli_3439]: waiting for service /controller_manager/list_controllers to become available...
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+wait exit=0

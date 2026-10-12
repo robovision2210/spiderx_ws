@@ -1,0 +1,69 @@
+baseline (unmutated): rc=0  87 passed, 128 deselected in 16.76s
+M1 zero time_from_start counts as informative: CAUGHT  rc=1  22 failed, 65 passed, 128 deselected in 16.84s
+    test/test_m61_gait_replay.py::test_mock_scenario_outcomes[feedback_tfs_zero]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[joint_missing]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[joints_never_move]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[lag_0_5s]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[offset_after_4s]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[one_sample_spike]
+    test/test_m61_tracking.py::test_abort_threshold_boundary_at_the_first_tracked_instant
+    test/test_m61_tracking.py::test_enabled_live_wiring_tracks_a_zero_tfs_controller
+    ... 14 more
+M2 negative time_from_start counts as informative (abs): CAUGHT  rc=1  1 failed, 86 passed, 128 deselected in 16.24s
+    test/test_m61_tracking.py::test_informative_boundaries[-0.5-False]
+M3 offset limit inclusive (>=): CAUGHT  rc=1  1 failed, 86 passed, 128 deselected in 16.55s
+    test/test_m61_tracking.py::test_offset_limit_boundary_is_exclusive
+M4 informative estimate ignored (always acceptance): CAUGHT  rc=1  2 failed, 85 passed, 128 deselected in 16.51s
+    test/test_m61_tracking.py::test_informative_feedback_reporting_another_start_moves_the_anchor
+    test/test_m61_tracking.py::test_offset_limit_boundary_is_exclusive
+M5 fallback never recorded: CAUGHT  rc=1  21 failed, 66 passed, 128 deselected in 16.58s
+    test/test_m61_tracking.py::test_a_non_finite_stamp_is_never_an_estimate
+    test/test_m61_tracking.py::test_enabled_live_wiring_tracks_a_zero_tfs_controller
+    test/test_m61_tracking.py::test_fallback_is_recorded_once_and_counted
+    test/test_m61_tracking.py::test_feedback_that_turns_informative_keeps_the_fallback_record
+    test/test_m61_tracking.py::test_informative_boundaries[-0.0-False]
+    test/test_m61_tracking.py::test_informative_boundaries[-0.5-False]
+    test/test_m61_tracking.py::test_informative_boundaries[-inf-False]
+    test/test_m61_tracking.py::test_informative_boundaries[0.0-False]
+    ... 13 more
+M6 feedback timing never captured: CAUGHT  rc=1  8 failed, 79 passed, 128 deselected in 16.09s
+    test/test_m61_tracking.py::test_enabled_live_wiring_tracks_a_zero_tfs_controller
+    test/test_m61_tracking.py::test_fallback_is_recorded_once_and_counted
+    test/test_m61_tracking.py::test_feedback_that_turns_informative_keeps_the_fallback_record
+    test/test_m61_tracking.py::test_informative_feedback_needs_no_fallback
+    test/test_m61_tracking.py::test_mock_controller_reporting_zero_time_from_start
+    test/test_m61_tracking.py::test_mock_informative_feedback_records_no_fallback
+    test/test_m61_tracking.py::test_replay_of_the_recorded_cycle_does_not_abort
+    test/test_m61_tracking.py::test_unreadable_feedback_fields_are_counted_not_used
+M7 M6.1 overrides removed: the pre-fix M6.0-D rule: CAUGHT  rc=1  9 failed, 78 passed, 128 deselected in 16.87s
+    test/test_m61_gait_replay.py::test_mock_scenario_outcomes[feedback_tfs_zero]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[joints_never_move]
+    test/test_m61_tracking.py::test_abort_threshold_boundary_at_the_first_tracked_instant
+    test/test_m61_tracking.py::test_enabled_live_wiring_tracks_a_zero_tfs_controller
+    test/test_m61_tracking.py::test_fallback_is_recorded_once_and_counted
+    test/test_m61_tracking.py::test_feedback_that_turns_informative_keeps_the_fallback_record
+    test/test_m61_tracking.py::test_mock_controller_reporting_zero_time_from_start
+    test/test_m61_tracking.py::test_replay_of_the_recorded_cycle_does_not_abort
+    ... 1 more
+M8 start estimate reverted to the unfiltered M6.0-D median: CAUGHT  rc=1  1 failed, 86 passed, 128 deselected in 16.43s
+    test/test_m61_tracking.py::test_fallback_is_recorded_once_and_counted
+M9 abort threshold inclusive (>=): CAUGHT  rc=1  1 failed, 86 passed, 128 deselected in 16.11s
+    test/test_m61_tracking.py::test_abort_threshold_boundary_at_the_first_tracked_instant
+M10 fallback event never logged: CAUGHT  rc=1  5 failed, 82 passed, 128 deselected in 16.59s
+    test/test_m61_tracking.py::test_enabled_live_wiring_tracks_a_zero_tfs_controller
+    test/test_m61_tracking.py::test_fallback_is_recorded_once_and_counted
+    test/test_m61_tracking.py::test_feedback_that_turns_informative_keeps_the_fallback_record
+    test/test_m61_tracking.py::test_mock_controller_reporting_zero_time_from_start
+    test/test_m61_tracking.py::test_replay_of_the_recorded_cycle_does_not_abort
+M11 the fallback skips the in-flight check: CAUGHT  rc=1  15 failed, 72 passed, 128 deselected in 17.09s
+    test/test_m61_gait_replay.py::test_mock_scenario_outcomes[tracking_error_tfs_zero]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[joint_missing]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[joints_never_move]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[lag_0_5s]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[offset_after_4s]
+    test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[one_sample_spike]
+    test/test_m61_tracking.py::test_abort_threshold_boundary_at_the_first_tracked_instant
+    test/test_m61_tracking.py::test_enabled_live_wiring_still_cancels_a_bad_track
+    ... 7 more
+after restore: rc=0  87 passed, 128 deselected in 16.89s
+mutants caught: 11/11

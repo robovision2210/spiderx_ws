@@ -1,0 +1,24 @@
+M6.1 restore and verify, 20261012T083422Z, workspace /home/user/spiderx_ws, base b0d8e75
+base commit b0d8e757ab23ba8031619abdd8b69fee927d91f2
+--- 1. stop
+ok: no simulation process
+--- 2. preserve
+--- 3. restore
+HEAD b0d8e757ab23ba8031619abdd8b69fee927d91f2 (claude/stoic-shannon-ur2mes)
+ok: src/ equals the base b0d8e757ab23ba8031619abdd8b69fee927d91f2 (no diff, no untracked file)
+--- 4. rebuild
+skipped
+--- 5. verify (fresh environment)
+spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py (inside the workspace: True)
+spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py (inside the workspace: True)
+ok: a. both gates False in the imported modules, from this workspace
+ok: b. ros2 pkg prefix spiderx_controller = /home/user/spiderx_ws/install/spiderx_controller
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+REFUSED: Live M6.1 trot-cycle dispatch is HARD-DISABLED in this build. Sending the one live goal needs a separate owner authorization and an enabling code change after a final audit (docs/M61_IMPLEMENTATION_NOTES.md, verification checklist). Nothing was sent.
+[ros2run]: Process exited with failure 3
+ok: c. --live refused, exit 3, HARD-DISABLED
+ok: d. the calling environment cannot import spiderx_controller (not sourced)
+--- 6. enabling branch
+kept (no --delete-enabling-branch)
+VERDICT: DISABLED AND VERIFIED

@@ -664,6 +664,9 @@ EXPECTED = {   # scenario: (state, reason, goals, cancels, gates tripped)
     'action_server_unattributed': (lpb.REFUSED, 'stack_incompatible', 0, 0, None),
     'late_server_competing_client': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
     'client_appears_during_discovery': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    # feedback desired.time_from_start = 0 (JTC 2.48.0; m61_tracking, test_m61_tracking.py)
+    'feedback_tfs_zero': (lpb.SUCCEEDED, None, 1, 0, None),
+    'tracking_error_tfs_zero': (lpb.TRACKING_FAILED, 'tracking_error', 1, 1, None),
 }
 
 
