@@ -19,7 +19,7 @@ one.
   then observes everything afresh. A missing server is still refused.
 - On the disabled build, the read-only rehearsal of the production readiness path was READY in 8
   of 8 trials; cleanup ended `DISABLED AND VERIFIED`.
-- This plan is updated for a **new** authorization: the base is `61f3ffc` or later, a rehearsal
+- This plan is updated for a **new** authorization: the base is `02d284c` or later, a rehearsal
   step is added (§4 A2), and E5 records the discovery. The patch and the trajectory identities
   are unchanged.
 
@@ -52,7 +52,7 @@ procedure or threshold.
 - Items 1–3 were approved by the owner on 2026-10-12: criterion 6 version 2 as a limited planar
   check, the simulator physics state for z, roll and pitch, and E1–E11 at `8025668`.
 - Item 4, the run, was used once (refused before dispatch) and is spent.
-- A new attempt needs a new run authorization covering `61f3ffc` (the E5 discovery addition) and
+- A new attempt needs a new run authorization covering `61f3ffc`/`02d284c` (the E5 discovery addition) and
   the A2 rehearsal.
 
 1. **Owner decision on criterion 6** ([`M61A_CRITERION6_V2_PROPOSAL.md`](M61A_CRITERION6_V2_PROPOSAL.md);
@@ -108,7 +108,7 @@ procedure or threshold.
 
 | Item | Value | Where |
 |---|---|---|
-| Base branch | `claude/stoic-shannon-ur2mes` at the commit named in the approval (`61f3ffc` or later; `src/` must equal `61f3ffc`: `git diff 61f3ffc HEAD -- src/` empty). The attempt of 2026-10-12 used `8025668`, whose `src/` equals `1732c32` | — |
+| Base branch | `claude/stoic-shannon-ur2mes` at the commit named in the approval (`02d284c` or later; `src/` must equal `02d284c`, which is the fix `61f3ffc` plus a mode-explicit test: `git diff 02d284c HEAD -- src/` empty). The attempt of 2026-10-12 used `8025668`, whose `src/` equals `1732c32` | — |
 | Enabling branch | `local/m61-one-cycle-<UTC>`: **local only, never pushed, never merged**, deleted after the run | §4 |
 | Gate | `m61_live_contract.M61_LIVE_DISPATCH_ENABLED` (line 19), pinned by `test/m61_gate.py` (line 7) | patch |
 | Other gates | M6.0-D `m6_live_contract.LIVE_DISPATCH_ENABLED` stays `False` (not read by M6.1); the M5.5 gate is not on this branch | `m6_gait_replay._gate_state()` |
@@ -199,7 +199,7 @@ Check the copied tools against `frozen_harness.json` before use. Every shell sou
 
 **A. Gate-off checks on the base commit** (record all output in `$R/pre/`):
 ```bash
-git status --short && git rev-parse HEAD && git diff 61f3ffc HEAD -- src/ | wc -l     # clean; 0
+git status --short && git rev-parse HEAD && git diff 02d284c HEAD -- src/ | wc -l     # clean; 0
 pgrep -af "ign gazebo|gz sim|ros2|parameter_bridge|controller_manager|Xvfb" || echo none
 rm -rf build install && colcon build --symlink-install && source install/setup.bash
 ros2 run spiderx_controller m6_gait_replay.py --dry-run --no-write          # 241760e7dfd5ef12 / 9dba1a17…

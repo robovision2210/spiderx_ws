@@ -1261,7 +1261,7 @@ in each, the bag and the observer start **before** the probe.
 
 **Remaining blockers.**
 1. **A new owner authorization.** The one of 2026-10-12 is spent. It must name the base commit
-   (`61f3ffc` or later, `src/` equal to it) and accept the E5 addition (discovery before
+   (`02d284c` or later, `src/` equal to `02d284c`: the fix plus the mode-explicit test) and accept the E5 addition (discovery before
    readiness #1).
 2. **E6–E9** can only be shown in a motion run.
 3. **Owner PC:** phase 1 has not run there.
