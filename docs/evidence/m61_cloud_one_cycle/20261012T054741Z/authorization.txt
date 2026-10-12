@@ -1,0 +1,14 @@
+Owner authorization (2026-10-12, NEW; the a1a7d60 attempt is spent and not precedent), for ONE
+M6.1 fixed-base trot cycle in Claude Cloud simulation only:
+- Accepted: criterion 6 v2 as a limited planar check (v1 stays FAIL); the simulator physics state
+  for z/roll/pitch, for this simulation only; E1-E11 as documented, E5 including the bounded
+  action-server discovery wait (up to 10 s, then fresh readiness checks).
+- Base: claude/stoic-shannon-ur2mes head dcac464c898f1b8b57b3e0659abcb2d84123615e = origin, clean;
+  src/ equal to 02d284c1a64941d501e0b429d39fad0871365b4b; all gates False.
+- Patch docs/patches/m61_enable_one_cycle.UNAPPLIED.patch (b6213f21...); identities
+  241760e7dfd5ef12 / 94a492c4... / 9dba1a17...; stop on any mismatch or unexplained change.
+- Procedure A, A2 (3 read-only rehearsals READY, then verify-only DISABLED AND VERIFIED), B, C, D,
+  E (bag + observer, 10 s, tool; ONE confirmation, ONE goal; no retry, no second goal, no
+  automatic return; at most one cancel), F (frozen link check), G (restore: DISABLED AND VERIFIED).
+- Not authorized: hardware, owner PC, M5.5 or free-base dispatch, a second cycle, pushing enabled
+  code, any claim of walking, balance or navigation. PR #17 stays draft and unmerged.

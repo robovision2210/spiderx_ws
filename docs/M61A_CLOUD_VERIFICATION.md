@@ -1289,3 +1289,51 @@ in each, the bag and the observer start **before** the probe.
   `DISABLED AND VERIFIED`, with `--live` exit 3.
 - **Evaluation.** E1–E11, with missing evidence UNMEASURED. E5 now includes
   `m61_action_discovery.outcome = found` and the complete readiness report.
+
+## 13. The second authorized cycle (2026-10-12, `dcac464`): one goal, cancelled by a client reference-timing defect
+
+Evidence: [`evidence/m61_cloud_one_cycle/20261012T054741Z/`](evidence/m61_cloud_one_cycle/20261012T054741Z/README.md)
+(README, `requirements.json`, `SHA256SUMS`).
+
+**Result: FAIL. 1 goal, 1 cancel; `TRACKING_FAILED`, exit 1.** No retry, no second goal, no return
+goal. Cleanup ended `DISABLED AND VERIFIED` twice. The authorization is spent.
+
+**What ran.**
+- **Base.** `dcac464` = origin, clean; `src/` = `02d284c`. Patch `b6213f21…7595` and every
+  identity matched.
+- **A2.** 3 read-only rehearsals on the disabled build were READY (discovery 2.01, 0.75 and
+  0.00 s), then verify-only gave DISABLED AND VERIFIED.
+- **Enabled build.** 222 passed, 0 failed.
+- **Launch.** Healthy, with no relaunch; preflight READY.
+- **The tool.** Started 10 s after the observer.
+  - Discovery found the server immediately.
+  - Readiness was READY before and after the confirmation, which was written once, at the prompt.
+  - At the send: the readiness age was 4.36 s and the streams check passed.
+  - The goal was accepted. The client cancelled it about 6.2 s into the 7.0 s cycle (in-flight
+    |error| 0.0805 rad > 0.05); final status CANCELED.
+
+**Why the cancel is a false positive** (README §2; `run/tracking_reference_analysis.json`).
+- `LiveSession._ref_time` (M6.0-D, reused by M6.1) moves the reference start to the median of
+  `feedback stamp − desired.time_from_start` whenever that differs from acceptance by more than
+  0.1 s.
+- This JTC reports `desired.time_from_start = 0` (255 of 255 `controller_state` samples), so the
+  "estimate" is the median feedback stamp: 3.216 s after acceptance by the cancel.
+- That held the client's reference in the untracked 3 s lead-in until 6.2 s into the goal. Its
+  first tracked sample compared the neutral first waypoint with legs mid-cycle.
+- Timed from acceptance, the recorded joints tracked the approved trajectory within **0.0108 rad**
+  over all 322 tracked samples. The controller's own reported error was ≤ 0.0126 rad.
+- The test double of the M6.0-D tests fills `time_from_start`, so no test caught this.
+
+**E1–E11.** E1, E2, E3, E5, E8, E9, E10 and E11 PASS. E7 PASS for the executed portion (no gate
+tripped; the last 0.8 s never ran). **E4 and E6 FAIL as written.**
+- E8: body deviation 0 during motion; provenance PASS.
+- E9: link/kinematic consistency PASS; the counterfactual scored 22.1.
+
+**Not shown:** a completed cycle with goal tolerances, walking, balance, contact or hardware.
+
+**Next step (not implemented).**
+- Fix the client's in-flight reference on the M6.1 side: time the reference from acceptance, and
+  ignore a feedback "estimate" built from `desired.time_from_start = 0`.
+- Add a test double that reports `time_from_start = 0` like this JTC, plus a regression test that
+  replays this run's recorded joint states and feedback.
+- Rehearse read-only, then seek a new authorization.

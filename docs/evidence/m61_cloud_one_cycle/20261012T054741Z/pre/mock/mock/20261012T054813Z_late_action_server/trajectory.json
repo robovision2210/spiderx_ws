@@ -1,0 +1,348 @@
+{
+ "gait": {
+  "base_constraint": "fixed",
+  "cycle_duration_s": 4.0,
+  "duty_factor": 0.5,
+  "gait_name": "trot",
+  "lead_in_s": 3.0,
+  "lift_height_m": 0.006,
+  "num_cycles": 1,
+  "num_waypoints": 9,
+  "segments": 8,
+  "stance_height_offset_m": 0.0,
+  "step_length_m": 0.02,
+  "swing_pair_first": [
+   "front_left",
+   "rear_right"
+  ],
+  "swing_pair_second": [
+   "front_right",
+   "rear_left"
+  ],
+  "variant": "start_stop_single_cycle"
+ },
+ "joint_names": [
+  "lf_hip",
+  "lf_thigh_joint",
+  "lf_foot_joint",
+  "rf_hip",
+  "rf_thigh_joint",
+  "rf_foot_joint",
+  "lr_hip",
+  "lr_thigh_joint",
+  "lr_foot_joint",
+  "rr_hip",
+  "rr_thigh_joint",
+  "rr_foot_joint"
+ ],
+ "milestone": "M6.1",
+ "mode": "single_trot_cycle",
+ "points": [
+  {
+   "label": "neutral_start_pair_a_liftoff",
+   "positions": [
+    0.0,
+    0.0,
+    -0.0,
+    -0.0,
+    -0.0,
+    -0.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "time_from_start_s": 3.0,
+   "velocities": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "label": "pair_a_swing_quarter",
+   "positions": [
+    0.0,
+    0.005606216,
+    0.036781367,
+    -0.0,
+    -0.001772035,
+    -7.1836e-05,
+    0.0,
+    0.001772035,
+    -7.1836e-05,
+    0.0,
+    -0.005606216,
+    -0.036781367
+   ],
+   "time_from_start_s": 3.5,
+   "velocities": [
+    0.0,
+    -0.010289136,
+    0.112664614,
+    0.0,
+    -0.010406159,
+    -0.000406151,
+    0.0,
+    0.010406159,
+    -0.000406151,
+    0.0,
+    0.010289135,
+    -0.112664616
+   ]
+  },
+  {
+   "label": "pair_a_apex",
+   "positions": [
+    0.0,
+    -0.028217468,
+    0.068690075,
+    -0.0,
+    -0.012863242,
+    -0.000398933,
+    0.0,
+    0.012863242,
+    -0.000398933,
+    0.0,
+    0.028217467,
+    -0.068690076
+   ],
+   "time_from_start_s": 4.0,
+   "velocities": [
+    0.0,
+    -0.115685328,
+    -0.015393582,
+    0.0,
+    -0.035218398,
+    -0.000699793,
+    0.0,
+    0.035218397,
+    -0.000699792,
+    0.0,
+    0.115685327,
+    0.015393581
+   ]
+  },
+  {
+   "label": "pair_a_swing_three_quarter",
+   "positions": [
+    0.0,
+    -0.079908169,
+    0.026117498,
+    -0.0,
+    -0.036798304,
+    -0.000363098,
+    0.0,
+    0.036798304,
+    -0.000363098,
+    0.0,
+    0.079908169,
+    -0.026117499
+   ],
+   "time_from_start_s": 4.5,
+   "velocities": [
+    0.0,
+    -0.058140219,
+    -0.118340494,
+    0.0,
+    -0.05891145,
+    0.001372847,
+    0.0,
+    0.058911449,
+    0.001372848,
+    0.0,
+    0.05814022,
+    0.118340494
+   ]
+  },
+  {
+   "label": "pair_a_touchdown_pair_b_liftoff",
+   "positions": [
+    0.0,
+    -0.072987705,
+    -0.007370581,
+    -0.0,
+    -0.069096433,
+    0.001389834,
+    0.0,
+    0.069096433,
+    0.001389835,
+    0.0,
+    0.072987704,
+    0.007370579
+   ],
+   "time_from_start_s": 5.0,
+   "velocities": [
+    0.0,
+    0.074708855,
+    0.011745229,
+    0.0,
+    -0.066925522,
+    0.005769833,
+    -0.0,
+    0.066925521,
+    0.005769834,
+    0.0,
+    -0.074708855,
+    -0.011745228
+   ]
+  },
+  {
+   "label": "pair_b_swing_quarter",
+   "positions": [
+    0.0,
+    -0.03787035,
+    -0.002777354,
+    0.0,
+    -0.107494801,
+    -0.033884892,
+    0.0,
+    0.1074948,
+    -0.03388489,
+    0.0,
+    0.03787035,
+    0.002777354
+   ],
+   "time_from_start_s": 5.5,
+   "velocities": [
+    0.0,
+    0.062398074,
+    0.006478116,
+    0.0,
+    -0.049325817,
+    -0.117586874,
+    -0.0,
+    0.049325817,
+    -0.117586875,
+    0.0,
+    -0.062398073,
+    -0.006478115
+   ]
+  },
+  {
+   "label": "pair_b_apex",
+   "positions": [
+    0.0,
+    -0.012991672,
+    -0.000688189,
+    0.0,
+    -0.093089303,
+    -0.073636544,
+    0.0,
+    0.093089303,
+    -0.073636544,
+    0.0,
+    0.012991672,
+    0.000688189
+   ],
+   "time_from_start_s": 6.0,
+   "velocities": [
+    0.0,
+    0.035925265,
+    0.00229181,
+    0.0,
+    0.106159748,
+    -0.006336106,
+    0.0,
+    -0.106159747,
+    -0.006336108,
+    0.0,
+    -0.035925265,
+    -0.002291809
+   ]
+  },
+  {
+   "label": "pair_b_swing_three_quarter",
+   "positions": [
+    0.0,
+    -0.001774451,
+    -7.7278e-05,
+    0.0,
+    -0.028383027,
+    -0.037723799,
+    0.0,
+    0.028383027,
+    -0.037723799,
+    0.0,
+    0.001774451,
+    7.7278e-05
+   ],
+   "time_from_start_s": 6.5,
+   "velocities": [
+    0.0,
+    0.010434556,
+    0.000470109,
+    0.0,
+    0.115214577,
+    0.117811549,
+    0.0,
+    -0.115214577,
+    0.117811549,
+    0.0,
+    -0.010434556,
+    -0.000470109
+   ]
+  },
+  {
+   "label": "neutral_end_pair_b_touchdown",
+   "positions": [
+    0.0,
+    0.0,
+    -0.0,
+    -0.0,
+    -0.0,
+    -0.0,
+    0.0,
+    -0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "time_from_start_s": 7.0,
+   "velocities": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ ],
+ "provenance": {
+  "content_sha256": "94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64",
+  "design_note_reference_sha256": "d03e80a0e733ae756ed95433514aea5490ac627ffb6b18f5b47d2816174e876c",
+  "generator": "m61_trot_cycle.generate_points (design note section 2.3)",
+  "inputs_sha256": {
+   "m4_pose_targets.yaml": "e49d65d4008027558c2979cd25fd8a0b7fbf16a8335cfbff52270695471383e8",
+   "m61_limits.yaml": "0ff8fc9ee6f1ba70f8e14acda61e3889d3ef3395fdfceaf51f6ea6fc11fe70c7",
+   "m61_trot_cycle.yaml": "b91839fc1000e48ba947bb91a9c8e86071093794f7b175a43c116f6e1ecb4f39",
+   "spiderx_legs.yaml": "78129b594b1d1b6d20e018894c7c3f3372f6e061fccc685a6437328fe68d7b25",
+   "spiderx_poses.yaml": "58fa4d36617f08bab13deb436193f1049a478144ef8dd0bd70b0fc747a1642d7",
+   "spiderx_ros2_controllers.yaml": "c449f24f2757d83fcf466dbbbaf2ebe0d4e0ef51cdfde91351aadfeba6496e01",
+   "urdf_expanded_xml": "915125596b3dff4bf0af5ed395d04ca0e815455f3ad8db6af3a22927ef81288c"
+  },
+  "m4_config_version": 1,
+  "trajectory_source": "m61_trot_cycle.yaml"
+ },
+ "schema": "spiderx.m61.trajectory/1",
+ "trajectory_id": "241760e7dfd5ef12"
+}

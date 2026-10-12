@@ -12,7 +12,17 @@ one.
 - Evidence: [`evidence/m61_cloud_one_cycle/20261012T025531Z/`](evidence/m61_cloud_one_cycle/20261012T025531Z/README.md).
   Report: [Cloud report §11](M61A_CLOUD_VERIFICATION.md).
 
-**Since then (Cloud report §12): readiness fixed at `61f3ffc`, rehearsed without motion.**
+**Second authorized attempt, 2026-10-12 at `dcac464` (Cloud report §13): FAIL, 1 goal, 1 cancel.**
+- The goal was accepted, then cancelled by the client's in-flight tracking check at about 6.2 s of
+  7.0 s (`TRACKING_FAILED`).
+- The cause is a client reference-timing defect: this controller reports
+  `desired.time_from_start = 0`, and the feedback "start estimate" then shifted the reference.
+  Timed from acceptance, the joints tracked within 0.0108 rad.
+- Cleanup ended `DISABLED AND VERIFIED`. That authorization is spent; another attempt needs the
+  reference fix and a new authorization.
+- Evidence: [`evidence/m61_cloud_one_cycle/20261012T054741Z/`](evidence/m61_cloud_one_cycle/20261012T054741Z/README.md).
+
+**Since the first attempt (Cloud report §12): readiness fixed at `61f3ffc`, rehearsed without motion.**
 - The refusal's mechanism was reproduced read-only with the pre-fix code against a running
   server: a single per-node action-server query about 2.1 s after node creation missed it.
 - The fix waits, bounded by the existing 10 s server wait, for that same query to see the server,

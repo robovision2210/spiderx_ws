@@ -2,7 +2,7 @@
 
 Last updated on branch `claude/stoic-shannon-ur2mes` (M6.1-A fixed base, stacked on the unmerged M6.1 branch `claude/spiderx-m61-trot-replay` @ `6a7f1f0`, from `main` @ `77fd171`).
 
-**M6.1 protected trot replay and M6.1-A fixed base: implemented; Cloud-verified offline, with mocks, on isolated domains and in launch-only Cloud Gazebo observations; both live gates `False` on every pushed commit. The one authorized Cloud attempt at the fixed-base cycle (2026-10-12) was refused before dispatch: 0 goals ([Cloud report §11](docs/M61A_CLOUD_VERIFICATION.md)). The refusal was reproduced read-only and fixed at `61f3ffc` (bounded action-server discovery before readiness); the read-only rehearsal on the disabled build was READY in 8 of 8 trials (§12).**
+**M6.1 protected trot replay and M6.1-A fixed base: implemented; Cloud-verified offline, with mocks, on isolated domains and in launch-only Cloud Gazebo observations; both live gates `False` on every pushed commit. The one authorized Cloud attempt at the fixed-base cycle (2026-10-12) was refused before dispatch: 0 goals ([Cloud report §11](docs/M61A_CLOUD_VERIFICATION.md)). The refusal was reproduced read-only and fixed at `61f3ffc` (bounded action-server discovery before readiness); the read-only rehearsal on the disabled build was READY in 8 of 8 trials (§12). A second authorized cycle (§13) sent 1 goal: it was accepted and then cancelled by the client's tracking check (TRACKING_FAILED, 1 cancel). The cause is a client reference-timing defect, since the joints tracked within 0.0108 rad from acceptance; the cycle is not passed.**
 - **M6.1** (`6a7f1f0`, [notes](docs/M61_IMPLEMENTATION_NOTES.md)):
   - the one approved trot cycle: 2 cm step, 6 mm lift, 4.0 s;
   - `content_sha256 94a492c4…`, `trajectory_id 241760e7dfd5ef12`, fingerprint `9dba1a17…`;
@@ -17,7 +17,7 @@ Last updated on branch `claude/stoic-shannon-ur2mes` (M6.1-A fixed base, stacked
 - **Unchanged:** both trajectory identities (M6.0-D `44f0a7ad52e5c330`, M6.1 `241760e7dfd5ef12`), the free-base model and every existing launch.
 - **Pending (local, each needs approval):**
   - phase 1, the launch-only fixed-base observation, which decides the provisional tolerances and height;
-  - phase 2, one fixed-base cycle. It was attempted once in Cloud on 2026-10-12 and refused before dispatch (`action_server_missing`, most likely a discovery false negative). The readiness fix is in (`61f3ffc`, rehearsed READY 8 of 8 without motion); a new authorization is needed.
+  - phase 2, one fixed-base cycle. It was attempted once in Cloud on 2026-10-12 and refused before dispatch (`action_server_missing`, most likely a discovery false negative). The readiness fix is in (`61f3ffc`). The second authorized cycle (§13) failed on a client tracking-reference defect: 1 goal, 1 cancel. A reference fix and a new authorization are needed.
 
   Free-base walking and keyboard teleoperation are **not** demonstrated.
 
