@@ -636,6 +636,15 @@ was sent anywhere.
     (`61f3ffc`). The fix was rehearsed READY 8 of 8 without motion on the disabled build
     ([Cloud report](M61A_CLOUD_VERIFICATION.md) §11–§12).
   - A new owner authorization is needed for the cycle.
+- **After the merge of the second-cycle record and the tracking-reference fix** (`7ada564`):
+  clean build and full suite **1894 tests, 0 errors, 0 failures, 0 skipped** in Cloud
+  ([`evidence/m55/cloud_verify_7ada564/`](evidence/m55/cloud_verify_7ada564/README.md)).
+  - The second authorized M6.1 Cloud cycle sent 1 goal. It was cancelled by a client
+    tracking-reference defect: **FAIL**, 1 cancel, E4 and E6 FAIL.
+  - The defect was fixed on the M6.1 side (`b0d8e75`): the reference is timed from goal
+    acceptance; no threshold changed. It was rehearsed read-only, with no goal, on the disabled
+    build ([Cloud report](M61A_CLOUD_VERIFICATION.md) §13–§14).
+  - A new owner authorization is needed for the cycle.
 - **Keyboard walking is not done.** This branch has the locomotion state machine, the gait and the
   keyboard teleop. All of it is offline, mock or shadow, behind
   `M55_LOCOMOTION_DISPATCH_ENABLED = False`, and nothing has walked. The M6.1 one fixed-base cycle
@@ -643,8 +652,9 @@ was sent anywhere.
 - **Next procedure:**
   1. owner review of that closeout (or phase 1 on the owner PC);
   2. the separately approved M6.1 phase 2 fixed-base cycle: source-verified Cloud plan
-     [`M61_CLOUD_ONE_CYCLE_PLAN.md`](M61_CLOUD_ONE_CYCLE_PLAN.md) (updated after the refused
-     attempt: base `02d284c` or later, a read-only rehearsal step A2), enabling patch unapplied;
+     [`M61_CLOUD_ONE_CYCLE_PLAN.md`](M61_CLOUD_ONE_CYCLE_PLAN.md) (updated after the second
+     attempt: `src/` = `b0d8e75`; A2 adds the tracking-path probe; the action feedback is
+     recorded), enabling patch unapplied;
   3. M5.5 phase 1 above (shadow session; this build as is).
   Keyboard walking (M5.5 phases 2–4) comes before the odometry, SLAM and navigation milestones
   (M7–M9).
