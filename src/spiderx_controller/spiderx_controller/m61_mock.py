@@ -9,7 +9,14 @@ and /joint_states stream on a fake wall clock) with:
   - streams_now() for the M6.1 pre-send check (the scripted streams at the current fake time)
     and server_wait_s, a server wait during which fake time passes and nothing is delivered (as
     rclpy wait_for_server, which does not spin): streams that stop, or a world that pauses,
-    after readiness and before the send.
+    after readiness and before the send;
+  - action-server discovery (m61_discovery): action_discovery_snapshot() and spin_for() on the
+    fake clock. The server becomes visible at action_server_at (relative fake time; None =
+    never), the host node may be hidden (action_host_visible) and the endpoints may be visible
+    without a node (action_endpoints_only); readiness_report() then observes the server as it is
+    at the observation time;
+  - a competing action client that appears at a fake time (foreign_client_at), e.g. during the
+    discovery wait.
 Every goal and cancel it receives is recorded, so tests can prove what was (not) dispatched.
 
 M6.1-A fixed-base mode (fixed_base=<FixedBaseConfig>, what the CLI --mock uses): the mock plays
@@ -23,6 +30,7 @@ displaced body is an attachment failure (G8) as it would be on a real weld.
 
 import math
 
+from spiderx_controller import m6_envelope as env
 from spiderx_controller import m6_live_mock as m6mock
 from spiderx_controller import m61_trot_cycle as tc
 from spiderx_controller import m61a_fixed_base as fb
@@ -39,7 +47,9 @@ class M61FakeTransport(m6mock.FakeTransport):
                  jump_joint='rf_foot_joint', jump_to=0.60, fixed_base=None,
                  description='fixed_base', spawn_offset=None, link_offset=None,
                  mount_override=None, command_publishers=0, foreign_clients=0,
-                 competing_after_calls=None, server_wait_s=0.0, **kw):
+                 competing_after_calls=None, server_wait_s=0.0, action_server_at=0.0,
+                 action_host_visible=True, action_endpoints_only=False, foreign_client_at=None,
+                 **kw):
         latency = kw.get('response_latency', 0.1)
         rtf = kw.get('rtf', 1.0)
         duration = trajectory['points'][-1]['time_from_start_s']
@@ -78,6 +88,15 @@ class M61FakeTransport(m6mock.FakeTransport):
         self.command_publishers, self.foreign_clients = command_publishers, foreign_clients
         self.competing_after_calls = competing_after_calls
         self.owner_snapshots = 0
+        self.action_name = env.ACTION_NAME
+        self.domain_id = None
+        self.node_name = 'm61_fake_transport'
+        self.action_server_at = action_server_at        # relative fake time; None = never
+        self.action_host_visible = action_host_visible
+        self.action_endpoints_only = action_endpoints_only
+        self.foreign_client_at = foreign_client_at
+        self.discovery_snapshots = 0
+        self.spun_s = 0.0
 
     # ---------------------------------------------------------------- server wait and send
     def server_ready(self, timeout_s):
@@ -124,8 +143,43 @@ class M61FakeTransport(m6mock.FakeTransport):
         self.owner_snapshots += 1
         late = (self.competing_after_calls is not None
                 and self.owner_snapshots > self.competing_after_calls)
+        timed = (self.foreign_client_at is not None
+                 and self.t - self.t_start >= self.foreign_client_at)
         return {'command_publishers': self.command_publishers,
-                'foreign_action_clients': self.foreign_clients + (1 if late else 0)}
+                'foreign_action_clients': self.foreign_clients + (1 if late else 0)
+                + (1 if timed else 0)}
+
+    # ---------------------------------------------------------------- action discovery
+    def action_server_visible(self):
+        return (self.action_server_at is not None and not self.action_endpoints_only
+                and self.t - self.t_start >= self.action_server_at)
+
+    def action_discovery_snapshot(self):
+        """As M61AFixedBaseTransport.action_discovery_snapshot, from the scripted graph."""
+        self.discovery_snapshots += 1
+        visible = self.action_server_visible()
+        host = '/leg_trajectory_controller'
+        nodes = ['/' + self.node_name] + ([host] if self.action_host_visible or visible else [])
+        endpoints = visible or self.action_endpoints_only
+        return {'servers': [(host, [env.ACTION_TYPE])] if visible else [],
+                'nodes': nodes, 'status_publishers': 1 if endpoints else 0,
+                'client_matched': endpoints}
+
+    def spin_for(self, seconds):
+        """Fake time passes; what a live spin would deliver meanwhile is consumed and dropped
+        (as the readiness collection drops it), so tracking still starts at the dispatch."""
+        seconds = max(0.0, float(seconds))
+        self.t += seconds
+        self.spun_s += seconds
+        for at in list(self.interrupts_at):             # a signal arrives whatever is spinning
+            if self.t_start + at <= self.t:
+                self.interrupts_at.remove(at)
+                if self.latch is not None:
+                    self.latch.trigger()
+        while self.next_js < self.t:
+            self.next_js += self.js_period
+        while self.next_pose < self.t:
+            self.next_pose += self.pose_period
 
     # ---------------------------------------------------------------- joints (M6.1 reference)
     def _positions(self, wall):
@@ -237,6 +291,23 @@ class M61FakeTransport(m6mock.FakeTransport):
         return events
 
 
+def readiness_report(transport, names, neutral):
+    """The M6.0-B report of a mock readiness observation NOW: the healthy stack of
+    m6_live_mock.mock_readiness_report, with the action server as the fake graph shows it at this
+    instant (absent until action_server_at, or never)."""
+    from spiderx_controller import m6_live_preflight as lpf
+    report = m6mock.mock_readiness_report(names, neutral)
+    if transport.action_server_visible():
+        return report
+    obs = lpf.Observations(
+        action_servers=[],
+        controllers=report['observed']['controllers'],
+        joint_state_publishers=report['observed']['joint_state_publishers'],
+        joint_state_messages=[(100.0 + 0.02 * i, list(names), list(neutral)) for i in range(5)],
+        versions=dict(m6mock.MOCK_VERSIONS), interface=dict(report['interface']))
+    return lpf.evaluate(obs, list(names), list(neutral))
+
+
 SCENARIOS = {
     'success': {},
     'interrupt': {'interrupts_at': (5.0,)},
@@ -265,9 +336,21 @@ SCENARIOS = {
     'joint_states_stop_before_send': {'server_wait_s': 2.0, 'js_stop_at': 1.0},   # refused
     'body_pose_stops_before_send': {'server_wait_s': 2.0, 'pose_stop_at': 0.5},   # refused
     'sim_pauses_before_send': {'server_wait_s': 2.0, 'stamp_freeze_at': 0.5},     # refused
+    # Action-server discovery before readiness #1 (m61_discovery; bound = 10 s server wait).
+    'late_action_server': {'action_server_at': 3.0},             # found after 3 s: sent
+    'action_server_at_bound': {'action_server_at': 10.0},        # seen at the last poll: sent
+    'action_server_after_bound': {'action_server_at': 10.1},     # too late: refused
+    'action_server_absent': {'action_server_at': None},          # host visible: refused
+    'action_server_not_discovered': {'action_server_at': None,
+                                     'action_host_visible': False},          # refused
+    'action_server_unattributed': {'action_endpoints_only': True},          # refused
+    'late_server_competing_client': {'action_server_at': 3.0, 'foreign_clients': 1},  # refused
+    'client_appears_during_discovery': {'action_server_at': 3.0,
+                                        'foreign_client_at': 1.0},          # refused
 }
 # Fixed-base scenarios need the fixed-base mode; G7 report-only drift is a free-base behaviour
 # (on a weld, any drift G7 could flag is first an attachment failure, G8).
 FREE_BASE_SCENARIOS = {'body_drift_report_only': {'drift_at': 5.0}}
 
-__all__ = ['M61FakeTransport', 'SCENARIOS', 'FREE_BASE_SCENARIOS', 'NOMINAL_BODY_Z_M']
+__all__ = ['M61FakeTransport', 'SCENARIOS', 'FREE_BASE_SCENARIOS', 'NOMINAL_BODY_Z_M',
+           'readiness_report']

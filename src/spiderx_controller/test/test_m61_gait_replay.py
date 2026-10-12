@@ -655,6 +655,15 @@ EXPECTED = {   # scenario: (state, reason, goals, cancels, gates tripped)
     'joint_states_stop_before_send': (lpb.REFUSED, fb.JOINT_STATES_STALE, 0, 0, None),
     'body_pose_stops_before_send': (lpb.REFUSED, fb.POSE_STALE, 0, 0, None),
     'sim_pauses_before_send': (lpb.REFUSED, fb.POSE_SIM_NOT_ADVANCING, 0, 0, None),
+    # bounded action-server discovery before readiness #1 (m61_discovery, 10 s bound)
+    'late_action_server': (lpb.SUCCEEDED, None, 1, 0, None),
+    'action_server_at_bound': (lpb.SUCCEEDED, None, 1, 0, None),
+    'action_server_after_bound': (lpb.REFUSED, 'stack_incompatible', 0, 0, None),
+    'action_server_absent': (lpb.REFUSED, 'stack_incompatible', 0, 0, None),
+    'action_server_not_discovered': (lpb.REFUSED, 'stack_incompatible', 0, 0, None),
+    'action_server_unattributed': (lpb.REFUSED, 'stack_incompatible', 0, 0, None),
+    'late_server_competing_client': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
+    'client_appears_during_discovery': (lpb.REFUSED, 'readiness_not_ready', 0, 0, None),
 }
 
 

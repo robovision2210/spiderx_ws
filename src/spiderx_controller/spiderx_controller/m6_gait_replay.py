@@ -24,7 +24,13 @@ handling and EvidenceFile persistence. M6.1 replaces only what is gait specific:
     trajectory provenance, which is unchanged;
   - the streams NOW, immediately before the send (plan E5): the M6.0-D freshness check at the
     send only bounds the age of the readiness result (10 s), so M6.1 also requires current joint
-    states, a current attached body pose and advancing sim time (send_streams_check).
+    states, a current attached body pose and advancing sim time (send_streams_check);
+  - bounded action-server discovery before the first readiness observation (m61_discovery,
+    with_action_discovery): the M6.0-B probe looks for the server once, after a fixed 2.0 s
+    spin; M6.1 first waits, at most the existing 10 s server wait, until that same query sees
+    the server, then observes everything afresh. A server not seen within the bound is refused;
+  - the complete per-check readiness report in the evidence (readiness_before/after.json):
+    every check and layer, monotonic timestamps, the discovery record, domain and action name.
 
 LIVE M6.1 DISPATCH IS HARD-DISABLED (m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False).
 
@@ -38,10 +44,12 @@ import math
 import os
 
 from spiderx_controller import m6_action_client as ac
+from spiderx_controller import m6_envelope as env
 from spiderx_controller import m6_goal_fingerprint as gf
 from spiderx_controller import m6_live_contract as m6d
 from spiderx_controller import m6_live_playback as lp
 from spiderx_controller import m6_live_readiness as rd
+from spiderx_controller import m61_discovery as dsc
 from spiderx_controller import m61_evidence as evd
 from spiderx_controller import m61_gates as gates
 from spiderx_controller import m61_goal as goal61
@@ -174,6 +182,17 @@ class M61Session(lp.LiveSession):
         self._freshness_at_send['streams_now'] = dict(detail, ok=not codes, codes=list(codes))
         if codes:
             return False, codes[0]
+        return ok, code
+
+    def _readiness_ok(self, label):
+        """The M6.0-D readiness gate, unchanged in its decision; M6.1 also keeps the COMPLETE
+        per-check report (every check and layer, the discovery record, timestamps) in the entry
+        that becomes readiness_before/after.json."""
+        ok, code = super()._readiness_ok(label)
+        entry = self._readiness[-1][1] if self._readiness else None
+        res = self._last_readiness
+        if isinstance(entry, dict) and isinstance(res, rd.ReadinessResult):
+            entry.update(readiness_detail(res, self._now(), self._t0))
         return ok, code
 
     # ------------------------------------------------------------ gates (M6.1)
@@ -444,6 +463,99 @@ def load_fixed_base_config(config_dir=None):
     return cfg
 
 
+def with_action_discovery(base_provider, discover):
+    """Wrap the INNERMOST readiness provider (M6.1): before the first observation, wait - bounded
+    by the existing server wait - until the action server is visible (discover() ->
+    m61_discovery record), THEN observe. The observation starts after the wait, so its 10 s
+    expiry is unchanged and nothing seen during the wait is reused: every check, the action
+    server included, is observed afresh. Later observations do not wait again. Not READY
+    (DISCOVERY_TIMEOUT, in addition to whatever the fresh observation finds) when the server was
+    not seen within the bound."""
+    state = {}
+
+    def provide():
+        first = 'record' not in state
+        if first:
+            try:
+                state['record'] = discover()
+            except Exception as e:  # noqa: BLE001 - recorded; a failed wait is a timeout
+                state['record'] = {'schema': dsc.SCHEMA, 'outcome': dsc.TIMEOUT,
+                                   'classification': dsc.QUERY_FAILED,
+                                   'error': f'{type(e).__name__}: {e}'}
+        res = base_provider()
+        if not isinstance(res, rd.ReadinessResult):
+            return res
+        rec = dict(state['record'], waited_before_this_observation=first)
+        report = dict(res.report or {}, m61_action_discovery=rec)
+        if rec.get('outcome') == dsc.FOUND:
+            return dataclasses.replace(res, report=report)
+        code = (dsc.DISCOVERY_INTERRUPTED if rec.get('outcome') == dsc.INTERRUPTED
+                else dsc.DISCOVERY_TIMEOUT)
+        return dataclasses.replace(
+            res, ready=False, failure_codes=tuple(res.failure_codes) + (code,),
+            reasons=tuple(res.reasons) + (f'{dsc.summary_line(rec)}',), report=report)
+    return provide
+
+
+def with_readiness_record(base_provider, now, context):
+    """Wrap the OUTERMOST readiness provider: record when the observation was requested and
+    completed (monotonic), and the context (domain, action, node) in the report. Decides
+    nothing."""
+    def provide():
+        requested = now()
+        res = base_provider()
+        if not isinstance(res, rd.ReadinessResult):
+            return res
+        rec = dict(context, requested_monotonic=round(requested, 6),
+                   observation_started_monotonic=round(res.observed_monotonic, 6),
+                   collection_s=round(res.collection_s, 6), completed_monotonic=round(now(), 6))
+        return dataclasses.replace(res, report=dict(res.report or {}, m61_readiness_record=rec))
+    return provide
+
+
+def transport_discovery(transport, interrupted=None):
+    """() -> m61_discovery record for this transport (its own node, executor and clock); the
+    bound is the existing server wait (m61_discovery.TIMEOUT_S)."""
+    def discover():
+        return dsc.wait_for_action_server(
+            transport.action_discovery_snapshot, transport.spin_for, transport.wall_now,
+            action_name=getattr(transport, 'action_name', None) or env.ACTION_NAME,
+            domain_id=getattr(transport, 'domain_id', None), interrupted=interrupted)
+    return discover
+
+
+def compose_readiness(base, transport, plan, cfg, interrupted=None):
+    """The M6.1 readiness composition shared by --live, --mock and the read-only rehearsal:
+    discovery (innermost, before the observation), the M6.0-D observation `base`, then body pose,
+    fixed base, sim progress and command owner, each evaluated on its own current snapshot
+    AFTER the observation, and the record (outermost)."""
+    provide = with_command_owner(with_sim_progress(with_fixed_base(with_body_pose(
+        with_action_discovery(base, transport_discovery(transport, interrupted)),
+        transport.latest_body_pose, transport.wall_now, plan.limits),
+        transport.fixed_base_snapshot, cfg), transport.fixed_base_snapshot, transport.wall_now,
+        cfg), transport.command_owner_snapshot)
+    context = {'domain_id': getattr(transport, 'domain_id', None),
+               'action_name': getattr(transport, 'action_name', None) or env.ACTION_NAME,
+               'node_name': getattr(transport, 'node_name', None)}
+    return with_readiness_record(provide, transport.wall_now, context)
+
+
+def live_readiness_provider(transport, plan, cfg, collect_factory, interrupted=None):
+    """The production readiness provider of --live (and of the read-only rehearsal)."""
+    base = rd.make_readiness_provider(collect_factory(transport), plan.sources.joint_names,
+                                      plan.neutral, transport.wall_now)
+    return compose_readiness(base, transport, plan, cfg, interrupted)
+
+
+def readiness_detail(result, now, t0=None):
+    """The complete, JSON-safe record of one readiness observation: monotonic timestamps and
+    the full per-check report (M6.0-B checks and failures, every M6.1 layer, discovery)."""
+    return {'observed_monotonic': round(result.observed_monotonic, 6),
+            'evaluated_monotonic': round(now, 6),
+            'session_t_s': None if t0 is None else round(now - t0, 6),
+            'report': evd.json_safe(result.report or {})}
+
+
 def with_body_pose(base_provider, latest_pose, now, limits):
     """Wrap a readiness provider: also NOT READY without a fresh, upright, high-enough body pose
     (design section 3.2). latest_pose() -> (wall, stamp, (x, y, z, roll, pitch, yaw)) or None."""
@@ -464,7 +576,9 @@ def with_body_pose(base_provider, latest_pose, now, limits):
 
 __all__ = ['M61Session', 'GATE_TRIPPED', 'M61_TERMINAL', 'OUTCOME_SCHEMA', 'with_body_pose',
            'with_fixed_base', 'with_sim_progress', 'with_command_owner', 'fixed_base_record',
-           'load_fixed_base_config', 'send_streams_check']
+           'load_fixed_base_config', 'send_streams_check', 'with_action_discovery',
+           'with_readiness_record', 'compose_readiness', 'live_readiness_provider',
+           'transport_discovery', 'readiness_detail']
 
 
 # ==================================================================== CLI
@@ -531,7 +645,6 @@ def dry_run_report(plan):
 
 def run_mock(plan, scenario, reader):
     """(outcome, session, trajectory) of one mock run. Nothing reaches any ROS graph."""
-    from spiderx_controller import m6_live_mock as m6mock
     from spiderx_controller import m61_mock
     if scenario not in m61_mock.SCENARIOS:
         raise ValueError(f'unknown scenario {scenario!r}; choose from '
@@ -542,12 +655,10 @@ def run_mock(plan, scenario, reader):
     cfg = load_fixed_base_config(plan.config_dir)
     transport = m61_mock.M61FakeTransport(traj, fp, latch=latch, fixed_base=cfg,
                                           **m61_mock.SCENARIOS[scenario])
-    report = m6mock.mock_readiness_report(plan.sources.joint_names, plan.neutral)
-    provide = with_command_owner(with_sim_progress(with_fixed_base(
-        with_body_pose(lambda: rd.assess(report, transport.wall_now()),
-                       transport.latest_body_pose, transport.wall_now, plan.limits),
-        transport.fixed_base_snapshot, cfg), transport.fixed_base_snapshot, transport.wall_now,
-        cfg), transport.command_owner_snapshot)
+    provide = compose_readiness(
+        lambda: rd.assess(m61_mock.readiness_report(transport, plan.sources.joint_names,
+                                                    plan.neutral), transport.wall_now()),
+        transport, plan, cfg, interrupted=lambda: latch.count > 0)
     session = M61Session(transport, plan, provide, reader, latch=latch, fixed_base=cfg,
                          streams_check=send_streams_check(transport, cfg,
                                                           plan.sources.joint_names))
@@ -617,12 +728,8 @@ def _run_live(plan, transport_factory, collect_factory, reader, latch, domain_id
     transport = transport_factory(fp, domain_id, cfg)
     out = session = None
     try:
-        base = rd.make_readiness_provider(collect_factory(transport), plan.sources.joint_names,
-                                          plan.neutral, transport.wall_now)
-        provide = with_command_owner(with_sim_progress(with_fixed_base(
-            with_body_pose(base, transport.latest_body_pose, transport.wall_now, plan.limits),
-            transport.fixed_base_snapshot, cfg), transport.fixed_base_snapshot,
-            transport.wall_now, cfg), transport.command_owner_snapshot)
+        provide = live_readiness_provider(transport, plan, cfg, collect_factory,
+                                          interrupted=lambda: latch.count > 0)
         session = M61Session(transport, plan, provide, reader, latch=latch,
                              checkpoint=checkpoint, fixed_base=cfg,
                              streams_check=send_streams_check(transport, cfg,

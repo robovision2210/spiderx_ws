@@ -6,8 +6,11 @@ Layout of one run directory (design section 5):
   outcome.json                 mock runs: the same outcome document
   trajectory.json              the exact goal content (points, times, velocities, trajectory_id)
   goal_fingerprint.txt         the approved goal fingerprint, trajectory_id and content hash
-  readiness_before.json        readiness observed before the confirmation
-  readiness_after.json         readiness re-observed after the confirmation
+  readiness_before.json        readiness observed before the confirmation: the verdict, and the
+                               complete per-check report (M6.0-B checks and failures, every M6.1
+                               layer, the action-discovery record, monotonic timestamps, domain
+                               and action name)
+  readiness_after.json         readiness re-observed after the confirmation (same content)
   joint_states.csv             time_s, then the 12 joint positions (canonical order)
   body_pose.csv                time_s, x, y, z, roll, pitch, yaw (header only if no pose arrived)
   commanded_vs_observed.csv    time_s, ref_time_s, then <joint>_cmd/_obs/_err, max_abs_err_rad
@@ -71,6 +74,20 @@ def write_exclusive(path, text):
 
 def dumps(data):
     return json.dumps(data, indent=1, sort_keys=True, allow_nan=False, default=str) + '\n'
+
+
+def json_safe(obj):
+    """A JSON-ready copy: tuples become lists, non-finite floats their repr ('nan', 'inf'),
+    dict keys strings, anything else str(). So a complete readiness report is always written."""
+    if isinstance(obj, dict):
+        return {str(k): json_safe(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [json_safe(v) for v in obj]
+    if isinstance(obj, bool) or obj is None or isinstance(obj, (int, str)):
+        return obj
+    if isinstance(obj, float):
+        return obj if obj == obj and obj not in (float('inf'), float('-inf')) else repr(obj)
+    return str(obj)
 
 
 def _num(v):
@@ -170,5 +187,5 @@ def write_support_files(run_dir, outcome, trajectory, rows, gates_state):
 
 
 __all__ = ['DEFAULT_ROOT', 'LIVE_OUTCOME', 'MOCK_OUTCOME', 'SUPPORT_FILES', 'BODY_POSE_COLUMNS',
-           'utc_stamp', 'reserve_run_dir', 'write_exclusive', 'joint_states_csv', 'body_pose_csv',
-           'commanded_csv', 'write_support_files']
+           'utc_stamp', 'reserve_run_dir', 'write_exclusive', 'json_safe', 'joint_states_csv',
+           'body_pose_csv', 'commanded_csv', 'write_support_files']

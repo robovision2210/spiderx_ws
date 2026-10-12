@@ -26,6 +26,7 @@ install(PROGRAMS
   scripts/m6_gait_replay.py
   scripts/m61a_clearance
   scripts/m61a_observe_fixed_base
+  scripts/m61_readiness_rehearsal
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -71,6 +72,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m61a_observer test/test_m61a_observer.py TIMEOUT 300)
   ament_add_pytest_test(test_m61a_link_check test/test_m61a_link_check.py TIMEOUT 600)
   ament_add_pytest_test(test_m61_restore_script test/test_m61_restore_script.py TIMEOUT 300)
+  ament_add_pytest_test(test_m61_discovery test/test_m61_discovery.py TIMEOUT 600)
 endif()
 
 ament_package()
