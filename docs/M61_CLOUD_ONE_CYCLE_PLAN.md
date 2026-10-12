@@ -1,15 +1,31 @@
-# M6.1 – ONE fixed-base trot cycle in Cloud simulation: source-verified plan (NOT executed)
+# M6.1 – ONE fixed-base trot cycle in Cloud simulation: source-verified plan (attempted once; refused before dispatch)
 
-**Status: PLAN ONLY.**
-- Nothing here is enabled or executed; no goal has been sent.
+**Status: ATTEMPTED ONCE, on 2026-10-12, under the owner's authorization. Result: FAIL, refused
+before dispatch, 0 goals, 0 cancels.** The authorization is spent; another attempt needs a new
+one.
+- The plan below was followed unchanged at `8025668`.
+- The tool refused at readiness #1, before the confirmation prompt: `action_server_missing`,
+  therefore `stack_incompatible`, exit 2. The action server existed. A discovery false negative
+  in the single fixed-time action-server query is the likely cause, but it is not proven.
+- Cleanup ended `DISABLED AND VERIFIED`, twice. The local enabling branch was deleted after that
+  and was never pushed.
+- Evidence: [`evidence/m61_cloud_one_cycle/20261012T025531Z/`](evidence/m61_cloud_one_cycle/20261012T025531Z/README.md).
+  Report: [Cloud report §11](M61A_CLOUD_VERIFICATION.md).
+
+**Status of the plan text itself, as reviewed:**
+- Before that attempt, nothing here had been enabled or executed, and no goal had been sent.
+  Still no goal has been sent.
 - The enabling change exists only as an **unapplied** patch,
   [`patches/m61_enable_one_cycle.UNAPPLIED.patch`](patches/m61_enable_one_cycle.UNAPPLIED.patch)
   (SHA-256 `b6213f21dedf30e61e4959d22cd45a44525a8bc4432b641134406fe7f3277595`). Only its header
   changed since `06ce0f50…`: the revert instruction now names the restore script (§4 G). Its
   diff body is byte-identical.
 - `git apply --check` confirmed it applies cleanly. On this branch it was never applied. It was
-  applied only in a temporary worktree to run the tests in the enabled mode; no simulator was
-  involved and the worktree was removed (Cloud report §9.4, §10.5).
+  applied in two places only:
+  - a temporary worktree, to run the tests in the enabled mode, with no simulator; the worktree
+    was removed (Cloud report §9.4, §10.5);
+  - the attempt's local branch `local/m61-one-cycle-20261012T025531Z` (commit `9804c35`), which
+    was never pushed and was deleted after verification (§11).
 - Running this plan needs the owner approvals in §1.
 
 Every value below was read from the source at `1732c32`. That commit added the check of the

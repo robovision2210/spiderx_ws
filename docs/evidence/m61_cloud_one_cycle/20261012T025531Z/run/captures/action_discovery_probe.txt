@@ -1,0 +1,3 @@
+trial 0: first seen 0.254 s; seen by 2.0 s: True; nodes at 2.0 s: [7]
+trial 1: first seen 0.505 s; seen by 2.0 s: True; nodes at 2.0 s: [9]
+trial 2: first seen 1.518 s; seen by 2.0 s: True; nodes at 2.0 s: [9]

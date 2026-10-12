@@ -1,0 +1,31 @@
+M6.1 restore and verify, 20261012T030548Z, workspace /home/user/spiderx_ws, base claude/stoic-shannon-ur2mes
+base commit 80256683d9ede8f273f7ac5822e03570a2e986c2
+--- 1. stop
+process group 1911 already empty
+Xvfb 1908 not running
+ok: no simulation process
+--- 2. preserve
+enabling local/m61-one-cycle-20261012T025531Z = 9804c3522f785f0bbd11bc9045acadf318bafa08; src diff vs base sha256 8604d06be7f9109bee35dc2fe5c6b15f355cb5a08343f9b6103c6cee1b06fff3
+ src/spiderx_controller/spiderx_controller/m61_live_contract.py | 2 +-
+ src/spiderx_controller/test/m61_gate.py                        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+--- 3. restore
+HEAD 80256683d9ede8f273f7ac5822e03570a2e986c2 (claude/stoic-shannon-ur2mes)
+ok: src/ equals the base 80256683d9ede8f273f7ac5822e03570a2e986c2 (no diff, no untracked file)
+--- 4. rebuild
+ok: rebuilt (export PYTHONPATH=<scratchpad>/st59site:$PYTHONPATH; rm -rf build install && colcon build --symlink-install); log rebuild_20261012T030548Z.log
+--- 5. verify (fresh environment)
+spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py (inside the workspace: True)
+spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py (inside the workspace: True)
+ok: a. both gates False in the imported modules, from this workspace
+ok: b. ros2 pkg prefix spiderx_controller = /home/user/spiderx_ws/install/spiderx_controller
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+REFUSED: Live M6.1 trot-cycle dispatch is HARD-DISABLED in this build. Sending the one live goal needs a separate owner authorization and an enabling code change after a final audit (docs/M61_IMPLEMENTATION_NOTES.md, verification checklist). Nothing was sent.
+[ros2run]: Process exited with failure 3
+ok: c. --live refused, exit 3, HARD-DISABLED
+ok: d. the calling environment cannot import spiderx_controller (not sourced)
+--- 6. enabling branch
+kept (no --delete-enabling-branch)
+local branch:   local/m61-one-cycle-20261012T025531Z
+VERDICT: DISABLED AND VERIFIED

@@ -11,9 +11,15 @@ with RoboStack ROS 2 Humble, Gazebo Fortress 6.16.0 and Fast DDS (`rmw_fastrtps_
 | **Cloud simulation** | the real launch file running Gazebo Fortress (GUI on Xvfb, Mesa software rendering) in this VM |
 | **Owner PC** | the owner's Ubuntu 22.04 machine: **nothing in this document ran there** |
 
-Both live gates stayed `False` throughout (`m6_live_contract.LIVE_DISPATCH_ENABLED`,
-`m61_live_contract.M61_LIVE_DISPATCH_ENABLED`). No goal and no command was sent to any simulated
-controller. No hardware was involved.
+Both live gates (`m6_live_contract.LIVE_DISPATCH_ENABLED` and
+`m61_live_contract.M61_LIVE_DISPATCH_ENABLED`) stayed `False` on every pushed commit. Only two
+local, never-pushed trees had `M61_LIVE_DISPATCH_ENABLED = True`:
+- the temporary test worktree of §10.5, with tests only;
+- the local branch of the one authorized attempt (§11), from 02:57:15 to the restore at
+  03:05:48 UTC on 2026-10-12.
+
+No goal and no command was sent to any simulated controller: the attempt was refused before
+dispatch. No hardware was involved.
 
 **Outcome (Cloud simulation, `7f4c30f`).** Every **per-run** criterion of the §10 provisional list
 of [`M61A_FIXED_BASE_IMPLEMENTATION.md`](M61A_FIXED_BASE_IMPLEMENTATION.md) passed in three separate
@@ -1032,3 +1038,117 @@ branch. The patch is unapplied, and `git apply --check` passes.
    - One Cloud run, not on the owner PC.
 4. **E9 needs the motion run itself.** It cannot be shown beforehand.
 5. **Owner PC.** Phase 1 has not run there.
+
+## 11. The one authorized fixed-base cycle: attempted once, refused before dispatch (2026-10-12)
+
+**Authorization** (owner, 2026-10-12; recorded in `authorization.txt` of the evidence folder):
+- criterion 6 version 2 as a limited planar check, with version 1 kept as FAIL;
+- the verified simulator physics state for z, roll and pitch;
+- E1–E11 as documented at `8025668`;
+- ONE Cloud cycle, using only the two-line patch on a local branch, under the rules of the plan.
+
+**Result: FAIL.**
+- `REFUSED` at readiness #1, before the confirmation prompt, with `action_server_missing`. That
+  gave the classification `incompatible`, the reason `stack_incompatible`, and exit 2.
+- **0 goals and 0 cancels.** Nothing was retried, and no second goal was sent.
+- Evidence: [`evidence/m61_cloud_one_cycle/20261012T025531Z/`](evidence/m61_cloud_one_cycle/20261012T025531Z/README.md).
+  Its README has the timeline, and `requirements.json` has the E1–E11 table.
+
+### 11.1 What ran
+
+| Step | Result |
+|---|---|
+| A. Verification on the gate-off build | `HEAD` = origin = `8025668`, and `src/` equals `1732c32`. Patch SHA-256 `b6213f21…7595`, and `git apply --check` OK. Link check `649b0c4f…9e31`, restore script `e6fe9ee1…8257`, and all 6 plan hashes match. Dry run: the full identities. Mock `success`: SUCCEEDED. Mock `attachment_drift`: GATE_TRIPPED with 1 cancel. `--live` exit 3 |
+| B. Enabling | Local branch `local/m61-one-cycle-20261012T025531Z`, commit `9804c35`, 2 files and 2 lines; never pushed |
+| C. Enabled build | Gates `True` (pin `True`), M6.0-D `False`. Identity unchanged. `test_m61_gait_replay.py`: **156 passed, 0 failed** |
+| D. Launch | `create` needed 4 world-name requests on a cold start and then succeeded, so it was not the documented race and there was no relaunch. `gz_ros2_control` waited 2.5 s for the `robot_state_publisher` parameter service. Preflight **READY**, 12 of 12 |
+| E. Live tool | The bag, the 90 s observer and the tool started within about 3 s of each other. `PREFLIGHTED` at 0.16 s. Readiness #1, collected for 4.78 s: **NOT READY**. `REFUSED` at 4.94 s. The confirmation prompt never appeared |
+| F. Records | Captures, a read-only discovery replay and 4 GUI views; then a clean stop (nothing left) and the frozen link check on the bag. No video recording: the harness has none |
+| G. Cleanup | Restore run 1, with a rebuild, and run 2, which verified and then deleted the branch: both **DISABLED AND VERIFIED** (§11.4) |
+
+### 11.2 The refusal
+
+**Only `action_server_missing` was reported.** Every readiness layer appends its own codes
+unconditionally: the M6.0-B evaluation and the M6.1 wrappers for body pose, fixed base, sim
+progress and command owner. So all of those passed in the same observation.
+
+**The server existed.**
+- After the run, `ros2 action info` showed 1 server, `/leg_trajectory_controller`.
+- The controllers had been active for 74 s.
+- The bag holds 2,880 `controller_state` messages.
+
+**The mechanism.**
+- `GraphProbe.collect` spins a fixed 2.0 s on the tool's new node. It then queries the action
+  servers **once**, by node, with no wait (`m6_live_preflight.py` 374–381 and 418).
+- `list_controllers`, by contrast, waits up to 10 s for its service.
+- The server wait of the dispatch (`server_wait_s` 10 s) comes only after readiness.
+
+**A read-only replay of the same query**, from fresh nodes, in the same launch, on a quiet graph:
+- the server was first seen at 0.254, 0.505 and 1.518 s;
+- in one trial only 7 of 9 nodes were known at 2.0 s.
+
+During the attempt, three ROS processes started together while Gazebo ran at a real-time factor
+of about 0.7.
+
+**Conclusion.** A discovery false negative is consistent with every record. It is **not
+proven**, because no per-query timing was recorded. Nothing points to a fault in the controller,
+the launch or the trajectory.
+
+### 11.3 E1–E11 (missing evidence is UNMEASURED, never PASS)
+
+| # | Result | Basis |
+|---|---|---|
+| E1 | **PASS** | Preflight READY, 12 of 12, including `sim_clock` and `body_pose_sim_progress`; ownership 0 / 0 |
+| E2 | **PASS** | Enabled build: 156 passed, 0 failed |
+| E3 | **PASS** | `241760e7dfd5ef12` / `94a492c4…8e64` / `9dba1a17…5c3a` on the enabled build and in the live records |
+| E4 | **FAIL** | `REFUSED`, exit 2. Goals 0, cancels 0, retries 0, automatic returns 0 |
+| E5 | **FAIL** | Readiness before confirmation was NOT READY. The readiness after confirmation and the check at the send never ran |
+| E6 | UNMEASURED | No goal, so no tracking |
+| E7 | UNMEASURED | No gate supervised a goal |
+| E8 | UNMEASURED (cycle) | At rest in this launch, as a supplement only: body deviation 0 over 5,529 pose messages, and provenance PASS on 5,408 of 5,408 samples |
+| E9 | UNMEASURED | `NO_MOTION` |
+| E10 | **PASS** (attempt window) | Observer before and after: 0 command publishers and 0 action clients. No command-topic publisher ever appeared, so the recorder never subscribed. `readiness_after` was not taken |
+| E11 | **PASS** | `DISABLED AND VERIFIED` twice (§11.4) |
+
+### 11.4 Cleanup
+
+**Run 1.** `scripts/m61_restore_and_verify_disabled.sh` was run with `--enabling-ref`, the pid
+files and `--build-cmd`.
+- It found no simulation process.
+- It preserved the enabling commit before anything was deleted: its id and `show`, the patch,
+  and the `src/` diff against the base, SHA-256 `8604d06b…fff3`. That diff is identical to the
+  one from the earlier test worktree.
+- It restored `8025668`, with `src/` equal to the base, and rebuilt cleanly.
+- In a fresh environment: both imported gates `False`, from this workspace; `ros2 pkg prefix`
+  resolves here; `--live` refused with HARD-DISABLED, **exit 3**; the calling shell is clean.
+
+**Run 2** (`--verify-only --delete-enabling-branch`) gave the same verdict and only then deleted
+the branch.
+
+**Afterwards.** No `local/*` branch exists, locally or on the remote. Both gates are `False` in
+the source and in the installed build.
+
+### 11.5 Next step (proposed; not implemented in this round)
+
+1. **Readiness: fix the false negative on the M6.1 side**, leaving the M6.0-B/D modules
+   unchanged.
+   - Before the first readiness observation, poll the same graph query the probe uses, every
+     0.25 s, until the approved action server is visible, bounded by `server_wait_s` (10 s).
+   - The wait sits outside the readiness age, so the 10 s expiry is unaffected.
+   - If the server never appears, readiness still fails with `action_server_missing`. Nothing is
+     relaxed.
+   - Also store each readiness observation's per-layer report.
+   - Start the bag and the observer at least 10 s before the tool.
+2. **Tests.**
+   - A server that appears late but within the bound: READY.
+   - A server that never appears: refused with the same code.
+   - The readiness-age accounting stays unchanged.
+   - An isolated-domain test with a late action server.
+   - The full suite in both gate modes.
+3. **Cloud rehearsal, no motion, gate-off build.** Run the same transport and readiness
+   composition without a session or goal. Repeat it with the bag and the observer starting at
+   the same time, and record the time until the server is visible.
+4. **A new owner authorization** for one attempt with the same plan, patch and identities. E5's
+   text gains a note about the server wait.
+
+M5.5 keyboard walking stays blocked until one M6.1 fixed-base cycle passes E1–E11.

@@ -1,0 +1,21 @@
+{
+ "result": {
+  "age_s": 0.0,
+  "classification": "warning",
+  "collection_s": 0.0,
+  "failure_codes": [],
+  "observed_wall_iso": null,
+  "ready": true,
+  "reasons": [
+   "action_msgs: installed 1.2.2, reference 1.2.1 (differs)",
+   "control_msgs: installed 4.9.0, reference 4.8.0 (differs)",
+   "controller_manager: installed 2.54.2, reference 2.51.0 (differs)",
+   "controller_manager_msgs: installed 2.54.2, reference 2.51.0 (differs)",
+   "gz_ros2_control: installed 0.7.21, reference 0.7.15 (differs)",
+   "hardware_interface: installed 2.54.2, reference 2.51.0 (differs)",
+   "joint_trajectory_controller: installed 2.54.0, reference 2.48.0 (differs)",
+   "rclpy: installed 3.3.19, reference 3.3.16 (differs)"
+  ]
+ },
+ "when": "before_confirmation"
+}
