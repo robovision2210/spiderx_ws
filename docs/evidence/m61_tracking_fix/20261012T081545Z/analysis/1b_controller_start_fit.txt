@@ -1,0 +1,7 @@
+controller_state setpoint field used: ['reference']
+acceptance (sim) 29.814 s
+controller setpoint vs approved trajectory: best start 29.799 = acceptance -0.015 s; rms 1.08e-04 max 4.71e-04 rad over 130 samples
+recorded joint_states vs approved trajectory: best start 29.897 = acceptance +0.083 s; rms 0.0012 max 0.0017 rad over 314 samples
+setpoint max err at the acceptance anchor (rad, samples): (0.0022468533642896263, 130)
+joint_states max err at the acceptance anchor (rad, samples): (0.010513855332125344, 320)
+controller_state rate in the goal window: 41.02 Hz

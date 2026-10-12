@@ -1337,3 +1337,163 @@ tripped; the last 0.8 s never ran). **E4 and E6 FAIL as written.**
 - Add a test double that reports `time_from_start = 0` like this JTC, plus a regression test that
   replays this run's recorded joint states and feedback.
 - Rehearse read-only, then seek a new authorization.
+
+## 14. The tracking-reference defect: explained, fixed (`b0d8e75`), rehearsed without a goal
+
+Evidence: [`evidence/m61_tracking_fix/20261012T081545Z/`](evidence/m61_tracking_fix/20261012T081545Z/README.md)
+(README, `SHA256SUMS`). **The §13 record is unchanged: FAIL, 1 goal, 1 cancel; E4 and E6 FAIL.**
+No goal was sent in this round. Both gates are `False` on every commit.
+
+### 14.1 Why the M6.0-D crouch did not hit it
+
+- **Same rule, different controller.** The crouch ran on the owner's PC, whose
+  `joint_trajectory_controller` is 2.54.0 (M6.0-B record). That version fills
+  `desired.time_from_start` in the action feedback; upstream added it in 2.49.0 ("[JTC] added
+  time_from_start to action feedback"). This Cloud image has 2.48.0 (the cycle's readiness record).
+- With the field filled, `stamp − time_from_start` is the true start. The estimate stays within
+  0.1 s of acceptance, so acceptance is used. The crouch SUCCEEDED with 0.00603 rad in flight
+  (`606d229:docs/M6D_FIRST_GOAL_RESULTS.md`).
+- **Model** (`analysis/1a_m6d_crouch_tfs_zero.txt`; perfect tracking, 100 Hz joints, 20 Hz
+  feedback), the unchanged M6.0-D rule on the crouch:
+  - field filled: error 0, no abort;
+  - field 0: abort at 6.05 s, 0.1222 rad.
+
+  On 2.48.0 the crouch would have been cancelled in the same way.
+- **Why no test caught it.** The M6.0-D isolated test double and every fake fill
+  `time_from_start`.
+
+### 14.2 The controller's real start, measured from the bag
+
+`analysis/1b_controller_start_fit.txt`: a 1 ms grid search, reference time 3.0–6.2 s.
+
+| Series | Best-fit start | Fit | Max error timed from acceptance |
+|---|---|---|---|
+| Controller setpoint (`controller_state.reference`) | **acceptance − 0.015 s** | rms 1.08e-4 rad, 130 samples | 0.0022 rad |
+| Recorded `/joint_states` | acceptance + 0.083 s | rms 0.0012 rad, 314 samples | 0.0105 rad (0.0108 over all 322 tracked samples) |
+
+- The controller started its trajectory 0.015 s before the client processed the acceptance.
+- The joints lag the setpoint by about 0.083 s. That is physical tracking lag, part of the
+  measured error, and it is not compensated.
+- **The data supports acceptance as the anchor.** No better anchor is available: −0.015 s is
+  1.5 joint-state periods and leaves the joints within 0.011 rad.
+
+### 14.3 Root cause: proven (one link inferred)
+
+- **The mechanism is proven from the record.**
+  - The tool's estimate was 33.03 s = acceptance + 3.216 s, about the median feedback stamp.
+  - An informative `time_from_start` would have put it near acceptance − 0.015 s (§14.2), and
+    acceptance would have been kept.
+  - So the feedback's `time_from_start` was about 0. The M6.0-D rule then replaced acceptance
+    with the drifting stamp median and held the reference in the untracked 3 s lead-in.
+- **The replay proves it.** The recorded `/joint_states` plus a feedback proxy, through the
+  unchanged rule: cancelled. Through the fixed rule: not cancelled, max 0.010756 rad (§14.5).
+- **Inferred, not recorded: the raw feedback field.** The bag did not record hidden action
+  topics.
+  - `controller_state` is no direct witness: its deprecated `desired` point is empty (0
+    positions).
+  - Its populated `reference` point also carries `time_from_start = 0`, in every message,
+    during the goal too.
+  - The next cycle records the feedback itself (§14.7).
+- §13 says "`desired.time_from_start = 0` (255 of 255 `controller_state` samples)". That is
+  true, but that point is empty. This section is the precise statement.
+
+### 14.4 Fix (`b0d8e75`, M6.1 side only)
+
+`m6_live_playback` (M6.0-D) is unchanged.
+- **`m61_tracking.tracking_anchor(accept, feedback)`**:
+  - the reference starts at goal acceptance;
+  - only feedback whose `time_from_start` is informative (finite, > 1e-6 s) can form an
+    estimate (the M6.0-D upper median);
+  - that estimate replaces acceptance only if it differs by more than the unchanged 0.1 s;
+  - 0, negative or non-finite values never do;
+  - if feedback arrived and none was informative, acceptance is a recorded **fallback**.
+- **`M61Session`**:
+  - records `(stamp, time_from_start)` for each feedback message;
+  - overrides `_ref_time` and `_start_estimate`;
+  - logs the fallback once, at first use;
+  - counts the in-flight checks made with it;
+  - reports `outcome['tracking_reference']`: anchor, t0, counts, fallback flag and count, the
+    unfiltered M6.0-D estimate for comparison, and the abort threshold.
+- **Thresholds unchanged:** client abort 0.05 rad, offset limit 0.1 s, path and goal tolerances
+  0.05 rad (pinned by a test).
+- **Fake.** `M61FakeTransport(feedback_tfs_zero=True)` reports 0, like 2.48.0. Two new mock
+  scenarios: `feedback_tfs_zero` (SUCCEEDED) and `tracking_error_tfs_zero` (TRACKING_FAILED,
+  1 cancel).
+
+### 14.5 Tests
+
+| Run | Result |
+|---|---|
+| `test_m61_tracking.py` (new, 49 tests) | **49 passed**. It covers: the anchor rule and its boundaries (0, ±0, 1e-6, 2e-6, negative, NaN, ±inf, None and string `time_from_start`; non-finite stamps; the 0.1 s limit, exclusive, with binary-exact values; mixed feedback; the upper median); the 0.05 rad abort boundary at the first tracked instant (0.05 does not cancel, the next float does); the fallback logged once and counted; informative feedback (no fallback; a late controller start still moves the anchor); unreadable fields. **The replay of the recorded cycle** (`test/data/m61_cycle_20261012T054741Z_tracking_replay.json`: 624 recorded joint samples, a 255-message `controller_state` proxy, source SHA-256 checked against the evidence) **does not cancel**, max 0.010756 rad. **The unchanged M6.0-D rule on the same replay cancels** (the control). Bad tracks still cancel: +0.06 rad after 4 s, a one-sample spike, joints that never move, a 0.5 s lag, a missing joint. The fake controller: `time_from_start = 0` SUCCEEDED (TRACKING_FAILED with the M6.0-D rule); a bad track still cancels. Gate modes with fakes: disabled refuses before any transport; enabled `--live` succeeds, with the fallback recorded, and cancels a bad track |
+| `test_m61_gait_replay.py` | the scenario table covers the 2 new mock scenarios |
+| Deliberate mutants (`mutants/mutants.txt`) | **11 of 11 caught**: zero counted as informative; a negative value counted via abs; an inclusive offset limit; an informative estimate ignored; the fallback never recorded; feedback never captured; the M6.1 overrides removed (the pre-fix rule); the start estimate reverted; an inclusive abort threshold; the fallback event never logged; the fallback skipping the in-flight check. Sources restored byte for byte (SHA-256 checked) |
+| Clean build and full `colcon test`, **disabled** (`b0d8e75`) | **1678 tests, 0 errors, 0 failures, 0 skipped** (8 packages; 1626 at `61f3ffc` + 49 `test_m61_tracking` + 2 mock scenarios + 1 CTest entry; `tests/disabled_full_colcon_test.txt`) |
+| Whole `spiderx_controller` suite, **enabled** (the patch `b6213f21…` applied in a temporary worktree at `b0d8e75`, tests only, fakes, no simulator) | **1634 passed, 0 failed** (7 min 03 s; 1583 at `61f3ffc` + 49 + 2 mock scenarios; `tests/enabled_pytest_summary.txt`) |
+
+### 14.6 Read-only rehearsal on the disabled build (no goal sent)
+
+The steps:
+- clean build at `b0d8e75`;
+- the frozen harness copied, 14 of 14 files byte-identical to `frozen_harness.json`;
+- `--verify-only` gave `DISABLED AND VERIFIED`;
+- launch; both controllers active after 13 s.
+
+**`tools/tracking_path_probe.py`** (`run/probe/`) ran for 40 s. Its node had subscriptions only:
+no action client, no publisher of its own.
+- `/joint_states` went through the production adapter conversion.
+- There is no action feedback without a goal, so each live `controller_state` message was
+  copied into a FollowJointTrajectory feedback message and converted by the production adapter
+  (`_on_feedback`).
+- Both streams went, from a pseudo acceptance 2 s into the window, into `M61Session._on_event`.
+  Its transport was an in-memory stub: a trip only increments a counter.
+- The same events also went through the unchanged M6.0-D rule, as a control.
+
+**Verdict PASS, 10 of 10 checks:**
+
+| Check | Result |
+|---|---|
+| No goal | 0 action-status messages, 0 goals; 0 messages on `/leg_trajectory_controller/joint_trajectory` (the bag has no such topic); the probe had no action client |
+| Robot held neutral | max \|q − neutral\| 9.7e-5 rad |
+| Live `time_from_start` | 0 in all 1206 converted messages; the JTC version is 2.48.0 |
+| Anchor | t0 = the pseudo acceptance (17.96 s sim); fallback recorded and logged once; 361 in-flight checks counted on it |
+| Tracking start | the first tracked check at reference time 3.0 s exactly |
+| A genuinely bad track (the robot did not move) | tripped at reference time 3.63 s, 0.0506 rad. Predicted independently: 3.624 s |
+| The M6.0-D rule on the same live data | its estimate drifted to 13.78 s after acceptance, and it started checking 3 s late |
+
+- **The production readiness rehearsal**, once (`run/readiness_rehearsal/`): READY, discovery
+  0.0 s, readiness age 5.12 s at the send check, 0 goals, 0 dispatch calls.
+- **Stop:** the process group was empty after 4 s and no process was left. `--verify-only`
+  gave `DISABLED AND VERIFIED` (`post/`).
+
+**What this rehearsal cannot show** (it needs a goal):
+- the controller's action feedback during a goal (the probe used a `controller_state` proxy);
+- the controller's start relative to acceptance in this launch;
+- the in-flight check over a complete 7 s cycle on this controller;
+- goal tolerances, and E4 and E6–E9 for a complete cycle;
+- any motion.
+
+### 14.7 What remains, and the plan for one newly authorized cycle
+
+**Remaining blockers.**
+1. **A new owner authorization.** It must name a base whose `src/` equals `b0d8e75`, accept the
+   `tracking_reference` record in E6 (thresholds unchanged), and accept the bag change below.
+2. **Unproven until a goal runs:**
+   - the raw action feedback on this controller;
+   - a complete cycle under the acceptance anchor;
+   - E4 and E6–E9.
+3. **Owner PC:** phase 1 has not run there.
+4. **M5.5 keyboard walking** stays blocked until one M6.1 fixed-base cycle passes E1–E11.
+
+**Plan** (`M61_CLOUD_ONE_CYCLE_PLAN.md`, updated; one goal, no retry):
+- **A.** As before, with `git diff b0d8e75 HEAD -- src/` empty.
+- **A2.** Three readiness rehearsals as before, **plus** one `tracking_path_probe.py`, which must
+  PASS. Then `--verify-only`.
+- **C.** The enabled tests include `test_m61_tracking.py`.
+- **E.** The bag also records `/leg_trajectory_controller/follow_joint_trajectory/_action/feedback`,
+  with `--include-hidden-topics`; never `_action/status`, whose subscribers count as competing
+  clients. This records the field directly. It was checked read-only in a second launch on the disabled build (`run2/feedback_bag_check/`).
+  The bag subscribed to `_action/feedback`, and `_action/status` had 0 subscribers. Readiness was
+  READY, with `foreign_action_clients` 0 and `command_publishers` 0, and 0 goals. Then
+  `DISABLED AND VERIFIED` (`post2/`).
+- **Evaluation.** E6 also reads `live_outcome.json` `tracking_reference`: the anchor and whether
+  the fallback was used. The 0.05 rad limit is unchanged.

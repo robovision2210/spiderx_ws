@@ -321,6 +321,41 @@ ros2 run spiderx_controller m6_gait_replay.py --live --domain-id 0     # REFUSED
 - **Tests.** `test/test_m61_discovery.py` (fake clocks, mock sessions, both gate modes with
   fakes, isolated ROS domain).
 
+### 5.2 The in-flight tracking reference: timed from goal acceptance (`b0d8e75`)
+
+- **Why.** The second authorized Cloud cycle was cancelled by the client's in-flight tracking
+  check while the joints followed the approved trajectory within 0.0108 rad (Cloud report §13,
+  §14).
+  - `joint_trajectory_controller` 2.48.0 reports `desired.time_from_start = 0` in its action
+    feedback (2.49.0 added it).
+  - The reused M6.0-D rule (`LiveSession._ref_time`) then took the median feedback STAMP as the
+    trajectory start. It drifted to about half the elapsed time.
+  - The M6.0-D crouch ran on 2.54.0, where the field is filled.
+- **What** (`m61_tracking`, `M61Session`; M6.0-D unchanged):
+  - The reference starts at goal **acceptance**. The cycle's bag shows the controller started
+    0.015 s before it.
+  - Only feedback with an informative `time_from_start` (finite, > 1e-6 s) forms an estimate.
+    It replaces acceptance only beyond the unchanged 0.1 s.
+  - Zero, negative or non-finite values never do. When feedback arrived and none was
+    informative, acceptance is a **fallback**: one session event at first use, the count of
+    in-flight checks made with it, and `outcome['tracking_reference']`.
+- **Unchanged:** the client abort (0.05 rad), the offset limit (0.1 s), path and goal
+  tolerances (0.05 rad), and the untracked 3 s lead-in before the first waypoint.
+- **Fake.** `M61FakeTransport(feedback_tfs_zero=True)`; scenarios `feedback_tfs_zero` and
+  `tracking_error_tfs_zero`.
+- **Tests.** `test/test_m61_tracking.py`:
+  - the anchor boundaries;
+  - the abort boundary;
+  - a replay of the recorded cycle that must not cancel (the M6.0-D rule on it does);
+  - bad tracks that still cancel;
+  - both gate modes with fakes.
+
+  Deliberate mutants: 11 of 11 caught.
+- **Read-only rehearsal.**
+  `docs/evidence/m61_tracking_fix/20261012T081545Z/tools/tracking_path_probe.py` drives the live
+  streams through this path on the disabled build. Its node only subscribes, and the session's
+  transport is an in-memory stub.
+
 ## 6. Allowed claim and non-claims
 
 **Allowed now:** "The M6.1 trot-cycle replay tool is implemented and verified offline, with mocks

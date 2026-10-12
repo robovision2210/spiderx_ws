@@ -1,0 +1,20 @@
+Type: action_msgs/msg/GoalStatusArray
+
+Publisher count: 1
+
+Node name: leg_trajectory_controller
+Node namespace: /
+Topic type: action_msgs/msg/GoalStatusArray
+Endpoint type: PUBLISHER
+GID: 01.0f.78.fd.ad.2d.3c.29.00.00.00.00.00.00.70.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: TRANSIENT_LOCAL
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+

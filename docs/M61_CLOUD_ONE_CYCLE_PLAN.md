@@ -1,6 +1,6 @@
-# M6.1 – ONE fixed-base trot cycle in Cloud simulation: source-verified plan (attempted once; refused before dispatch)
+# M6.1 – ONE fixed-base trot cycle in Cloud simulation: source-verified plan (attempted twice: refused, then one goal cancelled; both FAIL)
 
-**Status: ATTEMPTED ONCE, on 2026-10-12, under the owner's authorization. Result: FAIL, refused
+**Status: FIRST ATTEMPT on 2026-10-12, under the owner's authorization. Result: FAIL, refused
 before dispatch, 0 goals, 0 cancels.** The authorization is spent; another attempt needs a new
 one.
 - The plan below was followed unchanged at `8025668`.
@@ -22,6 +22,23 @@ one.
   reference fix and a new authorization.
 - Evidence: [`evidence/m61_cloud_one_cycle/20261012T054741Z/`](evidence/m61_cloud_one_cycle/20261012T054741Z/README.md).
 
+**Since the second attempt (Cloud report §14): the tracking reference fixed at `b0d8e75`, rehearsed
+without a goal.** That cycle stays FAIL (E4, E6).
+- JTC 2.48.0 reports `time_from_start = 0` in its action feedback. The M6.1 client now times the
+  reference from goal acceptance; the bag shows that the controller started 0.015 s before it.
+- A feedback estimate is used only when its `time_from_start` is informative. The fallback is
+  recorded in `live_outcome.json` `tracking_reference`. No threshold changed.
+- On the disabled build, a read-only probe drove the live streams through the tracking path,
+  with no goal: PASS. Cleanup ended `DISABLED AND VERIFIED`.
+- This plan is updated for a **new** authorization:
+  - `src/` must equal `b0d8e75`;
+  - A2 adds the tracking-path probe;
+  - C runs `test_m61_tracking.py`;
+  - E records the action feedback;
+  - E6 reads `tracking_reference`.
+
+  The patch and the trajectory identities are unchanged.
+
 **Since the first attempt (Cloud report §12): readiness fixed at `61f3ffc`, rehearsed without motion.**
 - The refusal's mechanism was reproduced read-only with the pre-fix code against a running
   server: a single per-node action-server query about 2.1 s after node creation missed it.
@@ -35,7 +52,7 @@ one.
 
 **Status of the plan text itself, as reviewed:**
 - Before that attempt, nothing here had been enabled or executed, and no goal had been sent.
-  Still no goal has been sent.
+  Since then, one goal was sent, in the second attempt (Cloud report §13).
 - The enabling change exists only as an **unapplied** patch,
   [`patches/m61_enable_one_cycle.UNAPPLIED.patch`](patches/m61_enable_one_cycle.UNAPPLIED.patch)
   (SHA-256 `b6213f21dedf30e61e4959d22cd45a44525a8bc4432b641134406fe7f3277595`). Only its header
@@ -62,8 +79,10 @@ procedure or threshold.
 - Items 1–3 were approved by the owner on 2026-10-12: criterion 6 version 2 as a limited planar
   check, the simulator physics state for z, roll and pitch, and E1–E11 at `8025668`.
 - Item 4, the run, was used once (refused before dispatch) and is spent.
-- A new attempt needs a new run authorization covering `61f3ffc`/`02d284c` (the E5 discovery addition) and
-  the A2 rehearsal.
+- A new attempt needs a new run authorization covering `61f3ffc`/`02d284c` (the E5 discovery addition),
+  the A2 rehearsal and, after the second attempt, `b0d8e75`: the tracking-reference fix, the A2
+  tracking-path probe, the action-feedback recording in E and the `tracking_reference` record in
+  E6 (Cloud report §14.7).
 
 1. **Owner decision on criterion 6** ([`M61A_CRITERION6_V2_PROPOSAL.md`](M61A_CRITERION6_V2_PROPOSAL.md);
    Cloud report §9.6).
@@ -118,7 +137,7 @@ procedure or threshold.
 
 | Item | Value | Where |
 |---|---|---|
-| Base branch | `claude/stoic-shannon-ur2mes` at the commit named in the approval (`02d284c` or later; `src/` must equal `02d284c`, which is the fix `61f3ffc` plus a mode-explicit test: `git diff 02d284c HEAD -- src/` empty). The attempt of 2026-10-12 used `8025668`, whose `src/` equals `1732c32` | — |
+| Base branch | `claude/stoic-shannon-ur2mes` at the commit named in the approval (`b0d8e75` or later; `src/` must equal `b0d8e75`, which is the readiness fix `61f3ffc`, a mode-explicit test `02d284c` and the tracking-reference fix: `git diff b0d8e75 HEAD -- src/` empty). The first attempt of 2026-10-12 used `8025668` (`src/` = `1732c32`); the second used `dcac464` (`src/` = `02d284c`) | — |
 | Enabling branch | `local/m61-one-cycle-<UTC>`: **local only, never pushed, never merged**, deleted after the run | §4 |
 | Gate | `m61_live_contract.M61_LIVE_DISPATCH_ENABLED` (line 19), pinned by `test/m61_gate.py` (line 7) | patch |
 | Other gates | M6.0-D `m6_live_contract.LIVE_DISPATCH_ENABLED` stays `False` (not read by M6.1); the M5.5 gate is not on this branch | `m6_gait_replay._gate_state()` |
@@ -209,7 +228,7 @@ Check the copied tools against `frozen_harness.json` before use. Every shell sou
 
 **A. Gate-off checks on the base commit** (record all output in `$R/pre/`):
 ```bash
-git status --short && git rev-parse HEAD && git diff 02d284c HEAD -- src/ | wc -l     # clean; 0
+git status --short && git rev-parse HEAD && git diff b0d8e75 HEAD -- src/ | wc -l     # clean; 0
 pgrep -af "ign gazebo|gz sim|ros2|parameter_bridge|controller_manager|Xvfb" || echo none
 rm -rf build install && colcon build --symlink-install && source install/setup.bash
 ros2 run spiderx_controller m6_gait_replay.py --dry-run --no-write          # 241760e7dfd5ef12 / 9dba1a17…
@@ -227,8 +246,19 @@ ros2 run spiderx_controller m61_readiness_rehearsal --domain-id 0 --out $R/rehea
 - **Expected:** `READY` every time, with 0 goals and 0 dispatch calls. `rehearsal.json` holds the
   discovery time and both readiness observations.
 - **On any NOT READY:** stop. Read its complete record; do not enable.
+- **Then, still in this launch (`b0d8e75`; Cloud report §14.6), the tracking-path probe, once.**
+  Its node only subscribes. It drives the live `/joint_states` and a `controller_state` feedback
+  proxy, converted by the production adapter, through `M61Session` with an in-memory stub
+  transport. No goal can exist:
+  ```bash
+  python3 docs/evidence/m61_tracking_fix/20261012T081545Z/tools/tracking_path_probe.py \
+    --domain-id 0 --duration 40 --out $R/probe
+  ```
+  Expected: `verdict PASS` with all 10 checks true. They include: no goal; the robot held
+  neutral; the anchor at acceptance with the fallback recorded once; tracking from 3.0 s; the
+  non-moving robot tripping where predicted. Anything else stops the procedure.
 - Then `stage_stop.sh` and `scripts/m61_restore_and_verify_disabled.sh --verify-only`, which
-  must end `DISABLED AND VERIFIED`, before B. The rehearsal cannot dispatch and reads no gate.
+  must end `DISABLED AND VERIFIED`, before B. Neither the rehearsal nor the probe can dispatch.
 
 **B. Enabling branch (local only).**
 ```bash
@@ -248,8 +278,8 @@ grep -n "^M61_LIVE_DISPATCH_ENABLED\|^EXPECTED_M61" \
   src/spiderx_controller/test/m61_gate.py                         # both True
 grep -n "^LIVE_DISPATCH_ENABLED" src/spiderx_controller/spiderx_controller/m6_live_contract.py   # False
 ros2 run spiderx_controller m6_gait_replay.py --dry-run --no-write          # identity UNCHANGED (E3)
-cd src/spiderx_controller && python3 -m pytest test/test_m61_gait_replay.py -p no:cacheprovider \
-  --basetemp=$R/enabled_tests -rA > $R/enabled_tests.log; cd -
+cd src/spiderx_controller && python3 -m pytest test/test_m61_gait_replay.py test/test_m61_tracking.py \
+  -p no:cacheprovider --basetemp=$R/enabled_tests -rA > $R/enabled_tests.log; cd -
 ```
 Expected: **every test passes**; any failure stops the procedure.
 - The gate tests are mode-explicit: the pin, the disabled path with the gate set False, the
@@ -271,10 +301,11 @@ cleanly, and relaunch **once** after recording it (no observation or goal ran).
 **E. Recording and the one goal.**
 ```bash
 source $R/tools/env.sh
-ros2 bag record -s sqlite3 -o $R/run/bag /spiderx/sim/world_poses /joint_states /clock \
-  /robot_description /leg_trajectory_controller/controller_state \
-  /leg_trajectory_controller/joint_trajectory &
-BAG=$!                                                   # NOT the _action/status topic (§3)
+ros2 bag record -s sqlite3 --include-hidden-topics -o $R/run/bag /spiderx/sim/world_poses \
+  /joint_states /clock /robot_description /leg_trajectory_controller/controller_state \
+  /leg_trajectory_controller/joint_trajectory \
+  /leg_trajectory_controller/follow_joint_trajectory/_action/feedback &
+BAG=$!       # the action FEEDBACK (b0d8e75 plan; Cloud report §14.7), NOT _action/status (§3)
 ros2 run spiderx_controller m61a_observe_fixed_base --domain-id 0 --duration 90 \
   --out $R/run/observer > $R/run/observe_during.txt 2>&1 &
 OBS=$!
@@ -365,7 +396,7 @@ the enabling branch, which was never pushed. Then commit the evidence on the bas
 | E3 | Identity unchanged: `241760e7dfd5ef12` / `94a492c4…` / `9dba1a17…` on the enabled build | dry run; `trajectory.json`, `goal_fingerprint.txt` |
 | E4 | Final state `SUCCEEDED`, exit 0; `goals_sent 1`, `cancels_sent 0`, `retries 0`, `automatic_return_goals 0`; acceptance `accepted`, final goal status 4 | `m61_run/<UTC>/live_outcome.json` (phases reserved → pre_send → final) |
 | E5 | The action server discovered within the bound before readiness #1 (`m61_action_discovery.outcome` `found`, 10 s `SERVER_WAIT_S`; added at `61f3ffc`), and the observation started after the wait. Readiness READY before and after confirmation. The readiness composition includes `with_sim_progress`, so READY means sim time advanced ≥ 0.1 s within the last 1.0 s while the body pose arrived (a failure is listed as `body_pose_sim_time_not_advancing`). **And at the send, both of:** (a) the readiness result ≤ 10 s old (M6.0-D); (b) the streams *now* (§3): joint states, body pose and sim progress observed in a 1.0 s window after draining the backlog, plant and attachment included, `streams_now.ok` true. (a) does not replace (b): a ≤ 10 s snapshot says nothing about whether the streams are current at the send | `readiness_before.json`, `readiness_after.json` (`ready`, `failure_codes`, and from `61f3ffc` the complete per-check `report` with `m61_action_discovery` and monotonic timestamps), `live_outcome.json` (`freshness_at_send`, incl. `streams_now`) |
-| E6 | Tracking: max in-flight \|error\| < 0.05 rad; goal tolerances passed; no G6 sample gap | `live_outcome.json` (`tracking`, `channels`), `commanded_vs_observed.csv` |
+| E6 | Tracking: max in-flight \|error\| < 0.05 rad; goal tolerances passed; no G6 sample gap. From `b0d8e75`, the reference start is recorded: `tracking_reference.anchor` (`acceptance`, or `feedback_estimate` only from informative feedback) and whether the `time_from_start = 0` fallback was used. The fallback is recorded, not a failure; the 0.05 rad limit is unchanged | `live_outcome.json` (`tracking`, `tracking_reference`, `channels`), `commanded_vs_observed.csv`, the bag's `_action/feedback` |
 | E7 | No gate tripped (G1, G2, G3, G5, G6, G8, pose freshness); G7 drift reported only | `gates.json` |
 | E8 | Body stayed welded during the cycle, **measured from the physics state**. The body is the `spiderx` model entry (DART's pose of the merged body) · `dummy_link` entry (the SDF X_ML that Physics divided by, so it cancels) · T_dummy_body (URDF, identity, same rigid body). It must stay within 1 mm / 0.0033 rad of the description's weld origin, z within 1 mm of 0.125 m (the phase-1 rule). **Provenance in this launch** (`m61a_link_check`, frozen): the leg-link entries equal URDF FK at the measured joints and differ from FK(0). In gz-sim 6.16 that requires the model entry to have been written from DART first. The SDF weld value is never used as the measurement | `gates.json` attachment max, `body_pose.csv`, observer statistics; `run/link_check/link_check.json` (`e8_body_pose`, `e8_provenance` PASS, no contradicting server-log line) |
 | E9 | **Dynamic link/kinematic consistency of the pose stream** (content liveness, U-L1). The 12 leg-link entries, relative to the `dummy_link` entry, change during the goal: every foot link turns ≥ 0.02 rad. In every sample they match URDF FK at `/joint_states` interpolated to the sample's `/clock` time (±25 ms) within 1 mm / 5 mrad; there are ≥ 100 samples and no gap > 1.0 s. The frozen stale-stream counterfactual must fail. **This is not a measurement of global body height or tilt**: the entries are relative to the body (E8 covers the body). Analysis frozen before any motion run: `927acb2`, `m61a_link_check.py` SHA-256 `649b0c4f…7059e31` | `run/bag`; `run/link_check/link_check.json` (`e9_link_consistency` PASS) |
