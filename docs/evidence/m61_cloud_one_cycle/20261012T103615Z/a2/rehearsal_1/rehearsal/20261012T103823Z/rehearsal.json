@@ -1,0 +1,1001 @@
+{
+ "action_name": "/leg_trajectory_controller/follow_joint_trajectory",
+ "age_check_at_send": {
+  "age_s": 5.135693,
+  "code": null,
+  "max_age_s": 10.0,
+  "permitted": true
+ },
+ "cancels_sent": 0,
+ "discovery": {
+  "action_name": "/leg_trajectory_controller/follow_joint_trajectory",
+  "classification": null,
+  "classification_text": null,
+  "domain_id": 0,
+  "duration_s": 0.501095,
+  "ended_monotonic": 205.625303,
+  "expected_host_node": "/leg_trajectory_controller",
+  "found_after_s": 0.500834,
+  "last_snapshot": {
+   "client_matched": true,
+   "error": null,
+   "nodes": [
+    "/_ros2cli_daemon_0_f736a910cc87454e90402126050367f3",
+    "/gz_ros2_control",
+    "/controller_manager",
+    "/joint_state_broadcaster",
+    "/leg_trajectory_controller",
+    "/m61_readiness_rehearsal",
+    "/robot_state_publisher",
+    "/spiderx_gz_bridge",
+    "/spiderx_sim_ground_truth_bridge"
+   ],
+   "status_publishers": 1
+  },
+  "note": "bounded wait before the readiness observation; it permits nothing by itself",
+  "outcome": "found",
+  "poll_s": 0.25,
+  "polls": [
+   {
+    "client_matched": false,
+    "error": null,
+    "host_node_visible": false,
+    "monotonic": 205.124208,
+    "nodes": 2,
+    "servers": 0,
+    "status_publishers": 0,
+    "t_s": 0.0
+   },
+   {
+    "client_matched": false,
+    "error": null,
+    "host_node_visible": false,
+    "monotonic": 205.37456,
+    "nodes": 5,
+    "servers": 0,
+    "status_publishers": 0,
+    "t_s": 0.250352
+   },
+   {
+    "client_matched": true,
+    "error": null,
+    "host_node_visible": true,
+    "monotonic": 205.625042,
+    "nodes": 9,
+    "servers": 1,
+    "status_publishers": 1,
+    "t_s": 0.500834
+   }
+  ],
+  "schema": "spiderx.m61.action_discovery/1",
+  "servers": [
+   [
+    "/leg_trajectory_controller",
+    [
+     "control_msgs/action/FollowJointTrajectory"
+    ]
+   ]
+  ],
+  "started_monotonic": 205.124208,
+  "timeout_s": 10.0,
+  "waited_before_this_observation": true
+ },
+ "dispatch_calls": 0,
+ "dispatch_possible": false,
+ "domain_id": 0,
+ "errors": [],
+ "gates": {
+  "m61_live_dispatch_enabled": false,
+  "m6d_live_dispatch_enabled (not used by M6.1)": false
+ },
+ "goal_fingerprint": "9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a",
+ "goals_sent": 0,
+ "milestone": "M6.1",
+ "mode": "readiness_rehearsal",
+ "node_name": "m61_readiness_rehearsal",
+ "non_claims": [
+  "A rehearsal observes readiness only. It sends no goal and shows nothing about tracking, gates in motion, walking, contact or hardware."
+ ],
+ "run_dir": "/root/spiderx_evidence/m61_one_cycle_20261012T103615Z/a2/rehearsal_1/rehearsal/20261012T103823Z",
+ "schema": "spiderx.m61.readiness_rehearsal/1",
+ "steps": [
+  {
+   "code": null,
+   "permitted": true,
+   "result": {
+    "age_s": 4.027898,
+    "classification": "compatible",
+    "collection_s": 4.025226,
+    "evaluated_monotonic": 209.653214,
+    "failure_codes": [],
+    "observed_monotonic": 205.625315,
+    "observed_wall_iso": null,
+    "ready": true,
+    "reasons": [],
+    "report": {
+     "checks": {
+      "action_server": "passed",
+      "controllers": "passed",
+      "interface_contract": "passed",
+      "joint_names_contract": "passed",
+      "joint_states_fresh": "passed",
+      "joint_states_source": "passed",
+      "probe": "passed",
+      "start_pose": "passed"
+     },
+     "contract": {
+      "action_name": "/leg_trajectory_controller/follow_joint_trajectory",
+      "action_type": "control_msgs/action/FollowJointTrajectory",
+      "joint_names": [
+       "lf_hip",
+       "lf_thigh_joint",
+       "lf_foot_joint",
+       "rf_hip",
+       "rf_thigh_joint",
+       "rf_foot_joint",
+       "lr_hip",
+       "lr_thigh_joint",
+       "lr_foot_joint",
+       "rr_hip",
+       "rr_thigh_joint",
+       "rr_foot_joint"
+      ],
+      "neutral": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "required_controllers": [
+       "joint_state_broadcaster",
+       "leg_trajectory_controller"
+      ],
+      "start_pose_tolerance_rad": 0.05
+     },
+     "failure_codes": [],
+     "failures": [],
+     "goals_sent": 0,
+     "interface": {
+      "action_file_sha256": "31a124428ee490da22c15cc70a9ac2c89d07bbbba7d3bf370ca7596b229cb9f0",
+      "error_codes": {
+       "GOAL_TOLERANCE_VIOLATED": -5,
+       "INVALID_GOAL": -1,
+       "INVALID_JOINTS": -2,
+       "OLD_HEADER_TIMESTAMP": -3,
+       "PATH_TOLERANCE_VIOLATED": -4,
+       "SUCCESSFUL": 0
+      },
+      "goal_fields": [
+       "component_goal_tolerance",
+       "component_path_tolerance",
+       "goal_time_tolerance",
+       "goal_tolerance",
+       "multi_dof_trajectory",
+       "path_tolerance",
+       "trajectory"
+      ],
+      "tolerance_fields": [
+       "acceleration",
+       "name",
+       "position",
+       "velocity"
+      ]
+     },
+     "m61_action_discovery": {
+      "action_name": "/leg_trajectory_controller/follow_joint_trajectory",
+      "classification": null,
+      "classification_text": null,
+      "domain_id": 0,
+      "duration_s": 0.501095,
+      "ended_monotonic": 205.625303,
+      "expected_host_node": "/leg_trajectory_controller",
+      "found_after_s": 0.500834,
+      "last_snapshot": {
+       "client_matched": true,
+       "error": null,
+       "nodes": [
+        "/_ros2cli_daemon_0_f736a910cc87454e90402126050367f3",
+        "/gz_ros2_control",
+        "/controller_manager",
+        "/joint_state_broadcaster",
+        "/leg_trajectory_controller",
+        "/m61_readiness_rehearsal",
+        "/robot_state_publisher",
+        "/spiderx_gz_bridge",
+        "/spiderx_sim_ground_truth_bridge"
+       ],
+       "status_publishers": 1
+      },
+      "note": "bounded wait before the readiness observation; it permits nothing by itself",
+      "outcome": "found",
+      "poll_s": 0.25,
+      "polls": [
+       {
+        "client_matched": false,
+        "error": null,
+        "host_node_visible": false,
+        "monotonic": 205.124208,
+        "nodes": 2,
+        "servers": 0,
+        "status_publishers": 0,
+        "t_s": 0.0
+       },
+       {
+        "client_matched": false,
+        "error": null,
+        "host_node_visible": false,
+        "monotonic": 205.37456,
+        "nodes": 5,
+        "servers": 0,
+        "status_publishers": 0,
+        "t_s": 0.250352
+       },
+       {
+        "client_matched": true,
+        "error": null,
+        "host_node_visible": true,
+        "monotonic": 205.625042,
+        "nodes": 9,
+        "servers": 1,
+        "status_publishers": 1,
+        "t_s": 0.500834
+       }
+      ],
+      "schema": "spiderx.m61.action_discovery/1",
+      "servers": [
+       [
+        "/leg_trajectory_controller",
+        [
+         "control_msgs/action/FollowJointTrajectory"
+        ]
+       ]
+      ],
+      "started_monotonic": 205.124208,
+      "timeout_s": 10.0,
+      "waited_before_this_observation": true
+     },
+     "m61_body_pose": {
+      "age_s": 0.013704424999986031,
+      "max_age_s": 1.0,
+      "pose": [
+       0.0,
+       0.0,
+       0.125,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "required": true,
+      "stamp_s": 23.896
+     },
+     "m61_readiness_record": {
+      "action_name": "/leg_trajectory_controller/follow_joint_trajectory",
+      "collection_s": 4.025226,
+      "completed_monotonic": 209.653205,
+      "domain_id": 0,
+      "node_name": "m61_readiness_rehearsal",
+      "observation_started_monotonic": 205.625315,
+      "requested_monotonic": 205.124196
+     },
+     "m61a_command_owner": {
+      "codes": [],
+      "ok": true,
+      "snapshot": {
+       "command_publishers": 0,
+       "foreign_action_clients": 0
+      }
+     },
+     "m61a_fixed_base": {
+      "checks": {
+       "attachment": {
+        "code": null,
+        "detail": {
+         "dxy_m": 0.0,
+         "dz_m": 0.0,
+         "rotation_rad": 0.0,
+         "translation_m": 0.0
+        },
+        "ok": true
+       },
+       "body_pose_xyz_rpy": [
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "body_tilt_rad": 0.0,
+       "frame_body_link": {
+        "code": null,
+        "detail": {
+         "rotation_rad": 0.0,
+         "translation_m": 0.0
+        },
+        "ok": true
+       },
+       "robot_description": {
+        "code": null,
+        "detail": {
+         "all_codes": [],
+         "fixed_base": true,
+         "weld_xyz_rpy": [
+          0.0,
+          0.0,
+          0.125,
+          0.0,
+          0.0,
+          0.0
+         ]
+        },
+        "ok": true
+       },
+       "spawn_identity": {
+        "code": null,
+        "detail": {
+         "rotation_rad": 0.0,
+         "translation_m": 0.0
+        },
+        "ok": true
+       }
+      },
+      "codes": [],
+      "ok": true
+     },
+     "m61a_sim_progress": {
+      "code": null,
+      "min_sim_advance_s": 0.1,
+      "ok": true,
+      "samples": 56,
+      "sim_advance_s": 0.6259999999999977,
+      "window_s": 1.0
+     },
+     "messages_published": 0,
+     "non_claims": [
+      "M6.0 is a trajectory-execution and observability check only.",
+      "It does not show gait playback, walking, locomotion, contact, body support, balance, dynamic stability, navigation, real-time behaviour, actuator capability or hardware readiness."
+     ],
+     "not_proof": "Passing this preflight does NOT prove tracking, movement, contact, body support, balance or walking. No goal was sent and nothing was published.",
+     "observed": {
+      "action_servers": [
+       [
+        "/leg_trajectory_controller",
+        [
+         "control_msgs/action/FollowJointTrajectory"
+        ]
+       ]
+      ],
+      "controllers": [
+       [
+        "joint_state_broadcaster",
+        "joint_state_broadcaster/JointStateBroadcaster",
+        "active"
+       ],
+       [
+        "leg_trajectory_controller",
+        "joint_trajectory_controller/JointTrajectoryController",
+        "active"
+       ]
+      ],
+      "joint_state_messages": 127,
+      "joint_state_publishers": [
+       [
+        "/joint_state_broadcaster",
+        "sensor_msgs/msg/JointState"
+       ]
+      ],
+      "last_joint_state": {
+       "names": [
+        "lf_foot_joint",
+        "rf_hip",
+        "rf_foot_joint",
+        "rf_thigh_joint",
+        "lr_hip",
+        "lr_thigh_joint",
+        "lr_foot_joint",
+        "rr_hip",
+        "lf_hip",
+        "rr_thigh_joint",
+        "lf_thigh_joint",
+        "rr_foot_joint"
+       ],
+       "positions": [
+        -8.663887127852932e-05,
+        9.69594642404453e-05,
+        8.66430049524856e-05,
+        4.419909731719363e-05,
+        9.695926033241635e-05,
+        -4.4193464036709884e-05,
+        8.663887127852987e-05,
+        -9.695946424044206e-05,
+        -9.69592603324179e-05,
+        4.4199097317196905e-05,
+        -4.419346403671024e-05,
+        8.664300495248816e-05
+       ],
+       "stamp_s": 23.9
+      }
+     },
+     "ready": true,
+     "schema": "spiderx.m6.live_preflight/1",
+     "verdict": "READY",
+     "version_check": {
+      "note": "visible outcome (D6); the interface contract must pass",
+      "packages": {
+       "action_msgs": {
+        "installed": "1.2.1",
+        "reference": "1.2.1",
+        "status": "matches"
+       },
+       "control_msgs": {
+        "installed": "4.8.0",
+        "reference": "4.8.0",
+        "status": "matches"
+       },
+       "controller_manager": {
+        "installed": "2.51.0",
+        "reference": "2.51.0",
+        "status": "matches"
+       },
+       "controller_manager_msgs": {
+        "installed": "2.51.0",
+        "reference": "2.51.0",
+        "status": "matches"
+       },
+       "gz_ros2_control": {
+        "installed": "0.7.15",
+        "reference": "0.7.15",
+        "status": "matches"
+       },
+       "hardware_interface": {
+        "installed": "2.51.0",
+        "reference": "2.51.0",
+        "status": "matches"
+       },
+       "joint_trajectory_controller": {
+        "installed": "2.48.0",
+        "reference": "2.48.0",
+        "status": "matches"
+       },
+       "rclpy": {
+        "installed": "3.3.16",
+        "reference": "3.3.16",
+        "status": "matches"
+       },
+       "sensor_msgs": {
+        "installed": "4.9.0",
+        "reference": "4.9.0",
+        "status": "matches"
+       },
+       "trajectory_msgs": {
+        "installed": "4.9.0",
+        "reference": "4.9.0",
+        "status": "matches"
+       }
+      },
+      "status": "matches"
+     },
+     "versions": {
+      "ROS_DISTRO": "humble",
+      "action_msgs": "1.2.1",
+      "control_msgs": "4.8.0",
+      "controller_manager": "2.51.0",
+      "controller_manager_msgs": "2.51.0",
+      "gz_ros2_control": "0.7.15",
+      "hardware_interface": "2.51.0",
+      "joint_trajectory_controller": "2.48.0",
+      "rclpy": "3.3.16",
+      "sensor_msgs": "4.9.0",
+      "trajectory_msgs": "4.9.0"
+     }
+    },
+    "session_t_s": 4.534034
+   },
+   "when": "before_confirmation"
+  },
+  {
+   "code": null,
+   "permitted": true,
+   "result": {
+    "age_s": 4.022889,
+    "classification": "compatible",
+    "collection_s": 4.020717,
+    "evaluated_monotonic": 213.676316,
+    "failure_codes": [],
+    "observed_monotonic": 209.653427,
+    "observed_wall_iso": null,
+    "ready": true,
+    "reasons": [],
+    "report": {
+     "checks": {
+      "action_server": "passed",
+      "controllers": "passed",
+      "interface_contract": "passed",
+      "joint_names_contract": "passed",
+      "joint_states_fresh": "passed",
+      "joint_states_source": "passed",
+      "probe": "passed",
+      "start_pose": "passed"
+     },
+     "contract": {
+      "action_name": "/leg_trajectory_controller/follow_joint_trajectory",
+      "action_type": "control_msgs/action/FollowJointTrajectory",
+      "joint_names": [
+       "lf_hip",
+       "lf_thigh_joint",
+       "lf_foot_joint",
+       "rf_hip",
+       "rf_thigh_joint",
+       "rf_foot_joint",
+       "lr_hip",
+       "lr_thigh_joint",
+       "lr_foot_joint",
+       "rr_hip",
+       "rr_thigh_joint",
+       "rr_foot_joint"
+      ],
+      "neutral": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "required_controllers": [
+       "joint_state_broadcaster",
+       "leg_trajectory_controller"
+      ],
+      "start_pose_tolerance_rad": 0.05
+     },
+     "failure_codes": [],
+     "failures": [],
+     "goals_sent": 0,
+     "interface": {
+      "action_file_sha256": "31a124428ee490da22c15cc70a9ac2c89d07bbbba7d3bf370ca7596b229cb9f0",
+      "error_codes": {
+       "GOAL_TOLERANCE_VIOLATED": -5,
+       "INVALID_GOAL": -1,
+       "INVALID_JOINTS": -2,
+       "OLD_HEADER_TIMESTAMP": -3,
+       "PATH_TOLERANCE_VIOLATED": -4,
+       "SUCCESSFUL": 0
+      },
+      "goal_fields": [
+       "component_goal_tolerance",
+       "component_path_tolerance",
+       "goal_time_tolerance",
+       "goal_tolerance",
+       "multi_dof_trajectory",
+       "path_tolerance",
+       "trajectory"
+      ],
+      "tolerance_fields": [
+       "acceleration",
+       "name",
+       "position",
+       "velocity"
+      ]
+     },
+     "m61_action_discovery": {
+      "action_name": "/leg_trajectory_controller/follow_joint_trajectory",
+      "classification": null,
+      "classification_text": null,
+      "domain_id": 0,
+      "duration_s": 0.501095,
+      "ended_monotonic": 205.625303,
+      "expected_host_node": "/leg_trajectory_controller",
+      "found_after_s": 0.500834,
+      "last_snapshot": {
+       "client_matched": true,
+       "error": null,
+       "nodes": [
+        "/_ros2cli_daemon_0_f736a910cc87454e90402126050367f3",
+        "/gz_ros2_control",
+        "/controller_manager",
+        "/joint_state_broadcaster",
+        "/leg_trajectory_controller",
+        "/m61_readiness_rehearsal",
+        "/robot_state_publisher",
+        "/spiderx_gz_bridge",
+        "/spiderx_sim_ground_truth_bridge"
+       ],
+       "status_publishers": 1
+      },
+      "note": "bounded wait before the readiness observation; it permits nothing by itself",
+      "outcome": "found",
+      "poll_s": 0.25,
+      "polls": [
+       {
+        "client_matched": false,
+        "error": null,
+        "host_node_visible": false,
+        "monotonic": 205.124208,
+        "nodes": 2,
+        "servers": 0,
+        "status_publishers": 0,
+        "t_s": 0.0
+       },
+       {
+        "client_matched": false,
+        "error": null,
+        "host_node_visible": false,
+        "monotonic": 205.37456,
+        "nodes": 5,
+        "servers": 0,
+        "status_publishers": 0,
+        "t_s": 0.250352
+       },
+       {
+        "client_matched": true,
+        "error": null,
+        "host_node_visible": true,
+        "monotonic": 205.625042,
+        "nodes": 9,
+        "servers": 1,
+        "status_publishers": 1,
+        "t_s": 0.500834
+       }
+      ],
+      "schema": "spiderx.m61.action_discovery/1",
+      "servers": [
+       [
+        "/leg_trajectory_controller",
+        [
+         "control_msgs/action/FollowJointTrajectory"
+        ]
+       ]
+      ],
+      "started_monotonic": 205.124208,
+      "timeout_s": 10.0,
+      "waited_before_this_observation": false
+     },
+     "m61_body_pose": {
+      "age_s": 0.01893048700000577,
+      "max_age_s": 1.0,
+      "pose": [
+       0.0,
+       0.0,
+       0.125,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "required": true,
+      "stamp_s": 26.651000000000003
+     },
+     "m61_readiness_record": {
+      "action_name": "/leg_trajectory_controller/follow_joint_trajectory",
+      "collection_s": 4.020717,
+      "completed_monotonic": 213.676299,
+      "domain_id": 0,
+      "node_name": "m61_readiness_rehearsal",
+      "observation_started_monotonic": 209.653427,
+      "requested_monotonic": 209.653424
+     },
+     "m61a_command_owner": {
+      "codes": [],
+      "ok": true,
+      "snapshot": {
+       "command_publishers": 0,
+       "foreign_action_clients": 0
+      }
+     },
+     "m61a_fixed_base": {
+      "checks": {
+       "attachment": {
+        "code": null,
+        "detail": {
+         "dxy_m": 0.0,
+         "dz_m": 0.0,
+         "rotation_rad": 0.0,
+         "translation_m": 0.0
+        },
+        "ok": true
+       },
+       "body_pose_xyz_rpy": [
+        0.0,
+        0.0,
+        0.125,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "body_tilt_rad": 0.0,
+       "frame_body_link": {
+        "code": null,
+        "detail": {
+         "rotation_rad": 0.0,
+         "translation_m": 0.0
+        },
+        "ok": true
+       },
+       "robot_description": {
+        "code": null,
+        "detail": {
+         "all_codes": [],
+         "fixed_base": true,
+         "weld_xyz_rpy": [
+          0.0,
+          0.0,
+          0.125,
+          0.0,
+          0.0,
+          0.0
+         ]
+        },
+        "ok": true
+       },
+       "spawn_identity": {
+        "code": null,
+        "detail": {
+         "rotation_rad": 0.0,
+         "translation_m": 0.0
+        },
+        "ok": true
+       }
+      },
+      "codes": [],
+      "ok": true
+     },
+     "m61a_sim_progress": {
+      "code": null,
+      "min_sim_advance_s": 0.1,
+      "ok": true,
+      "samples": 56,
+      "sim_advance_s": 0.6500000000000021,
+      "window_s": 1.0
+     },
+     "messages_published": 0,
+     "non_claims": [
+      "M6.0 is a trajectory-execution and observability check only.",
+      "It does not show gait playback, walking, locomotion, contact, body support, balance, dynamic stability, navigation, real-time behaviour, actuator capability or hardware readiness."
+     ],
+     "not_proof": "Passing this preflight does NOT prove tracking, movement, contact, body support, balance or walking. No goal was sent and nothing was published.",
+     "observed": {
+      "action_servers": [
+       [
+        "/leg_trajectory_controller",
+        [
+         "control_msgs/action/FollowJointTrajectory"
+        ]
+       ]
+      ],
+      "controllers": [
+       [
+        "joint_state_broadcaster",
+        "joint_state_broadcaster/JointStateBroadcaster",
+        "active"
+       ],
+       [
+        "leg_trajectory_controller",
+        "joint_trajectory_controller/JointTrajectoryController",
+        "active"
+       ]
+      ],
+      "joint_state_messages": 136,
+      "joint_state_publishers": [
+       [
+        "/joint_state_broadcaster",
+        "sensor_msgs/msg/JointState"
+       ]
+      ],
+      "last_joint_state": {
+       "names": [
+        "lf_foot_joint",
+        "rf_hip",
+        "rf_foot_joint",
+        "rf_thigh_joint",
+        "lr_hip",
+        "lr_thigh_joint",
+        "lr_foot_joint",
+        "rr_hip",
+        "lf_hip",
+        "rr_thigh_joint",
+        "lf_thigh_joint",
+        "rr_foot_joint"
+       ],
+       "positions": [
+        -8.663887127852938e-05,
+        9.69594642404453e-05,
+        8.66430049524856e-05,
+        4.41990973171936e-05,
+        9.695926033241635e-05,
+        -4.4193464036709884e-05,
+        8.663887127852987e-05,
+        -9.695946424044206e-05,
+        -9.695926033241786e-05,
+        4.419909731719687e-05,
+        -4.4193464036710236e-05,
+        8.664300495248816e-05
+       ],
+       "stamp_s": 26.65
+      }
+     },
+     "ready": true,
+     "schema": "spiderx.m6.live_preflight/1",
+     "verdict": "READY",
+     "version_check": {
+      "note": "visible outcome (D6); the interface contract must pass",
+      "packages": {
+       "action_msgs": {
+        "installed": "1.2.1",
+        "reference": "1.2.1",
+        "status": "matches"
+       },
+       "control_msgs": {
+        "installed": "4.8.0",
+        "reference": "4.8.0",
+        "status": "matches"
+       },
+       "controller_manager": {
+        "installed": "2.51.0",
+        "reference": "2.51.0",
+        "status": "matches"
+       },
+       "controller_manager_msgs": {
+        "installed": "2.51.0",
+        "reference": "2.51.0",
+        "status": "matches"
+       },
+       "gz_ros2_control": {
+        "installed": "0.7.15",
+        "reference": "0.7.15",
+        "status": "matches"
+       },
+       "hardware_interface": {
+        "installed": "2.51.0",
+        "reference": "2.51.0",
+        "status": "matches"
+       },
+       "joint_trajectory_controller": {
+        "installed": "2.48.0",
+        "reference": "2.48.0",
+        "status": "matches"
+       },
+       "rclpy": {
+        "installed": "3.3.16",
+        "reference": "3.3.16",
+        "status": "matches"
+       },
+       "sensor_msgs": {
+        "installed": "4.9.0",
+        "reference": "4.9.0",
+        "status": "matches"
+       },
+       "trajectory_msgs": {
+        "installed": "4.9.0",
+        "reference": "4.9.0",
+        "status": "matches"
+       }
+      },
+      "status": "matches"
+     },
+     "versions": {
+      "ROS_DISTRO": "humble",
+      "action_msgs": "1.2.1",
+      "control_msgs": "4.8.0",
+      "controller_manager": "2.51.0",
+      "controller_manager_msgs": "2.51.0",
+      "gz_ros2_control": "0.7.15",
+      "hardware_interface": "2.51.0",
+      "joint_trajectory_controller": "2.48.0",
+      "rclpy": "3.3.16",
+      "sensor_msgs": "4.9.0",
+      "trajectory_msgs": "4.9.0"
+     }
+    },
+    "session_t_s": 8.557137
+   },
+   "when": "after_confirmation"
+  }
+ ],
+ "stopped_at": null,
+ "streams_at_send": {
+  "checked_at_wall": 214.787241629,
+  "checks": {
+   "attachment": {
+    "code": null,
+    "detail": {
+     "dxy_m": 0.0,
+     "dz_m": 0.0,
+     "rotation_rad": 0.0,
+     "translation_m": 0.0
+    },
+    "ok": true
+   },
+   "body_pose_fresh": {
+    "code": null,
+    "detail": {
+     "age_s": 0.002355558000004976,
+     "max_age_s": 1.0,
+     "since_wall": 213.78633643
+    },
+    "ok": true
+   },
+   "body_pose_sim_progress": {
+    "code": null,
+    "detail": {
+     "min_sim_advance_s": 0.1,
+     "samples": 57,
+     "sim_advance_s": 0.6389999999999993,
+     "window_s": 1.0009051989999875
+    },
+    "ok": true
+   },
+   "body_pose_xyz_rpy": [
+    0.0,
+    0.0,
+    0.125,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "body_tilt_rad": 0.0,
+   "frame_body_link": {
+    "code": null,
+    "detail": {
+     "rotation_rad": 0.0,
+     "translation_m": 0.0
+    },
+    "ok": true
+   },
+   "joint_states": {
+    "code": null,
+    "detail": {
+     "age_s": 0.008336162999995622,
+     "max_age_s": 0.5,
+     "since_wall": 213.78633643
+    },
+    "ok": true
+   },
+   "robot_description": {
+    "code": null,
+    "detail": {
+     "all_codes": [],
+     "fixed_base": true,
+     "weld_xyz_rpy": [
+      0.0,
+      0.0,
+      0.125,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "ok": true
+   },
+   "spawn_identity": {
+    "code": null,
+    "detail": {
+     "rotation_rad": 0.0,
+     "translation_m": 0.0
+    },
+    "ok": true
+   }
+  },
+  "codes": [],
+  "ok": true,
+  "since_wall": 213.78633643
+ },
+ "trajectory_content_sha256": "94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64",
+ "trajectory_id": "241760e7dfd5ef12",
+ "transport_closed": true,
+ "transport_open_s": 0.713664,
+ "transport_opened_monotonic": 205.119163,
+ "verdict": "READY"
+}

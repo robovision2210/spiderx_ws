@@ -1,0 +1,337 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/user/spiderx_ws/src/spiderx_controller
+collected 215 items
+
+test/test_m61_gait_replay.py ........................................... [ 20%]
+........................................................................ [ 53%]
+...................................................                      [ 77%]
+test/test_m61_tracking.py .............................................. [ 98%]
+...                                                                      [100%]
+
+=============================== warnings summary ===============================
+test/test_m61_gait_replay.py::test_rclpy_transport_reads_the_body_pose_read_only
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+    import sre_parse
+
+test/test_m61_gait_replay.py::test_rclpy_transport_reads_the_body_pose_read_only
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+    import sre_constants
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+__________________ test_gate_false_blocks_the_live_wiring_too __________________
+----------------------------- Captured stdout call -----------------------------
+REFUSED: Live M6.1 trot-cycle dispatch is HARD-DISABLED in this build. Sending the one live goal needs a separate owner authorization and an enabling code change after a final audit (docs/M61_IMPLEMENTATION_NOTES.md, verification checklist). Nothing was sent.
+_________________ test_mock_cli_writes_the_evidence_directory __________________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Mock success: final state SUCCEEDED, reason None, goals at mock server 1, cancels 0
+Evidence: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_mock_cli_writes_the_evide0/mock/20261012T104251Z_success
+_____________________ test_mock_cli_gate_trip_is_recorded ______________________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Mock joint_near_limit: final state GATE_TRIPPED, reason joint_near_limit, goals at mock server 1, cancels 1
+Evidence: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_mock_cli_gate_trip_is_rec0/mock/20261012T104252Z_joint_near_limit
+_________________ test_mock_cli_refusal_still_records_evidence _________________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Mock no_body_pose: final state REFUSED, reason readiness_not_ready, goals at mock server 0, cancels 0
+Evidence: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_mock_cli_refusal_still_re0/mock/20261012T104252Z_no_body_pose
+_________ test_evidence_records_the_gate_as_it_is_in_both_modes[False] _________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Dry run PASS: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461, goal fingerprint 9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a; nothing sent
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_evidence_records_the_gate0/dry_run/241760e7dfd5ef12/dry_run_report.json
+_________ test_evidence_records_the_gate_as_it_is_in_both_modes[True] __________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Dry run PASS: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461, goal fingerprint 9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a; nothing sent
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_evidence_records_the_gate1/dry_run/241760e7dfd5ef12/dry_run_report.json
+_________________________ test_no_write_writes_nothing _________________________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Mock success: final state SUCCEEDED, reason None, goals at mock server 1, cancels 0
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Dry run PASS: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461, goal fingerprint 9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a; nothing sent
+___________________ test_dry_run_report_is_never_overwritten ___________________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Dry run PASS: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461, goal fingerprint 9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a; nothing sent
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_dry_run_report_is_never_o0/dry_run/241760e7dfd5ef12/dry_run_report.json
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Dry run PASS: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461, goal fingerprint 9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a; nothing sent
+REFUSED: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_dry_run_report_is_never_o0/dry_run/241760e7dfd5ef12/dry_run_report.json already exists (reports are never overwritten)
+____________ test_unknown_scenario_and_stray_domain_id_are_refused _____________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+REFUSED: unknown scenario 'walk'; choose from ['action_server_absent', 'action_server_after_bound', 'action_server_at_bound', 'action_server_not_discovered', 'action_server_unattributed', 'attachment_drift', 'body_pose_stale', 'body_pose_stops_before_send', 'body_tilt', 'body_too_low', 'client_appears_during_discovery', 'competing_client', 'competing_client_late', 'competing_publisher', 'controller_lost', 'description_mismatch', 'feedback_tfs_zero', 'interrupt', 'joint_near_limit', 'joint_state_gap', 'joint_states_stop_before_send', 'late_action_server', 'late_server_competing_client', 'mount_not_approved', 'no_body_pose', 'not_fixed_base', 'rejected', 'sim_paused', 'sim_pauses_before_send', 'sim_stall', 'slow_server', 'spawn_offset', 'stale_joint_states', 'success', 'tracking_error', 'tracking_error_tfs_zero']
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+REFUSED: --domain-id is only valid with --live
+_______________ test_enabled_live_wiring_records_log_m61_run_utc _______________
+----------------------------- Captured stdout call -----------------------------
+Live: final state SUCCEEDED, reason None, goals sent 1, cancels sent 0; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_wiring_recor0/20261003T120000Z/live_outcome.json
+REFUSED: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_wiring_recor0/20261003T120000Z already exists (evidence is never overwritten); nothing started
+___________________ test_enabled_live_gate_trip_and_refusals ___________________
+----------------------------- Captured stdout call -----------------------------
+Live: final state GATE_TRIPPED, reason body_too_low, goals sent 1, cancels sent 1; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_gate_trip_an0/20261003T120001Z/live_outcome.json
+Live: final state REFUSED, reason readiness_not_ready, goals sent 0, cancels sent 0; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_gate_trip_an0/20261003T120002Z/live_outcome.json
+Live: final state REFUSED, reason confirmation_refused, goals sent 0, cancels sent 0; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_gate_trip_an0/20261003T120003Z/live_outcome.json
+___________ test_enabled_live_refuses_a_paused_world_before_any_goal ___________
+----------------------------- Captured stdout call -----------------------------
+Live: final state REFUSED, reason readiness_not_ready, goals sent 0, cancels sent 0; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_refuses_a_pa0/20261003T120004Z/live_outcome.json
+_______ test_enabled_live_checks_the_streams_immediately_before_the_send _______
+----------------------------- Captured stdout call -----------------------------
+Live: final state REFUSED, reason joint_states_stale, goals sent 0, cancels sent 0; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_checks_the_s0/20261003T120005Z/live_outcome.json
+Live: final state SUCCEEDED, reason None, goals sent 1, cancels sent 0; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_checks_the_s0/20261003T120006Z/live_outcome.json
+______________ test_enabled_live_still_needs_domain_and_evidence _______________
+----------------------------- Captured stdout call -----------------------------
+REFUSED: --live needs an explicit --domain-id in 0..232
+REFUSED: --live always records evidence; --no-write is not allowed with --live
+____________ test_disabled_gate_refuses_a_zero_tfs_controller_first ____________
+----------------------------- Captured stdout call -----------------------------
+REFUSED: Live M6.1 trot-cycle dispatch is HARD-DISABLED in this build. Sending the one live goal needs a separate owner authorization and an enabling code change after a final audit (docs/M61_IMPLEMENTATION_NOTES.md, verification checklist). Nothing was sent.
+____________ test_enabled_live_wiring_tracks_a_zero_tfs_controller _____________
+----------------------------- Captured stdout call -----------------------------
+Live: final state SUCCEEDED, reason None, goals sent 1, cancels sent 0; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_wiring_track0/20261012T090001Z/live_outcome.json
+______________ test_enabled_live_wiring_still_cancels_a_bad_track ______________
+----------------------------- Captured stdout call -----------------------------
+Live: final state TRACKING_FAILED, reason tracking_error, goals sent 1, cancels sent 1; no retry, no second goal
+Report: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/enabled_tests/bt/test_enabled_live_wiring_still0/20261012T090002Z/live_outcome.json
+=========================== short test summary info ============================
+PASSED test/test_m61_gait_replay.py::test_m61_gate_matches_the_single_test_expectation
+PASSED test/test_m61_gait_replay.py::test_m61_gate_is_a_single_literal_equal_to_the_pin
+PASSED test/test_m61_gait_replay.py::test_no_environment_or_flag_can_enable_m61_dispatch
+PASSED test/test_m61_gait_replay.py::test_the_enabler_scan_has_teeth_in_both_build_modes[False]
+PASSED test/test_m61_gait_replay.py::test_the_enabler_scan_has_teeth_in_both_build_modes[True]
+PASSED test/test_m61_gait_replay.py::test_only_the_m61_adapter_imports_rclpy
+PASSED test/test_m61_gait_replay.py::test_live_cli_refused_exit_3_before_anything
+PASSED test/test_m61_gait_replay.py::test_live_cli_with_gate_false_imports_no_ros_client
+PASSED test/test_m61_gait_replay.py::test_gate_false_blocks_the_live_wiring_too
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[SEND-ONE-TROT-CYCLE-True]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[SEND-ONE-TROT-CYCLE\n-True]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[SEND-ONE-TROT-CYCLE\r\n-True]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[-False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[ -False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[SEND-ONE-CROUCH-GOAL\n-False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[send-one-trot-cycle-False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[ SEND-ONE-TROT-CYCLE-False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[SEND-ONE-TROT-CYCLE -False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[yes-False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[value10-False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[value11-False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[value12-False]
+PASSED test/test_m61_gait_replay.py::test_confirmation_word[None-False]
+PASSED test/test_m61_gait_replay.py::test_help_has_no_bypass
+PASSED test/test_m61_gait_replay.py::test_limits_file_is_the_approved_one
+PASSED test/test_m61_gait_replay.py::test_limits_agree_with_the_reused_m6d_monitor
+PASSED test/test_m61_gait_replay.py::test_m6d_envelope_is_not_widened
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-unknown]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-missing]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-number]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-integer]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-finite]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-> 0]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-schema]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-contact]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-base_constraint]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-true or false]
+PASSED test/test_m61_gait_replay.py::test_limits_parser_refuses_malformed[<lambda>-< 1]
+PASSED test/test_m61_gait_replay.py::test_limits_loader_refuses_duplicate_keys
+PASSED test/test_m61_gait_replay.py::test_an_edited_limit_is_refused
+PASSED test/test_m61_gait_replay.py::test_trajectory_file_loads_with_its_metadata
+PASSED test/test_m61_gait_replay.py::test_content_hash_verifies
+PASSED test/test_m61_gait_replay.py::test_any_content_edit_changes_the_hash_and_is_refused
+PASSED test/test_m61_gait_replay.py::test_a_stored_hash_edit_is_refused
+PASSED test/test_m61_gait_replay.py::test_waypoints_rederive_from_the_approved_parameters
+PASSED test/test_m61_gait_replay.py::test_the_unapproved_design_note_variant_exceeds_the_cap
+PASSED test/test_m61_gait_replay.py::test_trajectory_file_parser_refuses_malformed
+PASSED test/test_m61_gait_replay.py::test_preflight_passes_with_margins
+PASSED test/test_m61_gait_replay.py::test_identity_is_pinned
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[duration]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[end_not_neutral]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[end_velocity]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[extra_point]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[first_time]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[gait_cycles]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[gait_edit]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[joint_order]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[nan]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[over_cap]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[schema]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[segment_too_short]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[speed]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[start_not_neutral]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[times_not_increasing]
+PASSED test/test_m61_gait_replay.py::test_every_mutation_is_refused_and_gets_no_goal[trajectory_id]
+PASSED test/test_m61_gait_replay.py::test_unusable_sources_refuse_everything
+PASSED test/test_m61_gait_replay.py::test_missing_limits_file_is_a_plan_error
+PASSED test/test_m61_gait_replay.py::test_reference_spline_matches_the_waypoints
+PASSED test/test_m61_gait_replay.py::test_tracking_against_the_spline
+PASSED test/test_m61_gait_replay.py::test_goal_message_contents
+PASSED test/test_m61_gait_replay.py::test_any_other_goal_is_refused_by_the_fingerprint
+PASSED test/test_m61_gait_replay.py::test_g1_body_height_needs_two_consecutive_low_samples
+PASSED test/test_m61_gait_replay.py::test_g2_tilt_roll_or_pitch
+PASSED test/test_m61_gait_replay.py::test_g3_joint_near_limit
+PASSED test/test_m61_gait_replay.py::test_gates_only_trip_while_gating
+PASSED test/test_m61_gait_replay.py::test_pose_freshness
+PASSED test/test_m61_gait_replay.py::test_pose_readiness[None-10.0-body_pose_missing]
+PASSED test/test_m61_gait_replay.py::test_pose_readiness[latest1-10.0-body_pose_stale]
+PASSED test/test_m61_gait_replay.py::test_pose_readiness[latest2-10.0-body_pose_invalid]
+PASSED test/test_m61_gait_replay.py::test_pose_readiness[latest3-10.0-body_too_low]
+PASSED test/test_m61_gait_replay.py::test_pose_readiness[latest4-10.0-body_tilted]
+PASSED test/test_m61_gait_replay.py::test_pose_readiness[latest5-10.0-None]
+PASSED test/test_m61_gait_replay.py::test_g7_drift_is_report_only
+PASSED test/test_m61_gait_replay.py::test_every_mock_scenario_is_covered
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[action_server_absent]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[action_server_after_bound]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[action_server_at_bound]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[action_server_not_discovered]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[action_server_unattributed]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[attachment_drift]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[body_pose_stale]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[body_pose_stops_before_send]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[body_tilt]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[body_too_low]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[client_appears_during_discovery]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[competing_client]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[competing_client_late]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[competing_publisher]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[controller_lost]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[description_mismatch]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[feedback_tfs_zero]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[interrupt]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[joint_near_limit]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[joint_state_gap]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[joint_states_stop_before_send]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[late_action_server]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[late_server_competing_client]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[mount_not_approved]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[no_body_pose]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[not_fixed_base]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[rejected]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[sim_paused]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[sim_pauses_before_send]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[sim_stall]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[slow_server]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[spawn_offset]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[stale_joint_states]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[success]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[tracking_error]
+PASSED test/test_m61_gait_replay.py::test_mock_scenario_outcomes[tracking_error_tfs_zero]
+PASSED test/test_m61_gait_replay.py::test_fixed_base_readiness_refusals_send_nothing[description_mismatch]
+PASSED test/test_m61_gait_replay.py::test_fixed_base_readiness_refusals_send_nothing[mount_not_approved]
+PASSED test/test_m61_gait_replay.py::test_fixed_base_readiness_refusals_send_nothing[not_fixed_base]
+PASSED test/test_m61_gait_replay.py::test_fixed_base_readiness_refusals_send_nothing[sim_paused]
+PASSED test/test_m61_gait_replay.py::test_fixed_base_readiness_refusals_send_nothing[spawn_offset]
+PASSED test/test_m61_gait_replay.py::test_streams_that_stop_after_readiness_are_refused_at_the_send[body_pose_stops_before_send]
+PASSED test/test_m61_gait_replay.py::test_streams_that_stop_after_readiness_are_refused_at_the_send[joint_states_stop_before_send]
+PASSED test/test_m61_gait_replay.py::test_streams_that_stop_after_readiness_are_refused_at_the_send[sim_pauses_before_send]
+PASSED test/test_m61_gait_replay.py::test_the_streams_now_are_recorded_when_the_goal_is_sent[success-0.0]
+PASSED test/test_m61_gait_replay.py::test_the_streams_now_are_recorded_when_the_goal_is_sent[slow_server-2.0]
+PASSED test/test_m61_gait_replay.py::test_a_slow_server_does_not_shift_the_result_before_the_trajectory_end
+PASSED test/test_m61_gait_replay.py::test_fixed_base_success_records_the_plant_apart_from_the_trajectory
+PASSED test/test_m61_gait_replay.py::test_g8_integrity_codes_match_the_fixed_base_module
+PASSED test/test_m61_gait_replay.py::test_g7_drift_report_only_on_the_free_base_mock
+PASSED test/test_m61_gait_replay.py::test_success_outcome_fields
+PASSED test/test_m61_gait_replay.py::test_wrong_confirmation_sends_nothing[]
+PASSED test/test_m61_gait_replay.py::test_wrong_confirmation_sends_nothing[yes\n]
+PASSED test/test_m61_gait_replay.py::test_wrong_confirmation_sends_nothing[SEND-ONE-CROUCH-GOAL\n]
+PASSED test/test_m61_gait_replay.py::test_wrong_confirmation_sends_nothing[send-one-trot-cycle\n]
+PASSED test/test_m61_gait_replay.py::test_a_session_sends_at_most_one_goal
+PASSED test/test_m61_gait_replay.py::test_gate_trip_after_the_result_fails_without_a_cancel
+PASSED test/test_m61_gait_replay.py::test_a_gate_trip_never_sends_a_second_goal_or_return
+PASSED test/test_m61_gait_replay.py::test_low_body_at_readiness_sends_nothing
+PASSED test/test_m61_gait_replay.py::test_preflight_failure_sends_nothing
+PASSED test/test_m61_gait_replay.py::test_mock_cli_writes_the_evidence_directory
+PASSED test/test_m61_gait_replay.py::test_mock_cli_gate_trip_is_recorded
+PASSED test/test_m61_gait_replay.py::test_mock_cli_refusal_still_records_evidence
+PASSED test/test_m61_gait_replay.py::test_evidence_records_the_gate_as_it_is_in_both_modes[False]
+PASSED test/test_m61_gait_replay.py::test_evidence_records_the_gate_as_it_is_in_both_modes[True]
+PASSED test/test_m61_gait_replay.py::test_no_write_writes_nothing
+PASSED test/test_m61_gait_replay.py::test_dry_run_report_is_never_overwritten
+PASSED test/test_m61_gait_replay.py::test_unknown_scenario_and_stray_domain_id_are_refused
+PASSED test/test_m61_gait_replay.py::test_evidence_primitives_never_overwrite
+PASSED test/test_m61_gait_replay.py::test_csv_formats
+PASSED test/test_m61_gait_replay.py::test_enabled_live_wiring_records_log_m61_run_utc
+PASSED test/test_m61_gait_replay.py::test_enabled_live_gate_trip_and_refusals
+PASSED test/test_m61_gait_replay.py::test_enabled_live_refuses_a_paused_world_before_any_goal
+PASSED test/test_m61_gait_replay.py::test_enabled_live_checks_the_streams_immediately_before_the_send
+PASSED test/test_m61_gait_replay.py::test_enabled_live_still_needs_domain_and_evidence
+PASSED test/test_m61_gait_replay.py::test_rclpy_transport_reads_the_body_pose_read_only
+PASSED test/test_m61_gait_replay.py::test_a_visible_competing_commander_refuses_before_any_goal[competing_publisher-competing_command_publishers]
+PASSED test/test_m61_gait_replay.py::test_a_visible_competing_commander_refuses_before_any_goal[competing_client-competing_action_clients]
+PASSED test/test_m61_gait_replay.py::test_a_visible_competing_commander_refuses_before_any_goal[competing_client_late-competing_action_clients]
+PASSED test/test_m61_gait_replay.py::test_a_late_competing_client_is_caught_by_the_pre_dispatch_recheck
+PASSED test/test_m61_gait_replay.py::test_sim_progress_wrapper_needs_advancing_sim_time
+PASSED test/test_m61_gait_replay.py::test_command_owner_wrapper_unknown_counts_are_not_ready
+PASSED test/test_m61_tracking.py::test_no_threshold_was_loosened
+PASSED test/test_m61_tracking.py::test_the_m6d_rule_is_unchanged
+PASSED test/test_m61_tracking.py::test_before_acceptance_there_is_no_anchor
+PASSED test/test_m61_tracking.py::test_no_feedback_anchors_at_acceptance_without_fallback
+PASSED test/test_m61_tracking.py::test_zero_time_from_start_never_moves_the_anchor[0.05]
+PASSED test/test_m61_tracking.py::test_zero_time_from_start_never_moves_the_anchor[0.5]
+PASSED test/test_m61_tracking.py::test_zero_time_from_start_never_moves_the_anchor[3.216]
+PASSED test/test_m61_tracking.py::test_zero_time_from_start_never_moves_the_anchor[7.0]
+PASSED test/test_m61_tracking.py::test_zero_time_from_start_never_moves_the_anchor[60.0]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[0.0-False]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[-0.0-False]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[1e-06-False]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[-0.5-False]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[nan-False]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[inf-False]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[-inf-False]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[None-False]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[1.0-False]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[2e-06-True]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[0.02-True]
+PASSED test/test_m61_tracking.py::test_informative_boundaries[3.0-True]
+PASSED test/test_m61_tracking.py::test_a_non_finite_stamp_is_never_an_estimate
+PASSED test/test_m61_tracking.py::test_informative_feedback_agreeing_with_acceptance_keeps_acceptance
+PASSED test/test_m61_tracking.py::test_informative_feedback_reporting_another_start_moves_the_anchor
+PASSED test/test_m61_tracking.py::test_offset_limit_boundary_is_exclusive
+PASSED test/test_m61_tracking.py::test_mixed_feedback_uses_only_the_informative_messages
+PASSED test/test_m61_tracking.py::test_median_is_the_m6d_upper_median
+PASSED test/test_m61_tracking.py::test_abort_threshold_boundary_at_the_first_tracked_instant
+PASSED test/test_m61_tracking.py::test_zero_time_from_start_no_longer_postpones_the_check
+PASSED test/test_m61_tracking.py::test_fallback_is_recorded_once_and_counted
+PASSED test/test_m61_tracking.py::test_informative_feedback_needs_no_fallback
+PASSED test/test_m61_tracking.py::test_feedback_that_turns_informative_keeps_the_fallback_record
+PASSED test/test_m61_tracking.py::test_unreadable_feedback_fields_are_counted_not_used
+PASSED test/test_m61_tracking.py::test_fixture_is_the_recorded_cycle
+PASSED test/test_m61_tracking.py::test_fixture_matches_the_committed_evidence
+PASSED test/test_m61_tracking.py::test_replay_of_the_recorded_cycle_does_not_abort
+PASSED test/test_m61_tracking.py::test_replay_with_the_m6d_rule_reproduces_the_defect
+PASSED test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[offset_after_4s]
+PASSED test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[one_sample_spike]
+PASSED test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[joints_never_move]
+PASSED test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[lag_0_5s]
+PASSED test/test_m61_tracking.py::test_a_genuinely_bad_track_still_cancels[joint_missing]
+PASSED test/test_m61_tracking.py::test_mock_controller_reporting_zero_time_from_start
+PASSED test/test_m61_tracking.py::test_mock_controller_zero_time_from_start_fails_with_the_m6d_rule
+PASSED test/test_m61_tracking.py::test_mock_bad_track_with_zero_time_from_start_still_cancels
+PASSED test/test_m61_tracking.py::test_mock_informative_feedback_records_no_fallback
+PASSED test/test_m61_tracking.py::test_disabled_gate_refuses_a_zero_tfs_controller_first
+PASSED test/test_m61_tracking.py::test_enabled_live_wiring_tracks_a_zero_tfs_controller
+PASSED test/test_m61_tracking.py::test_enabled_live_wiring_still_cancels_a_bad_track
+======================= 215 passed, 2 warnings in 36.62s =======================
+pytest exit=0

@@ -358,12 +358,18 @@ ros2 run spiderx_controller m6_gait_replay.py --live --domain-id 0     # REFUSED
 
 ## 6. Allowed claim and non-claims
 
-**Allowed now:** "The M6.1 trot-cycle replay tool is implemented and verified offline, with mocks
-and on an isolated ROS domain; live dispatch is hard-disabled."
+**Allowed now** (after the third authorized Cloud cycle, Cloud report §15):
+
+> "In Cloud simulation, one approved trot-cycle joint trajectory was dispatched once to the
+> simulated controller stack on a body welded at 0.125 m. It was executed to completion, tracked
+> within 0.0085 rad and supervised; E1–E11 passed. Live dispatch is hard-disabled again in every
+> pushed build."
 
 **Not allowed:**
-- that any goal was sent;
-- that anything moved, stepped, walked or balanced;
+- that SpiderX walked, stepped on the ground, balanced or navigated (the body was welded and the
+  feet never touched the ground);
 - any claim about contact (not measured);
-- any claim about the fixed base (not built);
-- anything about hardware.
+- any free-base, M5.5 or keyboard-walking behaviour;
+- anything about the owner's PC or hardware;
+- that a second goal or cycle was ever sent (exactly one goal per authorization; the first was
+  refused with 0 goals, the second cancelled).

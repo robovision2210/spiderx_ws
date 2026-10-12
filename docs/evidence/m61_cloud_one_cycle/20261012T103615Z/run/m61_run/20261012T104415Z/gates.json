@@ -1,0 +1,144 @@
+{
+ "body": {
+  "drift": {
+   "dx_m": 0.0,
+   "dy_m": 0.0,
+   "dyaw_rad": 0.0,
+   "dz_m": 0.0
+  },
+  "end_pose": [
+   0.0,
+   0.0,
+   0.125,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "fixed_base_samples": 690,
+  "frame": "Gazebo world; base_link = T_world_model * T_model_dummy (Gazebo entry) * T_dummy_base (M6.1-A fixed base)",
+  "gated_samples": 690,
+  "invalid_samples": 0,
+  "pitch_max_abs_rad": 0.0,
+  "roll_max_abs_rad": 0.0,
+  "samples": 690,
+  "start_pose": [
+   0.0,
+   0.0,
+   0.125,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "tilt_max_rad": 0.0,
+  "z_max_m": 0.125,
+  "z_min_m": 0.125
+ },
+ "cancel_reason": null,
+ "contact": {
+  "note": "Not measured: the SpiderX model and world have no contact sensor. Body height (G1) and tilt (G2) are proxies only; no contact or slip claim is made.",
+  "status": "not_measured"
+ },
+ "gates": {
+  "G1_body_height": {
+   "active": true,
+   "margin": 0.08,
+   "note": "debounce 2 samples",
+   "threshold": 0.045,
+   "trip": null,
+   "tripped": false,
+   "worst_observed": 0.125
+  },
+  "G2_body_tilt": {
+   "active": true,
+   "margin": 0.26,
+   "note": "debounce 2 samples",
+   "threshold": 0.26,
+   "trip": null,
+   "tripped": false,
+   "worst_observed": 0.0
+  },
+  "G3_joint_near_limit": {
+   "active": true,
+   "margin": 0.6350127279988391,
+   "note": null,
+   "threshold": 0.8,
+   "trip": null,
+   "tripped": false,
+   "worst_observed": {
+    "fraction": 0.16498727200116092,
+    "joint": "rf_foot_joint",
+    "position_rad": -0.07198922636681054
+   }
+  },
+  "G4_unexpected_contact": {
+   "active": false,
+   "margin": null,
+   "note": "Not measured: the SpiderX model and world have no contact sensor. Body height (G1) and tilt (G2) are proxies only; no contact or slip claim is made.",
+   "threshold": null,
+   "trip": null,
+   "tripped": false,
+   "worst_observed": null
+  },
+  "G5_sim_stall": {
+   "active": true,
+   "margin": null,
+   "note": "m6_live_contract.SIM_STALL_S via the re-used StreamMonitor",
+   "threshold": 5.0,
+   "trip": null,
+   "tripped": false,
+   "worst_observed": null
+  },
+  "G6_joint_state_gap": {
+   "active": true,
+   "margin": null,
+   "note": "m6_live_contract.SAMPLE_GAP_S via the re-used StreamMonitor",
+   "threshold": 0.25,
+   "trip": null,
+   "tripped": false,
+   "worst_observed": null
+  },
+  "G7_body_drift": {
+   "active": true,
+   "drift": {
+    "dx_m": 0.0,
+    "dy_m": 0.0,
+    "dyaw_rad": 0.0,
+    "dz_m": 0.0
+   },
+   "flags": [],
+   "report_only": true,
+   "thresholds": {
+    "lateral_m": 0.02,
+    "yaw_rad": 0.1
+   }
+  },
+  "G8_attachment": {
+   "active": true,
+   "margin": {
+    "rotation_rad": 0.01,
+    "translation_m": 0.003
+   },
+   "note": "M6.1-A fixed base: composed body vs weld, spawn identity, link consistency; codes seen {}",
+   "threshold": {
+    "rotation_rad": 0.01,
+    "translation_m": 0.003
+   },
+   "trip": null,
+   "tripped": false,
+   "worst_observed": {
+    "rotation_rad": 0.0,
+    "translation_m": 0.0
+   }
+  },
+  "body_pose_freshness": {
+   "active": true,
+   "margin": null,
+   "note": null,
+   "threshold": 1.0,
+   "trip": null,
+   "tripped": false,
+   "worst_observed": null
+  },
+  "trips_in_order": []
+ }
+}

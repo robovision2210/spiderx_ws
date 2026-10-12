@@ -1,0 +1,40 @@
+[10:37:43] start
+launch pid 1700 pgid 1700 xvfb 1695
+[10:37:47] wait controllers
+both controllers active after 14 s of polling
+[INFO] [1791801480.514345317] [_ros2cli_2014]: waiting for service /controller_manager/list_controllers to become available...
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+[10:38:04] preflight
+SpiderX M6.1-A fixed-base observer (READ-ONLY: no goal, no command, no publisher)
+READY: all fixed-base checks pass
+  PASS  action_clients
+  PASS  attachment
+  PASS  body_pose_fresh
+  PASS  body_pose_sim_progress
+  PASS  command_publishers
+  PASS  controllers
+  PASS  frame_body_link
+  PASS  joint_state_publishers
+  PASS  joint_states
+  PASS  robot_description
+  PASS  sim_clock
+  PASS  spawn_identity
+Evidence: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/a2/observer/20261012T103809Z/observation.json
+preflight exit=0
+[10:38:10] rehearsal 1
+rehearsal 1: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.500834 s (3 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False exit=0 
+[10:39:05] rehearsal 2
+rehearsal 2: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.250696 s (2 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False exit=0 
+[10:40:00] rehearsal 3
+rehearsal 3: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 1.504016 s (7 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False exit=0 
+[10:40:55] tracking-path probe
+[10:41:37] probe: verdict PASS; no_goal_in_action_status=T exit=0
+[10:41:37] captures
+[10:41:38] stop
+SIGINT sent to process group 1700
+process group empty after 3 s
+The daemon has been stopped
+--- remaining (expect nothing):
+none
+[10:41:43] end

@@ -1497,3 +1497,71 @@ no action client, no publisher of its own.
   `DISABLED AND VERIFIED` (`post2/`).
 - **Evaluation.** E6 also reads `live_outcome.json` `tracking_reference`: the anchor and whether
   the fallback was used. The 0.05 rad limit is unchanged.
+
+## 15. The third authorized cycle (2026-10-12, `d748891`): PASS, 1 goal, 0 cancels
+
+Evidence: [`evidence/m61_cloud_one_cycle/20261012T103615Z/`](evidence/m61_cloud_one_cycle/20261012T103615Z/README.md)
+(README, `requirements.json`, `SHA256SUMS`).
+
+**Result: PASS. 1 goal, 0 cancels; `SUCCEEDED`, exit 0; E1–E11 all PASS.** There was no retry,
+no second goal and no return goal. Cleanup ended `DISABLED AND VERIFIED` twice. The authorization
+is spent. The §11 and §13 records stay FAIL.
+
+**What ran** (plan at `d748891`):
+- **Base.** `d748891` = origin, clean; `src/` = `b0d8e75`. Patch `b6213f21…7595` and every
+  identity and frozen hash matched. No prior use of this authorization.
+- **A2.** On the disabled build:
+  - 3 of 3 readiness rehearsals READY (discovery 0.50, 0.25 and 1.50 s; 0 dispatch calls);
+  - the tracking-path probe PASS, 10 of 10;
+  - then DISABLED AND VERIFIED.
+- **Enabled build.** 215 passed, 0 failed (`test_m61_gait_replay.py` 166, `test_m61_tracking.py`
+  49).
+- **Launch.** Healthy, no relaunch; preflight READY 12/12.
+- **E.** The bag recorded `_action/feedback` (never `_action/status`); the observer ran first; the
+  tool started 10 s later.
+  - Discovery found the server at the first poll. READY before (age 4.11 s) and after (4.01 s)
+    the one confirmation.
+  - At the send: age 4.19 s; the streams check passed.
+  - The goal was accepted (sim 36.687 s) and ran the full 7.0 s cycle. Result: status 4, error 0,
+    "Goal successfully reached!".
+- **Tracking.**
+  - Client max in-flight \|error\| 0.0085 rad (limit 0.05).
+  - The independent channel passed over 501 samples; goal tolerances passed; no gate tripped
+    (G3 worst 16.5 % of limit).
+- **E8, E9.** Body deviation 0 over 5,442 pose messages; provenance PASS (smaller margin than §13,
+  see below); link consistency PASS, with foot links turning 0.080–0.111 rad and a counterfactual
+  score of 22.1.
+
+**The recorded feedback** (`run/feedback_anchor_analysis.*`):
+- All 214 action-feedback messages had `desired.time_from_start = 0`. This closes the inferred
+  link of §14.3.
+- The feedback's desired positions fit the approved trajectory exactly with a start at
+  **acceptance − 0.037 s** (`controller_state`: −0.038 s). The joints lag that setpoint by about
+  0.1 s.
+- So the `b0d8e75` reference anchored at acceptance and recorded the fallback: logged once, 697
+  checks.
+- Timed from the unfiltered M6.0-D estimate (acceptance + 3.42 s), the same joints would have
+  shown 0.0835 rad, and the cycle would have been cancelled again.
+
+**E8 provenance margin.** The cycle ended at neutral, so the steady samples that the frozen
+provenance check uses sit near q = 0 (gravity sag about 1e-4 rad). The residual against FK(0) is
+≥ 9.6e-5 rad, about 10× the frozen 1e-5 rad tolerance: a PASS by the frozen rule. In §13 the robot
+stopped mid-cycle, which gave 0.078 rad.
+
+**Shown:**
+- one approved trot-cycle joint trajectory (`241760e7dfd5ef12`) was dispatched once to the
+  simulated controller stack on a body welded at 0.125 m, in Cloud;
+- it was executed to completion;
+- it was tracked within 0.0085 rad and supervised throughout.
+
+**Not shown:**
+- walking, stepping on the ground, balance or contact (the feet never touched the ground);
+- navigation;
+- anything about hardware or the owner's PC;
+- any free-base or M5.5 behaviour.
+
+**Next.**
+- Owner review of this record.
+- Phase 1 on the owner's PC (not run there).
+- M5.5 keyboard walking is no longer blocked by the M6.1 Cloud cycle. It still needs its own
+  owner-approved phases, starting with the shadow session.
