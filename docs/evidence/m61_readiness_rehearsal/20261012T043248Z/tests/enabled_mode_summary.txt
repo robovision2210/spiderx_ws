@@ -1,0 +1,11 @@
+# enabled mode: detached worktree at 61f3ffc + docs/patches/m61_enable_one_cycle.UNAPPLIED.patch (sha256 b6213f21...7595) + the mode-explicit test fix; tests only, no simulator
+imported <scratchpad>/enabled_wt_61f3ffc/src/spiderx_controller/spiderx_controller/m61_live_contract.py True
+61f3ffcd2666ea090e24833221b84c90773e1f0d
+ src/spiderx_controller/spiderx_controller/m61_live_contract.py | 2 +-
+ src/spiderx_controller/test/m61_gate.py                        | 2 +-
+ src/spiderx_controller/test/test_m61_discovery.py              | 6 ++++--
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+<scratchpad>/enabled_wt_61f3ffc/install/spiderx_bringup
+--- pytest test (one session, PYTEST_DISABLE_PLUGIN_AUTOLOAD=1, ROS_LOCALHOST_ONLY=1)
+1583 passed, 2 warnings in 411.50s (0:06:51)
+pytest exit=0

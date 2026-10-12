@@ -1152,3 +1152,140 @@ the source and in the installed build.
    text gains a note about the server wait.
 
 M5.5 keyboard walking stays blocked until one M6.1 fixed-base cycle passes E1–E11.
+
+## 12. The readiness refusal: reproduced and fixed (`61f3ffc`), rehearsed without motion
+
+The attempt of §11 stays as recorded: **REFUSED before dispatch, 0 goals, 0 cancels**. Its
+evidence is unchanged in `evidence/m61_cloud_one_cycle/20261012T025531Z/`. Nothing in this
+section sent a goal or enabled a gate.
+
+### 12.1 Cause
+
+**What the record narrowed down.** In the attempt, `action_server_missing` was the only failure
+code.
+- A raised query would have added `probe_error` (`m6_live_preflight.evaluate`).
+- Every M6.1 layer appends its codes unconditionally.
+
+So the per-node query returned an empty list while every other check passed.
+
+**Reproduced in Cloud** (§12.3, trial 13). The pre-fix composition was replayed read-only against
+a running server: one fixed 2.0 s spin, then one query. The query, at node age 2.08 s, saw no
+server. The result matched the attempt exactly:
+- `action_server_missing` → `stack_incompatible`;
+- controllers, joint states, plant, sim progress and command owner all passed;
+- collection took 4.53 s (the attempt: 4.78 s).
+
+The same node saw the server 2.5 s later. Through the fixed path, the first sight of the server
+took up to 3.02 s.
+
+**Conclusion.**
+- The mechanism is reproduced: discovery latency against a single fixed-time per-node query.
+- That it caused the 2026-10-12 instance is the best-supported attribution, not a direct
+  observation, because that run recorded no per-query timing.
+- Concurrent start-up is not required: the reproduced miss came from a quiet start.
+
+### 12.2 Fix (`61f3ffc`)
+
+The M6.0-B/D modules are unchanged.
+- **Bounded discovery** (`m61_discovery`, `m6_gait_replay.with_action_discovery`).
+  - Before the first readiness observation, the readiness probe's own per-node query is repeated
+    every 0.25 s, bounded by the existing server wait, `SERVER_WAIT_S` = 10 s.
+  - The wait is the innermost readiness layer. The observation **starts after it**, so the 10 s
+    expiry is unchanged, and all of these are observed afresh after the wait, as before:
+    - the action server itself;
+    - the controllers;
+    - the joint states;
+    - the body pose, the plant and sim progress;
+    - the command owners.
+  - Readiness #2 does not wait again.
+- **A missing server still fails.** If the server is not seen by the bound, the fresh observation
+  fails `action_server_missing` and readiness also gets `action_discovery_timeout`. A server
+  first seen after the bound is not accepted. A timeout is classified from the graph:
+  - `server_absent_on_discovered_host`: the controller node is visible, but there is no status
+    publisher and no client match;
+  - `server_endpoints_without_node`;
+  - `not_discovered_before_timeout`: absence cannot be told from late discovery.
+
+  An operator interrupt ends the wait early (`action_discovery_interrupted`); nothing is sent.
+- **The complete readiness record.** `readiness_before/after.json` now hold the whole per-check
+  report:
+  - the M6.0-B checks and failures;
+  - every M6.1 layer;
+  - the discovery record with every poll;
+  - monotonic timestamps (requested, observation started, completed);
+  - domain, action and node.
+- **One composition**, `compose_readiness`, now serves `--live`, `--mock` and the rehearsal.
+- **The read-only rehearsal**, `ros2 run spiderx_controller m61_readiness_rehearsal --domain-id N`.
+  It runs the production readiness path and the pre-send streams check on `RehearsalTransport`,
+  whose send and cancel raise. It has no session, no confirmation and no goal object, reads no
+  gate, and runs on the disabled build.
+- **Unchanged:**
+  - the trajectory identities (`241760e7dfd5ef12`, `94a492c4…`, `9dba1a17…`);
+  - the enabling patch (`b6213f21…`), which still applies cleanly at `61f3ffc`;
+  - the gates, `False`.
+
+### 12.3 Rehearsal in Cloud Gazebo, no motion
+
+Evidence: [`evidence/m61_readiness_rehearsal/20261012T043248Z/`](evidence/m61_readiness_rehearsal/20261012T043248Z/README.md).
+
+**Setup.** One launch on the disabled build at `61f3ffc`, with preflight READY. Then 16 trials;
+in each, the bag and the observer start **before** the probe.
+
+| Path | Trials | Result |
+|---|---|---|
+| Fixed (`m61_readiness_rehearsal`) | 8: 6 with an attempt-like start-up, 2 with a quiet start | **8 of 8 READY**. Discovery 0.0–3.02 s, then both observations and the streams check passed; readiness age at the send check 5.1–5.2 s |
+| Pre-fix replay (`old_path_probe.py`, read-only) | 8: 6 attempt-like, 2 quiet | 7 permitted; **1 refused with the attempt's signature** (trial 13) |
+
+- 0 goals, 0 cancels and 0 dispatch calls in every trial.
+- 0 command publishers throughout.
+- After the trials: 1 server, 0 clients.
+
+**Cleanup.**
+- Stop: the process group was empty after 4 s, and nothing was left.
+- `scripts/m61_restore_and_verify_disabled.sh --verify-only` gave **DISABLED AND VERIFIED**:
+  - `src/` = `61f3ffc`;
+  - the imported gates `False`, from this workspace;
+  - `--live` exit 3.
+
+### 12.4 Tests
+
+| Run | Result |
+|---|---|
+| `test_m61_discovery.py` (new) | **58 passed**. It covers: fake-clock boundaries (found at the bound, refused just after, spin overruns); absence classes; transient query errors; interrupts; expiry unchanged; no second wait; competing commanders after the wait; pose, plant and sim progress after a late server; the streams stopping before the send; identity; the complete readiness files; `--live` refused on the disabled build; enabled `--live` with fakes (late server: 1 goal; absent: 0 goals); the rehearsal (no dispatch path by AST, transport raises, identical in both gate modes); isolated ROS domain (late server found, absent server classified, the production provider on a late test-double stack, a missing server refused) |
+| Deliberate mutants of the fix | 6 of 6 caught: accept after the bound, no wait, timeout not failing, observation before the wait, waiting at every observation, classification ignoring the host |
+| `test_m61_gait_replay.py` | 164 passed (8 new mock scenarios: late server, at and after the bound, absent, not discovered, unattributed, late server plus a competing client, a client appearing during the wait) |
+| Whole `spiderx_controller` suite, **enabled** (patch applied in a temporary worktree at `61f3ffc`, tests only, fakes, no simulator) | **1583 passed, 0 failed** (6 min 51 s). A first run had 4 failures: 3 because that worktree was built only up to `spiderx_controller` (`spiderx_bringup` missing), and 1 because a new test asserted the build's gate value instead of setting it. That test was made mode-explicit, the worktree fully built, and the suite re-run. Both runs are recorded (`tests/` in the rehearsal evidence) |
+| Clean build and full `colcon test`, disabled | **1626 tests, 0 errors, 0 failures, 0 skipped** (8 packages; `tests/disabled_full_colcon_test.txt`) |
+
+### 12.5 What remains, and the plan for one newly authorized cycle
+
+**Remaining blockers.**
+1. **A new owner authorization.** The one of 2026-10-12 is spent. It must name the base commit
+   (`61f3ffc` or later, `src/` equal to it) and accept the E5 addition (discovery before
+   readiness #1).
+2. **E6–E9** can only be shown in a motion run.
+3. **Owner PC:** phase 1 has not run there.
+4. **M5.5 keyboard walking** stays blocked until one M6.1 fixed-base cycle passes E1–E11.
+
+**Plan** (`M61_CLOUD_ONE_CYCLE_PLAN.md` §4, updated):
+- **A.** Gate-off checks at the approved base. Verify:
+  - the patch SHA-256 `b6213f21…`;
+  - the identities `241760e7dfd5ef12` / `94a492c4…` / `9dba1a17…`;
+  - the plan hashes;
+  - the dry run, the mocks, and `--live` exit 3.
+- **A2 (new).** Launch on the disabled build and run the read-only rehearsal three times, with
+  the bag and observer started first.
+  - All must be `READY`, with 0 dispatch calls.
+  - Then stop, and `--verify-only` must end `DISABLED AND VERIFIED`.
+  - Any NOT READY stops the procedure.
+- **B–C.** The two-line patch on a local, never-pushed branch, then the enabled-build tests.
+  Any failure blocks.
+- **D.** Relaunch and preflight. One relaunch only for the documented `create` race.
+- **E.** Start the bag and observer, wait 10 s, then start the tool.
+  - The tool waits at most 10 s for the action server, then observes readiness afresh.
+  - After READY and the pre-send check: one confirmation and one goal, `241760e7dfd5ef12`.
+  - At most one cancel. No retry and no return goal.
+- **F–G.** Records, the frozen link check (E8, E9), then the restore script: it must end
+  `DISABLED AND VERIFIED`, with `--live` exit 3.
+- **Evaluation.** E1–E11, with missing evidence UNMEASURED. E5 now includes
+  `m61_action_discovery.outcome = found` and the complete readiness report.

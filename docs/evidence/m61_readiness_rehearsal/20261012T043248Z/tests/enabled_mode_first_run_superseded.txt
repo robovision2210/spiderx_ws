@@ -1,0 +1,10 @@
+# first enabled-mode run (superseded): the worktree was built only up to spiderx_controller and the new gate test was not mode-explicit
+FAILED test/test_m61_discovery.py::test_disabled_build_refuses_live_before_any_discovery
+FAILED test/test_m61a_fixed_base.py::test_free_base_model_and_launches_do_not_contain_the_weld
+FAILED test/test_m61a_observer.py::test_fixed_base_launch_spawns_the_wrapper_at_identity
+FAILED test/test_m61a_observer.py::test_fixed_base_launch_starts_no_motion_tool
+4 failed, 1579 passed, 2 warnings in 417.46s (0:06:57)
+pytest exit=1
+3 failures: package 'spiderx_bringup' not found in the partial worktree overlay (environment)
+1 failure: test_disabled_build_refuses_live_before_any_discovery asserted the build's gate value instead of setting it; renamed test_disabled_gate_refuses_live_before_any_discovery and made mode-explicit (monkeypatch False)
+an earlier per-file loop was discarded unfinished: its --basetemp parent did not exist, so every tmp_path fixture errored at setup
