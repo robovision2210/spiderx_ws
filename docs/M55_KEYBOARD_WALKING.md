@@ -671,6 +671,9 @@ was sent anywhere.
   - **Check 1.7** is now bounded in sim time, with a 60 s wall backstop (§10). Re-scored
     offline on the S0 bag: 2.55 s sim ≤ 3.8 s (11.7 s wall ≤ 60 s): PASS. The S0 shadow re-run
     is folded into S2's shadow rehearsal ([S2 design](S2_FIXED_BASE_CRAWL_DESIGN.md) §2 A2).
+  - Clean build and full suite at `e4bd880`: **1922 tests, 0 errors, 0 failures, 0 skipped**
+    (1894 + 27 + 1 CTest entry). Gates `False`; `--live` exit 3
+    ([`evidence/m55/cloud_verify_e4bd880/`](evidence/m55/cloud_verify_e4bd880/README.md)).
 - **Keyboard walking is not done.** The locomotion state machine, gait and teleop are offline,
   mock or shadow, behind `M55_LOCOMOTION_DISPATCH_ENABLED = False`. Nothing has walked.
 - **Next procedure:** [`PATH_TO_SIM_WALKING.md`](PATH_TO_SIM_WALKING.md).

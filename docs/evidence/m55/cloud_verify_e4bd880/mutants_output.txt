@@ -1,0 +1,13 @@
+M1_burst_cap_ge: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_bunched_heartbeats_after_a_delivery_stall_pass[4] | 1 failed, 5 passed in 0.25s
+M2_sustained_cap_ge: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_stuck_key_flood_at_30_hz_is_rejected_within_a_second | 1 failed, 7 passed in 0.31s
+M3_rate_window_edge_inclusive: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_sustained_window_edge_is_excluded - A... | 1 failed, 13 passed in 0.27s
+M4_burst_window_edge_inclusive: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_bunched_heartbeats_after_a_delivery_stall_pass[4] | 1 failed, 5 passed in 0.28s
+M5_rejected_not_counted: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_stuck_key_flood_at_30_hz_is_rejected_within_a_second | 1 failed, 7 passed in 0.33s
+M6_burst_check_removed: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_genuine_flood_is_rejected_by_the_burst_cap | 1 failed, 8 passed in 0.22s
+M7_sustained_check_removed: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_stuck_key_flood_at_30_hz_is_rejected_within_a_second | 1 failed, 7 passed in 0.24s
+M8_no_stop_on_rate_reject: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_burst_above_the_hard_cap_is_rejected_even_at_a_low_average | 1 failed, 9 passed in 0.23s
+M9_max_burst_lower_bound_removed: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_config_refuses_unsafe_rate_parameters[max_burst-1-max_burst] | 1 failed, 15 passed in 0.25s
+M10_session_ignores_max_burst: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_session_stops_on_a_burst_above_the_hard_cap[gate_false_shadow] | 1 failed, 25 passed in 0.30s
+M11_old_pair_rule_restored: CAUGHT rc=1 | FAILED test/test_m55_rate_rule.py::test_bunched_heartbeats_after_a_delivery_stall_pass[2] | 1 failed, 3 passed in 0.19s
+Z_unmutated_control: SURVIVED rc=0 | 210 passed in 1.46s
+caught 11/11; control passes: True
