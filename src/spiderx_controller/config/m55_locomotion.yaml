@@ -20,7 +20,11 @@ command:
   topic: /cmd_vel                  # geometry_msgs/Twist (REP-103)
   lease_s: 0.5                     # no valid command for this long -> controlled stop, disarm
   deadband_m_s: 0.0002             # |linear.x| below this = stop
-  max_rate_hz: 50.0                # faster commands are rejected (and stop the robot)
+  # receive-rate rule (rejected messages stop the robot; m55_command.CommandLease):
+  max_rate_hz: 20.0                # sustained cap: > 20 Hz averaged over rate_window_s (2x heartbeat)
+  rate_window_s: 1.0
+  burst_window_s: 0.1              # one heartbeat period
+  max_burst: 4                     # > 4 messages within burst_window_s (> 40 Hz instantaneous)
   unsupported_tolerance: 1.0e-6    # |linear.y|, |angular.z|, ... above this are REJECTED
 
 gait:                              # m55_crawl.CrawlParams (one validated template per level)

@@ -24,6 +24,7 @@ Invalid commands (non-finite, unsupported components, too fast a rate) do not re
 """
 
 from dataclasses import dataclass
+import collections
 import math
 
 FORWARD, REVERSE, STOPPED = 1, -1, 0
@@ -100,15 +101,29 @@ class CommandMapper:
 
 
 class CommandLease:
-    """Renewable operator intent with a monotonic lease and a minimum message spacing."""
+    """Renewable operator intent with a monotonic lease and a windowed receive-rate limit.
 
-    def __init__(self, mapper, lease_s, max_rate_hz):
+    Rate rule (replaces a per-pair minimum spacing, which rejected normal 10 Hz heartbeats that
+    arrived bunched after a delivery stall: Cloud shadow session 2026-10-13, RTF 0.20). Every
+    received message, accepted or rejected, is counted at its receipt time `wall`; a message is
+    rejected (RATE_EXCEEDED, intent STOP, no lease renewal) when either
+      - more than max_rate_hz * rate_window_s messages fall in (wall - rate_window_s, wall]: a
+        sustained flood, e.g. a teleop that publishes every auto-repeated key (25-40 Hz), or
+      - more than max_burst messages fall in (wall - burst_window_s, wall]: an instantaneous
+        burst no bunched heartbeat stream produces.
+    Delivery jitter moves messages in time but adds none, so a 10 Hz stream stays near 10 per
+    window whatever the jitter."""
+
+    def __init__(self, mapper, lease_s, max_rate_hz, rate_window_s, burst_window_s, max_burst):
         self.mapper = mapper
         self.lease_s = float(lease_s)
-        self.min_dt = 1.0 / float(max_rate_hz)
+        self.rate_window_s = float(rate_window_s)
+        self.max_in_window = float(max_rate_hz) * self.rate_window_s
+        self.burst_window_s = float(burst_window_s)
+        self.max_burst = int(max_burst)
+        self._recv = collections.deque()    # receipt walls within the last rate_window_s
         self.intent = STOP
         self.last_valid_wall = None
-        self.last_msg_wall = None
         self.rejections = {}
         self.accepted = 0
 
@@ -116,16 +131,24 @@ class CommandLease:
         self.rejections[code] = self.rejections.get(code, 0) + 1
         return code
 
+    def _rate_exceeded(self, wall):
+        """Count this receipt; True if the sustained or the burst cap is exceeded."""
+        self._recv.append(wall)
+        while self._recv and self._recv[0] <= wall - self.rate_window_s + 1e-9:
+            self._recv.popleft()
+        if len(self._recv) > self.max_in_window + 1e-9:
+            return True
+        burst = sum(1 for t in self._recv if t > wall - self.burst_window_s + 1e-9)
+        return burst > self.max_burst
+
     def on_command(self, wall, linear, angular):
         """Process one received command (receipt time `wall`). Returns a rejection code or None.
 
         A rejected command does NOT renew the lease and sets the intent to STOP: an invalid
         message never leaves an earlier non-zero intent active."""
-        if self.last_msg_wall is not None and wall - self.last_msg_wall < self.min_dt - 1e-9:
-            self.last_msg_wall = wall
+        if self._rate_exceeded(wall):
             self.intent = STOP
             return self._reject(RATE_EXCEEDED)
-        self.last_msg_wall = wall
         intent, code = self.mapper.map(linear, angular)
         if code is not None:
             self.intent = STOP

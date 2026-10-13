@@ -148,6 +148,7 @@ class DispatchDisabled(LocomotionError):
 _POS, _NONNEG, _STR, _BOOL, _LEVELS = 'pos', 'nonneg', 'str', 'bool', 'levels'
 _SPEC = {
     'command': {'topic': _STR, 'lease_s': _POS, 'deadband_m_s': _POS, 'max_rate_hz': _POS,
+                'rate_window_s': _POS, 'burst_window_s': _POS, 'max_burst': _POS,
                 'unsupported_tolerance': _POS},
     'gait': {'stride_levels_m': _LEVELS, 'lift_m': _POS, 'min_shift_s': _POS, 'min_swing_s': _POS,
              'design_margin_m': _POS, 'min_margin_m': _POS, 'max_joint_speed_rad_s': _POS,
@@ -269,8 +270,16 @@ def parse_config(data, sha256=None):
                               'continuity_tolerance_rad')
     if cfg.command.lease_s < 2.0 / t.heartbeat_hz:
         raise LocomotionError('command.lease_s must cover at least two teleop heartbeats')
-    if cfg.command.max_rate_hz <= t.heartbeat_hz:
+    c = cfg.command
+    if c.max_rate_hz <= t.heartbeat_hz:
         raise LocomotionError('command.max_rate_hz must exceed teleop.heartbeat_hz')
+    if not float(c.max_burst).is_integer() or c.max_burst < 2:
+        raise LocomotionError('command.max_burst must be an integer >= 2 (a bunched heartbeat '
+                              'pair must pass)')
+    if c.burst_window_s > c.rate_window_s:
+        raise LocomotionError('command.burst_window_s must not exceed command.rate_window_s')
+    if c.max_burst > c.max_rate_hz * c.rate_window_s:
+        raise LocomotionError('command.max_burst must not exceed max_rate_hz * rate_window_s')
     if t.hold_s <= 1.0 / t.heartbeat_hz:
         raise LocomotionError('teleop.hold_s must exceed one heartbeat period')
     if m.graph_stale_s <= m.graph_period_s:
@@ -607,7 +616,8 @@ class LocomotionSession:
         self.lease = cmd.CommandLease(
             cmd.CommandMapper(library.speeds_m_s, cfg.command.deadband_m_s,
                               cfg.command.unsupported_tolerance),
-            cfg.command.lease_s, cfg.command.max_rate_hz)
+            cfg.command.lease_s, cfg.command.max_rate_hz, cfg.command.rate_window_s,
+            cfg.command.burst_window_s, cfg.command.max_burst)
         self.state = DISARMED
         self.level = 0
         self.b = 0

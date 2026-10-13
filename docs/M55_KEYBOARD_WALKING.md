@@ -174,7 +174,11 @@ yaw rate: identical in both frames (both right-handed about +z)
   - |angular.z| > 1e-6 → `command_unsupported_yaw`;
   - any other component → `command_unsupported_axis`;
   - a non-finite or malformed command → `command_nonfinite`;
-  - messages closer than 1/50 s → `command_rate_exceeded`.
+  - a receive-rate breach → `command_rate_exceeded`. Every receipt is counted, accepted or
+    rejected. A message is rejected if more than 20 fall in the last 1.0 s (sustained cap,
+    2× the 10 Hz heartbeat) or more than 4 in the last 0.1 s (hard burst cap). Bunched
+    heartbeats after a delivery stall of up to about 0.3 s pass (S0b, after the Cloud shadow
+    session; the old rule rejected any two messages < 20 ms apart).
 - **Speed level:** the fastest validated level not faster than the request. A request below the
   deadband (0.2 mm/s) or below the slowest level is a stop. The robot never goes faster than
   asked.
@@ -357,7 +361,7 @@ yet observed in a run). The emergency stop is the explicit `estop` service (tele
 | Value | Setting | Origin |
 |---|---|---|
 | Command lease | 0.5 s | ≥ 2 teleop heartbeats (10 Hz); checked by the loader |
-| Command rate limit | 50 Hz | > heartbeat rate; checked |
+| Command rate rule | reject if > 20 receipts in 1.0 s or > 4 in 0.1 s | sustained cap 2× heartbeat; burst window = one heartbeat period; checked (S0b) |
 | Teleop hold window | 0.8 s wall | must exceed the operator terminal's key-repeat delay (an environment assumption, §16.2) |
 | Continuity (arm posture and phase start) | 0.02 rad | lead-in speed ≤ 0.1 rad/s < 0.25 bound; checked |
 | Tracking abort / path and goal tolerance | 0.05 rad | = M6.0-D / M6.1 tracking tolerance |
@@ -424,6 +428,7 @@ New tests:
 | File | Tests | Covers |
 |---|---|---|
 | `test_m55_command.py` | 39 | axes and signs, levels, rejection, rate, lease |
+| `test_m55_rate_rule.py` | 27 | S0b windowed rate rule: recorded jitter and bunched heartbeats pass; stuck-key and genuine floods, bursts above the hard cap rejected; window boundaries; config refusals; the session in both gate modes |
 | `test_m55_review.py` | 49 | focused review: measured stop timeline, sim/wall timing (RTF 0.2, 0.02, pause), post-result freshness, clock anomalies, the arm posture policy, homing gating, graph snapshots, key-repeat semantics |
 | `test_m55_locomotion.py` | 95 | gate pins and source checks, config strictness, library, shadow mode, every state and transition, 7 transport failure scenarios, 11 monitor faults, arm refusals, stop latch, keyboard logic |
 | `test_m55_gait.py` | 18 | real templates, the margin method, no swing near neutral, controller joint order, boundary uniqueness, lead-in speed, full cycle each way on the fake plant, feasibility CLI, M6.0-D and M6.1 identities |
@@ -467,7 +472,7 @@ ros2 bag record -o ~/spiderx_ws/log/m55_phase1_bag /spiderx/locomotion/status /j
 | 1.4 | `a` (arm) from the posture hold | accepted; the **reported posture error** is recorded (it tests the provisional 0.02 rad) |
 | 1.5 | hold `w` for 30 s | `goals_recorded` rises; the robot does **not** move (joint states change < 0.005 rad) |
 | 1.6 | `j`, `l` | rejection message; `command_rejections` unchanged (nothing was sent) |
-| 1.7 | space while holding `w` | STOPPING then READY within 5 s; stays READY until `w` is released and pressed again |
+| 1.7 | space while holding `w` | STOPPING, then READY within the in-flight goal's `duration_s` + 1.0 s of **sim** time (`monitors.sim_time_s` on the status, from the last status before the space to the first READY): ≤ 3.8 s at level 0 (longest goal 2.8 s), ≤ 5.7 s at 60 mm (4.7 s). Wall backstop: READY within 60 s wall, else FAIL (covers RTF ≥ 0.1). Stays READY until `w` is released and pressed again |
 | 1.8 | `x`, then `a`, then `r`, then `a` | FAULTED; arm refused `faulted_reset_required`; reset → DISARMED; arm accepted |
 | 1.9 | close the teleop terminal while walking | DISARMED within 6 s (lease 0.5 s + the phase in flight ≤ 4.7 s); a new teleop cannot move it until `a` |
 | 1.10 | evidence | `events.jsonl`, `library.json`, `final_status.json`, `shadow_goals.json` in `evidence_dir`; copied to `~/spiderx_evidence/` before any rebuild (a clean build is `rm -rf build install`; keep `log/`) |
@@ -659,11 +664,19 @@ was sent anywhere.
     - 1.13: the crash/lease path was not exercised.
   - **Finding:** the 50 Hz receive-time rate check rejected two bunched heartbeats, and one of
     them stopped a held walk. The teleop never published faster than 10 Hz.
+- **S0b fixes (2026-10-13, owner-approved; no motion, nothing sent):**
+  - **Rate rule.** The windowed rule (§4, §7) replaces the per-pair rule: reject if > 20
+    receipts in 1.0 s or > 4 in 0.1 s. The tests are in `test_m55_rate_rule.py` (fakes, both
+    gate modes). 11 of 11 deliberate mutants were caught.
+  - **Check 1.7** is now bounded in sim time, with a 60 s wall backstop (§10). Re-scored
+    offline on the S0 bag: 2.55 s sim ≤ 3.8 s (11.7 s wall ≤ 60 s): PASS. The S0 shadow re-run
+    is folded into S2's shadow rehearsal ([S2 design](S2_FIXED_BASE_CRAWL_DESIGN.md) §2 A2).
 - **Keyboard walking is not done.** The locomotion state machine, gait and teleop are offline,
   mock or shadow, behind `M55_LOCOMOTION_DISPATCH_ENABLED = False`. Nothing has walked.
 - **Next procedure:** [`PATH_TO_SIM_WALKING.md`](PATH_TO_SIM_WALKING.md).
-  1. S0b, fix the two phase-1 findings (no motion);
-  2. S2, the crawl phases on the fixed base (owner approval and an enabling branch);
+  1. S0b, fix the two phase-1 findings (no motion): done in code and tests, above;
+  2. S2, the crawl phases on the fixed base (owner approval and an enabling branch;
+     [design](S2_FIXED_BASE_CRAWL_DESIGN.md));
   3. S3, a bounded level-0 free-base crawl;
   4. S4, keyboard walking.
 

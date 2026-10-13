@@ -16,8 +16,8 @@ def mapper():
     return cmd.CommandMapper(LEVELS, 0.0002, 1e-6)
 
 
-def lease(mapper, lease_s=0.5, rate=50.0):
-    return cmd.CommandLease(mapper, lease_s, rate)
+def lease(mapper, lease_s=0.5, rate=20.0, window=1.0, burst_window=0.1, max_burst=4):
+    return cmd.CommandLease(mapper, lease_s, rate, window, burst_window, max_burst)
 
 
 # ------------------------------------------------------------------ axes and signs
@@ -116,12 +116,15 @@ def test_rejected_command_stops_and_does_not_renew(mapper):
 
 
 def test_rate_limit_rejects_bursts_and_stops(mapper):
-    le = lease(mapper, rate=50.0)
-    assert le.on_command(10.0, (0.002, 0, 0), (0, 0, 0)) is None
-    assert le.on_command(10.005, (0.002, 0, 0), (0, 0, 0)) == cmd.RATE_EXCEEDED
-    assert not le.current(10.006)[0].moving
-    assert le.on_command(10.03, (0.002, 0, 0), (0, 0, 0)) is None   # spacing restored
-    assert le.current(10.031)[0].moving
+    """The windowed rule (test_m55_rate_rule.py has the full set): a burst above the hard cap
+    stops at once; spacing restored, a valid command moves again."""
+    le = lease(mapper)
+    for k in range(4):
+        assert le.on_command(10.0 + 0.005 * k, (0.002, 0, 0), (0, 0, 0)) is None
+    assert le.on_command(10.02, (0.002, 0, 0), (0, 0, 0)) == cmd.RATE_EXCEEDED
+    assert not le.current(10.021)[0].moving
+    assert le.on_command(10.2, (0.002, 0, 0), (0, 0, 0)) is None    # burst window drained
+    assert le.current(10.201)[0].moving
 
 
 def test_clear_forgets_intent_and_lease(mapper):
