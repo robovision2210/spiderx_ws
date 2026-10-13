@@ -1,0 +1,28 @@
+/spiderx_locomotion
+  Subscribers:
+    /cmd_vel: geometry_msgs/msg/Twist
+    /joint_states: sensor_msgs/msg/JointState
+    /spiderx/sim/world_poses: tf2_msgs/msg/TFMessage
+  Publishers:
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+    /rosout: rcl_interfaces/msg/Log
+    /spiderx/locomotion/status: std_msgs/msg/String
+  Service Servers:
+    /spiderx/locomotion/arm: std_srvs/srv/Trigger
+    /spiderx/locomotion/disarm: std_srvs/srv/Trigger
+    /spiderx/locomotion/estop: std_srvs/srv/Trigger
+    /spiderx/locomotion/home: std_srvs/srv/Trigger
+    /spiderx/locomotion/reset: std_srvs/srv/Trigger
+    /spiderx/locomotion/stop: std_srvs/srv/Trigger
+    /spiderx_locomotion/describe_parameters: rcl_interfaces/srv/DescribeParameters
+    /spiderx_locomotion/get_parameter_types: rcl_interfaces/srv/GetParameterTypes
+    /spiderx_locomotion/get_parameters: rcl_interfaces/srv/GetParameters
+    /spiderx_locomotion/list_parameters: rcl_interfaces/srv/ListParameters
+    /spiderx_locomotion/set_parameters: rcl_interfaces/srv/SetParameters
+    /spiderx_locomotion/set_parameters_atomically: rcl_interfaces/srv/SetParametersAtomically
+  Service Clients:
+
+  Action Servers:
+
+  Action Clients:
+

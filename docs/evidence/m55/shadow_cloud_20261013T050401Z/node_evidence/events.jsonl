@@ -1,0 +1,56 @@
+{"event": "transition", "n": 1, "previous": "DISARMED", "state": "READY", "wall": 370.17750327, "why": "arm"}
+{"event": "request", "message": "armed at boundary 0 (level 0, posture error 0.0000 rad)", "n": 2, "request": "arm", "state": "READY", "wall": 370.17750327}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 2.220446049250313e-16, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 3, "phase": 0, "points": 16, "seq": 1, "state": "READY", "wall": 374.233198467}
+{"event": "transition", "n": 4, "previous": "READY", "state": "STARTING", "wall": 374.233198467, "why": "dispatch"}
+{"accepted": true, "event": "goal_response", "n": 5, "seq": 1, "state": "STARTING", "wall": 374.28811369}
+{"event": "transition", "n": 6, "previous": "STARTING", "state": "WALKING", "wall": 374.28811369, "why": "accepted"}
+{"error_code": 0, "error_string": "", "event": "result", "n": 7, "seq": 1, "state": "WALKING", "status": 4, "wall": 382.685357342}
+{"b": 1, "direction": 1, "event": "phase_done", "n": 8, "phase": 0, "state": "WALKING", "wall": 382.685357342}
+{"b_from": 1, "b_to": 2, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "f11066369f383464d76dc281b2349fe367c235373eb43e9c346f5345ca23fb55", "kind": "swing", "leg": "rear_left", "level": 0, "n": 9, "phase": 1, "points": 23, "seq": 2, "state": "WALKING", "wall": 382.685357342}
+{"accepted": true, "event": "goal_response", "n": 10, "seq": 2, "state": "WALKING", "wall": 382.733085653}
+{"error_code": 0, "error_string": "", "event": "result", "n": 11, "seq": 2, "state": "WALKING", "status": 4, "wall": 394.787187621}
+{"b": 2, "direction": 1, "event": "phase_done", "n": 12, "phase": 1, "state": "WALKING", "wall": 394.787187621}
+{"b_from": 2, "b_to": 3, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "413a6b1db8398473e30469fcf15188bf49e3bf8a56c6a2fcb6708f69923efccd", "kind": "shift", "leg": null, "level": 0, "n": 13, "phase": 2, "points": 16, "seq": 3, "state": "WALKING", "wall": 394.787187621}
+{"accepted": true, "event": "goal_response", "n": 14, "seq": 3, "state": "WALKING", "wall": 394.833023663}
+{"error_code": 0, "error_string": "", "event": "result", "n": 15, "seq": 3, "state": "WALKING", "status": 4, "wall": 403.083505214}
+{"b": 3, "direction": 1, "event": "phase_done", "n": 16, "phase": 2, "state": "WALKING", "wall": 403.083505214}
+{"b_from": 3, "b_to": 4, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "c8c2f5054e926e9c3a1351e6583dff188fd30f0ea8dc9216cb080b0162e8b8aa", "kind": "swing", "leg": "front_left", "level": 0, "n": 17, "phase": 3, "points": 23, "seq": 4, "state": "WALKING", "wall": 403.083505214}
+{"accepted": true, "event": "goal_response", "n": 18, "seq": 4, "state": "WALKING", "wall": 403.13329153}
+{"event": "transition", "n": 19, "previous": "WALKING", "state": "STOPPING", "wall": 405.032967973, "why": "intent_stop"}
+{"error_code": 0, "error_string": "", "event": "result", "n": 20, "seq": 4, "state": "STOPPING", "status": 4, "wall": 415.083973932}
+{"b": 4, "direction": 1, "event": "phase_done", "n": 21, "phase": 3, "state": "STOPPING", "wall": 415.083973932}
+{"event": "transition", "n": 22, "previous": "STOPPING", "state": "READY", "wall": 415.083973932, "why": "stopped"}
+{"b_from": 4, "b_to": 5, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.8, "event": "goal_sent", "fingerprint": "287a329385f495fe8c684d07cad2bb67d50b5ae650dc6de26f575584e39d7ea8", "kind": "shift", "leg": null, "level": 0, "n": 23, "phase": 4, "points": 27, "seq": 5, "state": "READY", "wall": 415.083973932}
+{"event": "transition", "n": 24, "previous": "READY", "state": "STARTING", "wall": 415.083973932, "why": "dispatch"}
+{"accepted": true, "event": "goal_response", "n": 25, "seq": 5, "state": "STARTING", "wall": 415.133074317}
+{"event": "transition", "n": 26, "previous": "STARTING", "state": "WALKING", "wall": 415.133074317, "why": "accepted"}
+{"code": "command_rate_exceeded", "event": "command_rejected", "n": 27, "state": "WALKING", "wall": 415.638901213}
+{"event": "transition", "n": 28, "previous": "WALKING", "state": "STOPPING", "wall": 415.70256616, "why": "intent_stop"}
+{"event": "request", "message": "stopping after the current phase (held until a zero command)", "n": 29, "request": "stop", "state": "STOPPING", "wall": 417.2718277}
+{"error_code": 0, "error_string": "", "event": "result", "n": 30, "seq": 5, "state": "STOPPING", "status": 4, "wall": 428.983613076}
+{"b": 5, "direction": 1, "event": "phase_done", "n": 31, "phase": 4, "state": "STOPPING", "wall": 428.983613076}
+{"event": "transition", "n": 32, "previous": "STOPPING", "state": "READY", "wall": 428.983613076, "why": "stopped"}
+{"event": "fault", "n": 33, "reason": "estop", "state": "READY", "wall": 436.343453101}
+{"event": "transition", "n": 34, "previous": "READY", "state": "FAULTED", "wall": 436.343453101, "why": "estop"}
+{"event": "request", "message": "emergency stop: goal cancelled (if any), holding; reset and arm to continue", "n": 35, "request": "estop", "state": "FAULTED", "wall": 436.343453101}
+{"event": "refused", "n": 36, "reason": "faulted_reset_required", "request": "arm", "state": "FAULTED", "wall": 438.343714528}
+{"event": "reset", "faults": ["estop"], "n": 37, "state": "FAULTED", "wall": 440.344251522}
+{"event": "transition", "n": 38, "previous": "FAULTED", "state": "DISARMED", "wall": 440.344251522, "why": "reset"}
+{"event": "request", "message": "reset: disarmed (arm again to continue)", "n": 39, "request": "reset", "state": "DISARMED", "wall": 440.344251522}
+{"event": "transition", "n": 40, "previous": "DISARMED", "state": "READY", "wall": 442.353209116, "why": "arm"}
+{"event": "request", "message": "armed at boundary 0 (level 0, posture error 0.0000 rad)", "n": 41, "request": "arm", "state": "READY", "wall": 442.353209116}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 2.220446049250313e-16, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 42, "phase": 0, "points": 16, "seq": 6, "state": "READY", "wall": 445.483148462}
+{"event": "transition", "n": 43, "previous": "READY", "state": "STARTING", "wall": 445.483148462, "why": "dispatch"}
+{"accepted": true, "event": "goal_response", "n": 44, "seq": 6, "state": "STARTING", "wall": 445.535644224}
+{"event": "transition", "n": 45, "previous": "STARTING", "state": "WALKING", "wall": 445.535644224, "why": "accepted"}
+{"code": "command_rate_exceeded", "event": "command_rejected", "n": 46, "state": "WALKING", "wall": 449.454902056}
+{"event": "transition", "n": 47, "previous": "WALKING", "state": "STOPPING", "wall": 449.455169952, "why": "disarm"}
+{"event": "request", "message": "stopping after the current phase, then disarming", "n": 48, "request": "disarm", "state": "STOPPING", "wall": 449.455169952}
+{"event": "request", "message": "stopping after the current phase (held until a zero command)", "n": 49, "request": "stop", "state": "STOPPING", "wall": 449.456168506}
+{"error_code": 0, "error_string": "", "event": "result", "n": 50, "seq": 6, "state": "STOPPING", "status": 4, "wall": 454.533006502}
+{"b": 1, "direction": 1, "event": "phase_done", "n": 51, "phase": 0, "state": "STOPPING", "wall": 454.533006502}
+{"event": "transition", "n": 52, "previous": "STOPPING", "state": "DISARMED", "wall": 454.533006502, "why": "lease_expired"}
+{"event": "request", "message": "already disarmed", "n": 53, "request": "disarm", "state": "DISARMED", "wall": 470.414031119}
+{"event": "request", "message": "not moving (DISARMED); held until a zero command", "n": 54, "request": "stop", "state": "DISARMED", "wall": 470.414486887}
+{"event": "request", "message": "already disarmed", "n": 55, "request": "disarm", "state": "DISARMED", "wall": 470.415942817}
+{"event": "request", "message": "not moving (DISARMED); held until a zero command", "n": 56, "request": "stop", "state": "DISARMED", "wall": 470.41679801}

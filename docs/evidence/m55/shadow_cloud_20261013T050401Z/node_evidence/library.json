@@ -1,0 +1,191 @@
+{
+ "config": {
+  "command": {
+   "deadband_m_s": 0.0002,
+   "lease_s": 0.5,
+   "max_rate_hz": 50.0,
+   "topic": "/cmd_vel",
+   "unsupported_tolerance": 1e-06
+  },
+  "dispatch": {
+   "action": "/leg_trajectory_controller/follow_joint_trajectory",
+   "command_topic": "/leg_trajectory_controller/joint_trajectory",
+   "continuity_tolerance_rad": 0.02,
+   "goal_response_timeout_s": 2.0,
+   "goal_time_tolerance_s": 1.0,
+   "min_real_time_factor": 0.1,
+   "phase_lead_s": 0.2,
+   "post_result_wait_s": 2.0,
+   "result_margin_s": 1.0,
+   "tracking_tolerance_rad": 0.05
+  },
+  "gait": {
+   "check_dt_s": 0.02,
+   "design_margin_m": 0.02,
+   "lift_m": 0.012,
+   "max_joint_speed_rad_s": 0.25,
+   "min_margin_m": 0.015,
+   "min_shift_s": 0.5,
+   "min_swing_s": 0.6,
+   "point_dt_s": 0.1,
+   "speed_use": 0.9,
+   "spline_tolerance_rad": 0.002,
+   "stride_levels_m": [
+    0.02,
+    0.04,
+    0.06
+   ]
+  },
+  "monitor": {
+   "body_link": "dummy_link",
+   "body_pose_required": true,
+   "clock_reset_tolerance_s": 0.001,
+   "graph_period_s": 1.0,
+   "graph_stale_s": 3.0,
+   "joint_states_stale_s": 0.5,
+   "joint_states_topic": "/joint_states",
+   "max_tilt_rad": 0.26,
+   "model_name": "spiderx",
+   "pose_stale_s": 1.0,
+   "pose_topic": "/spiderx/sim/world_poses",
+   "sim_stall_s": 5.0
+  },
+  "node": {
+   "status_hz": 2.0,
+   "tick_hz": 20.0
+  },
+  "schema": "spiderx.m55.locomotion/1",
+  "sha256": "5b243247ec6ca9be02ea1900dd9f72e7558c6abd5ce974d473ef2514ee4f2b49",
+  "status": "provisional",
+  "teleop": {
+   "heartbeat_hz": 10.0,
+   "hold_s": 0.8
+  }
+ },
+ "library": {
+  "goals": 54,
+  "joint_names": [
+   "lf_hip",
+   "lf_thigh_joint",
+   "lf_foot_joint",
+   "rf_hip",
+   "rf_thigh_joint",
+   "rf_foot_joint",
+   "lr_hip",
+   "lr_thigh_joint",
+   "lr_foot_joint",
+   "rr_hip",
+   "rr_thigh_joint",
+   "rr_foot_joint"
+  ],
+  "lead_s": 0.2,
+  "levels": [
+   {
+    "cycle_s": 17.0,
+    "level": 0,
+    "max_joint_speed_rad_s": 0.22453029133852054,
+    "min_static_margin_m": 0.01981615551329519,
+    "phase_durations_s": [
+     1.5,
+     2.2,
+     1.5,
+     2.2,
+     2.6,
+     2.3,
+     1.5,
+     2.2,
+     1.0
+    ],
+    "speed_m_s": 0.0010638297872340426,
+    "stride_m": 0.02,
+    "template_speed_m_s": 0.0011764705882352942
+   },
+   {
+    "cycle_s": 19.3,
+    "level": 1,
+    "max_joint_speed_rad_s": 0.22466730751713423,
+    "min_static_margin_m": 0.019613390808882483,
+    "phase_durations_s": [
+     1.6,
+     3.0,
+     1.0,
+     3.1,
+     2.9,
+     2.8,
+     1.0,
+     2.9,
+     1.0
+    ],
+    "speed_m_s": 0.001895734597156398,
+    "stride_m": 0.04,
+    "template_speed_m_s": 0.002072538860103627
+   },
+   {
+    "cycle_s": 23.8,
+    "level": 2,
+    "max_joint_speed_rad_s": 0.2245587911465785,
+    "min_static_margin_m": 0.01939136571708927,
+    "phase_durations_s": [
+     1.7,
+     4.4,
+     0.6,
+     4.5,
+     3.0,
+     4.0,
+     0.6,
+     4.0,
+     1.0
+    ],
+    "speed_m_s": 0.00234375,
+    "stride_m": 0.06,
+    "template_speed_m_s": 0.002521008403361344
+   }
+  ],
+  "phase_sequence": [
+   [
+    "shift",
+    null
+   ],
+   [
+    "swing",
+    "rear_left"
+   ],
+   [
+    "shift",
+    null
+   ],
+   [
+    "swing",
+    "front_left"
+   ],
+   [
+    "shift",
+    null
+   ],
+   [
+    "swing",
+    "rear_right"
+   ],
+   [
+    "shift",
+    null
+   ],
+   [
+    "swing",
+    "front_right"
+   ],
+   [
+    "shift",
+    null
+   ]
+  ],
+  "phases_per_cycle": 9
+ },
+ "non_claims": [
+  "Offline, mock and isolated-domain verification only: nothing here has moved a robot.",
+  "The crawl static margin is a quasi-static approximation (CAD masses, point feet, flat ground, no slip, no dynamics); it is not a proof of balance.",
+  "Fault cancellation holds the joints; it does not guarantee physical balance or a safe hold.",
+  "Simulator ground truth used by the development monitor is not odometry or state estimation (M7).",
+  "The joint-speed bound is a development bound, not an actuator rating; URDF effort/velocity values are placeholders."
+ ]
+}

@@ -1,0 +1,16 @@
+start 2026-10-13T05:12:29Z head a8aa56f (src = a8aa56f; working tree differs in docs only)
+test exit=0
+result exit=0
+Summary: 1894 tests, 0 errors, 0 failures, 0 skipped
+end 2026-10-13T05:21:48Z
+build: rm -rf build install && colcon build --symlink-install (8 packages, exit 0) at a8aa56f
+== gates (source)
+m61_live_contract.py:19:M61_LIVE_DISPATCH_ENABLED = False
+m6_live_contract.py:18:LIVE_DISPATCH_ENABLED = False
+m55_contract.py:19:M55_LOCOMOTION_DISPATCH_ENABLED = False
+== gates (imported)
+from /home/user/spiderx_ws | M61 False M6D False M55 False
+== --live
+m6_gait_replay.py --live exit=3
+m6_live_playback --live exit=3
+== leftover processes: 0

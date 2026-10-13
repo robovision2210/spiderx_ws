@@ -2,7 +2,7 @@
 
 Last updated on branch `claude/spiderx-m55-keyboard-walking` (M5.5 keyboard walking, stacked on the M6.1-A branch `claude/stoic-shannon-ur2mes` @ `41fc10f` (draft PR #17, with the focused-review corrections), on the unmerged M6.1 branch `claude/spiderx-m61-trot-replay` @ `6a7f1f0`, from `main` @ `77fd171`). The M5.5 pull request is deferred until M6.1-A is reviewed. Preserved reports: [`docs/evidence/`](docs/evidence/README.md).
 
-**M5.5 keyboard walking: implemented in SHADOW mode; Cloud-verified in offline/mock/isolated-domain tests only; the new gate `M55_LOCOMOTION_DISPATCH_ENABLED` is `False`; nothing has run in Gazebo and nothing walks yet** ([M5.5](docs/M55_KEYBOARD_WALKING.md)).
+**M5.5 keyboard walking: implemented in SHADOW mode; Cloud-verified in offline/mock/isolated-domain tests only; the new gate `M55_LOCOMOTION_DISPATCH_ENABLED` is `False`; the phase-1 shadow session ran in Cloud on 2026-10-13: nothing was sent; 10 of 13 checks passed as written, 1.7 failed on a wall-time bound; nothing walks yet** ([M5.5](docs/M55_KEYBOARD_WALKING.md), [path to simulated walking](docs/PATH_TO_SIM_WALKING.md)).
 - **Gait.** A statically stable free-base crawl with body shift (not a trot: two-foot support has no static margin, and nothing here shows dynamic stability):
   - 3 validated speed levels: 20/40/60 mm strides, 1.06/1.90/2.34 mm/s;
   - a quasi-static margin of at least 19.4 mm (the requirement is 15 mm);

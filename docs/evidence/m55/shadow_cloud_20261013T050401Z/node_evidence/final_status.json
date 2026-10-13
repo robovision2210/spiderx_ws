@@ -1,0 +1,84 @@
+{
+ "awaiting_joint_state": false,
+ "boundary": 1,
+ "command_rejections": {
+  "command_rate_exceeded": 2
+ },
+ "commands_accepted": 951,
+ "continuity_reference": "planned (shadow: nothing moves)",
+ "cycles": 0,
+ "direction": 0,
+ "disarm_pending": false,
+ "dispatch_gate": false,
+ "faults": [],
+ "goal": null,
+ "goals_recorded": 6,
+ "ground_truth": {
+  "delta_since_arm_xy": [
+   -8.673774263338675e-16,
+   -7.342664441716737e-11
+  ],
+  "label": "simulator ground truth (development monitor), not odometry",
+  "tilt": 1.534168443230839e-07,
+  "xy": [
+   5.921388988218957e-12,
+   -8.897055205945326e-09
+  ],
+  "yaw": -2.1078299252057953e-11,
+  "z": 0.05450314904248618
+ },
+ "homing": 0,
+ "intent": {
+  "direction": 0,
+  "granted_m_s": 0.0,
+  "level": null,
+  "reason": "lease_expired",
+  "requested_m_s": 0.0
+ },
+ "joint_states_out_of_order": 0,
+ "last_refusal": {
+  "reason": "faulted_reset_required",
+  "request": "arm",
+  "wall": 438.343714528
+ },
+ "lease_age_s": 5.790385957000012,
+ "level": 0,
+ "levels_m_s": [
+  0.0010638297872340426,
+  0.001895734597156398,
+  0.00234375
+ ],
+ "milestone": "M5.5",
+ "mode": "shadow",
+ "monitors": {
+  "body_pose_age_s": 0.012200828999993973,
+  "graph": {
+   "action_server_present": true,
+   "command_topic_publishers": 0,
+   "foreign_action_clients": 0,
+   "joint_state_publishers": 1
+  },
+  "graph_age_s": 0.3707997399999954,
+  "joint_states_age_s": 0.04672497699999667,
+  "sim_time_s": 23.02
+ },
+ "phases_completed": 6,
+ "phases_per_cycle": 9,
+ "planned_displacement_xy_m": [
+  0.0009906570000000024,
+  0.050571236000000006
+ ],
+ "rest": [
+  0,
+  1
+ ],
+ "schema": "spiderx.m55.status/1",
+ "state": "DISARMED",
+ "stop_latched": true,
+ "stop_pending": null,
+ "strides_m": [
+  0.02,
+  0.04,
+  0.06
+ ]
+}

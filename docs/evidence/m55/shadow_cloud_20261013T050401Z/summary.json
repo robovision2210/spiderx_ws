@@ -1,0 +1,96 @@
+{
+ "schema": "spiderx.m55.shadow_cloud/1",
+ "run": "20261013T050401Z",
+ "branch_head": "a8aa56f",
+ "gates": {
+  "m55": false,
+  "m61": false,
+  "m6d": false
+ },
+ "isolation": {
+  "leg_trajectory_controller/joint_trajectory": "0 publishers before and after; 0 messages (topic never appeared in the bag)",
+  "follow_joint_trajectory/_action/feedback": "0 messages",
+  "locomotion_node_action_clients": "none (node info before and after)",
+  "ros2_action_info_clients": "0 before the bag; 1 after = /rosbag2_recorder (its _action/feedback subscription), no goal",
+  "cmd_vel": "967 messages, subscribers: the locomotion node (+ the bag recorder)",
+  "joint_motion_rad": 1.27e-11,
+  "tilt_max_rad": 1.54e-07
+ },
+ "shadow_goals_recorded": 6,
+ "command_rejections": {
+  "command_rate_exceeded": 2
+ },
+ "rtf": 0.199,
+ "checks": [
+  {
+   "id": "1.1",
+   "result": "PASS",
+   "basis": "node up in SHADOW mode (dispatch gate False) after 70 s; 6 /spiderx/locomotion services listed"
+  },
+  {
+   "id": "1.2",
+   "result": "PASS",
+   "basis": "status mode shadow, dispatch_gate false, levels_m_s 0.00106 / 0.00190 / 0.00234"
+  },
+  {
+   "id": "1.3",
+   "result": "PASS",
+   "basis": "joint_states_age 0.042 s, body_pose_age 0.005 s, graph 1 joint-state publisher / 0 command-topic publishers / 0 foreign clients, tilt max 1.5e-7 rad"
+  },
+  {
+   "id": "1.4",
+   "result": "PASS",
+   "basis": "arm accepted; reported posture error 0.0000 rad"
+  },
+  {
+   "id": "1.5",
+   "result": "PASS",
+   "basis": "hold w 30 s: goals_recorded rose (4 shadow goals); joints changed 1.3e-11 rad (< 0.005)"
+  },
+  {
+   "id": "1.6",
+   "result": "PASS",
+   "basis": "j and l: \"turning is not supported ... nothing was sent\"; command_rejections unchanged by them"
+  },
+  {
+   "id": "1.7",
+   "result": "FAIL as written",
+   "basis": "space at 417.27: READY at 428.98 = 11.7 s wall (criterion 5 s); the phase in flight was 2.8 s sim at RTF 0.20. STOPPING had already begun at 415.70, 1.6 s before the space, after a spurious command_rate_exceeded rejection (receive-side heartbeat bunching; the teleop never published faster than 10 Hz). The stop latch held: no restart while w was held through READY. Restart after a fresh press in READY not exercised"
+  },
+  {
+   "id": "1.8",
+   "result": "PASS",
+   "basis": "x FAULTED; a refused faulted_reset_required; r DISARMED; a READY"
+  },
+  {
+   "id": "1.9",
+   "result": "PASS",
+   "basis": "teleop terminal closed while walking (SIGHUP path): STOPPING 0.07 s, DISARMED 5.1 s (<= 6 s); a new teleop holding w without a stays DISARMED, no goal"
+  },
+  {
+   "id": "1.10",
+   "result": "PASS",
+   "basis": "events.jsonl, library.json, final_status.json, shadow_goals.json written"
+  },
+  {
+   "id": "1.11",
+   "result": "N/A (Cloud)",
+   "basis": "no physical keyboard: repeats emulated as 0.5 s delay + 30 Hz; no key-repeat-gap note"
+  },
+  {
+   "id": "1.12",
+   "result": "RECORDED",
+   "basis": "RTF 0.199 (joint_states stamps vs bag receive time)"
+  },
+  {
+   "id": "1.13",
+   "result": "PARTIAL",
+   "basis": "key release -> STOPPING 0.80 s (expected 0.8-0.95 s): PASS; teleop-crash lease path (<= 0.55 s) UNMEASURED: SIGKILL reached the ros2-run wrapper and the teleop quit cleanly on SIGHUP"
+  }
+ ],
+ "verdict": "nothing was sent (PASS); phase-1 criteria as written: 10 PASS, 1 FAIL (1.7 wall-time), 1 N/A (1.11), 1 PARTIAL (1.13)",
+ "findings": [
+  "50 Hz receive-time rate check rejects bunched heartbeats under delivery jitter and stops a held walk (m55_command.CommandLease.on_command)",
+  "check 1.7 states a wall-time bound (5 s) for a sim-time phase; at RTF 0.2 a 2.8 s phase takes 14 s"
+ ]
+}

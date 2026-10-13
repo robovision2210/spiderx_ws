@@ -645,19 +645,29 @@ was sent anywhere.
     acceptance; no threshold changed. It was rehearsed read-only, with no goal, on the disabled
     build ([Cloud report](M61A_CLOUD_VERIFICATION.md) §13–§14).
   - A new owner authorization is needed for the cycle.
-- **Keyboard walking is not done.** This branch has the locomotion state machine, the gait and the
-  keyboard teleop. All of it is offline, mock or shadow, behind
-  `M55_LOCOMOTION_DISPATCH_ENABLED = False`, and nothing has walked. The M6.1 one fixed-base cycle
-  comes first.
-- **Next procedure:**
-  1. owner review of that closeout (or phase 1 on the owner PC);
-  2. the separately approved M6.1 phase 2 fixed-base cycle: source-verified Cloud plan
-     [`M61_CLOUD_ONE_CYCLE_PLAN.md`](M61_CLOUD_ONE_CYCLE_PLAN.md) (updated after the second
-     attempt: `src/` = `b0d8e75`; A2 adds the tracking-path probe; the action feedback is
-     recorded), enabling patch unapplied;
-  3. M5.5 phase 1 above (shadow session; this build as is).
-  Keyboard walking (M5.5 phases 2–4) comes before the odometry, SLAM and navigation milestones
-  (M7–M9).
+- **After the merge of `origin/main`** (`a8aa56f`; main = `f22ac9f`, PR #17, which carries the
+  third M6.1 cycle record, PASS on the welded body): clean build and full suite
+  **1894 tests, 0 errors, 0 failures, 0 skipped** in Cloud ([`evidence/m55/cloud_verify_a8aa56f/`](evidence/m55/cloud_verify_a8aa56f/README.md)).
+  The only conflict, `README.md`, was resolved additively.
+- **Phase 1 (shadow) ran in Cloud on 2026-10-13**
+  ([`evidence/m55/shadow_cloud_20261013T050401Z/`](evidence/m55/shadow_cloud_20261013T050401Z/README.md);
+  free-base bench, RTF 0.20, the teleop driven through a pseudo-terminal).
+  - **Nothing was sent:** 0 command-topic publishers or messages, 0 action feedback, no action
+    client in the node, joints moved 1.3e-11 rad.
+  - **Checks as written:** 10 PASS, 1.7 FAIL, 1.11 N/A (no physical keyboard), 1.13 PARTIAL.
+    - 1.7: READY came 11.7 s wall after the space; the criterion is 5 s, for a 2.8 s sim phase.
+    - 1.13: the crash/lease path was not exercised.
+  - **Finding:** the 50 Hz receive-time rate check rejected two bunched heartbeats, and one of
+    them stopped a held walk. The teleop never published faster than 10 Hz.
+- **Keyboard walking is not done.** The locomotion state machine, gait and teleop are offline,
+  mock or shadow, behind `M55_LOCOMOTION_DISPATCH_ENABLED = False`. Nothing has walked.
+- **Next procedure:** [`PATH_TO_SIM_WALKING.md`](PATH_TO_SIM_WALKING.md).
+  1. S0b, fix the two phase-1 findings (no motion);
+  2. S2, the crawl phases on the fixed base (owner approval and an enabling branch);
+  3. S3, a bounded level-0 free-base crawl;
+  4. S4, keyboard walking.
+
+  Odometry, SLAM and navigation (M7–M9) come after.
 
 ## 15. Files
 
