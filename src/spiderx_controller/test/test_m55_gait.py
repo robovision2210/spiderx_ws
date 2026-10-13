@@ -194,7 +194,8 @@ def test_feasibility_cli_writes_a_report(designer, tmp_path, capsys):
     out = capsys.readouterr().out
     assert rc == 0 and 'two-foot support' in out
     data = json.loads((tmp_path / '20261008T000000Z' / 'report.json').read_text())
-    assert data['schema'] == fe.REPORT_SCHEMA and data['ok'] and data['dispatch_gate'] is False
+    assert data['schema'] == fe.REPORT_SCHEMA and data['ok']
+    assert data['dispatch_gate'] is c55.M55_LOCOMOTION_DISPATCH_ENABLED     # recorded as built
     assert data['levels'][0]['stride_m'] == 0.02 and data['library']['goals'] == 18
     assert len(data['config_sha256']) == 64 and data['non_claims']
     assert 'not a continuous bound' in data['template_labels']['static_margin_method']

@@ -2,13 +2,18 @@
 the in-memory dispatching fake) and the keyboard logic.
 
 Pure Python (no ROS graph). The dispatching fake is used only with the M5.5 gate set True INSIDE
-the test (monkeypatch); the committed literal stays False (test/m55_gate.py).
+the test (monkeypatch); the committed literal stays False (test/m55_gate.py). Gate tests are
+mode-explicit, as for M6.1: the committed gate is checked against its pin whatever its value, and
+the disabled behaviour is tested with the gate set False explicitly, so the S2 enabling patch
+(gate + pin, docs/patches/m55_enable_s2.UNAPPLIED.patch) leaves every test meaningful.
 """
 
 import copy
 import math
 import os
 import re
+import shutil
+import subprocess
 
 import m55_fixtures as fx
 import m55_gate
@@ -42,6 +47,11 @@ def lib():
 @pytest.fixture
 def gate_on(monkeypatch):
     monkeypatch.setattr(c55, 'M55_LOCOMOTION_DISPATCH_ENABLED', True)      # tests only
+
+
+@pytest.fixture
+def gate_off(monkeypatch):
+    monkeypatch.setattr(c55, 'M55_LOCOMOTION_DISPATCH_ENABLED', False)     # either build mode
 
 
 def dispatch_world(cfg, lib, scenario='ok', rtf=1.0, graph_period_s=None, **kw):
@@ -83,35 +93,105 @@ def _package_sources():
                 yield name, f.read()
 
 
-def test_m55_gate_is_false_pinned_and_separate():
-    assert c55.M55_LOCOMOTION_DISPATCH_ENABLED is \
-        m55_gate.EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED is False
+def test_m55_gate_equals_its_pin_and_the_other_gates_are_false():
+    """The committed gate equals its pin (False on every pushed branch; True only on a local S2
+    enabling branch, which flips both). The M6.0-D and M6.1 gates are never enabled with it."""
+    assert isinstance(m55_gate.EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED, bool)
+    assert c55.M55_LOCOMOTION_DISPATCH_ENABLED is m55_gate.EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED
     assert lc.LIVE_DISPATCH_ENABLED is m6d_gate.EXPECTED_LIVE_DISPATCH_ENABLED is False
     assert c61.M61_LIVE_DISPATCH_ENABLED is m61_gate.EXPECTED_M61_LIVE_DISPATCH_ENABLED is False
 
 
-def test_m55_gate_is_a_single_false_literal():
+def test_m55_gate_is_a_single_literal_equal_to_the_pin():
     hits = [(n, line) for n, src in _package_sources() for line in src.splitlines()
             if re.match(r'\s*(\w+\.)?M55_LOCOMOTION_DISPATCH_ENABLED\s*=', line)]
-    assert hits == [('m55_contract.py', 'M55_LOCOMOTION_DISPATCH_ENABLED = False')]
+    assert hits == [('m55_contract.py', 'M55_LOCOMOTION_DISPATCH_ENABLED = '
+                     f'{m55_gate.EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED}')]
 
 
 M55_MODULES = ('m55_contract.py', 'm55_command.py', 'm55_crawl.py', 'm55_locomotion.py',
                'm55_fake.py', 'm55_rclpy.py', 'm55_teleop.py', 'm55_feasibility.py')
 
 
-def test_no_environment_flag_or_parameter_can_enable_m55_dispatch():
-    srcs = dict(_package_sources())
+S2_PATCH = os.path.join(PKG, '..', '..', 'docs', 'patches', 'm55_enable_s2.UNAPPLIED.patch')
+
+
+def test_the_s2_enabling_patch_flips_exactly_the_gate_and_its_pin():
+    """docs/patches/m55_enable_s2.UNAPPLIED.patch: 2 lines in 2 files, the gate and its pin, and
+    it matches this tree in its build mode (applies forward when disabled, reverse when enabled).
+    """
+    with open(S2_PATCH) as f:
+        body = f.read().split('\ndiff --git ', 1)[1]
+    assert re.findall(r'^(?:diff --git )?a/(\S+) b/', 'diff --git ' + body, re.M) == [
+        'src/spiderx_controller/spiderx_controller/m55_contract.py',
+        'src/spiderx_controller/test/m55_gate.py']
+    changed = [ln for ln in body.splitlines()
+               if ln[:1] in '+-' and not ln.startswith(('+++ ', '--- '))]
+    assert changed == ['-M55_LOCOMOTION_DISPATCH_ENABLED = False',
+                       '+M55_LOCOMOTION_DISPATCH_ENABLED = True',
+                       '-EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = False',
+                       '+EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = True']
+    root = os.path.realpath(os.path.join(PKG, '..', '..'))
+    if shutil.which('git') is None or not os.path.exists(os.path.join(root, '.git')):
+        pytest.skip('not a git checkout')
+    mode = ['--reverse'] if m55_gate.EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED else []
+    r = subprocess.run(['git', 'apply', '--check', *mode, os.path.realpath(S2_PATCH)], cwd=root,
+                       capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+
+
+M55_ENABLERS = ('os.environ', 'getenv', 'DISPATCH_ENABLED or', "add_argument('--enable",
+                "add_argument('--yes'", "add_argument('--force'", "add_argument('--live'",
+                'DISPATCH_ENABLED = True', 'declare_parameter')
+
+
+def _m55_enabler_hits(srcs, expected):
+    """(file, what) for every way the M5.5 sources could enable dispatch other than THE gate line.
+    That line must appear exactly once, in m55_contract.py, with the pinned value; only that exact
+    line is exempt, so the scan means the same in both build modes (as for M6.1)."""
+    gate = f'M55_LOCOMOTION_DISPATCH_ENABLED = {expected}'
+    hits = []
     for name in M55_MODULES:
-        for w in ('os.environ', 'getenv', 'DISPATCH_ENABLED or', "add_argument('--enable",
-                  "add_argument('--yes'", "add_argument('--force'", "add_argument('--live'",
-                  'DISPATCH_ENABLED = True', 'declare_parameter'):
-            assert w not in srcs[name], (name, w)
-    # the gate is read, never assigned, outside the contract
+        lines = srcs[name].splitlines()
+        if name == 'm55_contract.py':
+            n = lines.count(gate)
+            if n != 1:
+                hits.append((name, f'{gate!r} found {n} times'))
+            lines = [line for line in lines if line != gate]
+        else:   # the gate is read, never assigned, outside the contract
+            hits += [(name, 'assignment') for line in lines
+                     if re.match(r'\s*(\w+\.)?M55_LOCOMOTION_DISPATCH_ENABLED\s*=[^=]', line)]
+            if 'setattr(c55' in srcs[name]:
+                hits.append((name, 'setattr(c55'))
+        text = '\n'.join(lines)
+        hits += [(name, w) for w in M55_ENABLERS if w in text]
+    return hits
+
+
+def test_no_environment_flag_or_parameter_can_enable_m55_dispatch():
+    assert _m55_enabler_hits(dict(_package_sources()),
+                             m55_gate.EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED) == []
+
+
+@pytest.mark.parametrize('expected', [False, True])
+def test_the_m55_enabler_scan_has_teeth_in_both_build_modes(expected):
+    gate = f'M55_LOCOMOTION_DISPATCH_ENABLED = {expected}'
+    clean = dict({n: 'X = 1\n' for n in M55_MODULES}, **{'m55_contract.py': gate})
+    assert _m55_enabler_hits(clean, expected) == []
+    flipped = f'M55_LOCOMOTION_DISPATCH_ENABLED = {not expected}'
+    for text in (flipped, 'X = 1', f'{gate}\n{gate}'):
+        assert _m55_enabler_hits(dict(clean, **{'m55_contract.py': text}), expected)
+    for text in (f'{gate}\n    M55_LOCOMOTION_DISPATCH_ENABLED = True',
+                 f'{gate}\nc55.M55_LOCOMOTION_DISPATCH_ENABLED = True'):
+        assert ('m55_contract.py', 'DISPATCH_ENABLED = True') in _m55_enabler_hits(
+            dict(clean, **{'m55_contract.py': text}), expected)
     for name in M55_MODULES[1:]:
-        for line in srcs[name].splitlines():
-            assert not re.match(r'\s*(\w+\.)?M55_LOCOMOTION_DISPATCH_ENABLED\s*=[^=]', line), name
-        assert 'setattr(c55' not in srcs[name], name
+        for w in M55_ENABLERS:
+            assert (name, w) in _m55_enabler_hits(dict(clean, **{name: f'y = {w}'}), expected)
+        assert (name, 'assignment') in _m55_enabler_hits(
+            dict(clean, **{name: 'c55.M55_LOCOMOTION_DISPATCH_ENABLED = False'}), expected)
+        assert (name, 'setattr(c55') in _m55_enabler_hits(
+            dict(clean, **{name: "setattr(c55, 'x', 1)"}), expected)
 
 
 def test_only_the_ros_modules_import_rclpy_and_only_inside_functions():
@@ -137,7 +217,7 @@ def test_only_the_gated_transport_creates_an_action_client():
     assert src.count('create_publisher(') == 1 and 'STATUS_TOPIC' in src
 
 
-def test_session_refuses_a_dispatching_transport_while_the_gate_is_false(cfg, lib):
+def test_session_refuses_a_dispatching_transport_while_the_gate_is_false(cfg, lib, gate_off):
     plant = fk.FakeLocomotionTransport(lib, lib.boundary_positions(0, 0))
     with pytest.raises(loc.DispatchDisabled):
         loc.LocomotionSession(cfg, lib, plant)
@@ -337,7 +417,7 @@ def test_session_refuses_a_deadband_above_the_slowest_level(cfg, lib):
 
 
 # ==================================================================== shadow mode
-def test_shadow_mode_runs_the_state_machine_and_sends_nothing(cfg, lib):
+def test_shadow_mode_runs_the_state_machine_and_sends_nothing(cfg, lib, gate_off):
     w, s, tr = shadow_world(cfg, lib)
     st = s.status(w.wall)
     assert st['mode'] == 'shadow' and st['dispatch_gate'] is False and st['state'] == 'DISARMED'

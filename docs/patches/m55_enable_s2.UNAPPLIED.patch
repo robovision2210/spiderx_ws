@@ -1,0 +1,46 @@
+UNAPPLIED - FOR REVIEW ONLY. Do not apply on claude/spiderx-m55-keyboard-walking, main or any
+pushed or merged branch. It enables M5.5 locomotion dispatch for the S2 fixed-base crawl and
+nothing else.
+
+Purpose : the minimal enabling change for ONE S2 session (docs/S2_FIXED_BASE_CRAWL_DESIGN.md):
+          the M5.5 phase goals on the welded fixed base, Cloud simulation, owner approval first.
+Base    : claude/spiderx-m55-keyboard-walking at the commit named in the owner's authorization.
+Branch  : apply only on a new local branch local/m55-s2-<UTC>, never pushed or merged; it is
+          deleted by the restore script after verification.
+Changes : 2 lines in 2 files - the M5.5 gate constant and its test pin (test/m55_gate.py).
+          The M6.1 and M6.0-D gates stay False (test_m55_locomotion asserts it).
+Expected test delta on the enabling branch: NONE. The M5.5 gate tests are mode-explicit (as for
+  M6.1): the committed gate is checked against its pin whatever its value, the enabler scan
+  exempts only the one pinned gate line, and disabled/shadow behaviour is tested with the gate
+  set False explicitly. Checked before the run with the gate and pin set True in memory (a
+  pytest plugin; no file patched); the real check is design step C on the enabling branch.
+Check   : git apply --check docs/patches/m55_enable_s2.UNAPPLIED.patch   (changes nothing)
+Revert  : NOT a branch switch alone. Run scripts/m61_restore_and_verify_disabled.sh with
+          --enabling-ref local/m55-s2-<UTC> (design section 2 F). It preserves the enabling
+          commit, restores and rebuilds the base, and proves in a fresh environment that all
+          three IMPORTED gates are False and that both M6 --live tools exit 3. Only then is the
+          local branch deleted (--delete-enabling-branch).
+
+diff --git a/src/spiderx_controller/spiderx_controller/m55_contract.py b/src/spiderx_controller/spiderx_controller/m55_contract.py
+index 86d14e7..ab93f06 100644
+--- a/src/spiderx_controller/spiderx_controller/m55_contract.py
++++ b/src/spiderx_controller/spiderx_controller/m55_contract.py
+@@ -16,7 +16,7 @@
+ (docs/M55_KEYBOARD_WALKING.md); it is not part of this milestone.
+ """
+ 
+-M55_LOCOMOTION_DISPATCH_ENABLED = False
++M55_LOCOMOTION_DISPATCH_ENABLED = True
+ 
+ M55_DISPATCH_DISABLED_MESSAGE = (
+     'continuous locomotion dispatch is hard-disabled in this build '
+diff --git a/src/spiderx_controller/test/m55_gate.py b/src/spiderx_controller/test/m55_gate.py
+index 5f4be06..833c51f 100644
+--- a/src/spiderx_controller/test/m55_gate.py
++++ b/src/spiderx_controller/test/m55_gate.py
+@@ -5,4 +5,4 @@
+ (docs/M55_KEYBOARD_WALKING.md): it flips m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED and this
+ expectation together, and nothing else. On main both stay False.
+ """
+-EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = False
++EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = True

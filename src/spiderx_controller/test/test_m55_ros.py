@@ -169,8 +169,10 @@ def _isolated_or_skip(node, allowed):
 
 
 @pytest.fixture
-def stack(isolated_env, cfg, lib, tmp_path):
-    """The locomotion node (own context) + peers (own context) on the private domain."""
+def stack(isolated_env, cfg, lib, tmp_path, monkeypatch):
+    """The locomotion node (own context) + peers (own context) on the private domain. The node is
+    the SHADOW node: the gate is set False explicitly, so this holds in either build mode."""
+    monkeypatch.setattr(c55, 'M55_LOCOMOTION_DISPATCH_ENABLED', False)
     assert 150 <= DOMAIN < 200 and DOMAIN != int(os.environ.get('ROS_DOMAIN_ID', '0') or 0)
     node_side = Spinner(DOMAIN)
     peer_side = Spinner(DOMAIN)
@@ -315,8 +317,10 @@ def test_teleop_node_against_the_locomotion_node(stack, cfg, lib):
 
 
 # ==================================================================== gated transport, pose
-def test_dispatch_transport_refuses_to_exist_while_the_gate_is_false(isolated_env, cfg, lib):
+def test_dispatch_transport_refuses_to_exist_while_the_gate_is_false(
+        isolated_env, cfg, lib, monkeypatch):
     import rclpy
+    monkeypatch.setattr(c55, 'M55_LOCOMOTION_DISPATCH_ENABLED', False)
     ctx = _context(DOMAIN)
     node = rclpy.create_node('m55_gate_probe', context=ctx)
     try:
