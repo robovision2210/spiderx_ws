@@ -1,0 +1,8 @@
+SpiderX M6.1 READ-ONLY readiness rehearsal (no goal, no cancel, no session)
+action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.250696 s (2 polls)
+  readiness before_confirmation: permitted True (None); failure codes []
+  readiness after_confirmation: permitted True (None); failure codes []
+  streams at send: ok True []; age check {'permitted': True, 'code': None, 'age_s': 5.137597, 'max_age_s': 10.0}
+READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False
+Record: /root/spiderx_evidence/m61_one_cycle_20261012T103615Z/a2/rehearsal_2/rehearsal/20261012T103919Z/rehearsal.json
+exit=0

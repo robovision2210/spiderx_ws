@@ -1,0 +1,11 @@
+commit 87eac0c2f681ee894c430a356498e3ed90348689
+Author:     Claude <noreply@anthropic.com>
+AuthorDate: Mon Oct 12 10:42:06 2026 +0000
+Commit:     Claude <noreply@anthropic.com>
+CommitDate: Mon Oct 12 10:42:06 2026 +0000
+
+    LOCAL ONLY: enable ONE M6.1 trot cycle (never push, never merge)
+
+ src/spiderx_controller/spiderx_controller/m61_live_contract.py | 2 +-
+ src/spiderx_controller/test/m61_gate.py                        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)

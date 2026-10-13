@@ -1,0 +1,3 @@
+rehearsal 1: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.500834 s (3 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False exit=0 
+rehearsal 2: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.250696 s (2 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False exit=0 
+rehearsal 3: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 1.504016 s (7 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False exit=0 

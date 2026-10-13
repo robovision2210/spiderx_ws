@@ -1,4 +1,4 @@
-# M6.1 – ONE fixed-base trot cycle in Cloud simulation: source-verified plan (attempted twice: refused, then one goal cancelled; both FAIL)
+# M6.1 – ONE fixed-base trot cycle in Cloud simulation: source-verified plan (attempted three times: refused, cancelled, then PASS)
 
 **Status: FIRST ATTEMPT on 2026-10-12, under the owner's authorization. Result: FAIL, refused
 before dispatch, 0 goals, 0 cancels.** The authorization is spent; another attempt needs a new
@@ -21,6 +21,16 @@ one.
 - Cleanup ended `DISABLED AND VERIFIED`. That authorization is spent; another attempt needs the
   reference fix and a new authorization.
 - Evidence: [`evidence/m61_cloud_one_cycle/20261012T054741Z/`](evidence/m61_cloud_one_cycle/20261012T054741Z/README.md).
+
+**Third authorized attempt, 2026-10-12 at `d748891` (Cloud report §15): PASS, 1 goal, 0 cancels.**
+- The plan below was followed at `d748891`, with A2 (3 rehearsals and the probe), the bag on
+  `_action/feedback`, and E6 reading `tracking_reference`.
+- Result: `SUCCEEDED`, exit 0. Max in-flight error 0.0085 rad; goal tolerances passed; E1–E11
+  all PASS.
+- The recorded feedback had `time_from_start = 0` in all 214 messages, and the controller started
+  0.037 s before acceptance.
+- Cleanup ended `DISABLED AND VERIFIED` twice. That authorization is spent.
+- Evidence: [`evidence/m61_cloud_one_cycle/20261012T103615Z/`](evidence/m61_cloud_one_cycle/20261012T103615Z/README.md).
 
 **Since the second attempt (Cloud report §14): the tracking reference fixed at `b0d8e75`, rehearsed
 without a goal.** That cycle stays FAIL (E4, E6).

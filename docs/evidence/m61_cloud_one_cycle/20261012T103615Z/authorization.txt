@@ -1,0 +1,19 @@
+Owner authorization (third, NEW), 2026-10-12, as received in this session:
+- ONE M6.1 fixed-base trot cycle in Claude Cloud simulation only. The attempts at a1a7d60
+  (refused, 0 goals) and 24782f6 (TRACKING_FAILED, 1 goal, 1 cancel) are spent, not precedent;
+  their FAIL records stand.
+- Accepted: criterion 6 version 2 as a limited planar check (version 1 stays FAIL); the simulator
+  physics state for z/roll/pitch, for this simulation only; E1-E11 as documented, E5 including
+  the bounded discovery wait, E6 also checking the tracking_reference record (acceptance anchor,
+  fallback count); the 0.05 rad limit unchanged.
+- Base: claude/stoic-shannon-ur2mes, head d748891, src/ = b0d8e75; patch SHA-256
+  b6213f21dedf30e61e4959d22cd45a44525a8bc4432b641134406fe7f3277595; identities
+  241760e7dfd5ef12 / 94a492c4... / 9dba1a17...
+- Procedure: docs/M61_CLOUD_ONE_CYCLE_PLAN.md as updated at d748891 (A, A2 with 3 rehearsals and
+  the tracking probe, B, C incl. test_m61_tracking.py, D, E with the bag recording _action/feedback
+  and never _action/status, F incl. the feedback comparison, G).
+- One confirmation, exactly one goal; no retry, no second goal, no automatic return, at most one
+  cancel. If the tool aborts or fails: no fix, patch or retry in this session.
+- Not authorized: hardware, the owner's PC, M5.5 or free-base dispatch, a second cycle, pushing
+  enabled code, any source change during the run, any claim that SpiderX walks, balances or
+  navigates.

@@ -1,0 +1,13 @@
+stdin is not a terminal device. Keyboard handling disabled.[INFO] [1791801546.256440557] [rosbag2_recorder]: Press SPACE for pausing/resuming
+[INFO] [1791801546.257919782] [rosbag2_storage]: Opened database '/root/spiderx_evidence/m61_one_cycle_20261012T103615Z/a2/rehearsal_2/bag/bag_0.db3' for READ_WRITE.
+[INFO] [1791801546.258649183] [rosbag2_recorder]: Listening for topics...
+[INFO] [1791801546.258763785] [rosbag2_recorder]: Recording...
+[INFO] [1791801546.258829114] [rosbag2_recorder]: Event publisher thread: Starting
+[INFO] [1791801546.662977754] [rosbag2_recorder]: Subscribed to topic '/robot_description'
+[INFO] [1791801547.068283306] [rosbag2_recorder]: Subscribed to topic '/spiderx/sim/world_poses'
+[INFO] [1791801547.170835453] [rosbag2_recorder]: Subscribed to topic '/clock'
+[INFO] [1791801547.476505866] [rosbag2_recorder]: Subscribed to topic '/joint_states'
+[INFO] [1791801547.479222447] [rosbag2_recorder]: Subscribed to topic '/leg_trajectory_controller/controller_state'
+[INFO] [1791801597.217053201] [rosbag2_cpp]: Writing remaining messages from cache to the bag. It may take a while
+[INFO] [1791801597.218427264] [rosbag2_recorder]: Event publisher thread: Exiting
+[INFO] [1791801597.218608162] [rosbag2_recorder]: Recording stopped

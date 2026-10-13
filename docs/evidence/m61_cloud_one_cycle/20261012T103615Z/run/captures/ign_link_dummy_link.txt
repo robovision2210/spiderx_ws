@@ -1,0 +1,45 @@
+
+Requesting state for world [spiderx_fortress]...
+
+- Link [36]
+  - Name: dummy_link
+  - Parent: spiderx [35]
+  - Mass (kg): 2.522103
+  - Inertial Pose [ XYZ (m) ] [ RPY (rad) ]:
+    [0.051000 -0.045000 0.087937]
+    [0.000000 -0.000000 0.000000]
+  - Inertial Matrix (kg.m^2):
+    [0.007746 -0.000000 -0.000000]
+    [-0.000000 0.004751 -0.000000]
+    [-0.000000 -0.000000 0.009654]
+  - Pose [ XYZ (m) ] [ RPY (rad) ]:
+    [0.000000 0.000000 0.125000]
+    [0.000000 -0.000000 0.000000]
+  - Sensor [51]
+    - Name: lidar
+    - Parent: spiderx [35]
+    - Pose [ XYZ (m) ] [ RPY (rad) ]:
+      [0.051000 -0.045000 0.141000]
+      [0.000000 -0.000000 1.570800]
+    - Range:
+      - Min (m): 0.15
+      - Max (m): 12
+      - Resolution: 0.01
+    - Horizontal scan:
+      - Samples: 360
+      - Resolution: 1
+      - Min angle (rad): -3.14159
+      - Max angle (rad): 3.12414
+    - Vertical scan:
+      - Samples: 1
+      - Resolution: 1
+      - Min angle (rad): 0
+      - Max angle (rad): 0
+    - Noise:
+      - Mean (m): 0
+      - Bias mean (m): 0
+      - Standard deviation (m): 0.01
+      - Bias standard deviation (m): 0
+      - Precision: 0
+      - Dynamic bias standard deviation (m): 0
+      - Dynamic bias correlation time (s): 0
