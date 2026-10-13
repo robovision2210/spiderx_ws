@@ -1,0 +1,1 @@
+{"command_rejections": {}, "expected_goals": 0, "faults": [], "final_state": "DISARMED", "goal_seqs_seen": [], "goals_recorded": 0, "levels": [0, 1, 2], "max_seq": 0, "result": "STOP CONDITION: wall cap 110 s exceeded waiting for: READY at boundary 0 after arm", "status_messages": 227}

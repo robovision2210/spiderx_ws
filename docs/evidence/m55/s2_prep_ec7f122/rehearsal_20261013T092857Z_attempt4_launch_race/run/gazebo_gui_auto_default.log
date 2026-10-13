@@ -1,0 +1,44 @@
+(2026-10-13T09:29:03.286599226) (2026-10-13T09:29:03.286614386) [Dbg] [gz.cc:161] Subscribing to [/ga(2026-10-13T09:29:03.294893866) (2026-10-13T09:29:03.294902123) [Dbg] [Gui.cc:253] Waiting for subscribers to [/gazebo/starting_world]...
+(2026-10-13T09:29:03.326060605) (2026-10-13T09:29:03.326072027) [Dbg] [Application.cc:92] Initializing application.
+(2026-10-13T09:29:03.329076040) (2026-10-13T09:29:03.329083862) [GUI] [Dbg] [Application.cc:555] Create main window
+(2026-10-13T09:29:03.583811849) (2026-10-13T09:29:03.583821309) [GUI] [Wrn] [Application.cc:797] [QT] qrc:/qml/StyleDialog.qml:112:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }
+(2026-10-13T09:29:03.583909733) (2026-10-13T09:29:03.583914375) [GUI] [Wrn] [Application.cc:797] [QT] qrc:/qml/StyleDialog.qml:105:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }
+(2026-10-13T09:29:03.583937651) (2026-10-13T09:29:03.583940857) [GUI] [Wrn] [Application.cc:797] [QT] qrc:/qml/StyleDialog.qml:98:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }
+(2026-10-13T09:29:03.588326535) (2026-10-13T09:29:03.588335024) [GUI] [Wrn] [Application.cc:797] [QT] qrc:qml/Main.qml:102:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }
+(2026-10-13T09:29:03.592054082) (2026-10-13T09:29:03.592061817) [GUI] [Wrn] [Application.cc:797] [QT] qrc:/qml/PluginMenu.qml:27:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }
+(2026-10-13T09:29:03.599292098) (2026-10-13T09:29:03.599300030) [GUI] [Dbg] [PathManager.cc:66] Requesting resource paths through [/gazebo/resource_paths/get]
+(2026-10-13T09:29:03.599805742) (2026-10-13T09:29:03.599812002) [GUI] [Wrn] [Application.cc:797] [QT] Broken filename passed to function
+(2026-10-13T09:29:03.600396364) (2026-10-13T09:29:03.600404812) [GUI] [Wrn] [Application.cc:797] [QT] Broken filename passed to function
+(2026-10-13T09:29:03.600497709) (2026-10-13T09:29:03.600503199) [GUI] [Wrn] [Application.cc:797] [QT] Broken filename passed to function
+(2026-10-13T09:29:03.600627884) (2026-10-13T09:29:03.600633586) [GUI] [Wrn] [Application.cc:797] [QT] Broken filename passed to function
+(2026-10-13T09:29:03.600735823) (2026-10-13T09:29:03.600742681) [GUI] [Wrn] [Application.cc:797] [QT] Broken filename passed to function
+(2026-10-13T09:29:03.600854255) (2026-10-13T09:29:03.600859970) [GUI] [Wrn] [Application.cc:797] [QT] Broken filename passed to function
+(2026-10-13T09:29:03.608071968) (2026-10-13T09:29:03.608080861) [GUI] [Wrn] [Application.cc:797] [QT] file::/Gazebo/GazeboDrawer.qml:242:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }
+(2026-10-13T09:29:03.617427360) (2026-10-13T09:29:03.617437246) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:08.617998253) (2026-10-13T09:29:08.618016062) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:13.618692199) (2026-10-13T09:29:13.618708935) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:18.619201220) (2026-10-13T09:29:18.619215556) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:23.619746385) (2026-10-13T09:29:23.619759757) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:28.620210155) (2026-10-13T09:29:28.620242759) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:33.620665649) (2026-10-13T09:29:33.620677089) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:38.621016639) (2026-10-13T09:29:38.621074276) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:43.621461741) (2026-10-13T09:29:43.621475392) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:48.621938896) (2026-10-13T09:29:48.621957247) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:53.622585412) (2026-10-13T09:29:53.622599774) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:29:58.623100033) (2026-10-13T09:29:58.623115115) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:03.623586948) (2026-10-13T09:30:03.623602541) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:08.624095543) (2026-10-13T09:30:08.624115302) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:13.624710541) (2026-10-13T09:30:13.624724676) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:18.625268591) (2026-10-13T09:30:18.625289216) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:23.625751647) (2026-10-13T09:30:23.625765695) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:28.626229769) (2026-10-13T09:30:28.626247797) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:33.627194450) (2026-10-13T09:30:33.627209872) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:38.627763865) (2026-10-13T09:30:38.627777792) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:43.628222214) (2026-10-13T09:30:43.628236672) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:48.628744994) (2026-10-13T09:30:48.628793414) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:53.629361182) (2026-10-13T09:30:53.629377953) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:30:58.629876499) (2026-10-13T09:30:58.629890688) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:31:03.630384664) (2026-10-13T09:31:03.630404698) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:31:08.631033295) (2026-10-13T09:31:08.631052883) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:31:13.631528805) (2026-10-13T09:31:13.631547912) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.
+(2026-10-13T09:31:18.632131148) (2026-10-13T09:31:18.632147507) [GUI] [Dbg] [Gui.cc:333] GUI requesting list of world names. The server may be busy downloading resources. Please be patient.

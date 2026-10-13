@@ -1,0 +1,11 @@
+attempt 3: largest receive gaps at the bag recorder (s, at s after bag start)
+/clock: [(0.073, 1.7), (0.071, 125.7), (0.067, 90.9)]
+/cmd_vel: [(0.145, 59.7), (0.14, 85.1), (0.14, 59.2)]
+/joint_states: [(0.081, 1.7), (0.071, 125.7), (0.07, 90.9)]
+/leg_trajectory_controller/controller_state: [(0.131, 21.2), (0.117, 124.5), (0.11, 2.9)]
+/spiderx/locomotion/status: [(0.813, 120.2), (0.565, 3.2), (0.549, 125.2)]
+/spiderx/sim/world_poses: [(0.676, 120.4), (0.082, 90.9), (0.081, 104.1)]
+The node faulted joint_states_stale (> 0.5 s without a /joint_states sample at the node)
+while the recorder saw /joint_states every <= 0.081 s: the stream never stopped. The
+node's own status stream shows a 0.81 s gap and the pose bridge 0.68 s at the same time:
+the node process (and the bridge) were starved of CPU; 4 cores, Gazebo GUI ~150 % CPU.

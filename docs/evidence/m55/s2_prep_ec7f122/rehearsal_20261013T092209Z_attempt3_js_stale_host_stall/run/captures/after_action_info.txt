@@ -1,0 +1,5 @@
+Action: /leg_trajectory_controller/follow_joint_trajectory
+Action clients: 1
+    /rosbag2_recorder
+Action servers: 1
+    /leg_trajectory_controller

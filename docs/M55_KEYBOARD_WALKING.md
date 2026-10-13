@@ -378,7 +378,10 @@ yet observed in a run). The emergency stop is the explicit `estop` service (tele
 | Graph check period / stale | 1.0 s / 3.0 s | — |
 | Gait | strides 20/40/60 mm, lift 12 mm, design margin 20 mm, min margin 15 mm, 0.25 rad/s, `speed_use` 0.9 | chosen offline so every level validates |
 
-All of them live in `spiderx_controller/config/m55_locomotion.yaml`. The strict loader refuses
+Each wall-time bound was reviewed against RTF 0.20 for S2: RTF alone trips none at RTF ≥ 0.1;
+host CPU starvation can trip the joint-state and pose monitors (kept; load reduced instead;
+[S2 design](S2_FIXED_BASE_CRAWL_DESIGN.md) §8). All of them live in
+`spiderx_controller/config/m55_locomotion.yaml`. The strict loader refuses
 unknown, missing, ill-typed or inconsistent values, and `status` must stay `provisional`.
 
 ## 8. Keyboard teleop
@@ -474,7 +477,7 @@ ros2 bag record -o ~/spiderx_ws/log/m55_phase1_bag /spiderx/locomotion/status /j
 | 1.6 | `j`, `l` | rejection message; `command_rejections` unchanged (nothing was sent) |
 | 1.7 | space while holding `w` | STOPPING, then READY within the in-flight goal's `duration_s` + 1.0 s of **sim** time (`monitors.sim_time_s` on the status, from the last status before the space to the first READY): ≤ 3.8 s at level 0 (longest goal 2.8 s), ≤ 5.7 s at 60 mm (4.7 s). Wall backstop: READY within 60 s wall, else FAIL (covers RTF ≥ 0.1). Stays READY until `w` is released and pressed again |
 | 1.8 | `x`, then `a`, then `r`, then `a` | FAULTED; arm refused `faulted_reset_required`; reset → DISARMED; arm accepted |
-| 1.9 | close the teleop terminal while walking | DISARMED within 6 s (lease 0.5 s + the phase in flight ≤ 4.7 s); a new teleop cannot move it until `a` |
+| 1.9 | close the teleop terminal while walking (clean quit: `disarm` on arrival), or kill it (crash: lease, STOPPING ≤ 0.55 s wall, 1.13) | DISARMED within the **sim** duration of the goals still to finish + 1.0 s (`monitors.sim_time_s` on the status, from the last status before the close to the first DISARMED). Those goals: the one in flight; on the crash path, also the next one if a phase boundary fell within those 0.55 s. That is ≤ 3.8 s at level 0 with one goal (≤ 6.6 s with two), ≤ 5.7 s at 60 mm (≤ 10.4 s). Wall backstop: DISARMED within 120 s wall, else FAIL (covers RTF ≥ 0.1 with two goals). A new teleop cannot move it until `a` |
 | 1.10 | evidence | `events.jsonl`, `library.json`, `final_status.json`, `shadow_goals.json` in `evidence_dir`; copied to `~/spiderx_evidence/` before any rebuild (a clean build is `rm -rf build install`; keep `log/`) |
 | 1.11 | key repeat | record `xset q` (or the desktop's keyboard settings); holding `w` for 10 s shows no `key repeat gap` note and no STOPPING until release |
 | 1.12 | real-time factor | record the Gazebo RTF; every sim-time duration in §16.1 takes 1/RTF as long in wall time |
@@ -509,10 +512,10 @@ teleop.
 | Check | Pass criterion |
 |---|---|
 | forward 0.3 m at the fastest level (3/3), then back | no unplanned fault; tilt ≤ 0.10 rad; lateral deviation ≤ 30 mm; heading drift ≤ 0.1 rad |
-| key release while walking | READY within one phase (≤ 4.7 s) |
+| key release while walking | READY within the goals still to finish + 1.0 s of **sim** time, as 1.7 (the in-flight goal, and the next one if a boundary fell within the 0.95 s wall detection): ≤ 2 × 4.7 + 1.0 s at 60 mm; wall backstop 120 s |
 | speed change, reversal, `home` | take effect at the next cycle / phase boundary; `home` ends at boundary 0 |
 | `x` while walking | FAULTED within one 50 ms tick; one cancel; no further goal |
-| close the teleop | DISARMED within 6 s; no motion until `a` |
+| close the teleop | DISARMED by check 1.9 (sim bound, 120 s wall backstop); no motion until `a` |
 | evidence | bag + evidence directory; a screen recording **made by the owner** if a video is wanted (none is fabricated) |
 
 Then odometry, SLAM and navigation (M7–M9). Hardware is a later stage (M10).
@@ -674,12 +677,27 @@ was sent anywhere.
   - Clean build and full suite at `e4bd880`: **1922 tests, 0 errors, 0 failures, 0 skipped**
     (1894 + 27 + 1 CTest entry). Gates `False`; `--live` exit 3
     ([`evidence/m55/cloud_verify_e4bd880/`](evidence/m55/cloud_verify_e4bd880/README.md)).
+- **S2 preparation (2026-10-13, owner-approved; no goal sent, all gates False):**
+  - **Wall-time bounds.** Check 1.9 is now in sim time, with a 120 s wall backstop; the two
+    phase-4 rows follow. Every other wall-time bound was reviewed for RTF 0.20, and none
+    changed.
+  - **Host load.** A host CPU stall can trip the 0.5 s `/joint_states` monitor. That is a
+    safety threshold, so it is kept and the host load is reduced instead
+    ([S2 design](S2_FIXED_BASE_CRAWL_DESIGN.md) §8).
+  - **Restore script.** It now checks the M5.5 gate as well (hermetic tests).
+  - **Tests.** The M5.5 gate tests are mode-explicit.
+  - **Enabling patch.** `docs/patches/m55_enable_s2.UNAPPLIED.patch` was written and not
+    applied.
+  - **Shadow rehearsal on the welded fixed base.** The full S2 script: 58 goals planned,
+    nothing sent, no action client in the node, 0 rate rejections.
+  - **Verification at `ec7f122`:** **1931 tests, 0 errors, 0 failures, 0 skipped**
+    ([`evidence/m55/s2_prep_ec7f122/`](evidence/m55/s2_prep_ec7f122/README.md)).
 - **Keyboard walking is not done.** The locomotion state machine, gait and teleop are offline,
   mock or shadow, behind `M55_LOCOMOTION_DISPATCH_ENABLED = False`. Nothing has walked.
 - **Next procedure:** [`PATH_TO_SIM_WALKING.md`](PATH_TO_SIM_WALKING.md).
   1. S0b, fix the two phase-1 findings (no motion): done in code and tests, above;
   2. S2, the crawl phases on the fixed base (owner approval and an enabling branch;
-     [design](S2_FIXED_BASE_CRAWL_DESIGN.md));
+     [design](S2_FIXED_BASE_CRAWL_DESIGN.md); prepared, the run awaits authorization);
   3. S3, a bounded level-0 free-base crawl;
   4. S4, keyboard walking.
 

@@ -1,0 +1,6 @@
+R1_m55_gate_not_imported: CAUGHT | 3 failed, 11 passed in 9.19s
+R2_live_playback_not_checked: CAUGHT | 4 failed, 10 passed in 9.22s
+R3_s2_branch_pattern_removed: CAUGHT | 1 failed, 13 passed in 10.89s
+R4_m55_node_not_a_leftover: CAUGHT | 1 failed, 13 passed in 9.40s
+Z_control: SURVIVED | 14 passed in 12.16s
+all caught, control passes

@@ -1,0 +1,15 @@
+[09:13:17] gates (imported): False False False
+[09:13:17] launch
+launch pid 21950 pgid 21950 xvfb 21945
+[09:13:38] controllers: exit 0
+[09:13:41] preflight
+[09:13:47] preflight exit 0 READY
+[09:13:47] node
+[09:15:12] node up after 85 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[09:15:15] captures before
+[09:15:21] driver
+[09:21:30] driver exit 2: {"command_rejections": {}, "expected_goals": 57, "faults": [], "final_state": "READY", "goal_seqs_seen": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+[09:21:33] captures after
+[09:21:38] node stopped
+[09:21:38] stop launch
+[09:21:45] end

@@ -1,0 +1,80 @@
+{
+ "awaiting_joint_state": false,
+ "boundary": 8,
+ "command_rejections": {
+  "command_rate_exceeded": 3
+ },
+ "commands_accepted": 1157,
+ "continuity_reference": "planned (shadow: nothing moves)",
+ "cycles": 1,
+ "direction": -1,
+ "disarm_pending": false,
+ "dispatch_gate": false,
+ "faults": [
+  "joint_states_stale",
+  "estop"
+ ],
+ "goal": null,
+ "goals_recorded": 29,
+ "ground_truth": {
+  "delta_since_arm_xy": [
+   0.0,
+   0.0
+  ],
+  "label": "simulator ground truth (development monitor), not odometry",
+  "tilt": 0.0,
+  "xy": [
+   0.0,
+   0.0
+  ],
+  "yaw": 0.0,
+  "z": 0.125
+ },
+ "homing": 0,
+ "intent": {
+  "direction": 0,
+  "granted_m_s": 0.0,
+  "level": null,
+  "reason": "no_command_yet",
+  "requested_m_s": 0.0
+ },
+ "joint_states_out_of_order": 0,
+ "last_refusal": null,
+ "lease_age_s": null,
+ "level": 1,
+ "levels_m_s": [
+  0.0010638297872340426,
+  0.001895734597156398,
+  0.00234375
+ ],
+ "milestone": "M5.5",
+ "mode": "shadow",
+ "monitors": {
+  "body_pose_age_s": 0.010570726999958424,
+  "graph": {
+   "action_server_present": true,
+   "command_topic_publishers": 0,
+   "foreign_action_clients": 0,
+   "joint_state_publishers": 1
+  },
+  "graph_age_s": 0.8222560720000729,
+  "joint_states_age_s": 0.0010726680002335343,
+  "sim_time_s": 140.29
+ },
+ "phases_completed": 28,
+ "phases_per_cycle": 9,
+ "planned_displacement_xy_m": [
+  -0.012768166999999999,
+  0.028507291999999997
+ ],
+ "rest": null,
+ "schema": "spiderx.m55.status/1",
+ "state": "FAULTED",
+ "stop_latched": false,
+ "stop_pending": null,
+ "strides_m": [
+  0.02,
+  0.04,
+  0.06
+ ]
+}

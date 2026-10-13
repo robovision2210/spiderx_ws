@@ -1,0 +1,15 @@
+[09:22:09] gates (imported): False False False
+[09:22:09] launch
+launch pid 23125 pgid 23125 xvfb 23120
+[09:22:30] controllers: exit 0
+[09:22:33] preflight
+[09:22:38] preflight exit 0 READY
+[09:22:38] node
+[09:24:12] node up after 94 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[09:24:15] captures before
+[09:24:22] driver
+[09:26:20] driver exit 134: terminate called without an active exception
+[09:26:23] captures after
+[09:26:27] node stopped
+[09:26:27] stop launch
+[09:26:34] end

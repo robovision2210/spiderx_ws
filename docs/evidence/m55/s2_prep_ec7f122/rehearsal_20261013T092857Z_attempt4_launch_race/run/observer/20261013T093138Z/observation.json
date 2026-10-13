@@ -1,0 +1,154 @@
+{
+ "checks": {
+  "action_clients": {
+   "code": null,
+   "detail": 0,
+   "ok": true
+  },
+  "body_pose_fresh": {
+   "code": "body_pose_missing",
+   "detail": {
+    "age_s": null,
+    "latest_sample_codes": []
+   },
+   "ok": false
+  },
+  "body_pose_sim_progress": {
+   "code": "body_pose_sim_time_not_advancing",
+   "detail": {
+    "min_sim_advance_s": 0.1,
+    "reason": "fewer than two usable pose samples received in the window",
+    "samples": 0,
+    "sim_advance_s": null,
+    "window_s": 1.0
+   },
+   "ok": false
+  },
+  "command_publishers": {
+   "code": null,
+   "detail": 0,
+   "ok": true
+  },
+  "controllers": {
+   "code": "controllers_unknown",
+   "detail": null,
+   "ok": false
+  },
+  "fixed_base_pose": {
+   "code": "body_pose_missing",
+   "detail": null,
+   "ok": false
+  },
+  "joint_state_publishers": {
+   "code": "joint_state_publisher_count",
+   "detail": 0,
+   "ok": false
+  },
+  "joint_states": {
+   "code": "joint_states_missing",
+   "detail": null,
+   "ok": false
+  },
+  "robot_description": {
+   "code": null,
+   "detail": {
+    "all_codes": [],
+    "fixed_base": true,
+    "weld_xyz_rpy": [
+     0.0,
+     0.0,
+     0.125,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "ok": true
+  },
+  "sim_clock": {
+   "code": "sim_clock_missing",
+   "detail": null,
+   "ok": false
+  }
+ },
+ "config_sha256": "1c7966fc35fdcb19d4d43347cdee21fd5fbf99ad2a92248beac4ce327d4c40b9",
+ "controllers": {
+  "end": null,
+  "start": null
+ },
+ "domain_id": 0,
+ "duration_s": 2.0,
+ "failure_codes": [
+  "body_pose_missing",
+  "body_pose_missing",
+  "body_pose_sim_time_not_advancing",
+  "joint_states_missing",
+  "sim_clock_missing",
+  "controllers_unknown",
+  "joint_state_publisher_count"
+ ],
+ "goals_sent": 0,
+ "graph": {
+  "end": {
+   "action_clients": 0,
+   "clock_publishers": [
+    "/spiderx_gz_bridge"
+   ],
+   "command_publishers": 0,
+   "description_publishers": [
+    "/robot_state_publisher"
+   ],
+   "joint_state_publishers": 0,
+   "pose_publishers": [
+    "/spiderx_sim_ground_truth_bridge"
+   ]
+  },
+  "start": {
+   "action_clients": 0,
+   "clock_publishers": [
+    "/spiderx_gz_bridge"
+   ],
+   "command_publishers": 0,
+   "description_publishers": [
+    "/robot_state_publisher"
+   ],
+   "joint_state_publishers": 0,
+   "pose_publishers": [
+    "/spiderx_sim_ground_truth_bridge"
+   ]
+  }
+ },
+ "milestone": "M6.1-A",
+ "mode": "preflight",
+ "non_claims": [
+  "READY shows a welded, observable, quiet plant; it shows no tracking, no gait, no contact, no balance and no walking.",
+  "Simulator ground truth (Gazebo SceneBroadcaster) is development evidence, not odometry or state estimation."
+ ],
+ "publishers_created": 0,
+ "ready": false,
+ "schema": "spiderx.m61a.observation/1",
+ "statistics": {
+  "header_frame_ids": {},
+  "joint_state_receipt": {
+   "count": 0,
+   "max_s": null,
+   "mean_s": null,
+   "p999_s": null,
+   "p99_s": null
+  },
+  "joint_state_sim_gap_max_s": null,
+  "pose_receipt": {
+   "count": 0,
+   "max_s": null,
+   "mean_s": null,
+   "p999_s": null,
+   "p99_s": null
+  },
+  "sample_codes": {}
+ },
+ "tracker": {
+  "invalid_samples": {},
+  "latest_pose_codes": [],
+  "messages": 0
+ }
+}
