@@ -1,0 +1,7 @@
+First attempt (06:49Z), WITHOUT PYTEST_DISABLE_PLUGIN_AUTOLOAD=1: no test ran.
+Every test file stopped at pytest start-up: pluggy PluginValidationError, plugin 'launch_testing',
+hook pytest_pycollect_makemodule (an incompatibility of this RoboStack image, handled as in earlier rounds).
+
+
+Summary: 81 tests, 41 errors, 40 failures, 0 skipped
+result rc=1

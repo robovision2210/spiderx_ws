@@ -1,0 +1,3 @@
+[INFO] [1791564874.035462381] [_ros2cli_9395]: waiting for service /controller_manager/list_controllers to become available...
+[92mjoint_state_broadcaster  [0m joint_state_broadcaster/JointStateBroadcaster          [92mactive[0m
+[92mleg_trajectory_controller[0m joint_trajectory_controller/JointTrajectoryController  [92mactive[0m

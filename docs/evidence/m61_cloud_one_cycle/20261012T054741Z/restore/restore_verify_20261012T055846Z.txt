@@ -1,0 +1,28 @@
+M6.1 restore and verify, 20261012T055846Z, workspace /home/user/spiderx_ws, base claude/stoic-shannon-ur2mes
+base commit dcac464c898f1b8b57b3e0659abcb2d84123615e
+--- 1. stop
+ok: no simulation process
+--- 2. preserve
+enabling local/m61-one-cycle-20261012T055225Z = 79ffdb2d0a64f1d21540945bedd170a14b58e9df; src diff vs base sha256 8604d06be7f9109bee35dc2fe5c6b15f355cb5a08343f9b6103c6cee1b06fff3
+ src/spiderx_controller/spiderx_controller/m61_live_contract.py | 2 +-
+ src/spiderx_controller/test/m61_gate.py                        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+--- 3. restore
+HEAD dcac464c898f1b8b57b3e0659abcb2d84123615e (claude/stoic-shannon-ur2mes)
+ok: src/ equals the base dcac464c898f1b8b57b3e0659abcb2d84123615e (no diff, no untracked file)
+--- 4. rebuild
+skipped
+--- 5. verify (fresh environment)
+spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py (inside the workspace: True)
+spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py (inside the workspace: True)
+ok: a. both gates False in the imported modules, from this workspace
+ok: b. ros2 pkg prefix spiderx_controller = /home/user/spiderx_ws/install/spiderx_controller
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+REFUSED: Live M6.1 trot-cycle dispatch is HARD-DISABLED in this build. Sending the one live goal needs a separate owner authorization and an enabling code change after a final audit (docs/M61_IMPLEMENTATION_NOTES.md, verification checklist). Nothing was sent.
+[ros2run]: Process exited with failure 3
+ok: c. --live refused, exit 3, HARD-DISABLED
+ok: d. the calling environment cannot import spiderx_controller (not sourced)
+--- 6. enabling branch
+Deleted branch local/m61-one-cycle-20261012T055225Z (was 79ffdb2).
+VERDICT: DISABLED AND VERIFIED

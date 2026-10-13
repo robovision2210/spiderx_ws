@@ -1,0 +1,117 @@
+........................................................................ [  4%]
+........................................................................ [  9%]
+........................................................................ [ 14%]
+........................................................................ [ 19%]
+........................................................................ [ 24%]
+........................................................................ [ 29%]
+........................................................................ [ 34%]
+........................................................................ [ 39%]
+........................................................................ [ 44%]
+....................................F.........F...F..................... [ 49%]
+........................................................................ [ 54%]
+........................................................................ [ 59%]
+........................................................................ [ 64%]
+........................................................................ [ 69%]
+........................................................................ [ 74%]
+........................................................................ [ 79%]
+........................................................................ [ 84%]
+........................................................................ [ 89%]
+........................................................................ [ 94%]
+........................................................................ [ 98%]
+...............                                                          [100%]
+=================================== FAILURES ===================================
+_________________________ test_success_outcome_fields __________________________
+
+plan = Plan(config_dir='/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/wt_enabled/src/sp...51aadfeba6496e01', 'urdf_expanded_xml': '915125596b3dff4bf0af5ed395d04ca0e815455f3ad8db6af3a22927ef81288c'}, errors=())
+
+    def test_success_outcome_fields(plan):
+        out, session, traj = gr.run_mock(plan, 'success', word())
+        assert out['schema'] == gr.OUTCOME_SCHEMA and out['milestone'] == 'M6.1'
+        assert out['channels'] == {'action': 'passed', 'tracking': 'passed',
+                                   'goal_tolerances': 'passed'}
+        assert out['tracking']['max_inflight_error_rad'] < 0.02
+        assert out['tracking']['detail']['uncovered_intervals'] == []
+        assert out['base_constraint'] == 'fixed' and out['contact']['status'] == 'not_measured'
+>       assert out['m61_live_dispatch_enabled'] is False
+E       assert True is False
+
+test/test_m61_gait_replay.py:734: AssertionError
+_________________ test_mock_cli_writes_the_evidence_directory __________________
+
+plan = Plan(config_dir='/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/wt_enabled/src/sp...51aadfeba6496e01', 'urdf_expanded_xml': '915125596b3dff4bf0af5ed395d04ca0e815455f3ad8db6af3a22927ef81288c'}, errors=())
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-655/test_mock_cli_writes_the_evide0')
+
+    def test_mock_cli_writes_the_evidence_directory(plan, tmp_path):
+        assert cli(plan, tmp_path, '--mock', '--scenario', 'success') == gr.EXIT_OK
+        (run,) = os.listdir(tmp_path / 'mock')
+        assert re.fullmatch(r'\d{8}T\d{6}Z_success', run)
+        d = tmp_path / 'mock' / run
+        assert sorted(os.listdir(d)) == sorted(evd.SUPPORT_FILES + (evd.MOCK_OUTCOME,))
+        out = json.loads((d / evd.MOCK_OUTCOME).read_text())
+        assert out['state'] == lpb.SUCCEEDED and out['run_dir'] == str(d)
+        assert set(out['evidence_files'].values()) == {'written'}
+        js = (d / 'joint_states.csv').read_text().splitlines()
+        assert js[0].split(',') == ['time_s'] + list(plan.sources.joint_names)
+        assert len(js) - 1 == out['evidence_rows']['joint_states'] > 300
+        assert all(len(row.split(',')) == 13 for row in js[1:])
+        bp = (d / 'body_pose.csv').read_text().splitlines()
+        assert bp[0] == 'time_s,x,y,z,roll,pitch,yaw'
+        assert len(bp) - 1 == out['evidence_rows']['body_pose'] > 100
+        assert float(bp[1].split(',')[3]) == pytest.approx(0.125)        # M6.1-A welded body
+        cov = (d / 'commanded_vs_observed.csv').read_text().splitlines()
+        assert cov[0].startswith('time_s,ref_time_s,lf_hip_cmd,lf_hip_obs,lf_hip_err')
+        assert cov[0].endswith('max_abs_err_rad') and len(cov) > 200
+        assert max(float(r.split(',')[-1]) for r in cov[1:]) < 0.05
+        traj = json.loads((d / 'trajectory.json').read_text())
+        assert traj['trajectory_id'] == TRAJECTORY_ID and len(traj['points']) == 9
+        assert FINGERPRINT in (d / 'goal_fingerprint.txt').read_text()
+        assert CONTENT_SHA256 in (d / 'goal_fingerprint.txt').read_text()
+        assert json.loads((d / 'readiness_before.json').read_text())['when'] == 'before_confirmation'
+        assert json.loads((d / 'readiness_after.json').read_text())['when'] == 'after_confirmation'
+        g = json.loads((d / 'gates.json').read_text())
+        assert set(gates.GATE_IDS) <= set(g['gates']) and g['contact']['status'] == 'not_measured'
+>       assert 'm61_live_dispatch_enabled: False' in (d / 'git_state.txt').read_text()
+E       AssertionError: assert 'm61_live_dispatch_enabled: False' in 'commit: a2c954fadd2c49d45083591dfe769f5967a51365\nbranch: HEAD\nstatus --porcelain:\nM src/spiderx_controller/config/...ler/test/test_m61a_observer.py\nm61_live_dispatch_enabled: True\nm6d_live_dispatch_enabled (not used by M6.1): False\n'
+E        +  where 'commit: a2c954fadd2c49d45083591dfe769f5967a51365\nbranch: HEAD\nstatus --porcelain:\nM src/spiderx_controller/config/...ler/test/test_m61a_observer.py\nm61_live_dispatch_enabled: True\nm6d_live_dispatch_enabled (not used by M6.1): False\n' = read_text()
+E        +    where read_text = (PosixPath('/tmp/pytest-of-root/pytest-655/test_mock_cli_writes_the_evide0/mock/20261009T162222Z_success') / 'git_state.txt').read_text
+
+test/test_m61_gait_replay.py:847: AssertionError
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Mock success: final state SUCCEEDED, reason None, goals at mock server 1, cancels 0
+Evidence: /tmp/pytest-of-root/pytest-655/test_mock_cli_writes_the_evide0/mock/20261009T162222Z_success
+___________________ test_dry_run_report_is_never_overwritten ___________________
+
+plan = Plan(config_dir='/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/wt_enabled/src/sp...51aadfeba6496e01', 'urdf_expanded_xml': '915125596b3dff4bf0af5ed395d04ca0e815455f3ad8db6af3a22927ef81288c'}, errors=())
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-655/test_dry_run_report_is_never_o0')
+
+    def test_dry_run_report_is_never_overwritten(plan, tmp_path):
+        assert cli(plan, tmp_path, '--dry-run') == gr.EXIT_OK
+        p = tmp_path / 'dry_run' / TRAJECTORY_ID / 'dry_run_report.json'
+        data = json.loads(p.read_text())
+        assert data['goal_fingerprint'] == FINGERPRINT and data['goals_sent'] == 0
+>       assert data['m61_live_dispatch_enabled'] is False
+E       assert True is False
+
+test/test_m61_gait_replay.py:877: AssertionError
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is ENABLED for exactly one goal; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Dry run PASS: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461, goal fingerprint 9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a; nothing sent
+Report: /tmp/pytest-of-root/pytest-655/test_dry_run_report_is_never_o0/dry_run/241760e7dfd5ef12/dry_run_report.json
+=============================== warnings summary ===============================
+../../../../../../../../opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+    import sre_parse
+
+../../../../../../../../opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+    import sre_constants
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test/test_m61_gait_replay.py::test_success_outcome_fields - assert Tru...
+FAILED test/test_m61_gait_replay.py::test_mock_cli_writes_the_evidence_directory
+FAILED test/test_m61_gait_replay.py::test_dry_run_report_is_never_overwritten
+3 failed, 1452 passed, 2 warnings in 363.73s (0:06:03)

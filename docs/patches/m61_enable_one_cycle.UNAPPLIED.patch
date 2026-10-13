@@ -1,0 +1,52 @@
+UNAPPLIED - FOR REVIEW ONLY. Do not apply on claude/stoic-shannon-ur2mes, main or any branch
+that is merged. It enables M6.1 live dispatch (ONE trot-cycle goal) and nothing else.
+
+Purpose : the minimal enabling change for ONE fixed-base M6.1 trot cycle in Cloud simulation,
+          as planned in docs/M61_CLOUD_ONE_CYCLE_PLAN.md (owner approval required first).
+Base    : claude/stoic-shannon-ur2mes (M6.1-A) at the reviewed commit named in the approval.
+Branch  : apply only on a new, never-merged branch (plan section 4); delete it after the run.
+Changes : 2 lines in 2 files - the gate constant and its test pin (test/m61_gate.py).
+Identity: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461..., goal fingerprint
+          9dba1a173e212bfc... are not inputs of the gate and must be unchanged (plan step E3).
+Expected test delta on the enabling branch: NONE. Every test passes in both build modes:
+  - the committed gate is checked against its pin (test/m61_gate.py), whatever its value;
+  - disabled behaviour is tested with the gate set False explicitly (fixture `disabled`; the
+    --live subprocess test sets it False inside the child, so it never reaches a ROS graph);
+  - the enabled wiring is tested with the gate set True explicitly and in-memory fakes only;
+  - the source scan exempts only the one pinned gate line.
+  Verified 2026-10-09 with this patch applied in a temporary worktree (tests only, no
+  simulator): full spiderx_controller suite 1457 passed, 0 failed; the same tree without the
+  patch: see docs/M61A_CLOUD_VERIFICATION.md sections 9.4 and 9.7. An earlier header listed five expected
+  failures; the empirical run found three more (outcome, mock evidence and dry-run report
+  asserted a recorded gate of False). All eight are now mode-aware.
+  Re-verified 2026-10-10 on 1732c32 + this patch (temporary worktree, tests only):
+  full spiderx_controller suite 1517 passed, 0 failed (docs/M61A_CLOUD_VERIFICATION.md section 10.6).
+Check   : git apply --check docs/patches/m61_enable_one_cycle.UNAPPLIED.patch   (changes nothing)
+Revert  : NOT a branch switch alone. Run scripts/m61_restore_and_verify_disabled.sh (plan
+          section 4 G). It preserves the enabling commit, restores and rebuilds the base, and
+          proves in a fresh environment that the IMPORTED gate is False and that --live exits 3.
+          Only then is the local branch deleted (--delete-enabling-branch).
+
+diff --git a/src/spiderx_controller/spiderx_controller/m61_live_contract.py b/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+index 3a9a869..6a0d32c 100644
+--- a/src/spiderx_controller/spiderx_controller/m61_live_contract.py
++++ b/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+@@ -16,7 +16,7 @@ from spiderx_controller import m6_live_contract as m6d
+ # ---- THE M6.1 live gate: no M6.1 goal can be dispatched while this is False ----
+ # Read only by m6_gait_replay.main() (before any ROS import or input), _live_main() and
+ # _run_live() (defensive re-checks).
+-M61_LIVE_DISPATCH_ENABLED = False
++M61_LIVE_DISPATCH_ENABLED = True
+ M61_LIVE_DISPATCH_DISABLED_MESSAGE = (
+     'Live M6.1 trot-cycle dispatch is HARD-DISABLED in this build. Sending the one live goal '
+     'needs a separate owner authorization and an enabling code change after a final audit '
+diff --git a/src/spiderx_controller/test/m61_gate.py b/src/spiderx_controller/test/m61_gate.py
+index 979f93c..80f8a8d 100644
+--- a/src/spiderx_controller/test/m61_gate.py
++++ b/src/spiderx_controller/test/m61_gate.py
+@@ -4,4 +4,4 @@ Enabling M6.1 live dispatch is a separate, owner-approved change on a branch tha
+ it flips m61_live_contract.M61_LIVE_DISPATCH_ENABLED and this expectation together, and nothing
+ else. On main both stay False.
+ """
+-EXPECTED_M61_LIVE_DISPATCH_ENABLED = False
++EXPECTED_M61_LIVE_DISPATCH_ENABLED = True

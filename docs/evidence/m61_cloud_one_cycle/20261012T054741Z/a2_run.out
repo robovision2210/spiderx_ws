@@ -1,0 +1,38 @@
+[05:48:47] start
+launch pid 1492 pgid 1492 xvfb 1487
+[05:48:51] wait controllers
+both controllers active after 13 s of polling
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+[05:49:07] preflight
+SpiderX M6.1-A fixed-base observer (READ-ONLY: no goal, no command, no publisher)
+READY: all fixed-base checks pass
+  PASS  action_clients
+  PASS  attachment
+  PASS  body_pose_fresh
+  PASS  body_pose_sim_progress
+  PASS  command_publishers
+  PASS  controllers
+  PASS  frame_body_link
+  PASS  joint_state_publishers
+  PASS  joint_states
+  PASS  robot_description
+  PASS  sim_clock
+  PASS  spawn_identity
+Evidence: /root/spiderx_evidence/m61_one_cycle_20261012T054741Z/a2/observer/20261012T054912Z/observation.json
+preflight exit=0
+[05:49:12] rehearsal 1
+rehearsal 1: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 2.010623 s (9 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False exit=0 
+[05:50:07] rehearsal 2
+rehearsal 2: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.75395 s (4 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False exit=0 
+[05:51:03] rehearsal 3
+rehearsal 3: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.0 s (1 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False exit=0 
+[05:51:58] captures
+[05:51:59] stop
+SIGINT sent to process group 1492
+process group empty after 4 s
+The daemon has been stopped
+--- remaining (expect nothing):
+none
+[05:52:06] end
+driver exit=0

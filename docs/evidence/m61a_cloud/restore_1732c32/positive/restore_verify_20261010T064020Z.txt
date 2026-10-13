@@ -1,0 +1,26 @@
+M6.1 restore and verify, 20261010T064020Z, workspace /home/user/spiderx_ws, base claude/stoic-shannon-ur2mes
+base commit 1732c3262a9839150bd0486d86155d4c65dc66fb
+--- 1. stop
+SIGINT sent to process group 8699
+SIGTERM sent to Xvfb 8694
+ok: no simulation process
+--- 2. preserve
+--- 3. restore
+HEAD 1732c3262a9839150bd0486d86155d4c65dc66fb (claude/stoic-shannon-ur2mes)
+ok: src/ equals the base 1732c3262a9839150bd0486d86155d4c65dc66fb (no diff, no untracked file)
+--- 4. rebuild
+ok: rebuilt (export PYTHONPATH=<scratchpad>/st59site:$PYTHONPATH; rm -rf build install && colcon build --symlink-install); log rebuild_20261010T064020Z.log
+--- 5. verify (fresh environment)
+spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py (inside the workspace: True)
+spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py (inside the workspace: True)
+ok: a. both gates False in the imported modules, from this workspace
+ok: b. ros2 pkg prefix spiderx_controller = /home/user/spiderx_ws/install/spiderx_controller
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+REFUSED: Live M6.1 trot-cycle dispatch is HARD-DISABLED in this build. Sending the one live goal needs a separate owner authorization and an enabling code change after a final audit (docs/M61_IMPLEMENTATION_NOTES.md, verification checklist). Nothing was sent.
+[ros2run]: Process exited with failure 3
+ok: c. --live refused, exit 3, HARD-DISABLED
+ok: d. the calling environment cannot import spiderx_controller (not sourced)
+--- 6. enabling branch
+kept (no --delete-enabling-branch)
+VERDICT: DISABLED AND VERIFIED

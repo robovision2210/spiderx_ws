@@ -1,0 +1,49 @@
+# M6.1 - protected replay of ONE trot gait cycle: the owner-approved limits (SIMULATION ONLY).
+#
+# Separate from M6.0-D on purpose: the M6.0-D limits live in spiderx_controller/m6_envelope.py and
+# m6_live_contract.py and are NOT read or changed by M6.1. Design: docs/M61_TROT_REPLAY_DESIGN.md;
+# implementation notes: docs/M61_IMPLEMENTATION_NOTES.md.
+#
+# Single source of these numbers for spiderx_controller/m61_limits.py. The loader refuses unknown,
+# missing or duplicate keys, non-finite numbers and booleans-as-numbers. Every value is ALSO pinned
+# in m61_live_contract.APPROVED_LIMITS: an edited file is refused by the preflight (and its SHA-256
+# is bound into the goal fingerprint), so loosening a limit needs a reviewed code change.
+#
+# Units: metres, radians, seconds. Frame base_link: +x right, +y front, +z up.
+
+schema: spiderx.m61.limits/1
+milestone: M6.1
+simulation_only: true
+
+# ---- trajectory envelope (offline preflight) ----
+max_trajectory_points: 9          # design section 2.1: 9 points (lead-in neutral + 7 + final neutral)
+min_segment_duration_s: 0.5       # T/8 at the approved 4.0 s cycle
+max_duration_s: 10.0              # the approved goal ends at 7.0 s (sim time)
+lead_in_s: 3.0                    # the M6.0-D lead-in rule: max(3.0, 2 x 0.05 / 0.5)
+max_joint_displacement_rad: 0.1223   # re-used M6.0-D cap (owner approval, M6.1): |q - neutral|
+displacement_epsilon_rad: 1.0e-9     # float round-off only (same as M6.0-D)
+max_planned_joint_speed_rad_s: 0.25  # 0.5 rad/s placeholder / M6.0-D speed factor 2
+source_match_rad: 1.0e-8          # stored waypoint vs re-derived (IK) waypoint, 9-decimal storage
+spline_check_samples_per_segment: 50
+
+# ---- goal tolerances (same values as M6.0-D) ----
+path_position_tolerance_rad: 0.05
+goal_position_tolerance_rad: 0.05
+goal_velocity_tolerance_rad_s: 0.05
+goal_time_tolerance_s: 1.0
+client_tracking_abort_rad: 0.05
+
+# ---- gait-specific gates (design section 3.3) ----
+body_min_height_m: 0.045          # G1: base_link origin z; nominal 0.0545 m (M2 threshold)
+body_max_tilt_rad: 0.26           # G2: |roll| or |pitch| (15 deg)
+body_gate_debounce_samples: 2     # G1/G2: consecutive samples before a trip
+body_pose_required: true          # readiness is NOT READY without fresh ground-truth body pose
+body_pose_stale_s: 1.0            # wall time without a body-pose sample while the goal runs
+joint_limit_fraction: 0.8         # G3: observed |q| above 80 % of the URDF limit on its side
+sim_stall_s: 5.0                  # G5: = m6_live_contract.SIM_STALL_S (re-used monitor)
+joint_state_gap_s: 0.25           # G6: = m6_live_contract.SAMPLE_GAP_S (re-used monitor)
+joint_states_stale_s: 0.5         # = m6_live_contract.JOINT_STATES_STALE_S (re-used monitor)
+drift_lateral_report_m: 0.02      # G7: report only, never a cancel
+drift_yaw_report_rad: 0.1         # G7: report only, never a cancel
+contact_sensing: not_measured     # G4: the model has no contact sensor (design C7)
+base_constraint: fixed            # owner decision D-M61-1: fixed / clamped base

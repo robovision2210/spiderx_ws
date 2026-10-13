@@ -1,0 +1,8 @@
+scans 40 beams used 346/360; residual median -0.1 mm, |res| p95 10.3 mm; fit - expected: dx +0.5 mm dy +0.1 mm dyaw +0.12 mrad (1 sigma 0.3/0.4 mm, 0.18 mrad)
+  box_a/link               beams  16 median   -0.3 mm
+  box_b/link               beams  22 median   +1.8 mm
+  pillar/link              beams  11 median   +2.0 mm
+  walls/wall_east          beams  70 median   -0.6 mm
+  walls/wall_north         beams  75 median   +0.1 mm
+  walls/wall_south         beams  70 median   -0.1 mm
+  walls/wall_west          beams  82 median   -0.1 mm

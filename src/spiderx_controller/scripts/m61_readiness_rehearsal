@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+"""M6.1 READ-ONLY readiness rehearsal (see spiderx_controller/m61_readiness_rehearsal.py).
+The production --live readiness path (bounded action-server discovery, both readiness
+observations, the pre-send streams check) with no session and no way to send a goal or cancel.
+
+    ros2 run spiderx_controller m61_readiness_rehearsal --domain-id 0 --out <dir>
+"""
+import sys
+
+from spiderx_controller.m61_readiness_rehearsal import main
+
+if __name__ == '__main__':
+    sys.exit(main())

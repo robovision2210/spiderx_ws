@@ -1,0 +1,6 @@
+commit: d74889128719a184c3967e61ba7ba591e7310788
+branch: claude/stoic-shannon-ur2mes
+status --porcelain:
+(clean)
+m61_live_dispatch_enabled: False
+m6d_live_dispatch_enabled (not used by M6.1): False

@@ -217,9 +217,9 @@ Source `install/setup.bash` first; the tests load the installed URDF.
 | `test_m6d_evidence_safety.py` | Evidence reservation and persistence, failure injection at every boundary | No (mock) |
 | `test_m6d_freshness_confirmation.py` | Truthful readiness timing, send-time freshness, interruptible confirmation | No (mock; one real SIGINT to the test process) |
 | `test_m6d_adapter_isolated.py` | `RclpyLiveTransport` against an in-process action test double; partial-open cleanup | Isolated domain |
-| `test_m6d_isolated_success.py` | `main()` with the gate set True **in the test only**, end to end against an in-process fake controller stack | Isolated domain |
+| `test_m6d_isolated_success.py` | `main()` with the gate set True **in the test only**, end to end against an in-process fake controller stack; a failure prints every readiness report in full. Also the fake stack itself: stamp rounding, no overlapping ticks / in-order stamps, no orphaned executor callbacks at stop ([Cloud diagnosis](M61A_CLOUD_VERIFICATION.md) §1–2) | Isolated domain |
 
-The isolated tests use domain `150 + pid % 50` with `ROS_LOCALHOST_ONLY=1`. They first prove that
+The isolated tests use domain `150 + pid % 50` with `ROS_LOCALHOST_ONLY=1`. The end-to-end test is timing-dependent: run it without competing CPU-heavy work (under 8 CPU burners it can end `TRACKING_FAILED`/`sample_gap`, the tool failing safe on a starved fake publisher). Use `--basetemp` to keep its `live_outcome.json` outside pytest's rotation. They first prove that
 no other node, service, publisher or action server is visible (the success-path test skips, with
 the reason, if isolation cannot be established). **Never** point them at a running stack or the
 default domain. The fake controller stack proves nothing about a real controller.

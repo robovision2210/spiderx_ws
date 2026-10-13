@@ -1,0 +1,22 @@
+[04:33:39] start
+[04:33:42] wait controllers
+[04:33:54] preflight
+[04:33:59] trial 1 old d0
+[04:34:39] trial 2 new d0
+[04:35:19] trial 3 old d0
+[04:35:59] trial 4 new d0
+[04:36:40] trial 5 old d0
+[04:37:20] trial 6 new d0
+[04:38:01] trial 7 old d0
+[04:38:41] trial 8 new d0
+[04:39:21] trial 9 old d0
+[04:40:02] trial 10 new d0
+[04:40:42] trial 11 old d0
+[04:41:22] trial 12 new d0
+[04:42:03] trial 13 old d10
+[04:42:43] trial 14 new d10
+[04:43:23] trial 15 old d10
+[04:44:03] trial 16 new d10
+[04:44:44] captures
+[04:44:47] stop
+[04:44:53] end

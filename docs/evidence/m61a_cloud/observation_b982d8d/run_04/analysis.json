@@ -1,0 +1,558 @@
+{
+ "run": "run_04",
+ "rows": [
+  {
+   "id": "1",
+   "criterion": "preflight READY",
+   "result": true,
+   "value": [
+    []
+   ],
+   "threshold": "READY, exit 0"
+  },
+  {
+   "id": "1b",
+   "criterion": "120 s observation READY at its end",
+   "result": true,
+   "value": [],
+   "threshold": "READY, exit 0"
+  },
+  {
+   "id": "2a",
+   "criterion": "body z mean within 1 mm of 0.125 m",
+   "result": true,
+   "value": 0.125,
+   "threshold": "|z - 0.125| <= 0.001 m"
+  },
+  {
+   "id": "2a",
+   "criterion": "body z range <= 1 mm",
+   "result": true,
+   "value": 0.0,
+   "threshold": "<= 0.001 m"
+  },
+  {
+   "id": "2b",
+   "criterion": "attachment max translation <= 1 mm",
+   "result": true,
+   "value": 0.0,
+   "threshold": "<= 0.001 m"
+  },
+  {
+   "id": "2b",
+   "criterion": "attachment max rotation <= 0.0033 rad",
+   "result": true,
+   "value": 0.0,
+   "threshold": "<= 0.0033 rad"
+  },
+  {
+   "id": "2c",
+   "criterion": "spawn deviation <= 1 mm",
+   "result": true,
+   "value": 0.0,
+   "threshold": "<= 0.001 m"
+  },
+  {
+   "id": "2d",
+   "criterion": "link deviation <= 0.1 mm",
+   "result": true,
+   "value": 0.0,
+   "threshold": "<= 0.0001 m"
+  },
+  {
+   "id": "2e",
+   "criterion": "tilt <= 0.0033 rad",
+   "result": true,
+   "value": 0.0,
+   "threshold": "<= 0.0033 rad"
+  },
+  {
+   "id": "3",
+   "criterion": "pose receipt max gap < 1.0 s (wall)",
+   "result": true,
+   "value": {
+    "count": 6814,
+    "mean_s": 0.017904423192573,
+    "p99_s": 0.03758817800007819,
+    "p999_s": 0.05780369000012797,
+    "max_s": 0.3403347359999316
+   },
+   "threshold": "< 1.0 s"
+  },
+  {
+   "id": "3",
+   "criterion": "joint-state sim gap max <= 0.25 s",
+   "result": true,
+   "value": 0.019999999999999574,
+   "threshold": "<= 0.25 s (sim)"
+  },
+  {
+   "id": "4",
+   "criterion": "no unexpected pose sample codes",
+   "result": true,
+   "value": {},
+   "threshold": "none"
+  },
+  {
+   "id": "7",
+   "criterion": "command ownership: no other commander visible",
+   "result": true,
+   "value": {
+    "ros2_action_info_clients": 0,
+    "ros2_topic_info_publishers": 0,
+    "observer_start": {
+     "command_publishers": 0,
+     "action_clients": 0
+    },
+    "observer_end": {
+     "command_publishers": 0,
+     "action_clients": 0
+    }
+   },
+   "threshold": "all 0"
+  },
+  {
+   "id": "M",
+   "criterion": "running /robot_description weld = world->dummy_link (0, 0, 0.125, rpy 0)",
+   "result": true,
+   "value": {
+    "type": "fixed",
+    "parent": "world",
+    "child": "dummy_link",
+    "xyz": "0.0 0.0 0.125",
+    "rpy": "0 0 0.0"
+   },
+   "threshold": "fixed, 0 0 0.125, 0 0 0"
+  },
+  {
+   "id": "Z2",
+   "criterion": "capture: 0 messages on the command topic and no action goal status",
+   "result": true,
+   "value": {
+    "command_messages": 0,
+    "status_messages": 0,
+    "goal_statuses": []
+   },
+   "threshold": "0 and none"
+  },
+  {
+   "id": "Z3",
+   "criterion": "controller reference constant over the capture (holding, no new command)",
+   "result": true,
+   "value": {
+    "/leg_trajectory_controller/controller_state": {
+     "messages": 241,
+     "max_ref_change_rad": 0.0,
+     "max_abs_error_rad": 1.3435378555678133e-11
+    },
+    "/leg_trajectory_controller/state": {
+     "messages": 241,
+     "max_ref_change_rad": 0.0,
+     "max_abs_error_rad": 1.3435378555678133e-11
+    }
+   },
+   "threshold": "change <= 1e-9 rad (None = not measured)"
+  },
+  {
+   "id": "Z",
+   "criterion": "no trajectory goal or topic command reached the controller (launch log)",
+   "result": true,
+   "value": 0,
+   "threshold": "0 goal lines"
+  },
+  {
+   "id": "6",
+   "criterion": "/scan: per-surface median residual within +-8 mm (supplementary)",
+   "result": true,
+   "value": {
+    "box_a/link": -0.00027915429836500305,
+    "box_b/link": 0.0018083042840737473,
+    "pillar/link": 0.0019687246183845986,
+    "walls/wall_east": -0.0005716112201665791,
+    "walls/wall_north": 9.894006450439363e-05,
+    "walls/wall_south": -9.476444635425629e-05,
+    "walls/wall_west": -7.159426907143995e-05
+   },
+   "threshold": "|median| <= 0.008 m"
+  },
+  {
+   "id": "6",
+   "criterion": "/scan: fitted lidar planar pose within 8 mm of the weld-implied pose (8 cube-map seam beams excluded)",
+   "result": true,
+   "value": {
+    "fit_minus_expected_m_m_rad": [
+     0.0004883092869906874,
+     5.194826094979954e-05,
+     0.00011655825343992454
+    ],
+    "one_sigma_m_m_rad": [
+     0.0002657986403651435,
+     0.0002748504870547221,
+     0.00013418850346272326
+    ]
+   },
+   "threshold": "|dxy| <= 0.008 m and 1 sigma < 0.008 m (yaw reported)"
+  },
+  {
+   "id": "8",
+   "criterion": "clean shutdown: launch group empty, nothing left",
+   "result": true,
+   "value": "none",
+   "threshold": "no leftover process"
+  }
+ ],
+ "facts": {
+  "header_frame_ids": {
+   "": 13628
+  },
+  "clock": {
+   "poses_per_sim_second": 86.78375383674873,
+   "real_time_factor": 0.650298730912634,
+   "sim_span_s": 78.517,
+   "wall_span_s": 120.73989424799993
+  },
+  "joint_state_receipt": {
+   "count": 7938,
+   "max_s": 0.349294115000248,
+   "mean_s": 0.015369865390953743,
+   "p999_s": 0.06003297199958979,
+   "p99_s": 0.041351017999659234
+  },
+  "body": {
+   "pitch_max_abs_rad": 0.0,
+   "roll_max_abs_rad": 0.0,
+   "samples": 6813,
+   "tilt_max_rad": 0.0,
+   "xy_drift_m": 0.0,
+   "yaw_drift_rad": 0.0,
+   "z_max_m": 0.125,
+   "z_mean_m": 0.125,
+   "z_min_m": 0.125,
+   "z_range_m": 0.0
+  },
+  "attachment": {
+   "fraction_of_tolerance": 0.0,
+   "max_link_deviation_m": 0.0,
+   "max_rotation_rad": 0.0,
+   "max_spawn_deviation_m": 0.0,
+   "max_translation_m": 0.0
+  },
+  "observer_checks_end": {
+   "action_clients": {
+    "code": null,
+    "detail": 0,
+    "ok": true
+   },
+   "attachment": {
+    "code": null,
+    "detail": {
+     "dxy_m": 0.0,
+     "dz_m": 0.0,
+     "rotation_rad": 0.0,
+     "translation_m": 0.0
+    },
+    "ok": true
+   },
+   "body_pose_fresh": {
+    "code": null,
+    "detail": {
+     "age_s": 0.012400023999816767,
+     "latest_sample_codes": []
+    },
+    "ok": true
+   },
+   "body_pose_sim_progress": {
+    "code": null,
+    "detail": {
+     "min_sim_advance_s": 0.1,
+     "samples": 56,
+     "sim_advance_s": 0.6700000000000017,
+     "window_s": 1.0
+    },
+    "ok": true
+   },
+   "body_pose_xyz_rpy": [
+    0.0,
+    0.0,
+    0.125,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "body_tilt_rad": 0.0,
+   "command_publishers": {
+    "code": null,
+    "detail": 0,
+    "ok": true
+   },
+   "controllers": {
+    "code": null,
+    "detail": null,
+    "ok": true
+   },
+   "frame_body_link": {
+    "code": null,
+    "detail": {
+     "rotation_rad": 0.0,
+     "translation_m": 0.0
+    },
+    "ok": true
+   },
+   "joint_state_publishers": {
+    "code": null,
+    "detail": 1,
+    "ok": true
+   },
+   "joint_states": {
+    "code": null,
+    "detail": null,
+    "ok": true
+   },
+   "robot_description": {
+    "code": null,
+    "detail": {
+     "all_codes": [],
+     "fixed_base": true,
+     "weld_xyz_rpy": [
+      0.0,
+      0.0,
+      0.125,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    "ok": true
+   },
+   "sim_clock": {
+    "code": null,
+    "detail": null,
+    "ok": true
+   },
+   "spawn_identity": {
+    "code": null,
+    "detail": {
+     "rotation_rad": 0.0,
+     "translation_m": 0.0
+    },
+    "ok": true
+   }
+  },
+  "observer_graph": {
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "start": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "observer_controllers": {
+   "end": {
+    "joint_state_broadcaster": "active",
+    "leg_trajectory_controller": "active"
+   },
+   "start": {
+    "joint_state_broadcaster": "active",
+    "leg_trajectory_controller": "active"
+   }
+  },
+  "joint_states_capture": {
+   "samples": 587,
+   "joints": 12,
+   "max_abs_position_rad": 9.695977715041874e-05,
+   "max_change_over_capture_rad": 1.2197274440461925e-19,
+   "max_abs_velocity": 2.0816681711721685e-17
+  },
+  "pose_entries_last": {
+   "spiderx": {
+    "child": "spiderx",
+    "frame": "",
+    "stamp": 0.0,
+    "xyz": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "q": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "dummy_link": {
+    "child": "dummy_link",
+    "frame": "",
+    "stamp": 0.0,
+    "xyz": [
+     0.0,
+     0.0,
+     0.125
+    ],
+    "q": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   }
+  },
+  "capture_own_publishers_all": [
+   "/parameter_events"
+  ],
+  "launch_log_goal_lines": [],
+  "launch_log_errors": [],
+  "launch_log_warnings": [
+   "[ign gazebo-1] [WARN] [1791564728.749225308] [gz_ros2_control]:  Desired controller update period (0.01 s) is slower than the gazebo simulation period (0.001 s).",
+   "[ign gazebo-1] [WARN] [1791564739.218030010] [leg_trajectory_controller]: [Deprecated]: \"allow_nonzero_velocity_at_trajectory_end\" is set to true. The default behavior will change to false.",
+   "[ign gazebo-1] [WARN] [1791564882.953776877] [leg_trajectory_controller]: Subscription to deprecated ~/state topic. Use ~/controller_state instead.",
+   "[ign gazebo-1] [WARN] [1791564884.378739631] [leg_trajectory_controller]: Subscription to deprecated ~/state topic. Use ~/controller_state instead.",
+   "[ign gazebo-1] [WARN] [1791564885.919948891] [leg_trajectory_controller]: Subscription to deprecated ~/state topic. Use ~/controller_state instead.",
+   "[ign gazebo-1] [WARN] [1791564887.601859200] [leg_trajectory_controller]: Subscription to deprecated ~/state topic. Use ~/controller_state instead.",
+   "[ign gazebo-1] [WARN] [1791564889.333211118] [leg_trajectory_controller]: Subscription to deprecated ~/state topic. Use ~/controller_state instead.",
+   "[ign gazebo-1] [WARN] [1791564890.887126666] [leg_trajectory_controller]: Subscription to deprecated ~/state topic. Use ~/controller_state instead."
+  ],
+  "scan_check_all_beams": {
+   "beams_used": 353,
+   "residual_median_m": -8.574787218762481e-05,
+   "residual_abs_p95_m": 0.010865604873973832,
+   "residual_abs_max_m": 2.6799823529245415,
+   "fit_minus_expected_m_m_rad": [
+    0.0004955126375253138,
+    0.0001405226867638651,
+    0.00018652352634251912
+   ],
+   "fit_1sigma_m_m_rad": [
+    0.015456732729492701,
+    0.0159257796523473,
+    0.007581895821778966
+   ],
+   "fit_residual_rms_m": 0.23457860401823935
+  },
+  "scan_check": {
+   "scans_averaged": 40,
+   "beams": 360,
+   "beams_used": 346,
+   "frame_id": "lidar_link",
+   "angle_min": -3.1415927410125732,
+   "angle_increment": 0.01745329238474369,
+   "mount_assumed_world_base_xyz_yaw": [
+    0.0,
+    0.0,
+    0.125,
+    0.0
+   ],
+   "lidar_expected_world_xyz_yaw": [
+    0.051,
+    -0.045,
+    0.266,
+    1.5707963267948966
+   ],
+   "scan_plane_z_m": 0.266,
+   "shapes_in_plane": [
+    "walls/wall_north",
+    "walls/wall_south",
+    "walls/wall_east",
+    "walls/wall_west",
+    "box_a/link",
+    "box_b/link",
+    "pillar/link"
+   ],
+   "residual_mean_m": -0.00023270738618958573,
+   "residual_median_m": -6.0372251015294864e-05,
+   "residual_abs_p95_m": 0.01030696015073529,
+   "residual_abs_max_m": 0.018809217120341337,
+   "per_beam_expected_noise_m": 0.0015811388300841897,
+   "surfaces": {
+    "box_a/link": {
+     "beams": 16,
+     "median_residual_m": -0.00027915429836500305,
+     "mean_residual_m": -0.00034852085323915094,
+     "max_abs_residual_m": 0.003155795674645079
+    },
+    "box_b/link": {
+     "beams": 22,
+     "median_residual_m": 0.0018083042840737473,
+     "mean_residual_m": 0.00114513502505635,
+     "max_abs_residual_m": 0.018809217120341337
+    },
+    "pillar/link": {
+     "beams": 11,
+     "median_residual_m": 0.0019687246183845986,
+     "mean_residual_m": 0.0016113362089035346,
+     "max_abs_residual_m": 0.006944737039058957
+    },
+    "walls/wall_east": {
+     "beams": 70,
+     "median_residual_m": -0.0005716112201665791,
+     "mean_residual_m": -0.0009453644266938304,
+     "max_abs_residual_m": 0.013176255697452177
+    },
+    "walls/wall_north": {
+     "beams": 75,
+     "median_residual_m": 9.894006450439363e-05,
+     "mean_residual_m": -0.00036547392689942744,
+     "max_abs_residual_m": 0.01593695410198137
+    },
+    "walls/wall_south": {
+     "beams": 70,
+     "median_residual_m": -9.476444635425629e-05,
+     "mean_residual_m": -0.0002393570535735634,
+     "max_abs_residual_m": 0.014632774272551163
+    },
+    "walls/wall_west": {
+     "beams": 82,
+     "median_residual_m": -7.159426907143995e-05,
+     "mean_residual_m": -9.167125222895366e-05,
+     "max_abs_residual_m": 0.017316360213312176
+    }
+   },
+   "fit_lidar_world_xy_yaw": [
+    0.051488309286990684,
+    -0.0449480517390502,
+    1.5709128850483365
+   ],
+   "fit_minus_expected_m_m_rad": [
+    0.0004883092869906874,
+    5.194826094979954e-05,
+    0.00011655825343992454
+   ],
+   "fit_1sigma_m_m_rad": [
+    0.0003488274648408556,
+    0.0003607068812611808,
+    0.00017610562420254032
+   ],
+   "fit_1sigma_robust_m_m_rad": [
+    0.0002657986403651435,
+    0.0002748504870547221,
+    0.00013418850346272326
+   ],
+   "fit_residual_robust_sigma_m": 0.003993940122030966,
+   "seam_beams_excluded": 8,
+   "fit_residual_rms_m": 0.00521877384037462,
+   "fit_beams_used": 346
+  }
+ }
+}

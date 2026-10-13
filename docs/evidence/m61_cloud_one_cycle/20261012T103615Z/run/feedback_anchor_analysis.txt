@@ -1,0 +1,7 @@
+feedback messages 214 (goal ids 1); time_from_start: 214 zero, 0 positive
+start fit feedback_desired: {'best_start_sim_s': 36.65, 'offset_from_acceptance_s': -0.037, 'rms_rad': 6.070053952830329e-16, 'max_rad': 1.0685896612017132e-15, 'samples': 119}
+start fit controller_state_reference: {'best_start_sim_s': 36.649, 'offset_from_acceptance_s': -0.038, 'rms_rad': 0.00012266535125570794, 'max_rad': 0.0007104979269884244, 'samples': 170}
+start fit joint_states: {'best_start_sim_s': 36.748, 'offset_from_acceptance_s': 0.061, 'rms_rad': 0.00118300060645588, 'max_rad': 0.0016969971493305813, 'samples': 400}
+joints from acceptance: {'t0_sim_s': 36.687000000000005, 'tracked_samples': 501, 'max_abs_err_rad': 0.008508482477609783}
+joints from the unfiltered M6.0-D estimate: {'t0_sim_s': 40.11, 'tracked_samples': 159, 'max_abs_err_rad': 0.0835185370928334}
+controller-reported max error in feedback: 0.013493877502307988

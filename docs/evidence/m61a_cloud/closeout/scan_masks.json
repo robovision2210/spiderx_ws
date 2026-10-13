@@ -1,0 +1,656 @@
+{
+ "run_01": {
+  "scans_averaged": 40,
+  "beams": 360,
+  "excluded_seam_beams": [
+   {
+    "index": 45,
+    "angle_lidar_deg": -135.0,
+    "bearing_world_deg": -45.0,
+    "surface": "walls/wall_east",
+    "expected_m": 4.1705,
+    "measured_mean_m": 1.6077,
+    "residual_m": -2.5628,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 46,
+    "angle_lidar_deg": -134.0,
+    "bearing_world_deg": -44.0,
+    "surface": "walls/wall_east",
+    "expected_m": 4.0996,
+    "measured_mean_m": 4.0879,
+    "residual_m": -0.0117,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   },
+   {
+    "index": 135,
+    "angle_lidar_deg": -45.0,
+    "bearing_world_deg": 45.0,
+    "surface": "box_a/link",
+    "expected_m": 1.6096,
+    "measured_mean_m": 4.2888,
+    "residual_m": 2.6791,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 136,
+    "angle_lidar_deg": -44.0,
+    "bearing_world_deg": 46.0,
+    "surface": "box_a/link",
+    "expected_m": 1.6214,
+    "measured_mean_m": 1.6216,
+    "residual_m": 0.0002,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   },
+   {
+    "index": 225,
+    "angle_lidar_deg": 45.0,
+    "bearing_world_deg": 135.0,
+    "surface": "walls/wall_north",
+    "expected_m": 4.3063,
+    "measured_mean_m": 1.9217,
+    "residual_m": -2.3846,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 226,
+    "angle_lidar_deg": 46.0,
+    "bearing_world_deg": 136.0,
+    "surface": "walls/wall_west",
+    "expected_m": 4.2414,
+    "measured_mean_m": 4.2313,
+    "residual_m": -0.0101,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   },
+   {
+    "index": 315,
+    "angle_lidar_deg": 135.0,
+    "bearing_world_deg": 225.0,
+    "surface": "box_b/link",
+    "expected_m": 1.9163,
+    "measured_mean_m": 1.9232,
+    "residual_m": 0.0069,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 316,
+    "angle_lidar_deg": 136.0,
+    "bearing_world_deg": 226.0,
+    "surface": "box_b/link",
+    "expected_m": 1.8837,
+    "measured_mean_m": 1.879,
+    "residual_m": -0.0047,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   }
+  ],
+  "excluded_edge_grazing_beams": [
+   {
+    "index": 117,
+    "angle_lidar_deg": -63.0,
+    "bearing_world_deg": 27.0,
+    "surface": "walls/wall_east",
+    "expected_m": 3.3097,
+    "measured_mean_m": 3.3058,
+    "residual_m": -0.0039,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 118,
+    "angle_lidar_deg": -62.0,
+    "bearing_world_deg": 28.0,
+    "surface": "box_a/link",
+    "expected_m": 1.6736,
+    "measured_mean_m": 1.5706,
+    "residual_m": -0.103,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 210,
+    "angle_lidar_deg": 30.0,
+    "bearing_world_deg": 120.0,
+    "surface": "pillar/link",
+    "expected_m": 1.7078,
+    "measured_mean_m": 1.7454,
+    "residual_m": 0.0376,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 222,
+    "angle_lidar_deg": 42.0,
+    "bearing_world_deg": 132.0,
+    "surface": "pillar/link",
+    "expected_m": 1.7032,
+    "measured_mean_m": 1.7,
+    "residual_m": -0.0032,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 309,
+    "angle_lidar_deg": 129.0,
+    "bearing_world_deg": 219.0,
+    "surface": "walls/wall_west",
+    "expected_m": 3.9259,
+    "measured_mean_m": 3.9154,
+    "residual_m": -0.0105,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 334,
+    "angle_lidar_deg": 154.0,
+    "bearing_world_deg": 244.0,
+    "surface": "box_b/link",
+    "expected_m": 1.9413,
+    "measured_mean_m": 1.9259,
+    "residual_m": -0.0154,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   }
+  ],
+  "beams_compared": 346,
+  "individual_ranges": {
+   "within_8mm_fraction": 0.8584,
+   "median_abs_mm": 2.91,
+   "p95_abs_mm": 11.32,
+   "max_abs_mm": 17.39,
+   "walls_by_incidence_deg": {
+    "0-30": {
+     "beams": 231,
+     "median_abs_mm": 2.64,
+     "p95_abs_mm": 8.78,
+     "max_abs_mm": 12.51
+    },
+    "30-45": {
+     "beams": 66,
+     "median_abs_mm": 7.26,
+     "p95_abs_mm": 14.74,
+     "max_abs_mm": 17.0
+    }
+   },
+   "expected_noise_of_a_40_scan_mean_mm": 1.58
+  },
+  "raw_all_beams_scan_check": {
+   "beams_used": 353,
+   "residual_median_m": -0.00047454130696289454,
+   "residual_abs_p95_m": 0.01166597648931118,
+   "residual_abs_max_m": 2.6791476971628225,
+   "fit_minus_expected_m_m_rad": [
+    0.0003995593484173582,
+    0.0001602881656697433,
+    0.00011446933839565077
+   ],
+   "fit_1sigma_m_m_rad": [
+    0.015462887372364892,
+    0.015932527845595967,
+    0.0075848478231978515
+   ],
+   "fit_residual_rms_m": 0.23467581897357498,
+   "fit_beams_used": 353
+  },
+  "seam_filtered_scan_check": {
+   "beams_used": 346,
+   "residual_median_m": -0.00037608296921454176,
+   "residual_abs_p95_m": 0.01131744459105366,
+   "residual_abs_max_m": 0.017393114283642097,
+   "fit_minus_expected_m_m_rad": [
+    0.000383745899296524,
+    7.814404676597525e-05,
+    2.306899286530495e-05
+   ],
+   "fit_1sigma_m_m_rad": [
+    0.0003615637904251401,
+    0.00037389316084024534,
+    0.00018253555082575222
+   ],
+   "fit_residual_rms_m": 0.0054094558494048005,
+   "fit_beams_used": 346,
+   "fit_1sigma_robust_m_m_rad": [
+    0.0002990130065770893,
+    0.0003092093874499868,
+    0.00015095677527729058
+   ],
+   "seam_beams_excluded": 8
+  },
+  "evidence": [
+   "observation_7f4c30f/run_01/captures/capture.json",
+   "observation_7f4c30f/run_01/captures/scan_check.json",
+   "observation_7f4c30f/run_01/captures/scan_check_seams_excluded.json",
+   "observation_7f4c30f/run_01/captures/scan_outliers.json"
+  ]
+ },
+ "run_02": {
+  "scans_averaged": 40,
+  "beams": 360,
+  "excluded_seam_beams": [
+   {
+    "index": 45,
+    "angle_lidar_deg": -135.0,
+    "bearing_world_deg": -45.0,
+    "surface": "walls/wall_east",
+    "expected_m": 4.1705,
+    "measured_mean_m": 1.6066,
+    "residual_m": -2.5639,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 46,
+    "angle_lidar_deg": -134.0,
+    "bearing_world_deg": -44.0,
+    "surface": "walls/wall_east",
+    "expected_m": 4.0996,
+    "measured_mean_m": 4.0893,
+    "residual_m": -0.0103,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   },
+   {
+    "index": 135,
+    "angle_lidar_deg": -45.0,
+    "bearing_world_deg": 45.0,
+    "surface": "box_a/link",
+    "expected_m": 1.6096,
+    "measured_mean_m": 4.2901,
+    "residual_m": 2.6805,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 136,
+    "angle_lidar_deg": -44.0,
+    "bearing_world_deg": 46.0,
+    "surface": "box_a/link",
+    "expected_m": 1.6214,
+    "measured_mean_m": 1.6262,
+    "residual_m": 0.0049,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   },
+   {
+    "index": 225,
+    "angle_lidar_deg": 45.0,
+    "bearing_world_deg": 135.0,
+    "surface": "walls/wall_north",
+    "expected_m": 4.3063,
+    "measured_mean_m": 1.9244,
+    "residual_m": -2.3819,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 226,
+    "angle_lidar_deg": 46.0,
+    "bearing_world_deg": 136.0,
+    "surface": "walls/wall_west",
+    "expected_m": 4.2414,
+    "measured_mean_m": 4.2337,
+    "residual_m": -0.0077,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   },
+   {
+    "index": 315,
+    "angle_lidar_deg": 135.0,
+    "bearing_world_deg": 225.0,
+    "surface": "box_b/link",
+    "expected_m": 1.9163,
+    "measured_mean_m": 1.9231,
+    "residual_m": 0.0068,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 316,
+    "angle_lidar_deg": 136.0,
+    "bearing_world_deg": 226.0,
+    "surface": "box_b/link",
+    "expected_m": 1.8837,
+    "measured_mean_m": 1.8771,
+    "residual_m": -0.0066,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   }
+  ],
+  "excluded_edge_grazing_beams": [
+   {
+    "index": 117,
+    "angle_lidar_deg": -63.0,
+    "bearing_world_deg": 27.0,
+    "surface": "walls/wall_east",
+    "expected_m": 3.3097,
+    "measured_mean_m": 3.3066,
+    "residual_m": -0.0031,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 118,
+    "angle_lidar_deg": -62.0,
+    "bearing_world_deg": 28.0,
+    "surface": "box_a/link",
+    "expected_m": 1.6736,
+    "measured_mean_m": 1.5754,
+    "residual_m": -0.0982,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 210,
+    "angle_lidar_deg": 30.0,
+    "bearing_world_deg": 120.0,
+    "surface": "pillar/link",
+    "expected_m": 1.7078,
+    "measured_mean_m": 1.7441,
+    "residual_m": 0.0363,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 222,
+    "angle_lidar_deg": 42.0,
+    "bearing_world_deg": 132.0,
+    "surface": "pillar/link",
+    "expected_m": 1.7032,
+    "measured_mean_m": 1.7025,
+    "residual_m": -0.0007,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 309,
+    "angle_lidar_deg": 129.0,
+    "bearing_world_deg": 219.0,
+    "surface": "walls/wall_west",
+    "expected_m": 3.9259,
+    "measured_mean_m": 3.9159,
+    "residual_m": -0.01,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 334,
+    "angle_lidar_deg": 154.0,
+    "bearing_world_deg": 244.0,
+    "surface": "box_b/link",
+    "expected_m": 1.9413,
+    "measured_mean_m": 1.9255,
+    "residual_m": -0.0157,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   }
+  ],
+  "beams_compared": 346,
+  "individual_ranges": {
+   "within_8mm_fraction": 0.8844,
+   "median_abs_mm": 2.49,
+   "p95_abs_mm": 11.31,
+   "max_abs_mm": 18.02,
+   "walls_by_incidence_deg": {
+    "0-30": {
+     "beams": 231,
+     "median_abs_mm": 2.24,
+     "p95_abs_mm": 7.97,
+     "max_abs_mm": 15.38
+    },
+    "30-45": {
+     "beams": 66,
+     "median_abs_mm": 6.43,
+     "p95_abs_mm": 13.37,
+     "max_abs_mm": 15.21
+    }
+   },
+   "expected_noise_of_a_40_scan_mean_mm": 1.58
+  },
+  "raw_all_beams_scan_check": {
+   "beams_used": 353,
+   "residual_median_m": -0.0001132813151509815,
+   "residual_abs_p95_m": 0.011913674011538861,
+   "residual_abs_max_m": 2.680506265831188,
+   "fit_minus_expected_m_m_rad": [
+    0.0003111876944244321,
+    0.00010542818693026063,
+    0.00018505325806983383
+   ],
+   "fit_1sigma_m_m_rad": [
+    0.015463467756544,
+    0.015931252817627736,
+    0.007584991291679994
+   ],
+   "fit_residual_rms_m": 0.2346697368185572,
+   "fit_beams_used": 353
+  },
+  "seam_filtered_scan_check": {
+   "beams_used": 346,
+   "residual_median_m": -9.690912936211049e-05,
+   "residual_abs_p95_m": 0.011306688971507883,
+   "residual_abs_max_m": 0.01801546724136771,
+   "fit_minus_expected_m_m_rad": [
+    0.000283369907474032,
+    2.9378210195579735e-05,
+    0.0001101610442535428
+   ],
+   "fit_1sigma_m_m_rad": [
+    0.00034819708981790416,
+    0.0003600198692368217,
+    0.00017578245810831032
+   ],
+   "fit_residual_rms_m": 0.005209087476805374,
+   "fit_beams_used": 346,
+   "fit_1sigma_robust_m_m_rad": [
+    0.00024884034524871634,
+    0.00025728953853158213,
+    0.00012562358745506888
+   ],
+   "seam_beams_excluded": 8
+  },
+  "evidence": [
+   "observation_7f4c30f/run_02/captures/capture.json",
+   "observation_7f4c30f/run_02/captures/scan_check.json",
+   "observation_7f4c30f/run_02/captures/scan_check_seams_excluded.json",
+   "observation_7f4c30f/run_02/captures/scan_outliers.json"
+  ]
+ },
+ "run_03": {
+  "scans_averaged": 40,
+  "beams": 360,
+  "excluded_seam_beams": [
+   {
+    "index": 45,
+    "angle_lidar_deg": -135.0,
+    "bearing_world_deg": -45.0,
+    "surface": "walls/wall_east",
+    "expected_m": 4.1705,
+    "measured_mean_m": 1.6079,
+    "residual_m": -2.5626,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 46,
+    "angle_lidar_deg": -134.0,
+    "bearing_world_deg": -44.0,
+    "surface": "walls/wall_east",
+    "expected_m": 4.0996,
+    "measured_mean_m": 4.0872,
+    "residual_m": -0.0124,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   },
+   {
+    "index": 135,
+    "angle_lidar_deg": -45.0,
+    "bearing_world_deg": 45.0,
+    "surface": "box_a/link",
+    "expected_m": 1.6096,
+    "measured_mean_m": 4.2902,
+    "residual_m": 2.6806,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 136,
+    "angle_lidar_deg": -44.0,
+    "bearing_world_deg": 46.0,
+    "surface": "box_a/link",
+    "expected_m": 1.6214,
+    "measured_mean_m": 1.6199,
+    "residual_m": -0.0014,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   },
+   {
+    "index": 225,
+    "angle_lidar_deg": 45.0,
+    "bearing_world_deg": 135.0,
+    "surface": "walls/wall_north",
+    "expected_m": 4.3063,
+    "measured_mean_m": 1.9241,
+    "residual_m": -2.3822,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 226,
+    "angle_lidar_deg": 46.0,
+    "bearing_world_deg": 136.0,
+    "surface": "walls/wall_west",
+    "expected_m": 4.2414,
+    "measured_mean_m": 4.2312,
+    "residual_m": -0.0102,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   },
+   {
+    "index": 315,
+    "angle_lidar_deg": 135.0,
+    "bearing_world_deg": 225.0,
+    "surface": "box_b/link",
+    "expected_m": 1.9163,
+    "measured_mean_m": 1.9211,
+    "residual_m": 0.0048,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (0.000 deg from it)"
+   },
+   {
+    "index": 316,
+    "angle_lidar_deg": 136.0,
+    "bearing_world_deg": 226.0,
+    "surface": "box_b/link",
+    "expected_m": 1.8837,
+    "measured_mean_m": 1.8782,
+    "residual_m": -0.0054,
+    "reason": "within 1 deg of the gpu_lidar cube-map seam (1.000 deg from it)"
+   }
+  ],
+  "excluded_edge_grazing_beams": [
+   {
+    "index": 117,
+    "angle_lidar_deg": -63.0,
+    "bearing_world_deg": 27.0,
+    "surface": "walls/wall_east",
+    "expected_m": 3.3097,
+    "measured_mean_m": 3.3089,
+    "residual_m": -0.0009,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 118,
+    "angle_lidar_deg": -62.0,
+    "bearing_world_deg": 28.0,
+    "surface": "box_a/link",
+    "expected_m": 1.6736,
+    "measured_mean_m": 1.5723,
+    "residual_m": -0.1013,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 210,
+    "angle_lidar_deg": 30.0,
+    "bearing_world_deg": 120.0,
+    "surface": "pillar/link",
+    "expected_m": 1.7078,
+    "measured_mean_m": 1.7456,
+    "residual_m": 0.0377,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 222,
+    "angle_lidar_deg": 42.0,
+    "bearing_world_deg": 132.0,
+    "surface": "pillar/link",
+    "expected_m": 1.7032,
+    "measured_mean_m": 1.6963,
+    "residual_m": -0.0069,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 309,
+    "angle_lidar_deg": 129.0,
+    "bearing_world_deg": 219.0,
+    "surface": "walls/wall_west",
+    "expected_m": 3.9259,
+    "measured_mean_m": 3.9171,
+    "residual_m": -0.0088,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   },
+   {
+    "index": 334,
+    "angle_lidar_deg": 154.0,
+    "bearing_world_deg": 244.0,
+    "surface": "box_b/link",
+    "expected_m": 1.9413,
+    "measured_mean_m": 1.9293,
+    "residual_m": -0.0119,
+    "reason": "edge-grazing at the weld-implied pose: the expected range changes > 5 cm within +-0.5 deg"
+   }
+  ],
+  "beams_compared": 346,
+  "individual_ranges": {
+   "within_8mm_fraction": 0.8439,
+   "median_abs_mm": 3.01,
+   "p95_abs_mm": 11.74,
+   "max_abs_mm": 18.89,
+   "walls_by_incidence_deg": {
+    "0-30": {
+     "beams": 231,
+     "median_abs_mm": 2.6,
+     "p95_abs_mm": 8.8,
+     "max_abs_mm": 12.05
+    },
+    "30-45": {
+     "beams": 66,
+     "median_abs_mm": 6.51,
+     "p95_abs_mm": 13.34,
+     "max_abs_mm": 14.78
+    }
+   },
+   "expected_noise_of_a_40_scan_mean_mm": 1.58
+  },
+  "raw_all_beams_scan_check": {
+   "beams_used": 353,
+   "residual_median_m": -9.908647395207026e-05,
+   "residual_abs_p95_m": 0.012120372922841934,
+   "residual_abs_max_m": 2.6805844909669916,
+   "fit_minus_expected_m_m_rad": [
+    0.00018669090683846867,
+    7.837668681161952e-05,
+    0.00014237389450744153
+   ],
+   "fit_1sigma_m_m_rad": [
+    0.015462498147643175,
+    0.0159298211781517,
+    0.0075843719371687015
+   ],
+   "fit_residual_rms_m": 0.23465228028978483,
+   "fit_beams_used": 353
+  },
+  "seam_filtered_scan_check": {
+   "beams_used": 346,
+   "residual_median_m": 3.973340655938351e-05,
+   "residual_abs_p95_m": 0.011735217052356695,
+   "residual_abs_max_m": 0.01888733716305202,
+   "fit_minus_expected_m_m_rad": [
+    0.0001654262971908238,
+    1.5215500139727223e-05,
+    4.259356897007294e-05
+   ],
+   "fit_1sigma_m_m_rad": [
+    0.0003614803510040142,
+    0.0003737543570248596,
+    0.0001824864581437984
+   ],
+   "fit_residual_rms_m": 0.005407823189172243,
+   "fit_beams_used": 346,
+   "fit_1sigma_robust_m_m_rad": [
+    0.0002871174198427117,
+    0.0002968664447345236,
+    0.0001449457511949261
+   ],
+   "seam_beams_excluded": 8
+  },
+  "evidence": [
+   "observation_7f4c30f/run_03/captures/capture.json",
+   "observation_7f4c30f/run_03/captures/scan_check.json",
+   "observation_7f4c30f/run_03/captures/scan_check_seams_excluded.json",
+   "observation_7f4c30f/run_03/captures/scan_outliers.json"
+  ]
+ }
+}

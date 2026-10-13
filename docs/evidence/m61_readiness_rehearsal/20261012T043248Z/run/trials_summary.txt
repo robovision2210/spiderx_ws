@@ -1,0 +1,33 @@
+ # mode  d  result
+ 1 old   0  permitted True (None); codes []; single query at node age 2.088246 s saw [['/leg_trajectory_controller', ['control_msgs/action/FollowJointTrajectory']]]; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+ 2 new   0  READY     discovery found after 3.018982 s (node age at start 0.005415 s); first seen {'host_node': 3.018982, 'status_publisher': 3.018982, 'client_matched': 3.018982, 'per_node_server': 3.018982}; codes [[], []]; streams True; age at send 5.212983; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+ 3 old   0  permitted True (None); codes []; single query at node age 2.107163 s saw [['/leg_trajectory_controller', ['control_msgs/action/FollowJointTrajectory']]]; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+ 4 new   0  READY     discovery found after 0.250676 s (node age at start 0.010704 s); first seen {'host_node': 0.250676, 'status_publisher': 0.250676, 'client_matched': 0.250676, 'per_node_server': 0.250676}; codes [[], []]; streams True; age at send 5.105079; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+ 5 old   0  permitted True (None); codes []; single query at node age 2.091022 s saw [['/leg_trajectory_controller', ['control_msgs/action/FollowJointTrajectory']]]; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+ 6 new   0  READY     discovery found after 0.0 s (node age at start 0.008986 s); first seen {'host_node': 0.0, 'status_publisher': 0.0, 'client_matched': 0.0, 'per_node_server': 0.0}; codes [[], []]; streams True; age at send 5.118771; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+ 7 old   0  permitted True (None); codes []; single query at node age 2.113864 s saw [['/leg_trajectory_controller', ['control_msgs/action/FollowJointTrajectory']]]; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+ 8 new   0  READY     discovery found after 1.001982 s (node age at start 0.008062 s); first seen {'status_publisher': 0.751639, 'client_matched': 0.751639, 'host_node': 1.001982, 'per_node_server': 1.001982}; codes [[], []]; streams True; age at send 5.231765; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+ 9 old   0  permitted True (None); codes []; single query at node age 2.096591 s saw [['/leg_trajectory_controller', ['control_msgs/action/FollowJointTrajectory']]]; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+10 new   0  READY     discovery found after 0.0 s (node age at start 0.007594 s); first seen {'host_node': 0.0, 'status_publisher': 0.0, 'client_matched': 0.0, 'per_node_server': 0.0}; codes [[], []]; streams True; age at send 5.107618; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+11 old   0  permitted True (None); codes []; single query at node age 2.123671 s saw [['/leg_trajectory_controller', ['control_msgs/action/FollowJointTrajectory']]]; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+12 new   0  READY     discovery found after 1.503928 s (node age at start 0.008069 s); first seen {'host_node': 1.503928, 'status_publisher': 1.503928, 'client_matched': 1.503928, 'per_node_server': 1.503928}; codes [[], []]; streams True; age at send 5.141679; goals 0; dispatch calls 0
+      observer ready True start 0/1 end 0/0 (cmd pubs/action clients); command topic in bag False
+13 old  10  permitted False (stack_incompatible); codes ['action_server_missing']; single query at node age 2.084038 s saw []; goals 0; dispatch calls 0
+      observer ready True start 0/0 end 0/0 (cmd pubs/action clients); command topic in bag False
+14 new  10  READY     discovery found after 1.007245 s (node age at start 0.009901 s); first seen {'host_node': 1.007245, 'status_publisher': 1.007245, 'client_matched': 1.007245, 'per_node_server': 1.007245}; codes [[], []]; streams True; age at send 5.10801; goals 0; dispatch calls 0
+      observer ready True start 0/0 end 0/0 (cmd pubs/action clients); command topic in bag False
+15 old  10  permitted True (None); codes []; single query at node age 2.096755 s saw [['/leg_trajectory_controller', ['control_msgs/action/FollowJointTrajectory']]]; goals 0; dispatch calls 0
+      observer ready True start 0/0 end 0/0 (cmd pubs/action clients); command topic in bag False
+16 new  10  READY     discovery found after 1e-06 s (node age at start 0.008018 s); first seen {'host_node': 1e-06, 'status_publisher': 1e-06, 'client_matched': 1e-06, 'per_node_server': 1e-06}; codes [[], []]; streams True; age at send 5.154499; goals 0; dispatch calls 0
+      observer ready True start 0/0 end 0/0 (cmd pubs/action clients); command topic in bag False

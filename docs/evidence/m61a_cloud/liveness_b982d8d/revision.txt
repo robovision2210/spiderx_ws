@@ -1,0 +1,8 @@
+b982d8d63297eb919a09f5df9535a1d55917194f
+ M docs/M61A_CLOUD_VERIFICATION.md
+ M docs/M61A_FIXED_BASE_IMPLEMENTATION.md
+ M docs/M61_CLOUD_ONE_CYCLE_PLAN.md
+ M docs/SPIDERX_TESTING_GUIDE.md
+ M docs/patches/m61_enable_one_cycle.UNAPPLIED.patch
+?? docs/evidence/m61a_cloud/gate_modes/
+?? docs/evidence/m61a_cloud/liveness_tools/

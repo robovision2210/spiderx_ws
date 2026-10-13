@@ -1,0 +1,10 @@
+ROS_DISTRO: humble
+ROS_VERSION: 2
+ROS_DOMAIN_ID: 0
+ROS_LOCALHOST_ONLY: 1
+RMW_IMPLEMENTATION: (unset)
+GZ_VERSION: (unset)
+IGN_GAZEBO_RESOURCE_PATH: (unset)
+python: 3.11.16
+platform: Linux-6.18.44-fc-v114-x86_64-with-glibc2.39
+note: ROS_DOMAIN_ID is recorded only; the tool uses the explicit --domain-id

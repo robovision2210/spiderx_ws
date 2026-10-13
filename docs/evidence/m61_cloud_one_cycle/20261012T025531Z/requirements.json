@@ -1,0 +1,136 @@
+{
+ "schema": "spiderx.m61.one_cycle_requirements/1",
+ "attempt": "20261012T025531Z",
+ "base_commit": "80256683d9ede8f273f7ac5822e03570a2e986c2",
+ "enabling_commit_local_only": "9804c3522f785f0bbd11bc9045acadf318bafa08",
+ "plan": "docs/M61_CLOUD_ONE_CYCLE_PLAN.md @ 8025668 section 6",
+ "verdict": "FAIL",
+ "state": "REFUSED",
+ "reason": "stack_incompatible",
+ "failure_codes": [
+  "action_server_missing"
+ ],
+ "goals_sent": 0,
+ "cancels_sent": 0,
+ "retries": 0,
+ "automatic_return_goals": 0,
+ "tool_exit": 2,
+ "cleanup": "DISABLED AND VERIFIED (2 runs)",
+ "rule": "missing evidence is UNMEASURED, never PASS",
+ "requirements": [
+  {
+   "id": "E1",
+   "result": "PASS",
+   "basis": "Preflight READY 12/12 incl. sim_clock and body_pose_sim_progress; ownership 0/0",
+   "evidence": [
+    "run/preflight.txt",
+    "run/observer/20261012T025926Z/observation.json"
+   ]
+  },
+  {
+   "id": "E2",
+   "result": "PASS",
+   "basis": "Enabled build: test_m61_gait_replay.py 156 passed, 0 failed",
+   "evidence": [
+    "enabled_tests.log",
+    "C_enabled_checks.txt",
+    "C_enabled_build.log"
+   ]
+  },
+  {
+   "id": "E3",
+   "result": "PASS",
+   "basis": "241760e7dfd5ef12 / 94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64 / 9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a on the enabled build and in the live records",
+   "evidence": [
+    "C_enabled_checks.txt",
+    "run/m61_run/20261012T030023Z/trajectory.json",
+    "run/m61_run/20261012T030023Z/goal_fingerprint.txt",
+    "run/m61_run/20261012T030023Z/live_outcome.json"
+   ]
+  },
+  {
+   "id": "E4",
+   "result": "FAIL",
+   "basis": "REFUSED (stack_incompatible), exit 2; goals_sent 0, cancels_sent 0, retries 0, automatic_return_goals 0; acceptance not_attempted",
+   "evidence": [
+    "run/live.txt",
+    "run/m61_run/20261012T030023Z/live_outcome.json"
+   ]
+  },
+  {
+   "id": "E5",
+   "result": "FAIL",
+   "basis": "Readiness before confirmation NOT READY (incompatible: action_server_missing); readiness after confirmation and the check at the send never ran (readiness_after null, freshness_at_send null)",
+   "evidence": [
+    "run/m61_run/20261012T030023Z/readiness_before.json",
+    "run/m61_run/20261012T030023Z/readiness_after.json",
+    "run/m61_run/20261012T030023Z/live_outcome.json"
+   ]
+  },
+  {
+   "id": "E6",
+   "result": "UNMEASURED",
+   "basis": "No goal: 0 tracking samples, channels unavailable",
+   "evidence": [
+    "run/m61_run/20261012T030023Z/live_outcome.json",
+    "run/m61_run/20261012T030023Z/commanded_vs_observed.csv"
+   ]
+  },
+  {
+   "id": "E7",
+   "result": "UNMEASURED",
+   "basis": "No gate supervised a goal: tripped false with no observation",
+   "evidence": [
+    "run/m61_run/20261012T030023Z/gates.json"
+   ]
+  },
+  {
+   "id": "E8",
+   "result": "UNMEASURED",
+   "basis": "No cycle. Supplementary at rest in this launch: link-check E8 body PASS (0 m / 0 rad, 5529 pose messages) and provenance PASS (5408/5408 discriminating)",
+   "evidence": [
+    "run/link_check/link_check.json",
+    "run/link_check/link_check.txt",
+    "run/observer/20261012T030156Z/observation.json"
+   ]
+  },
+  {
+   "id": "E9",
+   "result": "UNMEASURED",
+   "basis": "NO_MOTION: consistent, but no foot link turned 0.02 rad",
+   "evidence": [
+    "run/link_check/link_check.json"
+   ]
+  },
+  {
+   "id": "E10",
+   "result": "PASS",
+   "basis": "Attempt window: observer 0 command publishers and 0 action clients before (02:59:26) and after (03:01:56), 1 = the tool's own client while it ran; after the run 0 publishers / 0 clients; no publisher ever appeared on the command topic (recorder never subscribed); readiness_after not taken",
+   "evidence": [
+    "run/observer/20261012T025926Z/observation.json",
+    "run/observer/20261012T030156Z/observation.json",
+    "run/captures/command_topic_info.txt",
+    "run/captures/action_info.txt",
+    "run/bag_record.log",
+    "run/bag.tar.xz",
+    "run/m61_run/20261012T030023Z/readiness_before.json"
+   ]
+  },
+  {
+   "id": "E11",
+   "result": "PASS",
+   "basis": "Restore runs 1 and 2: DISABLED AND VERIFIED (imported gates False from this workspace, pkg prefix here, --live exit 3, shell clean); enabling commit preserved before deletion; branch deleted only after run 2 verified",
+   "evidence": [
+    "restore/restore_verify_20261012T030548Z.txt",
+    "restore/restore_verify_20261012T030610Z.txt",
+    "restore/enabling_commit.txt",
+    "restore/enabling_commit.patch",
+    "restore/enabling_src_vs_base.diff",
+    "restore/rebuild_20261012T030548Z.log",
+    "restore_run1.out",
+    "restore_run2.out",
+    "run/shutdown.txt"
+   ]
+  }
+ ]
+}

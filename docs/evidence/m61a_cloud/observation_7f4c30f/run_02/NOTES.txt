@@ -1,0 +1,9 @@
+run_02 notes (written after the run; raw outputs unchanged):
+- Timing confounder: an offline re-analysis of run_01's /scan (single-core Python, scan_check.py
+  --exclude-seams) ran in this VM at about 09:19:30-09:20:20 UTC, inside this run's 120 s
+  observation window (09:18:59-09:21:01). Pose/joint-state gap and RTF statistics of this run
+  include that load.
+- run_one.sh was edited (scan post-processing steps added) while this run executed; the run used
+  the edited steps. Post-processing (scan_check_seams_excluded, scan_outliers, analysis) was then
+  regenerated from this run's unchanged captures/capture.json; the Z3 rule was corrected to read
+  'reference' (controller_state) or 'desired' (legacy state topic), whichever is populated.

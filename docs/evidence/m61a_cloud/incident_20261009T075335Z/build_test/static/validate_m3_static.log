@@ -1,0 +1,28 @@
+== Packages, installed files and imports
+  [PASS] spiderx_controller
+  [PASS] spiderx_bringup
+  [PASS] spiderx_description
+  [PASS] tf2_ros
+  [PASS] tf2_msgs
+  [PASS] ros_gz_bridge
+  [PASS] installed share/spiderx_controller/config/m3_kinematics_targets.yaml
+  [PASS] installed lib/spiderx_controller/validate_leg_kinematics
+  [PASS] M3 modules import
+== URDF-derived geometry and target config
+  [PASS] validate_controller_config (includes the M3 geometry and target checks)
+         M3 front_left (lf_hip, lf_thigh_joint, lf_foot_joint): chain base_link -> lf_foot_1 from the URDF; axes [[0.0, 1.0, 0.0], [-1.0, 0.0, 0.0], [1.0, 0.0,
+         M3 targets (simulation_only): 5 safe targets solvable inside URDF limits -/+ 0.05 rad; 2 negative targets rejected
+== M3 FK/IK unit tests
+  [PASS] 84 passed in 4.60s
+== Forbidden additions
+  [PASS] M3 files reference no hardware driver
+  [PASS] no wheel, diff-drive, /cmd_vel, /odom or mechaprime logic in M3 files
+== Invalid target configs are refused before anything is sent (no simulator needed)
+  [PASS] safe target pushing 10 mm into the ground refused (REFUSED: invalid M3 configuration: safe target lift_10mm lifts -0.01 m < min_lift_m 0.005 )
+  [PASS] unsupported leg rear_right refused (REFUSED: invalid M3 configuration: unknown or unsupported leg "rear_right": M3 validates o)
+  [PASS] frame odom refused (REFUSED: invalid M3 configuration: frame must be "base_link" (SpiderX body frame), got 'od)
+  [PASS] simulation_only: false refused (REFUSED: invalid M3 configuration: simulation_only: true is required)
+
+Scope: single-leg (front_left) simulation kinematics validation.
+Not walking, gait, balance, locomotion, odometry or hardware validation.
+All M3 checks passed.

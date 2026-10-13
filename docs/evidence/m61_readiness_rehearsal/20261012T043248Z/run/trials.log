@@ -1,0 +1,16 @@
+trial 1 old delay 0: old path: permitted True (None); failure codes []; first query at node age 2.088246 s; server first seen at node age 4.190318 s; dispatch calls 0 
+trial 2 new delay 0: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 3.018982 s (13 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False 
+trial 3 old delay 0: old path: permitted True (None); failure codes []; first query at node age 2.107163 s; server first seen at node age 4.139666 s; dispatch calls 0 
+trial 4 new delay 0: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.250676 s (2 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False 
+trial 5 old delay 0: old path: permitted True (None); failure codes []; first query at node age 2.091022 s; server first seen at node age 4.105862 s; dispatch calls 0 
+trial 6 new delay 0: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.0 s (1 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False 
+trial 7 old delay 0: old path: permitted True (None); failure codes []; first query at node age 2.113864 s; server first seen at node age 4.13849 s; dispatch calls 0 
+trial 8 new delay 0: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 1.001982 s (5 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False 
+trial 9 old delay 0: old path: permitted True (None); failure codes []; first query at node age 2.096591 s; server first seen at node age 4.117099 s; dispatch calls 0 
+trial 10 new delay 0: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 0.0 s (1 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False 
+trial 11 old delay 0: old path: permitted True (None); failure codes []; first query at node age 2.123671 s; server first seen at node age 4.232681 s; dispatch calls 0 
+trial 12 new delay 0: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 1.503928 s (7 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False 
+trial 13 old delay 10: old path: permitted False (stack_incompatible); failure codes ['action_server_missing']; first query at node age 2.084038 s; server first seen at node age 4.612377 s; dispatch calls 0 
+trial 14 new delay 10: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 1.007245 s (5 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False 
+trial 15 old delay 10: old path: permitted True (None); failure codes []; first query at node age 2.096755 s; server first seen at node age 4.199077 s; dispatch calls 0 
+trial 16 new delay 10: action discovery: found /leg_trajectory_controller/follow_joint_trajectory after 1e-06 s (1 polls) READY; goals sent 0, cancels sent 0, dispatch calls 0; M6.1 gate False 

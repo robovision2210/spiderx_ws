@@ -1,0 +1,19 @@
+[16:55:44] start
+launch pid 9870 pgid 9870 xvfb 9865
+[16:55:48] wait controllers
+both controllers active after 8 s of polling
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+[16:56:02] A running
+[16:56:15] pause
+[16:56:18] B paused
+[16:56:31] resume
+[16:56:35] C resumed
+[16:56:48] stop
+SIGINT sent to process group 9870
+process group empty after 4 s
+The daemon has been stopped
+--- remaining (expect nothing):
+9824 [REDACTED: the invoking shell, matched by the frozen pgrep pattern; see README]
+[16:56:55] end
+exit=0

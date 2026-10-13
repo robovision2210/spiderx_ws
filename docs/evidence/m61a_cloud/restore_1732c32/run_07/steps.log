@@ -1,0 +1,4 @@
+[06:39:59] start
+[06:40:03] wait controllers
+[06:40:20] restore and verify (the launch is still running)
+[06:40:44] restore script exit=0

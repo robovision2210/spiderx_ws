@@ -1,0 +1,10 @@
+[09:13:42] start
+[09:13:46] wait controllers
+[09:14:02] preflight
+[09:14:07] observe 120 s
+[09:16:11] captures
+[09:16:34] scan check
+[09:16:36] views
+[09:16:48] stop
+[09:16:53] analysis
+[09:16:54] end

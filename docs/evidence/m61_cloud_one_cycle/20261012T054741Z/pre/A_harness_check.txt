@@ -1,0 +1,2 @@
+14 frozen harness files checked against closeout/frozen_harness.json; mismatches: []
+(an accidental sed edit of the stage scripts was reverted by re-copying them before any use; this check is after the re-copy)

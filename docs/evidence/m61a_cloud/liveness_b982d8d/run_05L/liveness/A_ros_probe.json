@@ -1,0 +1,112 @@
+{
+ "window_s": 5.0,
+ "domain_id": 0,
+ "own_publishers": [],
+ "clock": {
+  "messages": 2452,
+  "rate_hz": 490.4,
+  "sim_first": 8.365,
+  "sim_last": 10.904,
+  "sim_advance_s": 2.5389999999999997,
+  "wall_span_s": 3.7902736329997424
+ },
+ "pose_stream": {
+  "messages": 216,
+  "rate_hz": 43.2,
+  "node_clock_at_first_receipt": 8.445,
+  "node_clock_at_last_receipt": 10.894,
+  "transforms_per_message": [
+   68
+  ],
+  "entry_names": [
+   "b_s1_c_horn_1",
+   "b_s1_c_horn_1_fixed_joint_lump__rr_holder_1_visual_2",
+   "b_s1_c_horn_1_fixed_joint_lump__rr_holder_suppor1_1_visual_1",
+   "b_s1_c_horn_1_visual",
+   "b_s2_c_horn_1",
+   "b_s2_c_horn_1_fixed_joint_lump__rf_holder_1_visual_2",
+   "b_s2_c_horn_1_fixed_joint_lump__rf_holder_suppor1_1_visual_1",
+   "b_s2_c_horn_1_visual",
+   "b_s3_c_horn_1",
+   "b_s3_c_horn_1_fixed_joint_lump__lr_holder_1_visual_2",
+   "b_s3_c_horn_1_fixed_joint_lump__lr_holder_suppor1_1_visual_1",
+   "b_s3_c_horn_1_visual",
+   "b_s4_c_horn_1",
+   "b_s4_c_horn_1_fixed_joint_lump__lf_holder_1_visual_2",
+   "b_s4_c_horn_1_fixed_joint_lump__lf_holder_suppor1_1_visual_1",
+   "b_s4_c_horn_1_visual",
+   "box_a",
+   "box_b",
+   "dummy_link",
+   "dummy_link_fixed_joint_lump__b_s1_1_visual_2",
+   "dummy_link_fixed_joint_lump__b_s2_1_visual_3",
+   "dummy_link_fixed_joint_lump__b_s3_1_visual_5",
+   "dummy_link_fixed_joint_lump__b_s4_1_visual_1",
+   "dummy_link_fixed_joint_lump__base_link_visual",
+   "dummy_link_fixed_joint_lump__lidar_link_visual_6",
+   "dummy_link_fixed_joint_lump__top_1_visual_4",
+   "ground_plane",
+   "lf_c_horn_1",
+   "lf_c_horn_1_fixed_joint_lump__lf_thigh_1_visual_1",
+   "lf_c_horn_1_visual",
+   "lf_foot_1",
+   "lf_foot_1_visual",
+   "link",
+   "lr_c_horn_1",
+   "lr_c_horn_1_fixed_joint_lump__lr_thigh_1_visual_1",
+   "lr_c_horn_1_visual",
+   "lr_foot_1",
+   "lr_foot_1_visual",
+   "pillar",
+   "rf_c_horn_1",
+   "rf_c_horn_1_fixed_joint_lump__rf_thigh_1_visual_1",
+   "rf_c_horn_1_visual",
+   "rf_foot_1",
+   "rf_foot_1_visual",
+   "rr_c_horn_1",
+   "rr_c_horn_1_fixed_joint_lump__rr_thigh_1_visual_1",
+   "rr_c_horn_1_visual",
+   "rr_foot_1",
+   "rr_foot_1_visual",
+   "spiderx",
+   "sun",
+   "sunVisual",
+   "visual",
+   "wall_east",
+   "wall_north",
+   "wall_south",
+   "wall_west",
+   "walls"
+  ],
+  "distinct_values": {
+   "spiderx": [
+    [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ],
+   "dummy_link": [
+    [
+     0.0,
+     0.0,
+     0.125,
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   ]
+  }
+ },
+ "joint_states": {
+  "messages": 258,
+  "rate_hz": 51.6,
+  "stamp_first": 8.33,
+  "stamp_last": 10.9
+ }
+}

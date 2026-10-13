@@ -12,6 +12,13 @@ While a goal executes, the published joint positions follow the received goal's 
 with the controller's cubic (zero-velocity) interpolation, then hold the last waypoint. It is NOT
 a controller, moves nothing physical and proves no controller behaviour; it records every goal and
 cancel request it receives.
+
+Like a real joint_state_broadcaster, it publishes from ONE update loop: the 100 Hz tick runs in its
+own mutually exclusive callback group, so two ticks never overlap and the /clock and /joint_states
+stamps leave in strictly increasing order. (In a reentrant group, rclpy releases a timer before its
+callback runs, so a slow tick could overlap the next one.) stop() first stops scheduling, then
+lets every scheduled callback finish, and only then shuts the executor down and destroys anything
+(see SpinThread), so no callback can touch a destroyed entity or guard condition.
 """
 
 import threading
@@ -23,7 +30,7 @@ from controller_manager_msgs.msg import ControllerState
 from controller_manager_msgs.srv import ListControllers
 import rclpy
 from rclpy.action import ActionServer, CancelResponse, GoalResponse
-from rclpy.callback_groups import ReentrantCallbackGroup
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.context import Context
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.signals import SignalHandlerOptions
@@ -37,9 +44,44 @@ from spiderx_controller import m6_live_preflight as lpf
 SIM_START_S = 100.0
 
 
+class SpinThread:
+    """Spins a MultiThreadedExecutor in a daemon thread until stop() (tests only).
+
+    rclpy 3.3 (Humble) Executor.shutdown() waits only for callbacks already running and then
+    destroys the executor's guard condition; a callback the pool starts just afterwards still
+    triggers that guard (executors.py, handler: `gc.trigger()`), and a callback still queued can
+    run after its entity is destroyed. Both raise InvalidHandle ('cannot use Destroyable because
+    destruction was requested') into a Task nobody reads, which rclpy prints as 'The following
+    exception was never retrieved'. stop() therefore: stops scheduling (no spin_once after the
+    flag), joins the spin thread, waits for every scheduled callback (the pool; later rclpy
+    releases do this inside shutdown()), and only then shuts the executor down.
+    """
+
+    def __init__(self, executor, period_s=0.05):
+        self.executor = executor
+        self._period_s = period_s
+        self._stop = threading.Event()
+        self.thread = threading.Thread(target=self._run, daemon=True)
+        self.thread.start()
+
+    def _run(self):
+        while not self._stop.is_set():
+            self.executor.spin_once(timeout_sec=self._period_s)
+
+    def stop(self, timeout_s=2.0):
+        self._stop.set()
+        self.thread.join(timeout=timeout_s)
+        pool = getattr(self.executor, '_executor', None)   # rclpy 3.3 MultiThreadedExecutor pool
+        if pool is not None:
+            pool.shutdown(wait=True)
+        self.executor.shutdown(timeout_sec=timeout_s)
+
+
 def _stamp(t):
-    sec = int(t)
-    return Time(sec=sec, nanosec=int(round((t - sec) * 1e9)) % 1_000_000_000)
+    # integer nanoseconds first: rounding only the fraction could yield nanosec = 1e9, which the
+    # old '% 1e9' turned into a stamp one whole second in the past
+    ns = int(round(t * 1e9))
+    return Time(sec=ns // 1_000_000_000, nanosec=ns % 1_000_000_000)
 
 
 def _secs(d):
@@ -53,6 +95,7 @@ class IsolatedFakeStack:
         self.rtf = rtf
         self.received, self.cancel_requests, self.list_calls = [], 0, 0
         self.results = []
+        self._stopping = False
         self._wall0 = time.monotonic()
         self._lock = threading.Lock()
         self.context = Context()
@@ -69,11 +112,11 @@ class IsolatedFakeStack:
                                    cancel_callback=self._cancel, callback_group=group)
         self.clock_pub = self.node.create_publisher(Clock, '/clock', 10)
         self.js_pub = self.node.create_publisher(JointState, env.JOINT_STATES_TOPIC, 10)
-        self.timer = self.node.create_timer(1.0 / rate_hz, self._tick, callback_group=group)
+        self.timer = self.node.create_timer(1.0 / rate_hz, self._tick,
+                                            callback_group=MutuallyExclusiveCallbackGroup())
         self.executor = MultiThreadedExecutor(num_threads=4, context=self.context)
         self.executor.add_node(self.node)
-        self.thread = threading.Thread(target=self.executor.spin, daemon=True)
-        self.thread.start()
+        self.spinner = SpinThread(self.executor)
 
     # ---------------------------------------------------------------- simulation time
     def sim_now(self):
@@ -126,6 +169,10 @@ class IsolatedFakeStack:
                 goal_handle.canceled()
                 self.results.append('canceled')
                 return FollowJointTrajectory.Result()
+            if self._stopping:                 # stop() mid-goal: end it, never report success
+                goal_handle.abort()
+                self.results.append('aborted_by_stop')
+                return FollowJointTrajectory.Result(error_code=-1, error_string='test double stop')
             fb = FollowJointTrajectory.Feedback()
             fb.header.stamp = _stamp(self.sim_now())
             fb.joint_names = names
@@ -140,8 +187,8 @@ class IsolatedFakeStack:
         return FollowJointTrajectory.Result(error_code=0, error_string='test double')
 
     def stop(self):
-        self.executor.shutdown(timeout_sec=2.0)
-        self.thread.join(timeout=2.0)
+        self._stopping = True
+        self.spinner.stop()
         self.node.destroy_timer(self.timer)
         self.server.destroy()
         self.node.destroy_service(self.service)

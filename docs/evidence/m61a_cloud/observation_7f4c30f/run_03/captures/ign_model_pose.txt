@@ -1,0 +1,8 @@
+
+Requesting state for world [spiderx_fortress]...
+
+Model: [35]
+  - Name: spiderx
+  - Pose [ XYZ (m) ] [ RPY (rad) ]:
+    [0.000000 0.000000 0.000000]
+    [0.000000 -0.000000 0.000000]

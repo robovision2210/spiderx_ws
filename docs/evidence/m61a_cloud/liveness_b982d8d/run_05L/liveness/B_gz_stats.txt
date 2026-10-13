@@ -1,0 +1,24 @@
+sim_time {
+  sec: 14
+  nsec: 666000000
+}
+real_time {
+  sec: 27
+  nsec: 185634385
+}
+paused: true
+iterations: 14666
+real_time_factor: 0.8649
+
+sim_time {
+  sec: 14
+  nsec: 666000000
+}
+real_time {
+  sec: 27
+  nsec: 185634385
+}
+paused: true
+iterations: 14666
+real_time_factor: 0.8649
+

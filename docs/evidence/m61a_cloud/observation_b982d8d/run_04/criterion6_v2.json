@@ -1,0 +1,309 @@
+{
+ "schema": "spiderx.m61a.criterion6_v2_result/1",
+ "spec_sha256": "1ca3bbc9647d475d1f0716021e7ca330af9f8f290cb24c45f03378a7d346e58b",
+ "capture_sha256": "f5449a044f332492d7366574cc44b956e675985469306dd83a9532c626e4d0fd",
+ "world_sha256": "9d05486f23d72f918869daa841c3392d6c6f6e0cb396ab513ce06225956a7452",
+ "tool_sha256": "47b17ee9a04966d48bd01c004a26ac863325ef8a6ca2c4251aae55fe6d47b713",
+ "v1": {
+  "wording": "6. Independent cross-check of the pose source: the /scan ranges to the world walls agree with the welded pose (0, 0, 0.125 m, yaw 0) to within the M0 +-8 mm. A disagreement means pose/info does not describe the simulated body, and nothing else in this list can be trusted.",
+  "single_scan_ranges": {
+   "count": 13840,
+   "within_fraction": 0.5307803468208092,
+   "max_abs_m": 0.0479735162948316
+  },
+  "per_beam_40_scan_means": {
+   "count": 346,
+   "within_fraction": 0.8554913294797688,
+   "max_abs_m": 0.018809217120341337
+  },
+  "minimax_over_planar_pose": {
+   "max_abs_residual_m": 0.017674021715838206,
+   "at_body_offset_m_m_rad": [
+    0.001860000000000001,
+    -0.0004,
+    -0.0008399999999999998
+   ]
+  },
+  "verdict": "FAIL"
+ },
+ "v2": {
+  "version": "criterion-6 v2 (proposal 2026-10-09)",
+  "reference": "pose/info composed body (same window)",
+  "reported_body": {
+   "samples": 430,
+   "mean_xyz_rpy": [
+    0.0,
+    0.0,
+    0.125,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "range_xyz_rpy": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  "fit_body_xy_yaw": [
+   0.00048303749323403875,
+   4.598666024175621e-05,
+   0.00011658756472502878
+  ],
+  "iterations": 3,
+  "beams_used": 346,
+  "beam_robust_sigma_m": 0.003994018801836511,
+  "sigma_robust_m_m_rad": [
+   0.00026662681939645645,
+   0.00027584764862544466,
+   0.00013418891004122996
+  ],
+  "sigma_jackknife_m_m_rad": [
+   0.0005783291516546807,
+   0.00035604524967438613,
+   0.0002596055038192853
+  ],
+  "jackknife_groups": [
+   "box_a/link",
+   "box_b/link",
+   "pillar/link",
+   "walls/wall_east",
+   "walls/wall_north",
+   "walls/wall_south",
+   "walls/wall_west"
+  ],
+  "sigma_used_m_m_rad": [
+   0.0005783291516546807,
+   0.00035604524967438613,
+   0.0002596055038192853
+  ],
+  "prerequisites": {
+   "scans_averaged": {
+    "ok": true,
+    "value": 40
+   },
+   "frozen_beams_finite": {
+    "ok": true,
+    "value": "346/346"
+   },
+   "beams_per_wall": {
+    "ok": true,
+    "value": {
+     "walls/wall_east": 70,
+     "walls/wall_north": 75,
+     "walls/wall_south": 70,
+     "walls/wall_west": 82
+    }
+   },
+   "pose_info_constant_in_window": {
+    "ok": true,
+    "value": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "resolving_power_xy": {
+    "ok": true,
+    "value": 0.0005783291516546807
+   },
+   "resolving_power_yaw": {
+    "ok": true,
+    "value": 0.0002596055038192853
+   }
+  },
+  "prerequisites_ok": true,
+  "fit_minus_reported_m_m_rad": [
+   0.00048303749323403875,
+   4.598666024175621e-05,
+   0.00011658756472502878
+  ],
+  "fit_minus_weld_m_m_rad": [
+   0.00048303749323403875,
+   4.598666024175621e-05,
+   0.00011658756472502878
+  ],
+  "dxy_m": 0.00048522159143015754,
+  "dyaw_rad": 0.00011658756472502878,
+  "within_tau_xy": true,
+  "within_tau_yaw": true,
+  "verdict": "PASS"
+ },
+ "counterfactual": [
+  {
+   "dxy_m": 0.0034848025193223555,
+   "dyaw_rad": 0.00011592118547793392,
+   "within_tau_xy": false,
+   "within_tau_yaw": true,
+   "verdict": "FAIL",
+   "offset_m_m_rad": [
+    0.003,
+    0.0,
+    0.0
+   ],
+   "recovered_minus_fit_m_m_rad": [
+    0.0030014476920454973,
+    1.040908724492678e-06,
+    -6.663792470948523e-07
+   ],
+   "recovery_error_m_m_rad": [
+    1.4476920454972037e-06,
+    1.040908724492678e-06,
+    -6.663792470948523e-07
+   ],
+   "recovery_within_3_sigma": true,
+   "expected_verdict": "FAIL"
+  },
+  {
+   "dxy_m": 0.003084901961333665,
+   "dyaw_rad": 0.00011594785291186088,
+   "within_tau_xy": false,
+   "within_tau_yaw": true,
+   "verdict": "FAIL",
+   "offset_m_m_rad": [
+    0.0,
+    0.003,
+    0.0
+   ],
+   "recovered_minus_fit_m_m_rad": [
+    9.585456926537294e-07,
+    0.0030007112153841754,
+    -6.397118131679162e-07
+   ],
+   "recovery_error_m_m_rad": [
+    9.585456926537294e-07,
+    7.112153841753663e-07,
+    -6.397118131679162e-07
+   ],
+   "recovery_within_3_sigma": true,
+   "expected_verdict": "FAIL"
+  },
+  {
+   "dxy_m": 0.0027168581480172555,
+   "dyaw_rad": 0.00011659601201568685,
+   "within_tau_xy": false,
+   "within_tau_yaw": true,
+   "verdict": "FAIL",
+   "offset_m_m_rad": [
+    -0.0021213203,
+    0.0021213203,
+    0.0
+   ],
+   "recovered_minus_fit_m_m_rad": [
+    -0.0021216494200564915,
+    0.0021211010513479153,
+    8.447290658061607e-09
+   ],
+   "recovery_error_m_m_rad": [
+    -3.2912005649152545e-07,
+    -2.192486520846866e-07,
+    8.447290658061607e-09
+   ],
+   "recovery_within_3_sigma": true,
+   "expected_verdict": null
+  },
+  {
+   "dxy_m": 0.00048181360934167054,
+   "dyaw_rad": 0.010110317214338563,
+   "within_tau_xy": true,
+   "within_tau_yaw": false,
+   "verdict": "FAIL",
+   "offset_m_m_rad": [
+    0.0,
+    0.0,
+    0.01
+   ],
+   "recovered_minus_fit_m_m_rad": [
+    -3.013893456171521e-06,
+    -4.493313749266245e-06,
+    0.009993729649613535
+   ],
+   "recovery_error_m_m_rad": [
+    -3.013893456171521e-06,
+    -4.493313749266245e-06,
+    -6.270350386465562e-06
+   ],
+   "recovery_within_3_sigma": true,
+   "expected_verdict": "FAIL"
+  },
+  {
+   "dxy_m": 0.0005736720761996694,
+   "dyaw_rad": -0.009987806344177173,
+   "within_tau_xy": true,
+   "within_tau_yaw": false,
+   "verdict": "FAIL",
+   "offset_m_m_rad": [
+    0.0,
+    0.0,
+    -0.01
+   ],
+   "recovered_minus_fit_m_m_rad": [
+    6.954674015155395e-05,
+    0.00010812471514921258,
+    -0.010104393908902201
+   ],
+   "recovery_error_m_m_rad": [
+    6.954674015155395e-05,
+    0.00010812471514921258,
+    -0.00010439390890220127
+   ],
+   "recovery_within_3_sigma": true,
+   "expected_verdict": "FAIL"
+  },
+  {
+   "dxy_m": 0.001484235567175273,
+   "dyaw_rad": 0.00011636997985124949,
+   "within_tau_xy": true,
+   "within_tau_yaw": true,
+   "verdict": "PASS",
+   "offset_m_m_rad": [
+    0.001,
+    0.0,
+    0.0
+   ],
+   "recovered_minus_fit_m_m_rad": [
+    0.001000474904408874,
+    3.402747732013709e-07,
+    -2.175848737793058e-07
+   ],
+   "recovery_error_m_m_rad": [
+    4.7490440887405436e-07,
+    3.402747732013709e-07,
+    -2.175848737793058e-07
+   ],
+   "recovery_within_3_sigma": true,
+   "expected_verdict": null
+  },
+  {
+   "dxy_m": 0.0004842732773078674,
+   "dyaw_rad": 0.0021154601284335195,
+   "within_tau_xy": true,
+   "within_tau_yaw": true,
+   "verdict": "PASS",
+   "offset_m_m_rad": [
+    0.0,
+    0.0,
+    0.002
+   ],
+   "recovered_minus_fit_m_m_rad": [
+    -8.530213749678088e-07,
+    -1.0562450145243602e-06,
+    0.0019988725637084905
+   ],
+   "recovery_error_m_m_rad": [
+    -8.530213749678088e-07,
+    -1.0562450145243602e-06,
+    -1.127436291509503e-06
+   ],
+   "recovery_within_3_sigma": true,
+   "expected_verdict": null
+  }
+ ],
+ "counterfactual_all_as_expected": true
+}

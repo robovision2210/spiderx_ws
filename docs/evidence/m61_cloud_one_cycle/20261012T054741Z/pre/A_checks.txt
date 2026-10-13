@@ -1,0 +1,31 @@
+== base
+HEAD dcac464c898f1b8b57b3e0659abcb2d84123615e
+origin dcac464c898f1b8b57b3e0659abcb2d84123615e
+expected dcac464c898f1b8b57b3e0659abcb2d84123615e
+code base 02d284c resolves to 02d284c1a64941d501e0b429d39fad0871365b4b
+expected 02d284c1a64941d501e0b429d39fad0871365b4b
+status entries: 0
+src diff vs 02d284c (lines): 0
+commits after dcac464 on origin: 0
+== patch
+b6213f21dedf30e61e4959d22cd45a44525a8bc4432b641134406fe7f3277595  docs/patches/m61_enable_one_cycle.UNAPPLIED.patch
+reviewed b6213f21dedf30e61e4959d22cd45a44525a8bc4432b641134406fe7f3277595 (docs/M61_CLOUD_ONE_CYCLE_PLAN.md)
+b6213f21dedf30e61e4959d22cd45a44525a8bc4432b641134406fe7f3277595
+git apply --check: OK
+== frozen analysis, restore script, rehearsal
+649b0c4fba9ad84cb4fca9157474ed990163dc759d8d78ef83011d4cf7059e31  src/spiderx_controller/spiderx_controller/m61a_link_check.py
+e6fe9ee1ddca122783a348803b1cf47a708d8f3f140b4c17c9a0b277a1ed8257  scripts/m61_restore_and_verify_disabled.sh
+expected 649b0c4fba9ad84cb4fca9157474ed990163dc759d8d78ef83011d4cf7059e31 / e6fe9ee1ddca122783a348803b1cf47a708d8f3f140b4c17c9a0b277a1ed8257
+== configs, launch, model
+0ff8fc9ee6f1ba70f8e14acda61e3889d3ef3395fdfceaf51f6ea6fc11fe70c7  src/spiderx_controller/config/m61_limits.yaml
+b91839fc1000e48ba947bb91a9c8e86071093794f7b175a43c116f6e1ecb4f39  src/spiderx_controller/config/m61_trot_cycle.yaml
+1c7966fc35fdcb19d4d43347cdee21fd5fbf99ad2a92248beac4ce327d4c40b9  src/spiderx_controller/config/m61a_fixed_base.yaml
+c449f24f2757d83fcf466dbbbaf2ebe0d4e0ef51cdfde91351aadfeba6496e01  src/spiderx_controller/config/spiderx_ros2_controllers.yaml
+f8d27e70663660df6ac8ae80938482c627a6ab9c8a1aee6670d828bd13582504  src/spiderx_bringup/launch/fortress_m61a_fixed_base.launch.py
+b43b91dae7fce2a51de8709b7aba034a48a20d8767fe9b802dd4e7d3bf2f469d  src/spiderx_description/urdf/spiderx_fixed_base.urdf.xacro
+== gates (source)
+src/spiderx_controller/spiderx_controller/m61_live_contract.py:19:M61_LIVE_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m6_live_contract.py:18:LIVE_DISPATCH_ENABLED = False
+7:EXPECTED_M61_LIVE_DISPATCH_ENABLED = False
+== processes
+simulation processes: 0

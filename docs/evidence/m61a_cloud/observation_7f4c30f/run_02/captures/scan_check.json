@@ -1,0 +1,103 @@
+{
+ "scans_averaged": 40,
+ "beams": 360,
+ "beams_used": 353,
+ "frame_id": "lidar_link",
+ "angle_min": -3.1415927410125732,
+ "angle_increment": 0.01745329238474369,
+ "mount_assumed_world_base_xyz_yaw": [
+  0.0,
+  0.0,
+  0.125,
+  0.0
+ ],
+ "lidar_expected_world_xyz_yaw": [
+  0.051,
+  -0.045,
+  0.266,
+  1.5707963267948966
+ ],
+ "scan_plane_z_m": 0.266,
+ "shapes_in_plane": [
+  "walls/wall_north",
+  "walls/wall_south",
+  "walls/wall_east",
+  "walls/wall_west",
+  "box_a/link",
+  "box_b/link",
+  "pillar/link"
+ ],
+ "residual_mean_m": -0.006401225152243261,
+ "residual_median_m": -0.0001132813151509815,
+ "residual_abs_p95_m": 0.011913674011538861,
+ "residual_abs_max_m": 2.680506265831188,
+ "per_beam_expected_noise_m": 0.0015811388300841897,
+ "surfaces": {
+  "box_a/link": {
+   "beams": 17,
+   "median_residual_m": -0.00041751308729343073,
+   "mean_residual_m": 0.15740571094624617,
+   "max_abs_residual_m": 2.680506265831188
+  },
+  "box_b/link": {
+   "beams": 24,
+   "median_residual_m": 0.001599364855392249,
+   "mean_residual_m": 0.0013967886967167498,
+   "max_abs_residual_m": 0.01801546724136771
+  },
+  "pillar/link": {
+   "beams": 11,
+   "median_residual_m": 0.0012461210252465715,
+   "mean_residual_m": 0.00126603078776788,
+   "max_abs_residual_m": 0.006947076521366391
+  },
+  "walls/wall_east": {
+   "beams": 72,
+   "median_residual_m": -0.0002183904236530143,
+   "mean_residual_m": -0.035720395193587565,
+   "max_abs_residual_m": 2.5638978197643323
+  },
+  "walls/wall_north": {
+   "beams": 76,
+   "median_residual_m": -0.0008935861582062277,
+   "mean_residual_m": -0.031575098060214656,
+   "max_abs_residual_m": 2.381855573811267
+  },
+  "walls/wall_south": {
+   "beams": 70,
+   "median_residual_m": -0.00015569651295055387,
+   "mean_residual_m": -0.00028284153701995583,
+   "max_abs_residual_m": 0.015206856408705338
+  },
+  "walls/wall_west": {
+   "beams": 83,
+   "median_residual_m": 0.00012680636141260138,
+   "mean_residual_m": 0.00010115640832903842,
+   "max_abs_residual_m": 0.015382726129309798
+  }
+ },
+ "fit_lidar_world_xy_yaw": [
+  0.05131118769442443,
+  -0.04489457181306974,
+  1.5709813800529664
+ ],
+ "fit_minus_expected_m_m_rad": [
+  0.0003111876944244321,
+  0.00010542818693026063,
+  0.00018505325806983383
+ ],
+ "fit_1sigma_m_m_rad": [
+  0.015463467756544,
+  0.015931252817627736,
+  0.007584991291679994
+ ],
+ "fit_1sigma_robust_m_m_rad": [
+  0.0002506150099969612,
+  0.0002581963597695772,
+  0.00012292926129630892
+ ],
+ "fit_residual_robust_sigma_m": 0.0038195359512110255,
+ "seam_beams_excluded": 0,
+ "fit_residual_rms_m": 0.2346697368185572,
+ "fit_beams_used": 353
+}

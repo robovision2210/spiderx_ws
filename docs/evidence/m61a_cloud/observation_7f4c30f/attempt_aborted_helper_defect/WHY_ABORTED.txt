@@ -1,0 +1,17 @@
+Aborted attempt (09:02:03-09:04:33 UTC), not counted as an observation run.
+
+The launch itself came up normally: entity created, joint_state_broadcaster and
+leg_trajectory_controller "Configured and activated" at about 09:02:55 (launch.log).
+The evidence helper stage_wait_controllers.sh never recognised this, for two reasons in the
+helper, not in the system under test:
+  1. the ros2 CLI daemon it auto-started answered every query with
+     xmlrpc Fault "RuntimeError: !rclpy.ok()" (daemon_restart.txt: after `ros2 daemon stop/start`
+     the same query listed both controllers active);
+  2. `ros2 control list_controllers` colours its output with ANSI escape codes, so the helper's
+     pattern '^(joint_state_broadcaster|leg_trajectory_controller).* active' could never match.
+The helper was stopped at 09:04:27; run_one.sh then ran the normal stop path (SIGINT to the launch
+process group: empty after 6 s; daemon stopped). The cleanup check listed "[Xvfb] <defunct>"
+because it ran one second after Xvfb was signalled; the zombie was reaped moments later (no such
+pid at 09:05). No preflight, observation or capture ran; no command was sent.
+Fixes before run_01: strip ANSI codes; restart the daemon when it reports !rclpy.ok(); wait for
+Xvfb to exit before the leftover check.

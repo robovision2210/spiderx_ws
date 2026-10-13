@@ -1,0 +1,24 @@
+Failed launch attempt (09:05:31-09:10:51 UTC). Not an observation run: the robot never existed in
+the simulation, no preflight, observation or capture ran, nothing was commanded.
+
+What happened (launch.log, gazebo_gui_auto_default.log, gazebo_server_log_dirs.txt):
+- 09:05:36 the Gazebo GUI started, logged "Waiting for subscribers to [/gazebo/starting_world]",
+  found one immediately, created its main window and then asked the server for the world names
+  every 5 s until shutdown (09:10:51) without an answer;
+- the Gazebo server never wrote its console log: no ~/.ignition/gazebo/log/<UTC> directory for this
+  launch (the previous launch's 09:02:21 directory is the newest), so it never loaded the world;
+- `create` asked for the world names for ~2 min, gave up (exit 255); no entity, so no
+  gz_ros2_control and no /controller_manager; the joint_state_broadcaster spawner timed out
+  (exit 1) and the SpiderX launch reported "joint_state_broadcaster startup failed";
+- at Ctrl+C the launcher had to SIGKILL the hung server ("Escalating to SIGKILL on [Ignition
+  Gazebo Server]"). The QML "TypeError ... of null" lines are from the GUI teardown at 09:10:51.
+
+Explanation: in GUI mode the dedicated launch runs `ign gazebo -r -v 2 <world>`; Fortress's
+launcher (lib/ruby/ignition/cmdgazebo6.rb: 'wait_gui' => 1 unless -s or -g) makes the server wait
+for the GUI to publish the starting world on /gazebo/starting_world ("Waiting for a world to be set
+from the GUI..." in libignition-gazebo6-ign.so) BEFORE it initialises logging or loads the world.
+The GUI published once after discovering the subscriber; the server evidently never received it
+and waited forever. This is a GUI-to-server startup handshake race inside Gazebo Fortress, outside
+SpiderX code; it occurred in 1 of the 2 launches so far (the first launch loaded in 15 s).
+Not retried silently: recorded here; the helper now detects a dead `create`/failed spawner at
+once and captures Gazebo process/topic diagnostics if it recurs.

@@ -1,0 +1,25 @@
+== Packages and installed files
+  [PASS] spiderx_controller
+  [PASS] spiderx_bringup
+  [PASS] gz_ros2_control
+  [PASS] ros_gz_bridge
+  [PASS] tf2_msgs
+  [PASS] installed share/spiderx_controller/config/m2_simulation_postures.yaml
+  [PASS] installed lib/spiderx_controller/run_posture_hold_test.py
+  [PASS] installed fortress_posture_hold.launch.py
+== Static configuration
+  [PASS] controller configs, <ros2_control> and M2 posture config match the URDF
+         M2 posture cad_neutral_simulation_hold (simulation_only): 12 leg joints (4 legs x 3), targets = cad_neutral, inside URDF limits -/+ 0.05 rad
+  [PASS] ros2 launch spiderx_bringup fortress_posture_hold.launch.py --show-args
+  [PASS] M2 files reference no hardware driver
+  [PASS] no wheel, diff-drive, /cmd_vel, /odom or mechaprime logic in M2 files
+  [PASS] ground-truth pose bridge is remapped away from /tf
+== Invalid posture configs are refused before anything is sent (no simulator needed)
+  [PASS] out-of-limit target lf_foot_joint 0.6 refused (REFUSED: invalid M2 posture configuration: lf_foot_joint target 0.6000 rad is outside the )
+  [PASS] target inside URDF limit but inside the 0.05 margin (lf_foot_joint 0.40) refused (REFUSED: invalid M2 posture configuration: lf_foot_joint target 0.4000 rad is outside the )
+  [PASS] unknown joint left_wheel_joint refused (REFUSED: invalid M2 posture configuration: pose joints differ from the 12 SpiderX joints ()
+  [PASS] simulation_only: false refused (REFUSED: invalid M2 posture configuration: top-level simulation_only: true is required)
+
+Scope: simulation-only posture hold of the existing CAD neutral pose.
+Not balance, walking, IK, odometry or hardware validation.
+All M2 checks passed.

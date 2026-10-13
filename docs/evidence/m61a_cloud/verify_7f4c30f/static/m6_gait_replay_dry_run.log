@@ -1,0 +1,3 @@
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+Dry run PASS: trajectory 241760e7dfd5ef12, content 94a492c43fcc0461, goal fingerprint 9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a; nothing sent

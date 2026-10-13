@@ -1,0 +1,2 @@
+label=orig_load8_3 stack=original burners=8 start=2026-10-09T08:29:01.820Z loadavg=3.93 1.05 0.36 nproc=4
+rc=0 end=2026-10-09T08:29:20.578Z

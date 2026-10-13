@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+  SpiderX FIXED-BASE model (M6.1-A, SIMULATION ONLY). Used only by
+  spiderx_bringup/launch/fortress_m61a_fixed_base.launch.py; free-base launches never include it.
+
+  It includes the UNCHANGED spiderx.urdf.xacro (all of its arguments, e.g. sim_backend,
+  enable_control and controllers_file, pass through) and adds exactly two elements:
+    * a link named "world" (empty: no inertia, visual or collision);
+    * ONE fixed joint "spiderx_fixed_base_weld" world -> dummy_link whose origin is the mounting
+      transform T_world_dummy (Approach B, docs/M61A_FIXED_BASE_IMPLEMENTATION.md).
+
+  sdformat 12 turns this into a fixed joint with <parent>world</parent> and pose = the origin,
+  relative to the model frame; dummy_link (which carries the merged base_link) sits at that pose.
+  The model must therefore be spawned at the IDENTITY pose (create -x 0 -y 0 -z 0 -Y 0), otherwise
+  the spawn transform is applied a second time. Roll and pitch are fixed at 0 (gravity stays along
+  the body z axis); only x, y, z and yaw are arguments.
+
+  mount_z default: PROVISIONAL (0.125 m) = the guaranteed clearance bound of every reachable joint
+  configuration (URDF limits + 0.02 rad) plus a 0.015 m margin, rounded up to 5 mm
+  (m61a_clearance; docs/M61A_FIXED_BASE_IMPLEMENTATION.md section 3). It must equal
+  config/m61a_fixed_base.yaml mount.z_m; a test checks that. Runtime acceptance is pending.
+-->
+<robot name="spiderx" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="mount_x" default="0.0"/>
+  <xacro:arg name="mount_y" default="0.0"/>
+  <xacro:arg name="mount_z" default="0.125"/>
+  <xacro:arg name="mount_yaw" default="0.0"/>
+
+  <xacro:include filename="$(find spiderx_description)/urdf/spiderx.urdf.xacro"/>
+
+  <link name="world"/>
+
+  <joint name="spiderx_fixed_base_weld" type="fixed">
+    <parent link="world"/>
+    <child link="dummy_link"/>
+    <origin xyz="$(arg mount_x) $(arg mount_y) $(arg mount_z)" rpy="0 0 $(arg mount_yaw)"/>
+  </joint>
+
+</robot>

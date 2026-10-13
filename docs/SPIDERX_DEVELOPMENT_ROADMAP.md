@@ -146,7 +146,10 @@ protected replay (not implemented). Odometry is now M7 (see the numbering note a
 - [x] PR #16 review corrections (offline/mock/isolated-domain only): evidence persistence and exception safety, send-time freshness, interruptible confirmation, isolated end-to-end success path, identity pins ([design §8](M6D_LIVE_ENABLING_DESIGN.md))
 - [ ] M6.0-D enabling commit (two lines; separate owner approval after a final audit)
 - [ ] M6.0-D local live playback: one valid neutral → `crouch_10mm` → neutral goal on the owner's PC (needs a separate owner approval, an enabling change and the manual runtime checklist; no goal has been sent)
-- [ ] M6.1: protected replay of an offline-validated gait cycle (future work, not implemented; deferred by D2; needs a separate plan)
+- [x] M6.1: protected replay of ONE offline-validated trot cycle — design `7b8798c`, implementation `6a7f1f0` (offline/mock/isolated-domain verified; live dispatch hard-disabled) — [notes](M61_IMPLEMENTATION_NOTES.md)
+- [x] M6.1-A: fixed-base simulation and body-pose observability — Approach B weld via a wrapper xacro and a dedicated launch, provisional 0.125 m mount from a guaranteed clearance bound, composed body pose, attachment gate G8, read-only observer; Cloud offline/mock/isolated verified ([implementation](M61A_FIXED_BASE_IMPLEMENTATION.md))
+- [ ] M6.1-A phase 1: launch-only fixed-base observation on the owner's PC (confirms the height, tolerances and pose gaps)
+- [x] M6.1 phase 2: one approved fixed-base trot cycle (separate approval and enabling change), **PASSED in Cloud simulation** on 2026-10-12 at the third authorization ([Cloud report §15](M61A_CLOUD_VERIFICATION.md)): 1 goal, 0 cancels, E1–E11. Welded body; not walking. It was attempted once in Cloud on 2026-10-12 and refused before dispatch, with 0 goals ([Cloud report §11](M61A_CLOUD_VERIFICATION.md)); the readiness refusal was fixed at `61f3ffc` (§12). A second authorized attempt sent 1 goal, which was cancelled by a client tracking-reference defect: FAIL, not passed (§13). The defect is fixed at `b0d8e75` and rehearsed read-only (§14); another attempt needs a new authorization
 
 ## Future — Gait playback and walking in simulation (unscheduled; formerly the M4.5 goal)
 

@@ -1,0 +1,18 @@
+Tree: 1732c32 + docs/patches/m61_enable_one_cycle.UNAPPLIED.patch (temporary detached worktree; tests only, no simulator)
+<scratchpad>/e11_enabled/src/spiderx_controller/spiderx_controller/m61_live_contract.py:7:LIVE M6.1 DISPATCH IS HARD-DISABLED (M61_LIVE_DISPATCH_ENABLED = False). It is a SEPARATE gate from
+<scratchpad>/e11_enabled/src/spiderx_controller/spiderx_controller/m61_live_contract.py:19:M61_LIVE_DISPATCH_ENABLED = True
+<scratchpad>/e11_enabled/src/spiderx_controller/test/m61_gate.py:7:EXPECTED_M61_LIVE_DISPATCH_ENABLED = True
+Command: cd src/spiderx_controller && python3 -m pytest test -p no:cacheprovider -q (ROS_LOCALHOST_ONLY=1)
+
+=============================== warnings summary ===============================
+../../../../../../../../opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+    import sre_parse
+
+../../../../../../../../opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+    import sre_constants
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1517 passed, 2 warnings in 469.30s (0:07:49)
+exit=0

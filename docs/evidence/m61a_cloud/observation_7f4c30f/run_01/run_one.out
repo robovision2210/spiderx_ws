@@ -1,0 +1,77 @@
+[09:13:42] start
+launch pid 20263 pgid 20263 xvfb 20258
+[09:13:46] wait controllers
+both controllers active after 13 s of polling
+[INFO] [1791537237.356542677] [_ros2cli_20564]: waiting for service /controller_manager/list_controllers to become available...
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+[09:14:02] preflight
+SpiderX M6.1-A fixed-base observer (READ-ONLY: no goal, no command, no publisher)
+READY: all fixed-base checks pass
+  PASS  action_clients
+  PASS  attachment
+  PASS  body_pose_fresh
+  PASS  command_publishers
+  PASS  controllers
+  PASS  frame_body_link
+  PASS  joint_state_publishers
+  PASS  joint_states
+  PASS  robot_description
+  PASS  sim_clock
+  PASS  spawn_identity
+Evidence: /home/user/spiderx_ws/spiderx_evidence/m61a_cloud_obs_20261009T083909Z/run_01/observer/20261009T091407Z/observation.json
+preflight exit=0
+[09:14:07] observe 120 s
+SpiderX M6.1-A fixed-base observer (READ-ONLY: no goal, no command, no publisher)
+READY: all fixed-base checks pass
+  PASS  action_clients
+  PASS  attachment
+  PASS  body_pose_fresh
+  PASS  command_publishers
+  PASS  controllers
+  PASS  frame_body_link
+  PASS  joint_state_publishers
+  PASS  joint_states
+  PASS  robot_description
+  PASS  sim_clock
+  PASS  spawn_identity
+Evidence: /home/user/spiderx_ws/spiderx_evidence/m61a_cloud_obs_20261009T083909Z/run_01/observer/20261009T091611Z/observation.json
+observe exit=0
+[09:16:11] captures
+scans 40 joint_states 644 poses 532 clock 5788 weld {'type': 'fixed', 'parent': 'world', 'child': 'dummy_link', 'xyz': '0.0 0.0 0.125', 'rpy': '0 0 0.0'} own_publishers ['/parameter_events'] command_messages 0 action_status 0 controller_state 0 (None)
+capture exit=0
+screenshot exit=0
+[09:16:34] scan check
+[09:16:36] views
+screenshot exit=0
+move_to spiderx screenshot exit=0
+side view screenshot exit=0
+[09:16:48] stop
+SIGINT sent to process group 20263
+process group empty after 3 s
+The daemon has been stopped
+--- remaining (expect nothing):
+none
+[09:16:53] analysis
+PASS 1   preflight READY                                                        [[]]
+PASS 1b  120 s observation READY at its end                                     []
+PASS 2a  body z mean within 1 mm of 0.125 m                                     0.125
+PASS 2a  body z range <= 1 mm                                                   0
+PASS 2b  attachment max translation <= 1 mm                                     0
+PASS 2b  attachment max rotation <= 0.0033 rad                                  0
+PASS 2c  spawn deviation <= 1 mm                                                0
+PASS 2d  link deviation <= 0.1 mm                                               0
+PASS 2e  tilt <= 0.0033 rad                                                     0
+PASS 3   pose receipt max gap < 1.0 s (wall)                                    {"count": 6846, "mean_s": 0.01782366791132213, "p99_s": 0.03843878199995743, "p999_s": 0.05305320200022834, "m
+PASS 3   joint-state sim gap max <= 0.25 s                                      0.05
+PASS 4   no unexpected pose sample codes                                        {}
+PASS 7   command ownership: no other commander visible                          {"ros2_action_info_clients": 0, "ros2_topic_info_publishers": 0, "observer_start": {"command_publishers": 0, "
+PASS M   running /robot_description weld = world->dummy_link (0, 0, 0.125, rpy 0) {"type": "fixed", "parent": "world", "child": "dummy_link", "xyz": "0.0 0.0 0.125", "rpy": "0 0 0.0"}
+PASS Z2  capture: 0 messages on the command topic and no action goal status     {"command_messages": 0, "status_messages": 0, "goal_statuses": []}
+FAIL Z3  controller reference constant over the capture (holding, no new command) {"type": null, "messages": 0, "max_ref_change_rad": null}
+PASS Z   no trajectory goal or topic command reached the controller (launch log) 0
+PASS 6   /scan: per-surface median residual within +-8 mm (supplementary)       {"box_a/link": -0.0008021835490252816, "box_b/link": 0.002420947001931628, "pillar/link": 0.000459652320937919
+PASS 6   /scan: fitted lidar planar pose within 8 mm of the weld-implied pose   [0.0003995593484173582, 0.0001602881656697433, 0.00011446933839565077]
+PASS 8   clean shutdown: launch group empty, nothing left                       "none"
+[09:16:54] end
+RUN_ONE_EXIT=0

@@ -1,0 +1,22 @@
+# disabled build: working tree = 61f3ffc + the mode-explicit test fix (committed next); gates False
+# rm -rf build install && colcon build --symlink-install (setuptools-59 path first); PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 colcon test; colcon test-result --all
+Summary: 8 packages finished [11.8s]
+build exit=0
+Summary: 8 packages finished [7min 10s]
+test exit=0
+build/spiderx_controller/test_results/spiderx_controller/test_m61_discovery.xunit.xml: 58 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m61_gait_replay.xunit.xml: 164 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m61_restore_script.xunit.xml: 8 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m61a_clearance.xunit.xml: 11 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m61a_fixed_base.xunit.xml: 105 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m61a_link_check.xunit.xml: 30 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m61a_observer.xunit.xml: 27 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m6d_adapter_isolated.xunit.xml: 15 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m6d_cli_readiness.xunit.xml: 29 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m6d_contract.xunit.xml: 83 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m6d_evidence_safety.xunit.xml: 23 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m6d_freshness_confirmation.xunit.xml: 30 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m6d_isolated_success.xunit.xml: 5 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m6d_live_enabling.xunit.xml: 33 tests, 0 errors, 0 failures, 0 skipped
+build/spiderx_controller/test_results/spiderx_controller/test_m6d_session.xunit.xml: 58 tests, 0 errors, 0 failures, 0 skipped
+Summary: 1626 tests, 0 errors, 0 failures, 0 skipped

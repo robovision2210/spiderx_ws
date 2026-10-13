@@ -1,0 +1,4 @@
+branch claude/stoic-shannon-ur2mes
+head 41fc10f038c52ebe54b1c388aa916ecd05e801a4
+status_porcelain_lines 0
+started 2026-10-09T07:53:35Z

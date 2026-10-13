@@ -1,0 +1,23 @@
+..                                                                       [100%]
+=============================== warnings summary ===============================
+test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+    import sre_parse
+
+test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+    import sre_constants
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+==================================== PASSES ====================================
+___________ test_gate_enabled_main_succeeds_end_to_end_with_one_goal ___________
+----------------------------- Captured stdout call -----------------------------
+SpiderX M6.0-D live-playback tool
+M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows motion, tracking, contact, balance or walking.
+Readiness passed (compatible or warning). Type SEND-ONE-CROUCH-GOAL to send ONE goal (neutral -> crouch_10mm -> neutral) to the running simulation on ROS domain 193; anything else, EOF or Ctrl+C refuses:
+Live: final state SUCCEEDED, reason None, goals sent 1, cancels sent 0; no retry, no second goal
+Report: /home/user/spiderx_ws/spiderx_evidence/m6d_diag_20261009T082638Z/runs/orig_noload_06/basetemp/test_gate_enabled_main_succeed0/live/20261009T083807Z/live_outcome.json
+=========================== short test summary info ============================
+PASSED test/test_m6d_isolated_success.py::test_isolation_preconditions
+PASSED test/test_m6d_isolated_success.py::test_gate_enabled_main_succeeds_end_to_end_with_one_goal
+2 passed, 2 warnings in 16.62s

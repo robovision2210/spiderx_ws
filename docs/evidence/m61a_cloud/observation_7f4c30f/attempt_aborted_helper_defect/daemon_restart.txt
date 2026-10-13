@@ -1,0 +1,9 @@
+09:04:05 daemon diagnosis
+The daemon is running
+The daemon has been stopped
+The daemon has been started
+The daemon is running
+[INFO] [1791536649.823103927] [_ros2cli_18759]: waiting for service /controller_manager/list_controllers to become available...
+[92mjoint_state_broadcaster  [0m joint_state_broadcaster/JointStateBroadcaster          [92mactive[0m
+[92mleg_trajectory_controller[0m joint_trajectory_controller/JointTrajectoryController  [92mactive[0m
+list exit=0

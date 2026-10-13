@@ -1,0 +1,16 @@
+[06:17:51] start
+launch pid 2716 pgid 2716 xvfb 2713
+[06:17:55] wait controllers
+both controllers active after 50 s of polling
+[INFO] [1791613123.897714259] [_ros2cli_3095]: waiting for service /controller_manager/list_controllers to become available...
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+[06:18:48] description
+[06:18:51] record 15 s
+[06:19:06] stop
+SIGINT sent to process group 2716
+process group empty after 6 s
+The daemon has been stopped
+--- remaining (expect nothing):
+none
+[06:19:15] end

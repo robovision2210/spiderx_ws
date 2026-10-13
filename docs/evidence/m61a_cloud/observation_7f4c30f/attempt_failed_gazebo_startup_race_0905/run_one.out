@@ -1,0 +1,15 @@
+[09:05:31] start
+launch pid 19072 pgid 19072 xvfb 19067
+[09:05:35] wait controllers
+TIMEOUT waiting for controllers
+[INFO] [1791537035.115072062] [_ros2cli_19890]: waiting for service /controller_manager/list_controllers to become available...
+[WARN] [1791537045.128938060] [_ros2cli_19890]: Could not contact service /controller_manager/list_controllers
+[INFO] [1791537045.129474615] [_ros2cli_19890]: waiting for service /controller_manager/list_controllers to become available...
+failed to check service availability: rcl node's context is invalid, at /home/runner/conda-bld/bld/rattler-build_ros-humble-rcl_1753312600/work/ros-humble-rcl/src/work/src/rcl/node.c:428
+[09:10:49] CONTROLLERS NOT ACTIVE
+SIGINT sent to process group 19072
+process group empty after 10 s
+The daemon has been stopped
+--- remaining (expect nothing):
+none
+RUN_ONE_EXIT=1

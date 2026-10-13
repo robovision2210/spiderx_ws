@@ -1,0 +1,35 @@
+{
+ "schema": "spiderx.m61.tracking_reference_analysis/1",
+ "accept_sim_s": 29.814000000000004,
+ "feedback_start_estimate_s": 33.03,
+ "feedback_offset_s": 3.216,
+ "tool_max_inflight_error_rad": 0.08048874316872187,
+ "client_abort_threshold_rad": 0.05,
+ "reference_from_acceptance": {
+  "t0_sim_s": 29.814000000000004,
+  "tracked_samples": 322,
+  "max_abs_err_rad": 0.01075628552069477,
+  "at_stamp": 36.03,
+  "at_ref_time_s": 6.2159999999999975,
+  "first_tracked_ref_time_s": 3.0059999999999967,
+  "last_tracked_ref_time_s": 6.2159999999999975
+ },
+ "reference_from_feedback_estimate": {
+  "t0_sim_s": 33.03,
+  "tracked_samples": 1,
+  "max_abs_err_rad": 0.07676038052196638,
+  "at_stamp": 36.03,
+  "at_ref_time_s": 3.0,
+  "first_tracked_ref_time_s": 3.0,
+  "last_tracked_ref_time_s": 3.0
+ },
+ "controller_state": {
+  "type": "control_msgs/msg/JointTrajectoryControllerState",
+  "samples_in_goal_window": 255,
+  "desired_time_from_start_values": [
+   0.0
+  ],
+  "max_controller_reported_abs_error_rad": 0.012563583660917713,
+  "median_stamp_in_window": 32.909
+ }
+}

@@ -1,0 +1,208 @@
+{
+ "checks": {
+  "action_clients": {
+   "code": null,
+   "detail": 0,
+   "ok": true
+  },
+  "attachment": {
+   "code": null,
+   "detail": {
+    "dxy_m": 0.0,
+    "dz_m": 0.0,
+    "rotation_rad": 0.0,
+    "translation_m": 0.0
+   },
+   "ok": true
+  },
+  "body_pose_fresh": {
+   "code": null,
+   "detail": {
+    "age_s": 0.009859339999820804,
+    "latest_sample_codes": []
+   },
+   "ok": true
+  },
+  "body_pose_sim_progress": {
+   "code": null,
+   "detail": {
+    "min_sim_advance_s": 0.1,
+    "samples": 56,
+    "sim_advance_s": 0.6590000000000007,
+    "window_s": 1.0
+   },
+   "ok": true
+  },
+  "body_pose_xyz_rpy": [
+   0.0,
+   0.0,
+   0.125,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "body_tilt_rad": 0.0,
+  "command_publishers": {
+   "code": null,
+   "detail": 0,
+   "ok": true
+  },
+  "controllers": {
+   "code": null,
+   "detail": null,
+   "ok": true
+  },
+  "frame_body_link": {
+   "code": null,
+   "detail": {
+    "rotation_rad": 0.0,
+    "translation_m": 0.0
+   },
+   "ok": true
+  },
+  "joint_state_publishers": {
+   "code": null,
+   "detail": 1,
+   "ok": true
+  },
+  "joint_states": {
+   "code": null,
+   "detail": null,
+   "ok": true
+  },
+  "robot_description": {
+   "code": null,
+   "detail": {
+    "all_codes": [],
+    "fixed_base": true,
+    "weld_xyz_rpy": [
+     0.0,
+     0.0,
+     0.125,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "ok": true
+  },
+  "sim_clock": {
+   "code": null,
+   "detail": null,
+   "ok": true
+  },
+  "spawn_identity": {
+   "code": null,
+   "detail": {
+    "rotation_rad": 0.0,
+    "translation_m": 0.0
+   },
+   "ok": true
+  }
+ },
+ "config_sha256": "1c7966fc35fdcb19d4d43347cdee21fd5fbf99ad2a92248beac4ce327d4c40b9",
+ "controllers": {
+  "end": {
+   "joint_state_broadcaster": "active",
+   "leg_trajectory_controller": "active"
+  },
+  "start": {
+   "joint_state_broadcaster": "active",
+   "leg_trajectory_controller": "active"
+  }
+ },
+ "domain_id": 0,
+ "duration_s": 2.0,
+ "failure_codes": [],
+ "goals_sent": 0,
+ "graph": {
+  "end": {
+   "action_clients": 0,
+   "clock_publishers": [
+    "/spiderx_gz_bridge"
+   ],
+   "command_publishers": 0,
+   "description_publishers": [
+    "/robot_state_publisher"
+   ],
+   "joint_state_publishers": 1,
+   "pose_publishers": [
+    "/spiderx_sim_ground_truth_bridge"
+   ]
+  },
+  "start": {
+   "action_clients": 0,
+   "clock_publishers": [
+    "/spiderx_gz_bridge"
+   ],
+   "command_publishers": 0,
+   "description_publishers": [
+    "/robot_state_publisher"
+   ],
+   "joint_state_publishers": 1,
+   "pose_publishers": [
+    "/spiderx_sim_ground_truth_bridge"
+   ]
+  }
+ },
+ "milestone": "M6.1-A",
+ "mode": "preflight",
+ "non_claims": [
+  "READY shows a welded, observable, quiet plant; it shows no tracking, no gait, no contact, no balance and no walking.",
+  "Simulator ground truth (Gazebo SceneBroadcaster) is development evidence, not odometry or state estimation."
+ ],
+ "publishers_created": 0,
+ "ready": true,
+ "schema": "spiderx.m61a.observation/1",
+ "statistics": {
+  "attachment": {
+   "fraction_of_tolerance": 0.0,
+   "max_link_deviation_m": 0.0,
+   "max_rotation_rad": 0.0,
+   "max_spawn_deviation_m": 0.0,
+   "max_translation_m": 0.0
+  },
+  "body": {
+   "pitch_max_abs_rad": 0.0,
+   "roll_max_abs_rad": 0.0,
+   "samples": 157,
+   "tilt_max_rad": 0.0,
+   "xy_drift_m": 0.0,
+   "yaw_drift_rad": 0.0,
+   "z_max_m": 0.125,
+   "z_mean_m": 0.125,
+   "z_min_m": 0.125,
+   "z_range_m": 0.0
+  },
+  "clock": {
+   "poses_per_sim_second": 57.80559646539026,
+   "real_time_factor": 0.6784776275227744,
+   "sim_span_s": 2.716000000000001,
+   "wall_span_s": 4.003079673999764
+  },
+  "header_frame_ids": {
+   "": 314
+  },
+  "joint_state_receipt": {
+   "count": 272,
+   "max_s": 0.043191129000206274,
+   "mean_s": 0.014679848369004036,
+   "p999_s": 0.043191129000206274,
+   "p99_s": 0.03616952400034279
+  },
+  "joint_state_sim_gap_max_s": 0.010000000000001563,
+  "pose_receipt": {
+   "count": 157,
+   "max_s": 0.04842094700006783,
+   "mean_s": 0.016688988205128926,
+   "p999_s": 0.04842094700006783,
+   "p99_s": 0.03055024500008585
+  },
+  "sample_codes": {}
+ },
+ "tracker": {
+  "invalid_samples": {},
+  "latest_pose_codes": [],
+  "messages": 157
+ }
+}

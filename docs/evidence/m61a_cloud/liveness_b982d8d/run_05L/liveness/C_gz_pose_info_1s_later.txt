@@ -1,0 +1,2337 @@
+header {
+  stamp {
+    sec: 17
+    nsec: 771000000
+  }
+}
+pose {
+  name: "ground_plane"
+  id: 4
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "walls"
+  id: 8
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "box_a"
+  id: 21
+  position {
+    x: 1.5
+    y: 1
+    z: 0.25
+  }
+  orientation {
+    z: 0.19866933079506124
+    w: 0.98006657784124163
+  }
+}
+pose {
+  name: "box_b"
+  id: 25
+  position {
+    x: -1.2
+    y: -1.6
+    z: 0.2
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "pillar"
+  id: 29
+  position {
+    x: -1
+    y: 1.4
+    z: 0.3
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "spiderx"
+  id: 35
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 5
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_north"
+  id: 9
+  position {
+    y: 3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_south"
+  id: 12
+  position {
+    y: -3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_east"
+  id: 15
+  position {
+    x: 3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_west"
+  id: 18
+  position {
+    x: -3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 22
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 26
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 30
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link"
+  id: 36
+  position {
+    z: 0.125
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s4_c_horn_1"
+  id: 52
+  position {
+    x: 0.01
+    y: 0.0161
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: -4.8479614697874248e-05
+    w: 0.99999999882486346
+  }
+}
+pose {
+  name: "lf_c_horn_1"
+  id: 59
+  position {
+    x: -0.023701114872728336
+    y: 0.038849999999999996
+    z: 0.21374673241991693
+  }
+  orientation {
+    x: 2.2096722883667703e-05
+    y: -4.8479614686038792e-05
+    z: 1.0712406127447647e-09
+    w: 0.99999999858073085
+  }
+}
+pose {
+  name: "lf_foot_1"
+  id: 64
+  position {
+    x: -0.03669357279556365
+    y: -0.038928562469441652
+    z: 0.13596003493692488
+  }
+  orientation {
+    x: -2.122270040625528e-05
+    y: -4.8479614686956562e-05
+    z: -1.0288683397527363e-09
+    w: 0.99999999859966193
+  }
+}
+pose {
+  name: "b_s1_c_horn_1"
+  id: 67
+  position {
+    x: 0.092
+    y: -0.1061
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: 4.8479716650545291e-05
+    w: 0.99999999882485857
+  }
+}
+pose {
+  name: "rr_c_horn_1"
+  id: 74
+  position {
+    x: 0.12570111487507257
+    y: -0.14934999999999998
+    z: 0.21374673241304509
+  }
+  orientation {
+    x: 2.2099539522195731e-05
+    y: 4.84797166387068e-05
+    z: -1.0713794154025984e-09
+    w: 0.99999999858066368
+  }
+}
+pose {
+  name: "rr_foot_1"
+  id: 79
+  position {
+    x: 0.13869357278200428
+    y: -0.2271285620312547
+    z: 0.13596003448925564
+  }
+  orientation {
+    x: -2.1221950604571522e-05
+    y: 4.8479716639628358e-05
+    z: 1.0288341532905215e-09
+    w: 0.99999999859967292
+  }
+}
+pose {
+  name: "b_s2_c_horn_1"
+  id: 82
+  position {
+    x: 0.092
+    y: 0.0161
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: 4.8479716650545589e-05
+    w: 0.99999999882485857
+  }
+}
+pose {
+  name: "rf_c_horn_1"
+  id: 89
+  position {
+    x: 0.12570111487507257
+    y: 0.038849999999999996
+    z: 0.21374673241304509
+  }
+  orientation {
+    x: 2.2099539522195555e-05
+    y: 4.84797166387071e-05
+    z: -1.0713794154025967e-09
+    w: 0.99999999858066368
+  }
+}
+pose {
+  name: "rf_foot_1"
+  id: 94
+  position {
+    x: 0.13869357278200428
+    y: -0.038928562031254721
+    z: 0.13596003448925564
+  }
+  orientation {
+    x: -2.1221950604570519e-05
+    y: 4.8479716639628656e-05
+    z: 1.0288341532904789e-09
+    w: 0.99999999859967292
+  }
+}
+pose {
+  name: "b_s3_c_horn_1"
+  id: 97
+  position {
+    x: 0.0099999999999999985
+    y: -0.1061
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: -4.8479614697874661e-05
+    w: 0.99999999882486346
+  }
+}
+pose {
+  name: "lr_c_horn_1"
+  id: 104
+  position {
+    x: -0.02370111487272834
+    y: -0.14934999999999998
+    z: 0.21374673241991693
+  }
+  orientation {
+    x: 2.2096722883666724e-05
+    y: -4.8479614686039205e-05
+    z: 1.0712406127447265e-09
+    w: 0.99999999858073085
+  }
+}
+pose {
+  name: "lr_foot_1"
+  id: 109
+  position {
+    x: -0.030693572823766935
+    y: -0.22712856246944163
+    z: 0.13596061669230058
+  }
+  orientation {
+    x: -2.1222700406253833e-05
+    y: -4.8479614686956975e-05
+    z: -1.0288683397526749e-09
+    w: 0.99999999859966193
+  }
+}
+pose {
+  name: "visual"
+  id: 6
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 10
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 13
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 16
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 19
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 23
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 27
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 31
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "sunVisual"
+  id: 34
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__base_link_visual"
+  id: 37
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s4_1_visual_1"
+  id: 38
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s1_1_visual_2"
+  id: 39
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s2_1_visual_3"
+  id: 40
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__top_1_visual_4"
+  id: 41
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s3_1_visual_5"
+  id: 42
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__lidar_link_visual_6"
+  id: 43
+  position {
+    x: 0.051
+    y: -0.045
+    z: 0.131
+  }
+  orientation {
+    z: 0.70710678118654724
+    w: 0.70710678118654779
+  }
+}
+pose {
+  name: "b_s4_c_horn_1_visual"
+  id: 53
+  position {
+    x: -0.01
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s4_c_horn_1_fixed_joint_lump__lf_holder_suppor1_1_visual_1"
+  id: 54
+  position {
+    x: -0.01
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s4_c_horn_1_fixed_joint_lump__lf_holder_1_visual_2"
+  id: 55
+  position {
+    x: -0.01
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lf_c_horn_1_visual"
+  id: 60
+  position {
+    x: 0.0237
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lf_c_horn_1_fixed_joint_lump__lf_thigh_1_visual_1"
+  id: 61
+  position {
+    x: 0.0237
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lf_foot_1_visual"
+  id: 65
+  position {
+    x: 0.0367
+    y: 0.038932
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s1_c_horn_1_visual"
+  id: 68
+  position {
+    x: -0.092
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s1_c_horn_1_fixed_joint_lump__rr_holder_suppor1_1_visual_1"
+  id: 69
+  position {
+    x: -0.092
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s1_c_horn_1_fixed_joint_lump__rr_holder_1_visual_2"
+  id: 70
+  position {
+    x: -0.092
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rr_c_horn_1_visual"
+  id: 75
+  position {
+    x: -0.1257
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rr_c_horn_1_fixed_joint_lump__rr_thigh_1_visual_1"
+  id: 76
+  position {
+    x: -0.1257
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rr_foot_1_visual"
+  id: 80
+  position {
+    x: -0.1387
+    y: 0.227132
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s2_c_horn_1_visual"
+  id: 83
+  position {
+    x: -0.092
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s2_c_horn_1_fixed_joint_lump__rf_holder_suppor1_1_visual_1"
+  id: 84
+  position {
+    x: -0.092
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s2_c_horn_1_fixed_joint_lump__rf_holder_1_visual_2"
+  id: 85
+  position {
+    x: -0.092
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rf_c_horn_1_visual"
+  id: 90
+  position {
+    x: -0.1257
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rf_c_horn_1_fixed_joint_lump__rf_thigh_1_visual_1"
+  id: 91
+  position {
+    x: -0.1257
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rf_foot_1_visual"
+  id: 95
+  position {
+    x: -0.1387
+    y: 0.038932
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s3_c_horn_1_visual"
+  id: 98
+  position {
+    x: -0.01
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s3_c_horn_1_fixed_joint_lump__lr_holder_suppor1_1_visual_1"
+  id: 99
+  position {
+    x: -0.01
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s3_c_horn_1_fixed_joint_lump__lr_holder_1_visual_2"
+  id: 100
+  position {
+    x: -0.01
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lr_c_horn_1_visual"
+  id: 105
+  position {
+    x: 0.0237
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lr_c_horn_1_fixed_joint_lump__lr_thigh_1_visual_1"
+  id: 106
+  position {
+    x: 0.0237
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lr_foot_1_visual"
+  id: 110
+  position {
+    x: 0.0307
+    y: 0.227132
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "sun"
+  id: 33
+  position {
+    z: 10
+  }
+  orientation {
+    w: 1
+  }
+}
+
+header {
+  stamp {
+    sec: 17
+    nsec: 788000000
+  }
+}
+pose {
+  name: "ground_plane"
+  id: 4
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "walls"
+  id: 8
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "box_a"
+  id: 21
+  position {
+    x: 1.5
+    y: 1
+    z: 0.25
+  }
+  orientation {
+    z: 0.19866933079506124
+    w: 0.98006657784124163
+  }
+}
+pose {
+  name: "box_b"
+  id: 25
+  position {
+    x: -1.2
+    y: -1.6
+    z: 0.2
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "pillar"
+  id: 29
+  position {
+    x: -1
+    y: 1.4
+    z: 0.3
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "spiderx"
+  id: 35
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 5
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_north"
+  id: 9
+  position {
+    y: 3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_south"
+  id: 12
+  position {
+    y: -3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_east"
+  id: 15
+  position {
+    x: 3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_west"
+  id: 18
+  position {
+    x: -3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 22
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 26
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 30
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link"
+  id: 36
+  position {
+    z: 0.125
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s4_c_horn_1"
+  id: 52
+  position {
+    x: 0.01
+    y: 0.0161
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: -4.8479614697874248e-05
+    w: 0.99999999882486346
+  }
+}
+pose {
+  name: "lf_c_horn_1"
+  id: 59
+  position {
+    x: -0.023701114872728336
+    y: 0.038849999999999996
+    z: 0.21374673241991693
+  }
+  orientation {
+    x: 2.2096722883667703e-05
+    y: -4.8479614686038792e-05
+    z: 1.0712406127447647e-09
+    w: 0.99999999858073085
+  }
+}
+pose {
+  name: "lf_foot_1"
+  id: 64
+  position {
+    x: -0.03669357279556365
+    y: -0.038928562469441652
+    z: 0.13596003493692488
+  }
+  orientation {
+    x: -2.122270040625528e-05
+    y: -4.8479614686956562e-05
+    z: -1.0288683397527363e-09
+    w: 0.99999999859966193
+  }
+}
+pose {
+  name: "b_s1_c_horn_1"
+  id: 67
+  position {
+    x: 0.092
+    y: -0.1061
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: 4.8479716650545291e-05
+    w: 0.99999999882485857
+  }
+}
+pose {
+  name: "rr_c_horn_1"
+  id: 74
+  position {
+    x: 0.12570111487507257
+    y: -0.14934999999999998
+    z: 0.21374673241304509
+  }
+  orientation {
+    x: 2.2099539522195731e-05
+    y: 4.84797166387068e-05
+    z: -1.0713794154025984e-09
+    w: 0.99999999858066368
+  }
+}
+pose {
+  name: "rr_foot_1"
+  id: 79
+  position {
+    x: 0.13869357278200428
+    y: -0.2271285620312547
+    z: 0.13596003448925564
+  }
+  orientation {
+    x: -2.1221950604571522e-05
+    y: 4.8479716639628358e-05
+    z: 1.0288341532905215e-09
+    w: 0.99999999859967292
+  }
+}
+pose {
+  name: "b_s2_c_horn_1"
+  id: 82
+  position {
+    x: 0.092
+    y: 0.0161
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: 4.8479716650545589e-05
+    w: 0.99999999882485857
+  }
+}
+pose {
+  name: "rf_c_horn_1"
+  id: 89
+  position {
+    x: 0.12570111487507257
+    y: 0.038849999999999996
+    z: 0.21374673241304509
+  }
+  orientation {
+    x: 2.2099539522195555e-05
+    y: 4.84797166387071e-05
+    z: -1.0713794154025967e-09
+    w: 0.99999999858066368
+  }
+}
+pose {
+  name: "rf_foot_1"
+  id: 94
+  position {
+    x: 0.13869357278200428
+    y: -0.038928562031254721
+    z: 0.13596003448925564
+  }
+  orientation {
+    x: -2.1221950604570519e-05
+    y: 4.8479716639628656e-05
+    z: 1.0288341532904789e-09
+    w: 0.99999999859967292
+  }
+}
+pose {
+  name: "b_s3_c_horn_1"
+  id: 97
+  position {
+    x: 0.0099999999999999985
+    y: -0.1061
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: -4.8479614697874661e-05
+    w: 0.99999999882486346
+  }
+}
+pose {
+  name: "lr_c_horn_1"
+  id: 104
+  position {
+    x: -0.02370111487272834
+    y: -0.14934999999999998
+    z: 0.21374673241991693
+  }
+  orientation {
+    x: 2.2096722883666724e-05
+    y: -4.8479614686039205e-05
+    z: 1.0712406127447265e-09
+    w: 0.99999999858073085
+  }
+}
+pose {
+  name: "lr_foot_1"
+  id: 109
+  position {
+    x: -0.030693572823766935
+    y: -0.22712856246944163
+    z: 0.13596061669230058
+  }
+  orientation {
+    x: -2.1222700406253833e-05
+    y: -4.8479614686956975e-05
+    z: -1.0288683397526749e-09
+    w: 0.99999999859966193
+  }
+}
+pose {
+  name: "visual"
+  id: 6
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 10
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 13
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 16
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 19
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 23
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 27
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 31
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "sunVisual"
+  id: 34
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__base_link_visual"
+  id: 37
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s4_1_visual_1"
+  id: 38
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s1_1_visual_2"
+  id: 39
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s2_1_visual_3"
+  id: 40
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__top_1_visual_4"
+  id: 41
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s3_1_visual_5"
+  id: 42
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__lidar_link_visual_6"
+  id: 43
+  position {
+    x: 0.051
+    y: -0.045
+    z: 0.131
+  }
+  orientation {
+    z: 0.70710678118654724
+    w: 0.70710678118654779
+  }
+}
+pose {
+  name: "b_s4_c_horn_1_visual"
+  id: 53
+  position {
+    x: -0.01
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s4_c_horn_1_fixed_joint_lump__lf_holder_suppor1_1_visual_1"
+  id: 54
+  position {
+    x: -0.01
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s4_c_horn_1_fixed_joint_lump__lf_holder_1_visual_2"
+  id: 55
+  position {
+    x: -0.01
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lf_c_horn_1_visual"
+  id: 60
+  position {
+    x: 0.0237
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lf_c_horn_1_fixed_joint_lump__lf_thigh_1_visual_1"
+  id: 61
+  position {
+    x: 0.0237
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lf_foot_1_visual"
+  id: 65
+  position {
+    x: 0.0367
+    y: 0.038932
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s1_c_horn_1_visual"
+  id: 68
+  position {
+    x: -0.092
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s1_c_horn_1_fixed_joint_lump__rr_holder_suppor1_1_visual_1"
+  id: 69
+  position {
+    x: -0.092
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s1_c_horn_1_fixed_joint_lump__rr_holder_1_visual_2"
+  id: 70
+  position {
+    x: -0.092
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rr_c_horn_1_visual"
+  id: 75
+  position {
+    x: -0.1257
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rr_c_horn_1_fixed_joint_lump__rr_thigh_1_visual_1"
+  id: 76
+  position {
+    x: -0.1257
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rr_foot_1_visual"
+  id: 80
+  position {
+    x: -0.1387
+    y: 0.227132
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s2_c_horn_1_visual"
+  id: 83
+  position {
+    x: -0.092
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s2_c_horn_1_fixed_joint_lump__rf_holder_suppor1_1_visual_1"
+  id: 84
+  position {
+    x: -0.092
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s2_c_horn_1_fixed_joint_lump__rf_holder_1_visual_2"
+  id: 85
+  position {
+    x: -0.092
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rf_c_horn_1_visual"
+  id: 90
+  position {
+    x: -0.1257
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rf_c_horn_1_fixed_joint_lump__rf_thigh_1_visual_1"
+  id: 91
+  position {
+    x: -0.1257
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rf_foot_1_visual"
+  id: 95
+  position {
+    x: -0.1387
+    y: 0.038932
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s3_c_horn_1_visual"
+  id: 98
+  position {
+    x: -0.01
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s3_c_horn_1_fixed_joint_lump__lr_holder_suppor1_1_visual_1"
+  id: 99
+  position {
+    x: -0.01
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s3_c_horn_1_fixed_joint_lump__lr_holder_1_visual_2"
+  id: 100
+  position {
+    x: -0.01
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lr_c_horn_1_visual"
+  id: 105
+  position {
+    x: 0.0237
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lr_c_horn_1_fixed_joint_lump__lr_thigh_1_visual_1"
+  id: 106
+  position {
+    x: 0.0237
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lr_foot_1_visual"
+  id: 110
+  position {
+    x: 0.0307
+    y: 0.227132
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "sun"
+  id: 33
+  position {
+    z: 10
+  }
+  orientation {
+    w: 1
+  }
+}
+
+header {
+  stamp {
+    sec: 17
+    nsec: 800000000
+  }
+}
+pose {
+  name: "ground_plane"
+  id: 4
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "walls"
+  id: 8
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "box_a"
+  id: 21
+  position {
+    x: 1.5
+    y: 1
+    z: 0.25
+  }
+  orientation {
+    z: 0.19866933079506124
+    w: 0.98006657784124163
+  }
+}
+pose {
+  name: "box_b"
+  id: 25
+  position {
+    x: -1.2
+    y: -1.6
+    z: 0.2
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "pillar"
+  id: 29
+  position {
+    x: -1
+    y: 1.4
+    z: 0.3
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "spiderx"
+  id: 35
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 5
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_north"
+  id: 9
+  position {
+    y: 3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_south"
+  id: 12
+  position {
+    y: -3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_east"
+  id: 15
+  position {
+    x: 3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "wall_west"
+  id: 18
+  position {
+    x: -3.05
+    z: 0.25
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 22
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 26
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "link"
+  id: 30
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link"
+  id: 36
+  position {
+    z: 0.125
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s4_c_horn_1"
+  id: 52
+  position {
+    x: 0.01
+    y: 0.0161
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: -4.8479614697874248e-05
+    w: 0.99999999882486346
+  }
+}
+pose {
+  name: "lf_c_horn_1"
+  id: 59
+  position {
+    x: -0.023701114872728336
+    y: 0.038849999999999996
+    z: 0.21374673241991693
+  }
+  orientation {
+    x: 2.2096722883667703e-05
+    y: -4.8479614686038792e-05
+    z: 1.0712406127447647e-09
+    w: 0.99999999858073085
+  }
+}
+pose {
+  name: "lf_foot_1"
+  id: 64
+  position {
+    x: -0.03669357279556365
+    y: -0.038928562469441652
+    z: 0.13596003493692488
+  }
+  orientation {
+    x: -2.122270040625528e-05
+    y: -4.8479614686956562e-05
+    z: -1.0288683397527363e-09
+    w: 0.99999999859966193
+  }
+}
+pose {
+  name: "b_s1_c_horn_1"
+  id: 67
+  position {
+    x: 0.092
+    y: -0.1061
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: 4.8479716650545291e-05
+    w: 0.99999999882485857
+  }
+}
+pose {
+  name: "rr_c_horn_1"
+  id: 74
+  position {
+    x: 0.12570111487507257
+    y: -0.14934999999999998
+    z: 0.21374673241304509
+  }
+  orientation {
+    x: 2.2099539522195731e-05
+    y: 4.84797166387068e-05
+    z: -1.0713794154025984e-09
+    w: 0.99999999858066368
+  }
+}
+pose {
+  name: "rr_foot_1"
+  id: 79
+  position {
+    x: 0.13869357278200428
+    y: -0.2271285620312547
+    z: 0.13596003448925564
+  }
+  orientation {
+    x: -2.1221950604571522e-05
+    y: 4.8479716639628358e-05
+    z: 1.0288341532905215e-09
+    w: 0.99999999859967292
+  }
+}
+pose {
+  name: "b_s2_c_horn_1"
+  id: 82
+  position {
+    x: 0.092
+    y: 0.0161
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: 4.8479716650545589e-05
+    w: 0.99999999882485857
+  }
+}
+pose {
+  name: "rf_c_horn_1"
+  id: 89
+  position {
+    x: 0.12570111487507257
+    y: 0.038849999999999996
+    z: 0.21374673241304509
+  }
+  orientation {
+    x: 2.2099539522195555e-05
+    y: 4.84797166387071e-05
+    z: -1.0713794154025967e-09
+    w: 0.99999999858066368
+  }
+}
+pose {
+  name: "rf_foot_1"
+  id: 94
+  position {
+    x: 0.13869357278200428
+    y: -0.038928562031254721
+    z: 0.13596003448925564
+  }
+  orientation {
+    x: -2.1221950604570519e-05
+    y: 4.8479716639628656e-05
+    z: 1.0288341532904789e-09
+    w: 0.99999999859967292
+  }
+}
+pose {
+  name: "b_s3_c_horn_1"
+  id: 97
+  position {
+    x: 0.0099999999999999985
+    y: -0.1061
+    z: 0.20224999999999999
+  }
+  orientation {
+    y: -4.8479614697874661e-05
+    w: 0.99999999882486346
+  }
+}
+pose {
+  name: "lr_c_horn_1"
+  id: 104
+  position {
+    x: -0.02370111487272834
+    y: -0.14934999999999998
+    z: 0.21374673241991693
+  }
+  orientation {
+    x: 2.2096722883666724e-05
+    y: -4.8479614686039205e-05
+    z: 1.0712406127447265e-09
+    w: 0.99999999858073085
+  }
+}
+pose {
+  name: "lr_foot_1"
+  id: 109
+  position {
+    x: -0.030693572823766935
+    y: -0.22712856246944163
+    z: 0.13596061669230058
+  }
+  orientation {
+    x: -2.1222700406253833e-05
+    y: -4.8479614686956975e-05
+    z: -1.0288683397526749e-09
+    w: 0.99999999859966193
+  }
+}
+pose {
+  name: "visual"
+  id: 6
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 10
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 13
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 16
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 19
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 23
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 27
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "visual"
+  id: 31
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "sunVisual"
+  id: 34
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__base_link_visual"
+  id: 37
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s4_1_visual_1"
+  id: 38
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s1_1_visual_2"
+  id: 39
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s2_1_visual_3"
+  id: 40
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__top_1_visual_4"
+  id: 41
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__b_s3_1_visual_5"
+  id: 42
+  position {
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "dummy_link_fixed_joint_lump__lidar_link_visual_6"
+  id: 43
+  position {
+    x: 0.051
+    y: -0.045
+    z: 0.131
+  }
+  orientation {
+    z: 0.70710678118654724
+    w: 0.70710678118654779
+  }
+}
+pose {
+  name: "b_s4_c_horn_1_visual"
+  id: 53
+  position {
+    x: -0.01
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s4_c_horn_1_fixed_joint_lump__lf_holder_suppor1_1_visual_1"
+  id: 54
+  position {
+    x: -0.01
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s4_c_horn_1_fixed_joint_lump__lf_holder_1_visual_2"
+  id: 55
+  position {
+    x: -0.01
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lf_c_horn_1_visual"
+  id: 60
+  position {
+    x: 0.0237
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lf_c_horn_1_fixed_joint_lump__lf_thigh_1_visual_1"
+  id: 61
+  position {
+    x: 0.0237
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lf_foot_1_visual"
+  id: 65
+  position {
+    x: 0.0367
+    y: 0.038932
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s1_c_horn_1_visual"
+  id: 68
+  position {
+    x: -0.092
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s1_c_horn_1_fixed_joint_lump__rr_holder_suppor1_1_visual_1"
+  id: 69
+  position {
+    x: -0.092
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s1_c_horn_1_fixed_joint_lump__rr_holder_1_visual_2"
+  id: 70
+  position {
+    x: -0.092
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rr_c_horn_1_visual"
+  id: 75
+  position {
+    x: -0.1257
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rr_c_horn_1_fixed_joint_lump__rr_thigh_1_visual_1"
+  id: 76
+  position {
+    x: -0.1257
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rr_foot_1_visual"
+  id: 80
+  position {
+    x: -0.1387
+    y: 0.227132
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s2_c_horn_1_visual"
+  id: 83
+  position {
+    x: -0.092
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s2_c_horn_1_fixed_joint_lump__rf_holder_suppor1_1_visual_1"
+  id: 84
+  position {
+    x: -0.092
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s2_c_horn_1_fixed_joint_lump__rf_holder_1_visual_2"
+  id: 85
+  position {
+    x: -0.092
+    y: -0.0161
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rf_c_horn_1_visual"
+  id: 90
+  position {
+    x: -0.1257
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rf_c_horn_1_fixed_joint_lump__rf_thigh_1_visual_1"
+  id: 91
+  position {
+    x: -0.1257
+    y: -0.03885
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "rf_foot_1_visual"
+  id: 95
+  position {
+    x: -0.1387
+    y: 0.038932
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s3_c_horn_1_visual"
+  id: 98
+  position {
+    x: -0.01
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s3_c_horn_1_fixed_joint_lump__lr_holder_suppor1_1_visual_1"
+  id: 99
+  position {
+    x: -0.01
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "b_s3_c_horn_1_fixed_joint_lump__lr_holder_1_visual_2"
+  id: 100
+  position {
+    x: -0.01
+    y: 0.1061
+    z: -0.07725
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lr_c_horn_1_visual"
+  id: 105
+  position {
+    x: 0.0237
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lr_c_horn_1_fixed_joint_lump__lr_thigh_1_visual_1"
+  id: 106
+  position {
+    x: 0.0237
+    y: 0.14935
+    z: -0.08875
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "lr_foot_1_visual"
+  id: 110
+  position {
+    x: 0.0307
+    y: 0.227132
+    z: -0.010968
+  }
+  orientation {
+    w: 1
+  }
+}
+pose {
+  name: "sun"
+  id: 33
+  position {
+    z: 10
+  }
+  orientation {
+    w: 1
+  }
+}
+

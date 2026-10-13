@@ -1,0 +1,5 @@
+SIGINT sent to process group 9870
+process group empty after 4 s
+The daemon has been stopped
+--- remaining (expect nothing):
+9824 [REDACTED: the shell that invoked run_liveness.sh; its command line contains the pattern words, so the frozen pgrep matched it. Not a simulator process; see README]

@@ -1,0 +1,3 @@
+
+Summary: 8 packages finished [15.5s]
+  7 packages had stderr output: spiderx_bringup spiderx_controller spiderx_description spiderx_firmware spiderx_localization spiderx_mapping spiderx_navigation

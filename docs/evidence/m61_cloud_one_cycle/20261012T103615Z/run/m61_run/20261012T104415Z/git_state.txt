@@ -1,0 +1,6 @@
+commit: unavailable (fatal: not a git repository (or any of the parent directories): .git)
+branch: unavailable (fatal: not a git repository (or any of the parent directories): .git)
+status --porcelain:
+unavailable (fatal: not a git repository (or any of the parent directories): .git)
+m61_live_dispatch_enabled: True
+m6d_live_dispatch_enabled (not used by M6.1): False

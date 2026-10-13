@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+"""M6.1-A OFFLINE ground clearance of the welded SpiderX over the M6.1 motion
+(see spiderx_controller/m61a_clearance.py). No simulator, no goal.
+
+    ros2 run spiderx_controller m61a_clearance [--margin 0.015] [--check-config] [--no-write]
+"""
+import sys
+
+from spiderx_controller.m61a_clearance import main
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -1,0 +1,44 @@
+SpiderX M6.1-A fixed-base observer (READ-ONLY: no goal, no command, no publisher)
+{
+ "subscriptions": {
+  "/spiderx/sim/world_poses": "tf2_msgs/msg/TFMessage",
+  "/joint_states": "sensor_msgs/msg/JointState",
+  "/clock": "rosgraph_msgs/msg/Clock (best effort)",
+  "/robot_description": "std_msgs/msg/String (transient local)"
+ },
+ "service_clients": {
+  "/controller_manager/list_controllers": "controller_manager_msgs/srv/ListControllers"
+ },
+ "publishers": {},
+ "action_clients": {},
+ "graph_queries": [
+  "count_publishers /joint_states",
+  "count_publishers /leg_trajectory_controller/joint_trajectory",
+  "count_subscribers /leg_trajectory_controller/follow_joint_trajectory/_action/status (= FollowJointTrajectory clients)",
+  "publisher node names of the pose, description and clock topics"
+ ],
+ "joint_names": [
+  "lf_hip",
+  "lf_thigh_joint",
+  "lf_foot_joint",
+  "rf_hip",
+  "rf_thigh_joint",
+  "rf_foot_joint",
+  "lr_hip",
+  "lr_thigh_joint",
+  "lr_foot_joint",
+  "rr_hip",
+  "rr_thigh_joint",
+  "rr_foot_joint"
+ ],
+ "model_name": "spiderx",
+ "body_link": "dummy_link",
+ "mount_xyz_rpy": [
+  0.0,
+  0.0,
+  0.125,
+  0.0,
+  0.0,
+  0.0
+ ]
+}

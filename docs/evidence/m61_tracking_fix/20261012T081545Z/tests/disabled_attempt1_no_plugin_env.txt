@@ -1,0 +1,13 @@
+First disabled colcon test launch at b0d8e75 (log/test_2026-10-12_08-36-34), WITHOUT PYTEST_DISABLE_PLUGIN_AUTOLOAD=1.
+Every pytest invocation failed at plugin registration, before collection; no test body ran.
+Re-run with the documented environment: disabled_full_colcon_test.txt (1678/0/0/0).
+
+--- colcon test-result summary of this attempt:
+Summary: 85 tests, 43 errors, 42 failures, 0 skipped
+
+--- representative error (identical for every test file):
+        raise PluginValidationError(
+    pluggy._manager.PluginValidationError: Plugin 'launch_testing' for hook 'pytest_pycollect_makemodule'
+    hookimpl definition: pytest_pycollect_makemodule(path, parent)
+    Argument(s) {'path'} are declared in the hookimpl but can not be found in the hookspec
+    -- run_test.py: return code 1

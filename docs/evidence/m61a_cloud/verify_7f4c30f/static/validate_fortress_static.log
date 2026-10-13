@@ -1,0 +1,71 @@
+== Package discovery
+  [PASS] spiderx_description -> /home/user/spiderx_ws/install/spiderx_description
+  [PASS] spiderx_bringup -> /home/user/spiderx_ws/install/spiderx_bringup
+  [PASS] spiderx_controller -> /home/user/spiderx_ws/install/spiderx_controller
+  [PASS] spiderx_localization -> /home/user/spiderx_ws/install/spiderx_localization
+  [PASS] spiderx_mapping -> /home/user/spiderx_ws/install/spiderx_mapping
+  [PASS] spiderx_navigation -> /home/user/spiderx_ws/install/spiderx_navigation
+  [PASS] spiderx_firmware -> /home/user/spiderx_ws/install/spiderx_firmware
+  [PASS] spiderx_scripts -> /home/user/spiderx_ws/install/spiderx_scripts
+  [PASS] ros_gz_sim -> /opt/mm/root/envs/humble
+  [PASS] ros_gz_bridge -> /opt/mm/root/envs/humble
+  [PASS] ros_gz_interfaces -> /opt/mm/root/envs/humble
+  [PASS] robot_state_publisher -> /opt/mm/root/envs/humble
+  [PASS] xacro -> /opt/mm/root/envs/humble
+  [PASS] ign CLI found (6.16.0)
+== xacro expansion and URDF checks
+  [PASS] xacro sim_backend:=classic
+  [PASS] check_urdf (classic)
+  [PASS] xacro sim_backend:=fortress
+  [PASS] check_urdf (fortress)
+  [PASS] xacro sim_backend:=none
+  [PASS] check_urdf (none)
+  [PASS] invalid sim_backend value is rejected
+  [PASS] sim_backend:=none has no simulator tags
+== Gazebo Fortress SDF checks
+  [PASS] URDF -> SDF conversion (sdformat 12.8.0)
+  [PASS] converted robot SDF is valid
+  [PASS] gpu_lidar sensor present
+  [PASS] lidar frame_id is lidar_link
+  [PASS] JointStatePublisher system present
+  [PASS] world SDF is valid
+== Mesh URIs (fortress description)
+  [PASS] all 30 mesh files resolve
+== Launch files
+  [PASS] py_compile src/spiderx_bringup/launch/fortress.launch.py
+  [PASS] py_compile src/spiderx_bringup/launch/fortress_control.launch.py
+  [PASS] py_compile src/spiderx_bringup/launch/fortress_m61a_fixed_base.launch.py
+  [PASS] py_compile src/spiderx_bringup/launch/fortress_posture_hold.launch.py
+  [PASS] py_compile src/spiderx_bringup/launch/real_robot.launch.py
+  [PASS] py_compile src/spiderx_controller/launch/controller.launch.py
+  [PASS] py_compile src/spiderx_description/launch/display.launch.py
+  [PASS] py_compile src/spiderx_description/launch/fortress.launch.py
+  [PASS] py_compile src/spiderx_firmware/launch/lidar.launch.py
+  [PASS] py_compile src/spiderx_localization/launch/global_localization.launch.py
+  [PASS] py_compile src/spiderx_localization/launch/local_localization.launch.py
+  [PASS] py_compile src/spiderx_mapping/launch/slam.launch.py
+  [PASS] py_compile src/spiderx_navigation/launch/navigation.launch.py
+  [PASS] ros2 launch spiderx_bringup fortress.launch.py --show-args
+  [PASS] ros2 launch spiderx_bringup fortress_control.launch.py --show-args
+  [PASS] ros2 launch spiderx_bringup fortress_m61a_fixed_base.launch.py --show-args
+  [PASS] ros2 launch spiderx_bringup fortress_posture_hold.launch.py --show-args
+  [PASS] ros2 launch spiderx_bringup real_robot.launch.py --show-args
+  [PASS] ros2 launch spiderx_controller controller.launch.py --show-args
+  [PASS] ros2 launch spiderx_description display.launch.py --show-args
+  [PASS] ros2 launch spiderx_description fortress.launch.py --show-args
+  [PASS] ros2 launch spiderx_firmware lidar.launch.py --show-args
+  [PASS] ros2 launch spiderx_localization global_localization.launch.py --show-args
+  [PASS] ros2 launch spiderx_localization local_localization.launch.py --show-args
+  [PASS] ros2 launch spiderx_mapping slam.launch.py --show-args
+  [PASS] ros2 launch spiderx_navigation navigation.launch.py --show-args
+== Controller configuration vs URDF
+  [PASS] spiderx_controller configs match the URDF (joints, axes, limits, chains, poses)
+== Passive vs controlled description (M1)
+  [PASS] passive Fortress description (default) has no <ros2_control>
+  [PASS] enable_control:=true adds gz_ros2_control (activity is checked by validate_m1_control.sh)
+== No hardware driver in the simulation launch path
+  [PASS] fortress.launch.py files reference no rplidar / spiderx_firmware / serial device
+== No Gazebo Classic tokens in Fortress-specific files
+  [PASS] none of: gazebo_ros, spawn_entity, gzserver, gzclient, GAZEBO_MODEL_PATH, libgazebo_ros_ray_sensor, gazebo_ros2_control
+
+All checks passed.

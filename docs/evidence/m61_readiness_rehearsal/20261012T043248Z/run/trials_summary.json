@@ -1,0 +1,951 @@
+[
+ {
+  "trial": 1,
+  "mode": "old",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "permitted": true,
+  "code": null,
+  "failure_codes": [],
+  "first_query_node_age_s": 2.088246,
+  "first_query_servers": [
+   [
+    "/leg_trajectory_controller",
+    [
+     "control_msgs/action/FollowJointTrajectory"
+    ]
+   ]
+  ],
+  "checks": {
+   "action_server": "passed",
+   "controllers": "passed",
+   "interface_contract": "passed",
+   "joint_names_contract": "passed",
+   "joint_states_fresh": "passed",
+   "joint_states_source": "passed",
+   "probe": "passed",
+   "start_pose": "passed"
+  },
+  "after_found_after_s": 1e-06,
+  "goals_sent": 0,
+  "dispatch_calls": 0
+ },
+ {
+  "trial": 2,
+  "mode": "new",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "verdict": "READY",
+  "stopped_at": null,
+  "discovery_outcome": "found",
+  "found_after_s": 3.018982,
+  "node_age_at_discovery_start_s": 0.005415,
+  "first_seen_in_polls_s": {
+   "host_node": 3.018982,
+   "status_publisher": 3.018982,
+   "client_matched": 3.018982,
+   "per_node_server": 3.018982
+  },
+  "polls": 13,
+  "failure_codes": [
+   [],
+   []
+  ],
+  "streams_ok": true,
+  "age_at_send_s": 5.212983,
+  "goals_sent": 0,
+  "dispatch_calls": 0,
+  "gate": false
+ },
+ {
+  "trial": 3,
+  "mode": "old",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "permitted": true,
+  "code": null,
+  "failure_codes": [],
+  "first_query_node_age_s": 2.107163,
+  "first_query_servers": [
+   [
+    "/leg_trajectory_controller",
+    [
+     "control_msgs/action/FollowJointTrajectory"
+    ]
+   ]
+  ],
+  "checks": {
+   "action_server": "passed",
+   "controllers": "passed",
+   "interface_contract": "passed",
+   "joint_names_contract": "passed",
+   "joint_states_fresh": "passed",
+   "joint_states_source": "passed",
+   "probe": "passed",
+   "start_pose": "passed"
+  },
+  "after_found_after_s": 0.0,
+  "goals_sent": 0,
+  "dispatch_calls": 0
+ },
+ {
+  "trial": 4,
+  "mode": "new",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "verdict": "READY",
+  "stopped_at": null,
+  "discovery_outcome": "found",
+  "found_after_s": 0.250676,
+  "node_age_at_discovery_start_s": 0.010704,
+  "first_seen_in_polls_s": {
+   "host_node": 0.250676,
+   "status_publisher": 0.250676,
+   "client_matched": 0.250676,
+   "per_node_server": 0.250676
+  },
+  "polls": 2,
+  "failure_codes": [
+   [],
+   []
+  ],
+  "streams_ok": true,
+  "age_at_send_s": 5.105079,
+  "goals_sent": 0,
+  "dispatch_calls": 0,
+  "gate": false
+ },
+ {
+  "trial": 5,
+  "mode": "old",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "permitted": true,
+  "code": null,
+  "failure_codes": [],
+  "first_query_node_age_s": 2.091022,
+  "first_query_servers": [
+   [
+    "/leg_trajectory_controller",
+    [
+     "control_msgs/action/FollowJointTrajectory"
+    ]
+   ]
+  ],
+  "checks": {
+   "action_server": "passed",
+   "controllers": "passed",
+   "interface_contract": "passed",
+   "joint_names_contract": "passed",
+   "joint_states_fresh": "passed",
+   "joint_states_source": "passed",
+   "probe": "passed",
+   "start_pose": "passed"
+  },
+  "after_found_after_s": 1e-06,
+  "goals_sent": 0,
+  "dispatch_calls": 0
+ },
+ {
+  "trial": 6,
+  "mode": "new",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "verdict": "READY",
+  "stopped_at": null,
+  "discovery_outcome": "found",
+  "found_after_s": 0.0,
+  "node_age_at_discovery_start_s": 0.008986,
+  "first_seen_in_polls_s": {
+   "host_node": 0.0,
+   "status_publisher": 0.0,
+   "client_matched": 0.0,
+   "per_node_server": 0.0
+  },
+  "polls": 1,
+  "failure_codes": [
+   [],
+   []
+  ],
+  "streams_ok": true,
+  "age_at_send_s": 5.118771,
+  "goals_sent": 0,
+  "dispatch_calls": 0,
+  "gate": false
+ },
+ {
+  "trial": 7,
+  "mode": "old",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "permitted": true,
+  "code": null,
+  "failure_codes": [],
+  "first_query_node_age_s": 2.113864,
+  "first_query_servers": [
+   [
+    "/leg_trajectory_controller",
+    [
+     "control_msgs/action/FollowJointTrajectory"
+    ]
+   ]
+  ],
+  "checks": {
+   "action_server": "passed",
+   "controllers": "passed",
+   "interface_contract": "passed",
+   "joint_names_contract": "passed",
+   "joint_states_fresh": "passed",
+   "joint_states_source": "passed",
+   "probe": "passed",
+   "start_pose": "passed"
+  },
+  "after_found_after_s": 1e-06,
+  "goals_sent": 0,
+  "dispatch_calls": 0
+ },
+ {
+  "trial": 8,
+  "mode": "new",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "verdict": "READY",
+  "stopped_at": null,
+  "discovery_outcome": "found",
+  "found_after_s": 1.001982,
+  "node_age_at_discovery_start_s": 0.008062,
+  "first_seen_in_polls_s": {
+   "status_publisher": 0.751639,
+   "client_matched": 0.751639,
+   "host_node": 1.001982,
+   "per_node_server": 1.001982
+  },
+  "polls": 5,
+  "failure_codes": [
+   [],
+   []
+  ],
+  "streams_ok": true,
+  "age_at_send_s": 5.231765,
+  "goals_sent": 0,
+  "dispatch_calls": 0,
+  "gate": false
+ },
+ {
+  "trial": 9,
+  "mode": "old",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "permitted": true,
+  "code": null,
+  "failure_codes": [],
+  "first_query_node_age_s": 2.096591,
+  "first_query_servers": [
+   [
+    "/leg_trajectory_controller",
+    [
+     "control_msgs/action/FollowJointTrajectory"
+    ]
+   ]
+  ],
+  "checks": {
+   "action_server": "passed",
+   "controllers": "passed",
+   "interface_contract": "passed",
+   "joint_names_contract": "passed",
+   "joint_states_fresh": "passed",
+   "joint_states_source": "passed",
+   "probe": "passed",
+   "start_pose": "passed"
+  },
+  "after_found_after_s": 1e-06,
+  "goals_sent": 0,
+  "dispatch_calls": 0
+ },
+ {
+  "trial": 10,
+  "mode": "new",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "verdict": "READY",
+  "stopped_at": null,
+  "discovery_outcome": "found",
+  "found_after_s": 0.0,
+  "node_age_at_discovery_start_s": 0.007594,
+  "first_seen_in_polls_s": {
+   "host_node": 0.0,
+   "status_publisher": 0.0,
+   "client_matched": 0.0,
+   "per_node_server": 0.0
+  },
+  "polls": 1,
+  "failure_codes": [
+   [],
+   []
+  ],
+  "streams_ok": true,
+  "age_at_send_s": 5.107618,
+  "goals_sent": 0,
+  "dispatch_calls": 0,
+  "gate": false
+ },
+ {
+  "trial": 11,
+  "mode": "old",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "permitted": true,
+  "code": null,
+  "failure_codes": [],
+  "first_query_node_age_s": 2.123671,
+  "first_query_servers": [
+   [
+    "/leg_trajectory_controller",
+    [
+     "control_msgs/action/FollowJointTrajectory"
+    ]
+   ]
+  ],
+  "checks": {
+   "action_server": "passed",
+   "controllers": "passed",
+   "interface_contract": "passed",
+   "joint_names_contract": "passed",
+   "joint_states_fresh": "passed",
+   "joint_states_source": "passed",
+   "probe": "passed",
+   "start_pose": "passed"
+  },
+  "after_found_after_s": 1e-06,
+  "goals_sent": 0,
+  "dispatch_calls": 0
+ },
+ {
+  "trial": 12,
+  "mode": "new",
+  "delay_s": 0,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 1,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "verdict": "READY",
+  "stopped_at": null,
+  "discovery_outcome": "found",
+  "found_after_s": 1.503928,
+  "node_age_at_discovery_start_s": 0.008069,
+  "first_seen_in_polls_s": {
+   "host_node": 1.503928,
+   "status_publisher": 1.503928,
+   "client_matched": 1.503928,
+   "per_node_server": 1.503928
+  },
+  "polls": 7,
+  "failure_codes": [
+   [],
+   []
+  ],
+  "streams_ok": true,
+  "age_at_send_s": 5.141679,
+  "goals_sent": 0,
+  "dispatch_calls": 0,
+  "gate": false
+ },
+ {
+  "trial": 13,
+  "mode": "old",
+  "delay_s": 10,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "permitted": false,
+  "code": "stack_incompatible",
+  "failure_codes": [
+   "action_server_missing"
+  ],
+  "first_query_node_age_s": 2.084038,
+  "first_query_servers": [],
+  "checks": {
+   "action_server": "failed",
+   "controllers": "passed",
+   "interface_contract": "passed",
+   "joint_names_contract": "passed",
+   "joint_states_fresh": "passed",
+   "joint_states_source": "passed",
+   "probe": "passed",
+   "start_pose": "passed"
+  },
+  "after_found_after_s": 0.0,
+  "goals_sent": 0,
+  "dispatch_calls": 0
+ },
+ {
+  "trial": 14,
+  "mode": "new",
+  "delay_s": 10,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 0,
+    "clock_publishers": [],
+    "command_publishers": 0,
+    "description_publishers": [],
+    "joint_state_publishers": 1,
+    "pose_publishers": []
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "verdict": "READY",
+  "stopped_at": null,
+  "discovery_outcome": "found",
+  "found_after_s": 1.007245,
+  "node_age_at_discovery_start_s": 0.009901,
+  "first_seen_in_polls_s": {
+   "host_node": 1.007245,
+   "status_publisher": 1.007245,
+   "client_matched": 1.007245,
+   "per_node_server": 1.007245
+  },
+  "polls": 5,
+  "failure_codes": [
+   [],
+   []
+  ],
+  "streams_ok": true,
+  "age_at_send_s": 5.10801,
+  "goals_sent": 0,
+  "dispatch_calls": 0,
+  "gate": false
+ },
+ {
+  "trial": 15,
+  "mode": "old",
+  "delay_s": 10,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "permitted": true,
+  "code": null,
+  "failure_codes": [],
+  "first_query_node_age_s": 2.096755,
+  "first_query_servers": [
+   [
+    "/leg_trajectory_controller",
+    [
+     "control_msgs/action/FollowJointTrajectory"
+    ]
+   ]
+  ],
+  "checks": {
+   "action_server": "passed",
+   "controllers": "passed",
+   "interface_contract": "passed",
+   "joint_names_contract": "passed",
+   "joint_states_fresh": "passed",
+   "joint_states_source": "passed",
+   "probe": "passed",
+   "start_pose": "passed"
+  },
+  "after_found_after_s": 1e-06,
+  "goals_sent": 0,
+  "dispatch_calls": 0
+ },
+ {
+  "trial": 16,
+  "mode": "new",
+  "delay_s": 10,
+  "observer": {
+   "ready": true,
+   "start": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   },
+   "end": {
+    "action_clients": 0,
+    "clock_publishers": [
+     "/spiderx_gz_bridge"
+    ],
+    "command_publishers": 0,
+    "description_publishers": [
+     "/robot_state_publisher"
+    ],
+    "joint_state_publishers": 1,
+    "pose_publishers": [
+     "/spiderx_sim_ground_truth_bridge"
+    ]
+   }
+  },
+  "command_topic_in_bag": false,
+  "verdict": "READY",
+  "stopped_at": null,
+  "discovery_outcome": "found",
+  "found_after_s": 1e-06,
+  "node_age_at_discovery_start_s": 0.008018,
+  "first_seen_in_polls_s": {
+   "host_node": 1e-06,
+   "status_publisher": 1e-06,
+   "client_matched": 1e-06,
+   "per_node_server": 1e-06
+  },
+  "polls": 1,
+  "failure_codes": [
+   [],
+   []
+  ],
+  "streams_ok": true,
+  "age_at_send_s": 5.154499,
+  "goals_sent": 0,
+  "dispatch_calls": 0,
+  "gate": false
+ }
+]

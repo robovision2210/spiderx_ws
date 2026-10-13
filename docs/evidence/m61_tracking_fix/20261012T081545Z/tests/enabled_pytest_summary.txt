@@ -1,0 +1,14 @@
+start 2026-10-12T08:45:06Z worktree b0d8e75 + patch b6213f21 (gate True, pin True)
+=============================== warnings summary ===============================
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+    import sre_parse
+
+  /opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+    import sre_constants
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1634 passed, 2 warnings in 423.39s (0:07:03)
+pytest exit=0
+end 2026-10-12T08:52:10Z
+
+worktree: git worktree add --detach <tmp> b0d8e75; git apply docs/patches/m61_enable_one_cycle.UNAPPLIED.patch (sha256 b6213f21dedf30e61e4959d22cd45a44525a8bc4432b641134406fe7f3277595): exactly m61_live_contract.py and test/m61_gate.py, one line each; colcon build --symlink-install (8 packages); python3 -m pytest test/ (whole spiderx_controller suite, one session) with PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 ROS_LOCALHOST_ONLY=1. The worktree is temporary and was never committed.

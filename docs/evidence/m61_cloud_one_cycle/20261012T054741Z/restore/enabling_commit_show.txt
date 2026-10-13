@@ -1,0 +1,15 @@
+commit 79ffdb2d0a64f1d21540945bedd170a14b58e9df
+Author:     Claude <noreply@anthropic.com>
+AuthorDate: Mon Oct 12 05:52:25 2026 +0000
+Commit:     Claude <noreply@anthropic.com>
+CommitDate: Mon Oct 12 05:52:25 2026 +0000
+
+    LOCAL ONLY: enable ONE M6.1 trot cycle (never push, never merge)
+    
+    Applies docs/patches/m61_enable_one_cycle.UNAPPLIED.patch (SHA-256 b6213f21...) on top of
+    dcac464 (src/ = 02d284c) for the one owner-authorized Cloud cycle. Removed by
+    scripts/m61_restore_and_verify_disabled.sh after the run.
+
+ src/spiderx_controller/spiderx_controller/m61_live_contract.py | 2 +-
+ src/spiderx_controller/test/m61_gate.py                        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)

@@ -1,0 +1,687 @@
+{
+ "gait": {
+  "base_constraint": "fixed",
+  "cycle_duration_s": 4.0,
+  "duty_factor": 0.5,
+  "gait_name": "trot",
+  "lead_in_s": 3.0,
+  "lift_height_m": 0.006,
+  "num_cycles": 1,
+  "num_waypoints": 9,
+  "segments": 8,
+  "stance_height_offset_m": 0.0,
+  "step_length_m": 0.02,
+  "swing_pair_first": [
+   "front_left",
+   "rear_right"
+  ],
+  "swing_pair_second": [
+   "front_right",
+   "rear_left"
+  ],
+  "variant": "start_stop_single_cycle"
+ },
+ "goal_fingerprint": "9dba1a173e212bfc172ffcd7da59124f87e98a321906e914e9d60e55595e5c3a",
+ "goal_spec": {
+  "binding": {
+   "goal_count": 1,
+   "inputs_sha256": {
+    "m4_pose_targets.yaml": "e49d65d4008027558c2979cd25fd8a0b7fbf16a8335cfbff52270695471383e8",
+    "m61_limits.yaml": "0ff8fc9ee6f1ba70f8e14acda61e3889d3ef3395fdfceaf51f6ea6fc11fe70c7",
+    "m61_trot_cycle.yaml": "b91839fc1000e48ba947bb91a9c8e86071093794f7b175a43c116f6e1ecb4f39",
+    "spiderx_legs.yaml": "78129b594b1d1b6d20e018894c7c3f3372f6e061fccc685a6437328fe68d7b25",
+    "spiderx_poses.yaml": "58fa4d36617f08bab13deb436193f1049a478144ef8dd0bd70b0fc747a1642d7",
+    "spiderx_ros2_controllers.yaml": "c449f24f2757d83fcf466dbbbaf2ebe0d4e0ef51cdfde91351aadfeba6496e01",
+    "urdf_expanded_xml": "915125596b3dff4bf0af5ed395d04ca0e815455f3ad8db6af3a22927ef81288c"
+   },
+   "mode": "single_trot_cycle",
+   "trajectory_id": "241760e7dfd5ef12"
+  },
+  "component_goal_tolerance": 0,
+  "component_path_tolerance": 0,
+  "goal_time_tolerance_ns": 1000000000,
+  "goal_tolerance": [
+   {
+    "acceleration": 0.0,
+    "name": "lf_hip",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lf_thigh_joint",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lf_foot_joint",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rf_hip",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rf_thigh_joint",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rf_foot_joint",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lr_hip",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lr_thigh_joint",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lr_foot_joint",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rr_hip",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rr_thigh_joint",
+    "position": 0.05,
+    "velocity": 0.05
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rr_foot_joint",
+    "position": 0.05,
+    "velocity": 0.05
+   }
+  ],
+  "header_stamp_ns": 0,
+  "joint_names": [
+   "lf_hip",
+   "lf_thigh_joint",
+   "lf_foot_joint",
+   "rf_hip",
+   "rf_thigh_joint",
+   "rf_foot_joint",
+   "lr_hip",
+   "lr_thigh_joint",
+   "lr_foot_joint",
+   "rr_hip",
+   "rr_thigh_joint",
+   "rr_foot_joint"
+  ],
+  "multi_dof_joint_names": [],
+  "multi_dof_points": 0,
+  "path_tolerance": [
+   {
+    "acceleration": 0.0,
+    "name": "lf_hip",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lf_thigh_joint",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lf_foot_joint",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rf_hip",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rf_thigh_joint",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rf_foot_joint",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lr_hip",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lr_thigh_joint",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "lr_foot_joint",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rr_hip",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rr_thigh_joint",
+    "position": 0.05,
+    "velocity": 0.0
+   },
+   {
+    "acceleration": 0.0,
+    "name": "rr_foot_joint",
+    "position": 0.05,
+    "velocity": 0.0
+   }
+  ],
+  "points": [
+   {
+    "accelerations": [],
+    "effort": [],
+    "positions": [
+     0.0,
+     0.0,
+     -0.0,
+     -0.0,
+     -0.0,
+     -0.0,
+     0.0,
+     -0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "time_ns": 3000000000,
+    "velocities": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "accelerations": [],
+    "effort": [],
+    "positions": [
+     0.0,
+     0.005606216,
+     0.036781367,
+     -0.0,
+     -0.001772035,
+     -7.1836e-05,
+     0.0,
+     0.001772035,
+     -7.1836e-05,
+     0.0,
+     -0.005606216,
+     -0.036781367
+    ],
+    "time_ns": 3500000000,
+    "velocities": [
+     0.0,
+     -0.010289136,
+     0.112664614,
+     0.0,
+     -0.010406159,
+     -0.000406151,
+     0.0,
+     0.010406159,
+     -0.000406151,
+     0.0,
+     0.010289135,
+     -0.112664616
+    ]
+   },
+   {
+    "accelerations": [],
+    "effort": [],
+    "positions": [
+     0.0,
+     -0.028217468,
+     0.068690075,
+     -0.0,
+     -0.012863242,
+     -0.000398933,
+     0.0,
+     0.012863242,
+     -0.000398933,
+     0.0,
+     0.028217467,
+     -0.068690076
+    ],
+    "time_ns": 4000000000,
+    "velocities": [
+     0.0,
+     -0.115685328,
+     -0.015393582,
+     0.0,
+     -0.035218398,
+     -0.000699793,
+     0.0,
+     0.035218397,
+     -0.000699792,
+     0.0,
+     0.115685327,
+     0.015393581
+    ]
+   },
+   {
+    "accelerations": [],
+    "effort": [],
+    "positions": [
+     0.0,
+     -0.079908169,
+     0.026117498,
+     -0.0,
+     -0.036798304,
+     -0.000363098,
+     0.0,
+     0.036798304,
+     -0.000363098,
+     0.0,
+     0.079908169,
+     -0.026117499
+    ],
+    "time_ns": 4500000000,
+    "velocities": [
+     0.0,
+     -0.058140219,
+     -0.118340494,
+     0.0,
+     -0.05891145,
+     0.001372847,
+     0.0,
+     0.058911449,
+     0.001372848,
+     0.0,
+     0.05814022,
+     0.118340494
+    ]
+   },
+   {
+    "accelerations": [],
+    "effort": [],
+    "positions": [
+     0.0,
+     -0.072987705,
+     -0.007370581,
+     -0.0,
+     -0.069096433,
+     0.001389834,
+     0.0,
+     0.069096433,
+     0.001389835,
+     0.0,
+     0.072987704,
+     0.007370579
+    ],
+    "time_ns": 5000000000,
+    "velocities": [
+     0.0,
+     0.074708855,
+     0.011745229,
+     0.0,
+     -0.066925522,
+     0.005769833,
+     -0.0,
+     0.066925521,
+     0.005769834,
+     0.0,
+     -0.074708855,
+     -0.011745228
+    ]
+   },
+   {
+    "accelerations": [],
+    "effort": [],
+    "positions": [
+     0.0,
+     -0.03787035,
+     -0.002777354,
+     0.0,
+     -0.107494801,
+     -0.033884892,
+     0.0,
+     0.1074948,
+     -0.03388489,
+     0.0,
+     0.03787035,
+     0.002777354
+    ],
+    "time_ns": 5500000000,
+    "velocities": [
+     0.0,
+     0.062398074,
+     0.006478116,
+     0.0,
+     -0.049325817,
+     -0.117586874,
+     -0.0,
+     0.049325817,
+     -0.117586875,
+     0.0,
+     -0.062398073,
+     -0.006478115
+    ]
+   },
+   {
+    "accelerations": [],
+    "effort": [],
+    "positions": [
+     0.0,
+     -0.012991672,
+     -0.000688189,
+     0.0,
+     -0.093089303,
+     -0.073636544,
+     0.0,
+     0.093089303,
+     -0.073636544,
+     0.0,
+     0.012991672,
+     0.000688189
+    ],
+    "time_ns": 6000000000,
+    "velocities": [
+     0.0,
+     0.035925265,
+     0.00229181,
+     0.0,
+     0.106159748,
+     -0.006336106,
+     0.0,
+     -0.106159747,
+     -0.006336108,
+     0.0,
+     -0.035925265,
+     -0.002291809
+    ]
+   },
+   {
+    "accelerations": [],
+    "effort": [],
+    "positions": [
+     0.0,
+     -0.001774451,
+     -7.7278e-05,
+     0.0,
+     -0.028383027,
+     -0.037723799,
+     0.0,
+     0.028383027,
+     -0.037723799,
+     0.0,
+     0.001774451,
+     7.7278e-05
+    ],
+    "time_ns": 6500000000,
+    "velocities": [
+     0.0,
+     0.010434556,
+     0.000470109,
+     0.0,
+     0.115214577,
+     0.117811549,
+     0.0,
+     -0.115214577,
+     0.117811549,
+     0.0,
+     -0.010434556,
+     -0.000470109
+    ]
+   },
+   {
+    "accelerations": [],
+    "effort": [],
+    "positions": [
+     0.0,
+     0.0,
+     -0.0,
+     -0.0,
+     -0.0,
+     -0.0,
+     0.0,
+     -0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "time_ns": 7000000000,
+    "velocities": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  ],
+  "schema": "spiderx.m6d.goal_spec/1"
+ },
+ "goals_sent": 0,
+ "limits": {
+  "approved_content_sha256": "94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64",
+  "approved_goal_count": 1,
+  "confirmation_word": "SEND-ONE-TROT-CYCLE",
+  "design_note_reference_sha256": "d03e80a0e733ae756ed95433514aea5490ac627ffb6b18f5b47d2816174e876c",
+  "m61_live_dispatch_enabled": false,
+  "reused_m6d_supervision": {
+   "cancel_response_timeout_s": 5.0,
+   "controller_check_period_s": 1.0,
+   "final_status_after_cancel_s": 5.0,
+   "goal_response_timeout_s": 10.0,
+   "joint_states_stale_s": 0.5,
+   "post_result_settle_s": 1.0,
+   "readiness_max_age_s": 10.0,
+   "result_watchdog_s": 120.0,
+   "sample_gap_s": 0.25,
+   "server_wait_s": 10.0,
+   "sim_stall_s": 5.0
+  }
+ },
+ "m61_limits": {
+  "base_constraint": "fixed",
+  "body_gate_debounce_samples": 2,
+  "body_max_tilt_rad": 0.26,
+  "body_min_height_m": 0.045,
+  "body_pose_required": true,
+  "body_pose_stale_s": 1.0,
+  "client_tracking_abort_rad": 0.05,
+  "contact_sensing": "not_measured",
+  "displacement_epsilon_rad": 1e-09,
+  "drift_lateral_report_m": 0.02,
+  "drift_yaw_report_rad": 0.1,
+  "goal_position_tolerance_rad": 0.05,
+  "goal_time_tolerance_s": 1.0,
+  "goal_velocity_tolerance_rad_s": 0.05,
+  "joint_limit_fraction": 0.8,
+  "joint_state_gap_s": 0.25,
+  "joint_states_stale_s": 0.5,
+  "lead_in_s": 3.0,
+  "max_duration_s": 10.0,
+  "max_joint_displacement_rad": 0.1223,
+  "max_planned_joint_speed_rad_s": 0.25,
+  "max_trajectory_points": 9,
+  "min_segment_duration_s": 0.5,
+  "path_position_tolerance_rad": 0.05,
+  "sim_stall_s": 5.0,
+  "source_match_rad": 1e-08,
+  "spline_check_samples_per_segment": 50
+ },
+ "m61_live_dispatch_enabled": false,
+ "mode": "dry-run",
+ "non_claims": [
+  "M6.1 replays ONE offline-validated trot-cycle joint trajectory and checks joint tracking and the gait safety gates. Simulation only, placeholder actuators.",
+  "It does not show walking, locomotion, translation, balance, dynamic stability, contact or slip (contact is not measured), energy, real-time behaviour, actuator capability or hardware readiness."
+ ],
+ "preflight": {
+  "checks": {
+   "content_hash": "passed",
+   "displacement_cap": "passed",
+   "endpoints": "passed",
+   "gait": "passed",
+   "identity": "passed",
+   "joint_limits": "passed",
+   "joint_speed": "passed",
+   "joints": "passed",
+   "limits": "passed",
+   "numeric": "passed",
+   "rederivation": "passed",
+   "schema": "passed",
+   "sources": "passed",
+   "structure": "passed",
+   "timing": "passed"
+  },
+  "failure_codes": [],
+  "failures": [],
+  "non_claims": [
+   "M6.1 replays ONE offline-validated trot-cycle joint trajectory and checks joint tracking and the gait safety gates. Simulation only, placeholder actuators.",
+   "It does not show walking, locomotion, translation, balance, dynamic stability, contact or slip (contact is not measured), energy, real-time behaviour, actuator capability or hardware readiness."
+  ],
+  "ok": true,
+  "schema": "spiderx.m61.preflight/1",
+  "summary": {
+   "content_sha256": "94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64",
+   "cycle_duration_s": 4.0,
+   "duration_s": 7.0,
+   "max_limit_fraction": 0.16885758173765847,
+   "max_limit_fraction_joint": "lr_foot_joint",
+   "max_spline_displacement_joint": "rf_thigh_joint",
+   "max_spline_displacement_rad": 0.111358889762624,
+   "max_spline_speed_joint": "lr_thigh_joint",
+   "max_spline_speed_rad_s": 0.13895767645600002,
+   "max_waypoint_displacement_rad": 0.107494801,
+   "min_soft_limit_margin_rad": 0.312654033645244,
+   "per_joint": {
+    "lf_foot_joint": {
+     "max_displacement_rad": 0.06896295205919999,
+     "max_limit_fraction": 0.15805155720689748,
+     "max_speed_rad_s": 0.1184338954464,
+     "min_soft_limit_margin_rad": 0.3173690479408
+    },
+    "lf_hip": {
+     "max_displacement_rad": 0.0,
+     "max_limit_fraction": 0.0,
+     "max_speed_rad_s": 0.0,
+     "min_soft_limit_margin_rad": 0.560865
+    },
+    "lf_thigh_joint": {
+     "max_displacement_rad": 0.08526029961652,
+     "max_limit_fraction": 0.13957306379727108,
+     "max_speed_rad_s": 0.11998618956000001,
+     "min_soft_limit_margin_rad": 0.47560470038347996
+    },
+    "lr_foot_joint": {
+     "max_displacement_rad": 0.073677966354756,
+     "max_limit_fraction": 0.16885758173765847,
+     "max_speed_rad_s": 0.117811549,
+     "min_soft_limit_margin_rad": 0.312654033645244
+    },
+    "lr_hip": {
+     "max_displacement_rad": 0.0,
+     "max_limit_fraction": 0.0,
+     "max_speed_rad_s": 0.0,
+     "min_soft_limit_margin_rad": 0.560865
+    },
+    "lr_thigh_joint": {
+     "max_displacement_rad": 0.11135888896947199,
+     "max_limit_fraction": 0.14178657059156247,
+     "max_speed_rad_s": 0.13895767645600002,
+     "min_soft_limit_margin_rad": 0.560865
+    },
+    "rf_foot_joint": {
+     "max_displacement_rad": 0.073677966335548,
+     "max_limit_fraction": 0.16885758169363696,
+     "max_speed_rad_s": 0.117811549,
+     "min_soft_limit_margin_rad": 0.312654033664452
+    },
+    "rf_hip": {
+     "max_displacement_rad": 0.0,
+     "max_limit_fraction": 0.0,
+     "max_speed_rad_s": 0.0,
+     "min_soft_limit_margin_rad": 0.560865
+    },
+    "rf_thigh_joint": {
+     "max_displacement_rad": 0.111358889762624,
+     "max_limit_fraction": 0.14178657160143518,
+     "max_speed_rad_s": 0.13895767617080002,
+     "min_soft_limit_margin_rad": 0.560865
+    },
+    "rr_foot_joint": {
+     "max_displacement_rad": 0.068962953013056,
+     "max_limit_fraction": 0.15805155939297597,
+     "max_speed_rad_s": 0.11843389552160001,
+     "min_soft_limit_margin_rad": 0.317369046986944
+    },
+    "rr_hip": {
+     "max_displacement_rad": 0.0,
+     "max_limit_fraction": 0.0,
+     "max_speed_rad_s": 0.0,
+     "min_soft_limit_margin_rad": 0.560865
+    },
+    "rr_thigh_joint": {
+     "max_displacement_rad": 0.0852602993661,
+     "max_limit_fraction": 0.1395730633873278,
+     "max_speed_rad_s": 0.11998619088,
+     "min_soft_limit_margin_rad": 0.4756047006338999
+    }
+   },
+   "point_count": 9,
+   "rederivation_max_diff": 0.0
+  },
+  "trajectory_id": "241760e7dfd5ef12",
+  "verdict": "PASS"
+ },
+ "schema": "spiderx.m61.dry_run/1",
+ "trajectory_content_sha256": "94a492c43fcc046125d6bc71ee7f1d9a8a5d8466f1a1bdd9958a16044dd58e64",
+ "trajectory_id": "241760e7dfd5ef12",
+ "verdict": "PASS"
+}
