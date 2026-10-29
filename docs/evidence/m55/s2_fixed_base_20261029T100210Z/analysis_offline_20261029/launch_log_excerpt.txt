@@ -1,0 +1,21 @@
+# Excerpt of run/launch.log (outside the repository: ~/spiderx_evidence/s2_run_20261029T100210Z/run/launch.log)
+# source sha256 85b9fca0b891efe7c7f592c040aff544306e7ca703a30f13dce9862ca79a2a07, 345 lines; selected lines verbatim except ANSI colour codes removed; 'N:' = line number
+# stamps in [...] are CLOCK_REALTIME seconds of the controller process
+119: [ign gazebo-1] [INFO] [1793269543.976281456] [gz_ros2_control]: [gz_ros2_control] Fixed joint [spiderx_fixed_base_weld] (Entity=112)] is skipped
+120: [ign gazebo-1] [INFO] [1793269543.984046427] [gz_ros2_control]: The position_proportional_gain has been set to: 0.1
+181: [ign gazebo-1] [INFO] [1793269543.984931714] [gz_ros2_control]: Loading joint: rr_thigh_joint
+182: [ign gazebo-1] [INFO] [1793269543.984941085] [gz_ros2_control]: 	State:
+183: [ign gazebo-1] [INFO] [1793269543.984947526] [gz_ros2_control]: 		 position
+184: [ign gazebo-1] [INFO] [1793269543.984953214] [gz_ros2_control]: 		 velocity
+185: [ign gazebo-1] [INFO] [1793269543.984958945] [gz_ros2_control]: 	Command:
+186: [ign gazebo-1] [INFO] [1793269543.984964494] [gz_ros2_control]: 		 position
+207: [ign gazebo-1] [WARN] [1793269544.423179293] [gz_ros2_control]:  Desired controller update period (0.01 s) is slower than the gazebo simulation period (0.001 s).
+221: [ign gazebo-1] [WARN] [1793269550.683874767] [leg_trajectory_controller]: [Deprecated]: "allow_nonzero_velocity_at_trajectory_end" is set to true. The default behavior will change to false.
+225: [ign gazebo-1] [INFO] [1793269550.691284941] [leg_trajectory_controller]: Command interfaces are [position] and state interfaces are [position velocity].
+226: [ign gazebo-1] [INFO] [1793269550.691312043] [leg_trajectory_controller]: Using 'splines' interpolation method.
+227: [ign gazebo-1] [INFO] [1793269550.693118550] [leg_trajectory_controller]: Controller state will be published at 50.00 Hz.
+228: [ign gazebo-1] [INFO] [1793269550.696930725] [leg_trajectory_controller]: Action status changes will be monitored at 20.00 Hz.
+231: [ign gazebo-1] [INFO] [1793269655.653534108] [leg_trajectory_controller]: Received new action goal
+232: [ign gazebo-1] [INFO] [1793269655.653628864] [leg_trajectory_controller]: Accepted new action goal
+233: [ign gazebo-1] [INFO] [1793269656.967620847] [leg_trajectory_controller]: Got request to cancel goal
+234: [ign gazebo-1] [INFO] [1793269656.967784131] [leg_trajectory_controller]: Canceling active action goal because cancel callback received.

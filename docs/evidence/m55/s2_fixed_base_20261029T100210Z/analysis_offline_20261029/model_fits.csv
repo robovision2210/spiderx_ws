@@ -1,0 +1,7 @@
+joints,model,parameter,value,n,rms_rad,max_abs_rad
+all_joints,"discrete first-order, 10 ms updates (free run)",g,0.09999999996518733,1200,9.947e-12,1.904e-11
+all_joints,continuous first-order (free run),tau_s,0.10130186382338148,1200,4.272e-05,1.409e-04
+all_joints,pure delay,delay_s,0.0901879006117941,1200,3.907e-04,1.337e-03
+rr_thigh_joint,"discrete first-order, 10 ms updates (free run)",g,0.09999999993586525,100,5.168e-12,7.585e-12
+rr_thigh_joint,continuous first-order (free run),tau_s,0.1012904777947091,100,6.191e-05,1.388e-04
+rr_thigh_joint,pure delay,delay_s,0.0902772217122538,100,5.667e-04,1.318e-03

@@ -1,0 +1,19 @@
+event,source,mono_s,realtime_s,realtime_is,sim_exact_s,sim_lower_s,sim_upper_s,js_receipt_before_ms,js_receipt_after_ms,note
+node: goal 1 sent,node/events.jsonl goal_sent,2020.224616,1793269655.647640,mapped from mono,,73.070,73.080,2.7,19.4,
+controller: Received / Accepted new action goal,run/launch.log,,1793269655.653534,recorded,,73.070,73.080,8.6,13.5,
+controller: trajectory start (first update sampling goal 1),derived,,,,73.080,,,,,"reference reconstruction, exact equality"
+node: goal response (accepted),node/events.jsonl (node tick that processed it),2020.274483,1793269655.697508,mapped from mono,,73.100,73.110,8.3,13.4,
+derived: first update with |desired - actual| > 0.02 rad,derived,,,,74.000,,,,,joint rf_thigh_joint (reference reconstruction and /joint_states)
+recorded: first action-feedback sample with |error| > 0.02 rad,bag feedback,,,,74.000,,,,,"joint rf_thigh_joint, -0.02014 rad"
+recorded: feedback sample whose error the stop status reported,bag feedback,,,,74.040,,,,,"0.02072 rad, exact float equality"
+node: status that triggered the stop (published),status goal.elapsed_s + goal_sent wall,2021.528578,1793269656.951602,mapped from mono,,74.060,74.070,14.3,0.7,its sim_time_s (newest /joint_states stamp at the node) = 74.05; max 0.02072
+recorded: last action-feedback sample (maximum recorded error),bag receipt,,1793269656.958821,recorded,74.070,74.070,74.080,6.5,16.8,realtime is the recorder receipt
+driver: stop request (x written to the teleop),driver/driver.jsonl,2021.538400,1793269656.961424,mapped from mono,,74.070,74.080,9.2,14.2,
+node: disarm request processed,node/events.jsonl,2021.542183,1793269656.965208,mapped from mono,,74.070,74.080,12.9,10.4,teleop shutdown sequence after the driver's SIGTERM
+node: stop request processed,node/events.jsonl,2021.543229,1793269656.966253,mapped from mono,,74.070,74.080,14.0,9.4,teleop shutdown sequence after the driver's SIGTERM
+node: estop fault (FAULTED) and cancel request sent,node/events.jsonl fault + cancel_sent (same tick),2021.543615,1793269656.966640,mapped from mono,,74.070,74.080,14.4,9.0,
+controller: Got request to cancel goal,run/launch.log,,1793269656.967621,recorded,,74.070,74.080,15.3,8.0,
+controller: cancel callback read the state of update,derived,,,,74.070,,,,,hold reference equals /joint_states at this update exactly
+controller: hold in effect (first update with the hold reference),derived,,,,74.080,,,,,observed reference departs; inferred command equals the hold
+node: cancel response processed,node/events.jsonl (tick; callback time not logged),2021.574491,1793269656.997515,mapped from mono,,74.100,74.110,6.9,34.6,
+node: result CANCELED processed,node/events.jsonl (tick; callback time not logged),2021.624800,1793269657.047825,mapped from mono,,74.110,74.120,15.7,11.8,
