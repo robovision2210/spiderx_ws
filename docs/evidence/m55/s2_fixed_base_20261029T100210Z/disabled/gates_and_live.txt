@@ -1,0 +1,5 @@
+spiderx_controller.m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED = False from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED = False from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+m6_gait_replay.py --live exit=3 hard_disabled=2
+m6_live_playback --live exit=3 hard_disabled=2

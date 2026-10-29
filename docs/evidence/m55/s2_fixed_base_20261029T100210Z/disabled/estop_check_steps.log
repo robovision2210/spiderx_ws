@@ -1,0 +1,16 @@
+[10:16:21] gates (imported): False False False
+[10:16:21] launch
+launch pid 8204 pgid 8204 xvfb 8199
+[10:16:41] controllers: exit 0
+[10:16:44] gazebo gui pid(s) 8345  reniced +19
+[10:16:44] preflight
+[10:16:49] preflight exit 0 READY
+[10:16:49] node
+[10:18:01] node up after 72 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[10:18:04] captures before
+[10:18:10] estop-service check
+[10:18:16] estop check exit 0: {"service_calls": [{"available": true, "event": "estop_service", "message": "emergency stop: goal cancelled (if any), holding; reset and arm to continue", "mono": 1458.3895, "success": true, "why": "S2 step 3: disabled real-graph estop-serv
+[10:18:19] captures after
+[10:18:23] node stopped
+[10:18:23] stop launch
+[10:18:34] end

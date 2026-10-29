@@ -1,0 +1,2 @@
+messages per topic: {'status': 26, 'world_poses': 805, '_action/feedback': 0, 'controller_state': 395, 'joint_states': 963}
+joint motion max |dq| rad: 1.3552527156068805e-19

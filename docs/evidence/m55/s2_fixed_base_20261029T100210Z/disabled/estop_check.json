@@ -1,0 +1,36 @@
+{
+ "service_calls": [
+  {
+   "available": true,
+   "event": "estop_service",
+   "message": "emergency stop: goal cancelled (if any), holding; reset and arm to continue",
+   "mono": 1458.3895,
+   "success": true,
+   "why": "S2 step 3: disabled real-graph estop-service check"
+  }
+ ],
+ "status_after": {
+  "boundary": 0,
+  "dispatch_gate": false,
+  "faults": [
+   "estop"
+  ],
+  "goal": null,
+  "goals_recorded": 0,
+  "last_refusal": null,
+  "mode": "shadow",
+  "state": "FAULTED"
+ },
+ "status_before": {
+  "boundary": 0,
+  "dispatch_gate": false,
+  "faults": [],
+  "goal": null,
+  "goals_recorded": 0,
+  "last_refusal": null,
+  "mode": "shadow",
+  "state": "DISARMED"
+ },
+ "status_messages": 10,
+ "teleop_alive": false
+}
