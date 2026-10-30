@@ -1,0 +1,493 @@
+{
+ "evidence": {
+  "controller_state_header_minus_update_ms": {
+   "-8.0": 1,
+   "-7.0": 1,
+   "-6.0": 4,
+   "-5.0": 4,
+   "-4.0": 6,
+   "-3.0": 11,
+   "-2.0": 14,
+   "-1.0": 93,
+   "0.0": 241
+  },
+  "controller_state_output_vs_reference": {
+   "equal": 375
+  },
+  "excluded": {
+   "controller_state_ambiguous_match_at_rest": 37
+  },
+  "pairs": 393,
+  "pairs_by_segment": {
+   "after_goal_1": 114,
+   "before_first_goal": 223,
+   "goal_1": 56
+  },
+  "pairs_by_source": {
+   "both": 8,
+   "controller_state": 367,
+   "feedback": 18
+  },
+  "updates_with_recorded_command": 393
+ },
+ "expected_gain": 1.0,
+ "goal_mapping_note": null,
+ "goals": [
+  {
+   "feedback_samples": 26,
+   "first_feedback_receipt_ns": 1793269655710948176,
+   "first_feedback_s": 73.11,
+   "goal_id": "e885a7b33adb495c9dcb8d69138facf5",
+   "index": 1,
+   "last_feedback_receipt_ns": 1793269656958820979,
+   "last_feedback_s": 74.07,
+   "node": {
+    "b_from": 0,
+    "b_to": 1,
+    "cancel_sent": true,
+    "direction": 1,
+    "duration_s": 1.7,
+    "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a",
+    "kind": "shift",
+    "leg": null,
+    "level": 0,
+    "node_max_tracking_error_rad": 0.02072062245070036,
+    "phase": 0,
+    "seq": 1
+   }
+  }
+ ],
+ "inputs": {
+  "messages": {
+   "/joint_states": 1003,
+   "/leg_trajectory_controller/controller_state": 412,
+   "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": 26,
+   "/spiderx/locomotion/status": 35
+  },
+  "open_mode": "sqlite3 mode=ro&immutable=1",
+  "path": "/root/spiderx_evidence/s2_run_20261029T100210Z/bag/bag_0.db3",
+  "sha256_after": "53d093dae5828d10692364c1cebe3144f89b8c6507e1d5646c596a3a6256d816",
+  "sha256_before": "53d093dae5828d10692364c1cebe3144f89b8c6507e1d5646c596a3a6256d816",
+  "unchanged": true
+ },
+ "joint_order": [
+  "lf_hip",
+  "lf_thigh_joint",
+  "lf_foot_joint",
+  "rf_hip",
+  "rf_thigh_joint",
+  "rf_foot_joint",
+  "lr_hip",
+  "lr_thigh_joint",
+  "lr_foot_joint",
+  "rr_hip",
+  "rr_thigh_joint",
+  "rr_foot_joint"
+ ],
+ "plant": {
+  "contradictions": [
+   "pooled: g_hat 0.09999999997176866 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint lf_hip: g_hat 0.0999999998796493 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint lf_thigh_joint: g_hat 0.09999999990955698 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint lf_foot_joint: g_hat 0.10000000013290342 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint rf_hip: g_hat 0.10000000011562123 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint rf_thigh_joint: g_hat 0.0999999999461468 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint rf_foot_joint: g_hat 0.09999999980003185 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint lr_hip: g_hat 0.09999999987964932 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint lr_thigh_joint: g_hat 0.09999999990955703 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint lr_foot_joint: g_hat 0.10000000013290361 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint rr_hip: g_hat 0.10000000011562123 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint rr_thigh_joint: g_hat 0.0999999999461465 differs from 1.0 by -0.9 (>= 1e-06)",
+   "joint rr_foot_joint: g_hat 0.09999999980003177 differs from 1.0 by -0.9 (>= 1e-06)",
+   "segment hold_after_cancel: g_hat 0.10000000028936379 differs from 1.0 by -0.9 (>= 1e-06)",
+   "segment tracking: g_hat 0.09999999997124237 differs from 1.0 by -0.9 (>= 1e-06)"
+  ],
+  "insufficient": [],
+  "per_joint": {
+   "lf_foot_joint": {
+    "excitation_norm_rad": 0.03815383485870748,
+    "gain": 0.10000000013290342,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.8999999998670966,
+    "gain_standard_error": 2.680125766298005e-11,
+    "max_abs_excitation_rad": 0.011354335624799317,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.010218902061300196,
+     "n": 393,
+     "rms": 0.0017321457389339213
+    },
+    "residual_at_gain": {
+     "max_abs": 1.3515155249284316e-12,
+     "n": 393,
+     "rms": 1.0225707588790092e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "lf_hip": {
+    "excitation_norm_rad": 0.0592555075068988,
+    "gain": 0.0999999998796493,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.9000000001203508,
+    "gain_standard_error": 2.2351099451140545e-11,
+    "max_abs_excitation_rad": 0.0156454546017706,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.014080909143027287,
+     "n": 393,
+     "rms": 0.0026901404602032914
+    },
+    "residual_at_gain": {
+     "max_abs": 1.572810471813825e-12,
+     "n": 393,
+     "rms": 1.3244257413145002e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "lf_thigh_joint": {
+    "excitation_norm_rad": 0.04742891719631531,
+    "gain": 0.09999999990955698,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.900000000090443,
+    "gain_standard_error": 1.647368350418589e-11,
+    "max_abs_excitation_rad": 0.011776583184634482,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.010598924867018938,
+     "n": 393,
+     "rms": 0.0021532251515075603
+    },
+    "residual_at_gain": {
+     "max_abs": 9.29966729166544e-13,
+     "n": 393,
+     "rms": 7.81328970838338e-13
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "lr_foot_joint": {
+    "excitation_norm_rad": 0.038153835739907105,
+    "gain": 0.10000000013290361,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.8999999998670964,
+    "gain_standard_error": 2.6801277044582716e-11,
+    "max_abs_excitation_rad": 0.01135433566573947,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.01021890209814634,
+     "n": 393,
+     "rms": 0.001732145778939498
+    },
+    "residual_at_gain": {
+     "max_abs": 1.3515150505899812e-12,
+     "n": 393,
+     "rms": 1.022571521978752e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "lr_hip": {
+    "excitation_norm_rad": 0.05925550750689879,
+    "gain": 0.09999999987964932,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.9000000001203506,
+    "gain_standard_error": 2.2351099539212614e-11,
+    "max_abs_excitation_rad": 0.0156454546017706,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.014080909143027287,
+     "n": 393,
+     "rms": 0.0026901404602032914
+    },
+    "residual_at_gain": {
+     "max_abs": 1.5728104582612978e-12,
+     "n": 393,
+     "rms": 1.3244257465332552e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "lr_thigh_joint": {
+    "excitation_norm_rad": 0.047428916704514976,
+    "gain": 0.09999999990955703,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.900000000090443,
+    "gain_standard_error": 1.64736977468818e-11,
+    "max_abs_excitation_rad": 0.011776582788600685,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.010598924510588532,
+     "n": 393,
+     "rms": 0.002153225129180319
+    },
+    "residual_at_gain": {
+     "max_abs": 9.299722179400421e-13,
+     "n": 393,
+     "rms": 7.813296382522129e-13
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "rf_foot_joint": {
+    "excitation_norm_rad": 0.028026639456084537,
+    "gain": 0.09999999980003185,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.9000000001999682,
+    "gain_standard_error": 3.637517971005746e-11,
+    "max_abs_excitation_rad": 0.0064861969607637356,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.005837577265729105,
+     "n": 393,
+     "rms": 0.0012723812510125727
+    },
+    "residual_at_gain": {
+     "max_abs": 1.3471690803916817e-12,
+     "n": 393,
+     "rms": 1.019474046884062e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "rf_hip": {
+    "excitation_norm_rad": 0.060646299929367,
+    "gain": 0.10000000011562123,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.8999999998843787,
+    "gain_standard_error": 2.1811914500051647e-11,
+    "max_abs_excitation_rad": 0.016230021955955652,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.01460701975893764,
+     "n": 393,
+     "rms": 0.0027532810370385265
+    },
+    "residual_at_gain": {
+     "max_abs": 1.7222717663915171e-12,
+     "n": 393,
+     "rms": 1.3228119088038414e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "rf_thigh_joint": {
+    "excitation_norm_rad": 0.08033570256954357,
+    "gain": 0.0999999999461468,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.9000000000538532,
+    "gain_standard_error": 9.885733520714902e-12,
+    "max_abs_excitation_rad": 0.020972637957440823,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.01887537416258564,
+     "n": 393,
+     "rms": 0.0036471601199273814
+    },
+    "residual_at_gain": {
+     "max_abs": 9.729101476275287e-13,
+     "n": 393,
+     "rms": 7.941773478019192e-13
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "rr_foot_joint": {
+    "excitation_norm_rad": 0.028026638907982352,
+    "gain": 0.09999999980003177,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.9000000001999682,
+    "gain_standard_error": 3.637517818347296e-11,
+    "max_abs_excitation_rad": 0.006486197568251834,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.005837577812468402,
+     "n": 393,
+     "rms": 0.0012723812261292845
+    },
+    "residual_at_gain": {
+     "max_abs": 1.347170855772739e-12,
+     "n": 393,
+     "rms": 1.019473984161714e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "rr_hip": {
+    "excitation_norm_rad": 0.06064629992936701,
+    "gain": 0.10000000011562123,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.8999999998843787,
+    "gain_standard_error": 2.1811911842227666e-11,
+    "max_abs_excitation_rad": 0.016230021955955652,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.01460701975893764,
+     "n": 393,
+     "rms": 0.0027532810370385265
+    },
+    "residual_at_gain": {
+     "max_abs": 1.7222717663915171e-12,
+     "n": 393,
+     "rms": 1.322811747616651e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "rr_thigh_joint": {
+    "excitation_norm_rad": 0.08033570258484823,
+    "gain": 0.0999999999461465,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.9000000000538535,
+    "gain_standard_error": 9.885731740098006e-12,
+    "max_abs_excitation_rad": 0.020972637967721877,
+    "pairs": 393,
+    "residual_at_expected_gain": {
+     "max_abs": 0.018875374171838627,
+     "n": 393,
+     "rms": 0.0036471601206221984
+    },
+    "residual_at_gain": {
+     "max_abs": 9.729036966246024e-13,
+     "n": 393,
+     "rms": 7.941772049061076e-13
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   }
+  },
+  "per_segment_kind": {
+   "hold_after_cancel": {
+    "excitation_norm_rad": 0.007751374524359731,
+    "gain": 0.10000000028936379,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.8999999997106363,
+    "gain_standard_error": 1.4582671350157855e-10,
+    "max_abs_excitation_rad": 0.00209726379588325,
+    "pairs": 1368,
+    "residual_at_expected_gain": {
+     "max_abs": 0.001887537415615828,
+     "n": 1368,
+     "rms": 0.00018861584859812097
+    },
+    "residual_at_gain": {
+     "max_abs": 2.0042563257920837e-12,
+     "n": 1368,
+     "rms": 1.1303574720072412e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   },
+   "idle": {
+    "excitation_norm_rad": 7.491678245669268e-06,
+    "gain": null,
+    "max_abs_excitation_rad": 2.644575970839501e-06,
+    "pairs": 2676,
+    "reason": "excitation norm 7.49e-06 rad < 0.0001",
+    "status": "UNMEASURED"
+   },
+   "tracking": {
+    "excitation_norm_rad": 0.19028232633116204,
+    "gain": 0.09999999997124237,
+    "gain_matches_expected": false,
+    "gain_minus_expected": -0.9000000000287576,
+    "gain_standard_error": 5.6800809964298254e-12,
+    "max_abs_excitation_rad": 0.020972637967721877,
+    "pairs": 672,
+    "residual_at_expected_gain": {
+     "max_abs": 0.018875374171838627,
+     "n": 672,
+     "rms": 0.006606270088293698
+    },
+    "residual_at_gain": {
+     "max_abs": 1.889183254277782e-12,
+     "n": 672,
+     "rms": 1.0808190257500921e-12
+    },
+    "residual_ok": true,
+    "status": "IDENTIFIED"
+   }
+  },
+  "pooled": {
+   "excitation_norm_rad": 0.19044014171686827,
+   "gain": 0.09999999997176866,
+   "gain_matches_expected": false,
+   "gain_minus_expected": -0.9000000000282313,
+   "gain_standard_error": 5.787080712030299e-12,
+   "max_abs_excitation_rad": 0.020972637967721877,
+   "pairs": 4716,
+   "residual_at_expected_gain": {
+    "max_abs": 0.018875374171838627,
+    "n": 4716,
+    "rms": 0.002495824865615251
+   },
+   "residual_at_gain": {
+    "max_abs": 1.880641475882072e-12,
+    "n": 4716,
+    "rms": 1.102092470926005e-12
+   },
+   "residual_ok": true,
+   "status": "IDENTIFIED"
+  },
+  "unmeasured_required_joints": [],
+  "verdict": "CONTRADICTED"
+ },
+ "schema": "spiderx.response_law/1",
+ "scope": "offline plant-validity check of a completed bag; not an online stop condition",
+ "thresholds": {
+  "controller_state_match_window_ns": 100000000,
+  "gain_tolerance": 1e-06,
+  "max_residual_rad": 1e-09,
+  "min_excitation_norm_rad": 0.0001,
+  "min_excitation_rad": 1e-06,
+  "min_pairs": 20,
+  "update_period_ns": 10000000
+ },
+ "timing": {
+  "receipt": {
+   "first_ns": 1793269647780052354,
+   "joint_states_received_out_of_stamp_order": 0,
+   "last_ns": 1793269662838394210
+  },
+  "simulation": {
+   "first_s": 67.73,
+   "gap_examples_s": [],
+   "gaps": 0,
+   "joint_states": 1003,
+   "last_s": 77.75,
+   "stamp_differences_ns": {
+    "10000000": 1002
+   }
+  },
+  "wall": "not in the bag (driver and node logs carry CLOCK_MONOTONIC)"
+ },
+ "tracking": {
+  "basis": "action feedback error (desired - actual), the S2 P2 basis",
+  "error_identity_mismatches": 0,
+  "first_crossing": {
+   "error_rad": -0.020137499030105914,
+   "joint": "rf_thigh_joint",
+   "receipt_ns": 1793269656859770276,
+   "s": 74.0
+  },
+  "limit_rad": 0.02,
+  "max_abs_error_rad": 0.020972637967721877,
+  "max_at_s": 74.07,
+  "max_joint": "rr_thigh_joint",
+  "per_goal": [
+   {
+    "at_s": 74.07,
+    "index": 1,
+    "joint": "rr_thigh_joint",
+    "max_abs_error_rad": 0.020972637967721877,
+    "samples": 26,
+    "samples_above_limit": 3
+   }
+  ],
+  "samples": 26,
+  "samples_above_limit": 3,
+  "samples_skipped_unusable": 0,
+  "verdict": "FAIL"
+ }
+}
