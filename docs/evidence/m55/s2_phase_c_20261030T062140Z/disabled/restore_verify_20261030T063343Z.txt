@@ -1,0 +1,30 @@
+M6.1 / M5.5 restore and verify, 20261030T063343Z, workspace /home/user/spiderx_ws, base claude/spiderx-sim-actuator-model
+base commit f32285a90a7d4ef2c0c45d229aabd1cf4567922e
+--- 1. stop
+ok: no simulation process
+--- 2. preserve
+--- 3. restore
+HEAD f32285a90a7d4ef2c0c45d229aabd1cf4567922e (claude/spiderx-sim-actuator-model)
+ok: src/ equals the base f32285a90a7d4ef2c0c45d229aabd1cf4567922e (no diff, no untracked file)
+--- 4. rebuild
+skipped
+--- 5. verify (fresh environment)
+spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py (inside the workspace: True)
+spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py (inside the workspace: True)
+spiderx_controller.m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED = False imported from /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py (inside the workspace: True)
+ok: a. all three gates False in the imported modules, from this workspace
+ok: b. ros2 pkg prefix spiderx_controller = /home/user/spiderx_ws/install/spiderx_controller
+SpiderX M6.1 protected trot gait replay
+M6.1 protected trot gait replay. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows walking, locomotion, contact or balance.
+REFUSED: Live M6.1 trot-cycle dispatch is HARD-DISABLED in this build. Sending the one live goal needs a separate owner authorization and an enabling code change after a final audit (docs/M61_IMPLEMENTATION_NOTES.md, verification checklist). Nothing was sent.
+[ros2run]: Process exited with failure 3
+ok: c. m6_gait_replay.py --live refused, exit 3, HARD-DISABLED
+SpiderX M6.0-D live-playback tool
+M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows motion, tracking, contact, balance or walking.
+REFUSED: Live M6.0-D dispatch is HARD-DISABLED in this build. Sending the one live goal needs a separate owner authorization and an enabling code change after a final audit (docs/M6D_LIVE_PLAYBACK_PLAN.md section 16). Nothing was sent.
+[ros2run]: Process exited with failure 3
+ok: c. m6_live_playback --live refused, exit 3, HARD-DISABLED
+ok: d. the calling environment cannot import spiderx_controller (not sourced)
+--- 6. enabling branch
+kept (no --delete-enabling-branch)
+VERDICT: DISABLED AND VERIFIED

@@ -1,0 +1,19 @@
+[06:42:29] gates (imported): True False False
+[06:42:29] launch
+launch pid 8022 pgid 8022 xvfb 8017
+[06:42:49] controllers: exit 0
+[06:42:52] gazebo gui pid(s) 8169  reniced +19
+[06:42:52] preflight
+[06:42:57] preflight exit 0 READY
+[06:42:57] pre-motion checks: waiting for go.flag or abort.flag (at most 1500 s)
+[06:43:34] pre-motion checks passed: 2026-10-30T06:43:34Z premotion PASS (process 8166 in session 8022; overlay libraries ef37a04f/c3db97f2 mapped; gain log 1 x 'set to: 1'; param 1.0; update_rate 100; physics 0.001 s; 0 action clients; 0 command publishers; weld z 0.125 m); screenshot 1 taken
+[06:43:34] node
+[06:44:40] node up after 66 s: locomotion node up in DISPATCH mode (dispatch gate True); levels [1.06, 1.9, 2.34] mm/s
+[06:44:43] captures before
+[06:44:49] driver
+[06:48:42] driver exit 0: {"command_rejections": {}, "expected_goals": 59, "faults": ["estop"], "final_state": "FAULTED", "goal_seqs_seen": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
+[06:48:45] captures after
+[06:48:49] node stopped
+[06:48:49] screenshot 2: exit 0
+[06:48:49] stop launch
+[06:48:58] end

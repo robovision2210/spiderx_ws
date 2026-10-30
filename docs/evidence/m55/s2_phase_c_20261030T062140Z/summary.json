@@ -1,0 +1,157 @@
+{
+ "P": {
+  "P1": {
+   "all_succeeded": true,
+   "goals_in_runs": 54,
+   "runs_ready_at_b0": 6,
+   "script_order": true,
+   "unplanned_faults": [],
+   "verdict": "PASS"
+  },
+  "P2": {
+   "goals_sent": 59,
+   "goals_with_feedback": 58,
+   "max_abs_error_rad": 0.0022469101426617205,
+   "verdict": "UNMEASURED"
+  },
+  "P3": {
+   "max_continuity_rad": 9.695963352621825e-05,
+   "verdict": "PASS"
+  },
+  "P4": {
+   "cancels_sent": 1,
+   "exercise_order_ok": true,
+   "goals_sent": 59,
+   "joint_trajectory_msgs": null,
+   "max_command_topic_publishers": 0,
+   "max_foreign_clients": 0,
+   "verdict": "FAIL"
+  },
+  "P5": {
+   "check_1_7": {
+    "bound_sim_s": 2.7,
+    "goal_duration_s": 1.7,
+    "pass": true,
+    "sim_s": 1.77,
+    "wall_s": 2.559
+   },
+   "check_1_9": {
+    "bound_sim_s": 2.7,
+    "goal_duration_s": 1.7,
+    "pass": true,
+    "sim_s": 1.8,
+    "wall_s": 2.573
+   },
+   "estop_one_cancel_last_goal_canceled": true,
+   "lease_disarmed": true,
+   "verdict": "PASS"
+  },
+  "P6": {
+   "bad_samples": 0,
+   "max_dz_m": 0.0,
+   "max_rot_rad": 0.0,
+   "max_xy_m": 0.0,
+   "pose_samples": 13627,
+   "verdict": "PASS"
+  },
+  "P7": {
+   "disabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+   "enabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+   "verdict": "PASS"
+  },
+  "P8": {
+   "report": "/root/spiderx_evidence/s2_phase_c_20261030T062140Z/restore/restore_verify_20261030T064957Z.txt",
+   "verdict": "PASS"
+  }
+ },
+ "bag_counts": {
+  "/cmd_vel": 2241,
+  "/joint_states": 16903,
+  "/leg_trajectory_controller/controller_state": 6996,
+  "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": 3947,
+  "/spiderx/locomotion/status": 526,
+  "/spiderx/sim/world_poses": 13627
+ },
+ "driver": {
+  "command_rejections": {},
+  "expected_goals": 59,
+  "faults": [
+   "estop"
+  ],
+  "final_state": "FAULTED",
+  "goal_seqs_seen": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30,
+   31,
+   32,
+   33,
+   34,
+   35,
+   36,
+   37,
+   38,
+   39,
+   40,
+   41,
+   42,
+   43,
+   44,
+   45,
+   46,
+   47,
+   48,
+   49,
+   50,
+   51,
+   52,
+   53,
+   54,
+   55,
+   56,
+   57,
+   58,
+   59
+  ],
+  "goals_recorded": 59,
+  "levels": [
+   0,
+   1,
+   2
+  ],
+  "max_seq": 59,
+  "result": "script complete",
+  "status_messages": 506
+ },
+ "goals_above_0_02_rad": [],
+ "joint_state_samples": 16903,
+ "overall": "FAIL",
+ "rtf_from_status": 0.696
+}

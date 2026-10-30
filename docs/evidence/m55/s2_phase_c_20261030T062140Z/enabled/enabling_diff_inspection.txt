@@ -1,0 +1,7 @@
+ src/spiderx_controller/spiderx_controller/m55_contract.py | 2 +-
+ src/spiderx_controller/test/m55_gate.py                   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+-M55_LOCOMOTION_DISPATCH_ENABLED = False
++M55_LOCOMOTION_DISPATCH_ENABLED = True
+-EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = False
++EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = True

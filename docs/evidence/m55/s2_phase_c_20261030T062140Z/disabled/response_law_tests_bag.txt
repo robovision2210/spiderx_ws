@@ -1,0 +1,12 @@
+/opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:163: DeprecationWarning: module 'sre_parse' is deprecated
+  import sre_parse
+/opt/mm/root/envs/humble/lib/python3.11/site-packages/lark/utils.py:164: DeprecationWarning: module 'sre_constants' is deprecated
+  import sre_constants
+test_bag_unchanged_by_reading (test_response_law.OriginalBagRegression.test_bag_unchanged_by_reading) ... ok
+test_original_tracking_findings (test_response_law.OriginalBagRegression.test_original_tracking_findings) ... ok
+test_recorded_gain_0_1_is_recovered (test_response_law.OriginalBagRegression.test_recorded_gain_0_1_is_recovered) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.531s
+
+OK

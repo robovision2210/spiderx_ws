@@ -1,0 +1,43 @@
+From af92e1e147fe4cc931bab81ec13ed295904ce141 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 30 Oct 2026 06:36:44 +0000
+Subject: [PATCH] LOCAL ONLY, NEVER PUSH: enable M5.5 dispatch for one S2 Phase
+ C attempt
+
+Applies docs/patches/m55_enable_s2.UNAPPLIED.patch (sha256 d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236)
+on claude/spiderx-sim-actuator-model at f32285a: M55_LOCOMOTION_DISPATCH_ENABLED and its test pin.
+M6.1 and M6.0-D gates stay False. Deleted by the restore after verification.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01QzFL2kguRig19KtzFfqEm3
+---
+ src/spiderx_controller/spiderx_controller/m55_contract.py | 2 +-
+ src/spiderx_controller/test/m55_gate.py                   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/spiderx_controller/spiderx_controller/m55_contract.py b/src/spiderx_controller/spiderx_controller/m55_contract.py
+index 86d14e7..ab93f06 100644
+--- a/src/spiderx_controller/spiderx_controller/m55_contract.py
++++ b/src/spiderx_controller/spiderx_controller/m55_contract.py
+@@ -16,7 +16,7 @@ Enabling it is a separate, reviewed, owner-approved change after the local accep
+ (docs/M55_KEYBOARD_WALKING.md); it is not part of this milestone.
+ """
+ 
+-M55_LOCOMOTION_DISPATCH_ENABLED = False
++M55_LOCOMOTION_DISPATCH_ENABLED = True
+ 
+ M55_DISPATCH_DISABLED_MESSAGE = (
+     'continuous locomotion dispatch is hard-disabled in this build '
+diff --git a/src/spiderx_controller/test/m55_gate.py b/src/spiderx_controller/test/m55_gate.py
+index 5f4be06..833c51f 100644
+--- a/src/spiderx_controller/test/m55_gate.py
++++ b/src/spiderx_controller/test/m55_gate.py
+@@ -5,4 +5,4 @@ Enabling M5.5 dispatch is a separate, owner-approved change after the local acce
+ (docs/M55_KEYBOARD_WALKING.md): it flips m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED and this
+ expectation together, and nothing else. On main both stay False.
+ """
+-EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = False
++EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = True
+-- 
+2.43.0
+

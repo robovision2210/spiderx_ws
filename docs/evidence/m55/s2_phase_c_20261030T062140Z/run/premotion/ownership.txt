@@ -1,0 +1,23 @@
+== ros2 control list_controllers
+[INFO] [1793342588.223738935] [_ros2cli_8695]: waiting for service /controller_manager/list_controllers to become available...
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+== ros2 action info
+Action: /leg_trajectory_controller/follow_joint_trajectory
+Action clients: 0
+Action servers: 1
+    /leg_trajectory_controller
+== ros2 topic info joint_trajectory
+Type: trajectory_msgs/msg/JointTrajectory
+Publisher count: 0
+Subscription count: 1
+== locomotion/driver/teleop processes
+none
+== ros2 node list
+/controller_manager
+/gz_ros2_control
+/joint_state_broadcaster
+/leg_trajectory_controller
+/robot_state_publisher
+/spiderx_gz_bridge
+/spiderx_sim_ground_truth_bridge

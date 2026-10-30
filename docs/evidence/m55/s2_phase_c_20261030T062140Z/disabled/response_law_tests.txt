@@ -1,0 +1,24 @@
+test_constant_joint_is_unmeasured_not_fabricated (test_response_law.Excitation.test_constant_joint_is_unmeasured_not_fabricated) ... ok
+test_no_commands_is_insufficient (test_response_law.Excitation.test_no_commands_is_insufficient) ... ok
+test_fit_has_no_search_interval (test_response_law.GainRecovery.test_fit_has_no_search_interval) ... ok
+test_gain_0_1_is_recovered_and_supported (test_response_law.GainRecovery.test_gain_0_1_is_recovered_and_supported) ... ok
+test_gain_1_0_is_recovered_and_supported (test_response_law.GainRecovery.test_gain_1_0_is_recovered_and_supported) ... ok
+test_wrong_expected_gain_is_rejected (test_response_law.GainRecovery.test_wrong_expected_gain_is_rejected) ... ok
+test_goal_ids_without_status_are_reported_not_guessed (test_response_law.GoalsAndHolds.test_goal_ids_without_status_are_reported_not_guessed) ... ok
+test_multiple_goals_and_a_cancelled_final_goal (test_response_law.GoalsAndHolds.test_multiple_goals_and_a_cancelled_final_goal) ... ok
+test_bag_unchanged_by_reading (test_response_law.OriginalBagRegression.test_bag_unchanged_by_reading) ... skipped 'set S2_BAG to the 2026-10-29 bag_0.db3'
+test_original_tracking_findings (test_response_law.OriginalBagRegression.test_original_tracking_findings) ... skipped 'set S2_BAG to the 2026-10-29 bag_0.db3'
+test_recorded_gain_0_1_is_recovered (test_response_law.OriginalBagRegression.test_recorded_gain_0_1_is_recovered) ... skipped 'set S2_BAG to the 2026-10-29 bag_0.db3'
+test_joint_name_permutations_change_nothing (test_response_law.RecordingFaults.test_joint_name_permutations_change_nothing) ... ok
+test_missing_updates_and_out_of_order_receipt (test_response_law.RecordingFaults.test_missing_updates_and_out_of_order_receipt) ... ok
+test_non_finite_and_conflicting_samples_are_excluded (test_response_law.RecordingFaults.test_non_finite_and_conflicting_samples_are_excluded) ... ok
+test_successful_run_without_a_crossing (test_response_law.Tracking.test_successful_run_without_a_crossing) ... ok
+test_command_recorded_against_the_wrong_update_is_contradicted (test_response_law.WrongTimingMustNotPass.test_command_recorded_against_the_wrong_update_is_contradicted) ... ok
+test_controller_state_stamps_outside_the_window_are_not_used (test_response_law.WrongTimingMustNotPass.test_controller_state_stamps_outside_the_window_are_not_used) ... ok
+test_feedback_stamped_one_update_late_is_excluded (test_response_law.WrongTimingMustNotPass.test_feedback_stamped_one_update_late_is_excluded) ... ok
+test_one_update_command_delay_is_contradicted (test_response_law.WrongTimingMustNotPass.test_one_update_command_delay_is_contradicted) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.247s
+
+OK (skipped=3)

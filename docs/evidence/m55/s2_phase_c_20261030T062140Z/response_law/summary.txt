@@ -1,0 +1,15 @@
+plant verdict: SUPPORTED (expected gain 1.0)
+pooled g_hat 0.9999999999996921 over 107832 joint-updates, residual max 2.01e-12
+  lf_hip: g_hat 1.000000000003118, residual max 1.59e-12
+  lf_thigh_joint: g_hat 0.9999999999964191, residual max 9.79e-13
+  lf_foot_joint: g_hat 0.9999999999938963, residual max 1.21e-12
+  rf_hip: g_hat 0.999999999998229, residual max 1.9e-12
+  rf_thigh_joint: g_hat 0.9999999999952703, residual max 1.23e-12
+  rf_foot_joint: g_hat 0.9999999999915395, residual max 1.12e-12
+  lr_hip: g_hat 1.0000000000038882, residual max 1.65e-12
+  lr_thigh_joint: g_hat 1.0000000000012539, residual max 9.9e-13
+  lr_foot_joint: g_hat 1.0000000000059839, residual max 1.21e-12
+  rr_hip: g_hat 0.999999999999632, residual max 2.01e-12
+  rr_thigh_joint: g_hat 1.0000000000035663, residual max 1.26e-12
+  rr_foot_joint: g_hat 1.0000000000073674, residual max 1.1e-12
+tracking (action feedback error (desired - actual), the S2 P2 basis): PASS, max |error| 0.0022469101426617205 at 155.04 s (rf_thigh_joint), first crossing None
