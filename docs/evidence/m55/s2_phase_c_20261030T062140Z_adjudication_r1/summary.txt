@@ -1,0 +1,5 @@
+Retrospective assessment under criteria revision r1 (NOT the original frozen result)
+frozen (original criteria): FAIL {'P1': 'PASS', 'P2': 'UNMEASURED', 'P3': 'PASS', 'P4': 'FAIL', 'P5': 'PASS', 'P6': 'PASS', 'P7': 'PASS', 'P8': 'PASS'}
+r1: P2 PASS (N/A goals [59], max 0.0022469101426617205 rad over 58 goals); P4 PASS (command topic term PASS)
+r1 retrospective: {'P': {'P1': 'PASS', 'P2': 'PASS', 'P3': 'PASS', 'P4': 'PASS', 'P5': 'PASS', 'P6': 'PASS', 'P7': 'PASS', 'P8': 'PASS'}, 'plant': 'SUPPORTED', 'result': 'PASS'}
+bag unchanged: True

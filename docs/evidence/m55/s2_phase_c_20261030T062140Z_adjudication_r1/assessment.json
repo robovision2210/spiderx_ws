@@ -1,0 +1,586 @@
+{
+ "P2": {
+  "criterion": "P2",
+  "feedback_ids": 58,
+  "feedback_ids_unattributed": [],
+  "final_goal_context": {
+   "controller_state_max_abs_reference_minus_feedback_rad": 1.3437087970080706e-12,
+   "controller_state_max_gap_s_in_window": 0.034819602966308594,
+   "controller_state_samples_in_window": 4,
+   "joint_motion_max_abs_rad": 1.3437264079207971e-12,
+   "joint_state_samples_window_minus_0_1_plus_0_3_s": 37,
+   "note": "context only: the controller_state reference after a cancel is the hold, not necessarily goal 59; this is not a P2 measurement",
+   "window_s": [
+    1903.705886503,
+    1903.804429228
+   ]
+  },
+  "goals": [
+   {
+    "feedback_samples": 49,
+    "max_abs_error_rad": 0.0021835854866989607,
+    "seq": 1,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 74,
+    "max_abs_error_rad": 0.0021662054994682385,
+    "seq": 2,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 51,
+    "max_abs_error_rad": 0.0021401906547001415,
+    "seq": 3,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 72,
+    "max_abs_error_rad": 0.0022448209782575364,
+    "seq": 4,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 84,
+    "max_abs_error_rad": 0.0022404297832280817,
+    "seq": 5,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 74,
+    "max_abs_error_rad": 0.002153869956803941,
+    "seq": 6,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 47,
+    "max_abs_error_rad": 0.0022248005942900415,
+    "seq": 7,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 71,
+    "max_abs_error_rad": 0.0021588927978953925,
+    "seq": 8,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 36,
+    "max_abs_error_rad": 0.0022116266934177967,
+    "seq": 9,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 34,
+    "max_abs_error_rad": 0.0022116266919773794,
+    "seq": 10,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 66,
+    "max_abs_error_rad": 0.002161055038104748,
+    "seq": 11,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 48,
+    "max_abs_error_rad": 0.0022236133931072023,
+    "seq": 12,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 70,
+    "max_abs_error_rad": 0.002150372835691281,
+    "seq": 13,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 82,
+    "max_abs_error_rad": 0.00224019439176891,
+    "seq": 14,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 65,
+    "max_abs_error_rad": 0.00224482098054298,
+    "seq": 15,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 46,
+    "max_abs_error_rad": 0.0021400830540917876,
+    "seq": 16,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 68,
+    "max_abs_error_rad": 0.002164935503529218,
+    "seq": 17,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 48,
+    "max_abs_error_rad": 0.002185478695698184,
+    "seq": 18,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 55,
+    "max_abs_error_rad": 0.0022136309045032027,
+    "seq": 19,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 91,
+    "max_abs_error_rad": 0.002197845265419277,
+    "seq": 20,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 35,
+    "max_abs_error_rad": 0.0022439257308735916,
+    "seq": 21,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 91,
+    "max_abs_error_rad": 0.0022041215540516135,
+    "seq": 22,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 84,
+    "max_abs_error_rad": 0.002180142759643511,
+    "seq": 23,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 83,
+    "max_abs_error_rad": 0.002224170499919187,
+    "seq": 24,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 32,
+    "max_abs_error_rad": 0.0022357879860206275,
+    "seq": 25,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 86,
+    "max_abs_error_rad": 0.0022469101426617205,
+    "seq": 26,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 36,
+    "max_abs_error_rad": 0.0021905976643160005,
+    "seq": 27,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 34,
+    "max_abs_error_rad": 0.0021926310940767954,
+    "seq": 28,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 88,
+    "max_abs_error_rad": 0.002245022295341001,
+    "seq": 29,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 38,
+    "max_abs_error_rad": 0.002235787987574887,
+    "seq": 30,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 92,
+    "max_abs_error_rad": 0.002224909076868231,
+    "seq": 31,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 92,
+    "max_abs_error_rad": 0.0021800837203483636,
+    "seq": 32,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 96,
+    "max_abs_error_rad": 0.002204121555342803,
+    "seq": 33,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 36,
+    "max_abs_error_rad": 0.002245582734724416,
+    "seq": 34,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 89,
+    "max_abs_error_rad": 0.0021978452669749347,
+    "seq": 35,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 52,
+    "max_abs_error_rad": 0.0022121610298938277,
+    "seq": 36,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 53,
+    "max_abs_error_rad": 0.002224021645806845,
+    "seq": 37,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 131,
+    "max_abs_error_rad": 0.002222118590585742,
+    "seq": 38,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 25,
+    "max_abs_error_rad": 0.0021857608560973962,
+    "seq": 39,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 131,
+    "max_abs_error_rad": 0.002223300313654336,
+    "seq": 40,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 88,
+    "max_abs_error_rad": 0.0022419681513545786,
+    "seq": 41,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 115,
+    "max_abs_error_rad": 0.0021991595416079868,
+    "seq": 42,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 22,
+    "max_abs_error_rad": 0.0020992561713076563,
+    "seq": 43,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 119,
+    "max_abs_error_rad": 0.00224507065329399,
+    "seq": 44,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 34,
+    "max_abs_error_rad": 0.0021695462436141094,
+    "seq": 45,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 34,
+    "max_abs_error_rad": 0.0021751152161738965,
+    "seq": 46,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 118,
+    "max_abs_error_rad": 0.0022453341475088123,
+    "seq": 47,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 20,
+    "max_abs_error_rad": 0.002081940144693442,
+    "seq": 48,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 124,
+    "max_abs_error_rad": 0.0021991595435854328,
+    "seq": 49,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 93,
+    "max_abs_error_rad": 0.002241929296234735,
+    "seq": 50,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 137,
+    "max_abs_error_rad": 0.002223408636737298,
+    "seq": 51,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 23,
+    "max_abs_error_rad": 0.002183618493303119,
+    "seq": 52,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 133,
+    "max_abs_error_rad": 0.0022221185920084097,
+    "seq": 53,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 57,
+    "max_abs_error_rad": 0.0022240216439872867,
+    "seq": 54,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 49,
+    "max_abs_error_rad": 0.0021854391570934745,
+    "seq": 55,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 49,
+    "max_abs_error_rad": 0.0021835854848954728,
+    "seq": 56,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 49,
+    "max_abs_error_rad": 0.002183466870290765,
+    "seq": 57,
+    "verdict": "PASS"
+   },
+   {
+    "feedback_samples": 48,
+    "max_abs_error_rad": 0.0021854391553009223,
+    "seq": 58,
+    "verdict": "PASS"
+   },
+   {
+    "estop_proof": {
+     "checks": {
+      "accepted": true,
+      "cancel_after_key": true,
+      "cancel_processed_by_server": true,
+      "early_cancel_request": true,
+      "estop_fault_follows_key": true,
+      "exactly_one_cancel_overall": true,
+      "identity_matches_estop_exercise": true,
+      "is_final_scripted_goal": true,
+      "no_feedback_for_goal": true,
+      "no_refusal_before_result": true,
+      "no_unplanned_fault_before": true,
+      "result_canceled": true,
+      "scripted_estop_key_during_goal": true
+     },
+     "failed": [],
+     "qualifies": true,
+     "timing": {
+      "alignment_tolerance_s": 0.03172922134399414,
+      "cancel_requested_after_send_s": 0.011266004999924917,
+      "cancel_requested_t (queued if no goal handle yet)": 1903.717152508,
+      "cancel_response_polled_t": 1903.758498549,
+      "estop_key_t (driver)": 1903.7159,
+      "goal_response_polled_t (accepted; callback in (prev poll, t])": 1903.758498549,
+      "goal_sent_t": 1903.705886503,
+      "not_recorded": "server-side acceptance and cancel-processing times",
+      "observed_feedback_period_s": 0.050003767013549805,
+      "result_polled_t": 1903.804429228,
+      "server_active_interval_upper_bound_s (cancel response polled - sent)": 0.052612045999921975
+     }
+    },
+    "feedback_samples": 0,
+    "note": "tracking N/A - planned cancellation before feedback",
+    "seq": 59,
+    "verdict": "N/A"
+   }
+  ],
+  "goals_na": [
+   59
+  ],
+  "goals_with_feedback": 58,
+  "limit_rad": 0.02,
+  "max_abs_error_rad": 0.0022469101426617205,
+  "per_goal_max_equals_frozen_tracking_csv": true,
+  "problems": [],
+  "revision": "r1",
+  "verdict": "PASS"
+ },
+ "P4": {
+  "command_topic": {
+   "failed": [],
+   "present_in_bag": false,
+   "support": {
+    "captures_before_after_zero_publishers": true,
+    "discovery_demonstrated_after_start": true,
+    "no_owner_refusal_in_node_events": true,
+    "node_monitored_streams_continuous": true,
+    "owner_monitor_fresh": true,
+    "owner_monitor_zero_throughout": true,
+    "recorder_log_without_failure": true,
+    "recording_covers_goal_interval": true,
+    "requested_from_recorder": true,
+    "script_counts_and_order_match": true
+   },
+   "term": "PASS"
+  },
+  "criterion": "P4",
+  "evidence": {
+   "captures": {
+    "after": 0,
+    "before": 0
+   },
+   "continuity": {
+    "/joint_states": {
+     "limit_s": 0.5,
+     "limit_source": "monitor.joint_states_stale_s",
+     "max_gap_s": 0.05716419219970703
+    },
+    "/spiderx/sim/world_poses": {
+     "limit_s": 1.0,
+     "limit_source": "monitor.pose_stale_s",
+     "max_gap_s": 0.04714846611022949
+    }
+   },
+   "informational_max_gaps_s": {
+    "/leg_trajectory_controller/controller_state": 0.09036898612976074,
+    "/spiderx/locomotion/status": 0.5331430435180664
+   },
+   "owner": {
+    "graph_period_s": 1.0,
+    "graph_stale_s": 3.0,
+    "max_foreign": 0,
+    "max_graph_age_s": 1.02151429200012,
+    "max_publishers": 0,
+    "max_status_gap_s": 0.5331430435180664,
+    "samples": 486,
+    "samples_without_graph": 0
+   },
+   "recorder": {
+    "discovered_after_start": [
+     "/spiderx/sim/world_poses",
+     "/spiderx/locomotion/status",
+     "/cmd_vel"
+    ],
+    "errors": [],
+    "started_t": 1672.932894229889,
+    "stopped_t": 1915.4862310886383,
+    "subscriptions": [
+     {
+      "t": 1672.9310762882233,
+      "topic": "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback"
+     },
+     {
+      "t": 1672.931936264038,
+      "topic": "/leg_trajectory_controller/controller_state"
+     },
+     {
+      "t": 1672.9327688217163,
+      "topic": "/joint_states"
+     },
+     {
+      "t": 1673.0370116233826,
+      "topic": "/spiderx/sim/world_poses"
+     },
+     {
+      "t": 1673.241221666336,
+      "topic": "/spiderx/locomotion/status"
+     },
+     {
+      "t": 1677.689516544342,
+      "topic": "/cmd_vel"
+     }
+    ]
+   },
+   "requested_topics": [
+    "/spiderx/locomotion/status",
+    "/joint_states",
+    "/spiderx/sim/world_poses",
+    "/cmd_vel",
+    "/leg_trajectory_controller/joint_trajectory",
+    "/leg_trajectory_controller/controller_state",
+    "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback"
+   ]
+  },
+  "frozen_terms": {
+   "cancels_1": true,
+   "command_topic_publishers_0": true,
+   "exercise_order_ok": true,
+   "foreign_clients_0": true,
+   "goals_sent_59": true
+  },
+  "problems": [],
+  "revision": "r1",
+  "sampling_limitations": [
+   "the node graph monitor samples once per graph_period_s (1.0 s); a publisher that exists only between samples is not seen by it",
+   "the recorder subscribes only after discovering a publisher; messages sent by a publisher that appears and disappears before discovery are not recorded",
+   "captures of the command topic exist only before and after the script"
+  ],
+  "verdict": "PASS"
+ },
+ "alignment": {
+  "of_driver_statuses": 506,
+  "offset_s": 1793341013.092072,
+  "p05_p95_ms": [
+   -1.52,
+   1.3
+  ],
+  "pairs": 506,
+  "tolerance_s": 0.03172922134399414
+ },
+ "bag": {
+  "messages": {
+   "/joint_states": 16903,
+   "/leg_trajectory_controller/controller_state": 6996,
+   "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": 3947,
+   "/spiderx/locomotion/status": 526
+  },
+  "open_mode": "sqlite3 mode=ro&immutable=1",
+  "path": "/root/spiderx_evidence/s2_phase_c_20261030T062140Z/bag/bag_0.db3",
+  "sha256_after": "9c77b9a2846a5ce7c731e96069e087eab7d03be1fa7617deb254ee3d3c16ec2e",
+  "sha256_after_topic_scan": "9c77b9a2846a5ce7c731e96069e087eab7d03be1fa7617deb254ee3d3c16ec2e",
+  "sha256_before": "9c77b9a2846a5ce7c731e96069e087eab7d03be1fa7617deb254ee3d3c16ec2e",
+  "unchanged": true
+ },
+ "feedback_period_s": 0.050003767013549805,
+ "frozen": {
+  "P": {
+   "P1": "PASS",
+   "P2": "UNMEASURED",
+   "P3": "PASS",
+   "P4": "FAIL",
+   "P5": "PASS",
+   "P6": "PASS",
+   "P7": "PASS",
+   "P8": "PASS"
+  },
+  "note": "the original frozen result; unchanged and still authoritative for the original criteria",
+  "overall": "FAIL",
+  "scorer": "analyze_s2.py (sha256 e9c2efcb...)"
+ },
+ "label": "Retrospective assessment under criteria revision r1",
+ "retrospective": {
+  "P": {
+   "P1": "PASS",
+   "P2": "PASS",
+   "P3": "PASS",
+   "P4": "PASS",
+   "P5": "PASS",
+   "P6": "PASS",
+   "P7": "PASS",
+   "P8": "PASS"
+  },
+  "plant": "SUPPORTED",
+  "result": "PASS"
+ },
+ "revision": "r1",
+ "schema": "spiderx.s2_adjudication/1"
+}
