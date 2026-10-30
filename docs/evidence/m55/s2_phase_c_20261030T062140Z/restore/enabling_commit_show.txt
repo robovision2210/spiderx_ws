@@ -1,0 +1,18 @@
+commit af92e1e147fe4cc931bab81ec13ed295904ce141
+Author:     Claude <noreply@anthropic.com>
+AuthorDate: Fri Oct 30 06:36:44 2026 +0000
+Commit:     Claude <noreply@anthropic.com>
+CommitDate: Fri Oct 30 06:36:44 2026 +0000
+
+    LOCAL ONLY, NEVER PUSH: enable M5.5 dispatch for one S2 Phase C attempt
+    
+    Applies docs/patches/m55_enable_s2.UNAPPLIED.patch (sha256 d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236)
+    on claude/spiderx-sim-actuator-model at f32285a: M55_LOCOMOTION_DISPATCH_ENABLED and its test pin.
+    M6.1 and M6.0-D gates stay False. Deleted by the restore after verification.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01QzFL2kguRig19KtzFfqEm3
+
+ src/spiderx_controller/spiderx_controller/m55_contract.py | 2 +-
+ src/spiderx_controller/test/m55_gate.py                   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)

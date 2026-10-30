@@ -1,0 +1,4 @@
+== ros2 topic info /leg_trajectory_controller/joint_trajectory
+Type: trajectory_msgs/msg/JointTrajectory
+Publisher count: 0
+Subscription count: 1

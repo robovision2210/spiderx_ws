@@ -1,0 +1,18 @@
+2,4c2,6
+< # Phase B run-local safety net (not part of the frozen harness): if the session is interrupted,
+< # stop this launch through the harness once the deadline passes. Exits when RUN/stopped.flag exists.
+< RUN=$1; DEADLINE_S=${2:-1500}
+---
+> # Phase C run-local safety net (the Phase B watchdog, extended): if the session is interrupted and
+> # the deadline passes, stop everything the run started (the tested S2 cleanup.sh, which ends with
+> # stage_stop.sh), then restore and verify the disabled state (restore_cmd.sh).
+> # Exits without acting when RUN/stopped.flag exists.
+> RUN=$1; DEADLINE_S=${2:-3600}
+10,11c12,15
+< echo "$(date -u +%FT%TZ) watchdog: deadline ${DEADLINE_S}s reached; running stage_stop.sh" >> "$RUN/watchdog.txt"
+< bash "$EVT/stage_stop.sh" "$RUN" >> "$RUN/watchdog.txt" 2>&1
+---
+> echo "$(date -u +%FT%TZ) watchdog: deadline ${DEADLINE_S}s reached; cleanup.sh, then restore_cmd.sh" >> "$RUN/watchdog.txt"
+> bash "$EVT/cleanup.sh" "$RUN" >> "$RUN/watchdog.txt" 2>&1
+> bash "$EVT/restore_cmd.sh" >> "$RUN/watchdog.txt" 2>&1
+> echo "$(date -u +%FT%TZ) watchdog: done" >> "$RUN/watchdog.txt"

@@ -23,6 +23,24 @@ They are genuine, but they are not showcase quality.
 | `cloud_validation/m2_cad_neutral_posture_hold.png` | M2: SpiderX CAD neutral posture hold in Gazebo Fortress — simulation only; not balance or walking. Captured after `run_posture_hold_test.py` reported "Simulation posture hold verified." (Gazebo window only) |
 | `cloud_validation/rviz_scan_tf.png` | Output of `rviz:=true`: the RobotModel driven by Gazebo `/joint_states`, TF, and `/scan` outlining the walls, boxes and pillar, with Global Status OK. |
 
+## S2 Phase C fixed-base attempt (cloud, 2026-10-30): FAIL
+
+This capture was taken during the one authorized S2 Phase C attempt. It shows the Gazebo GUI on Xvfb, with Mesa software rendering and no GPU. It was taken with the pre-installed ImageMagick `import`, then cropped to the Gazebo window; the strip removed was empty. There was no other edit.
+
+| File | What it shows |
+|---|---|
+| `s2_phase_c/20261030T062140Z/s2_phase_c_before_first_goal.png` | `fortress_m61a_fixed_base.launch.py` with the gain-1.0 actuator overlay. SpiderX is welded 0.125 m above the floor, after preflight READY and the pre-motion checks, before the first goal |
+
+*Simulation-only fixed-base crawl trajectory validation. The body is welded above the ground; this does not demonstrate walking, ground contact or balance.*
+
+- **Purpose:** to show the fixed-base rig used for the S2 crawl-trajectory check: the controller executes the phase trajectories on a body that cannot touch the ground.
+- **Attempt verdict: FAIL.** The run did not stop early: the script completed, with 59 goals and 1 scripted cancel. The offline plant check matched gain 1.0. The frozen scorer rated:
+  - **P4 FAIL:** the `joint_trajectory` topic is absent from the bag, which the scorer does not count as zero messages;
+  - **P2 UNMEASURED:** the scripted estop goal was cancelled before any feedback arrived;
+  - **P1, P3 and P5–P8:** PASS.
+- **Evidence:** `docs/evidence/m55/s2_phase_c_20261030T062140Z/`. This is the run evidence; it is under review and not yet committed.
+- **Limitations:** the image was taken before any motion, and a static screenshot does not prove that a trajectory or cycle completed. A second capture, after the script, differs by 12 pixels at this distance, so it is not published. The rendering is software-only, not showcase quality.
+
 ## Showcase media to capture locally (placeholder)
 
 Capture these on an Ubuntu 22.04 machine with a GPU, then add them here and reference them

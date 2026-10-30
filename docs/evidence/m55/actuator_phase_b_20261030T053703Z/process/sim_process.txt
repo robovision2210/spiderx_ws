@@ -1,0 +1,5 @@
+pid 1332; ppid chain: 1245 -> 1242 ; session 1144 (launch.pid 1144)
+exe: /opt/mm/root/envs/humble/bin/ruby
+cmdline: ign gazebo server                                                                                                                                                              
+IGN_GAZEBO_SYSTEM_PLUGIN_PATH in process env: /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib:/root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib:/opt/mm/root/envs/humble/opt/rviz_ogre_vendor/lib:
+GZ_SIM_SYSTEM_PLUGIN_PATH in process env: /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib:/root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib:/opt/mm/root/envs/humble/opt/rviz_ogre_vendor/lib:

@@ -1,0 +1,21 @@
+# SIMULATION ONLY: the simulated actuator model of gz_ros2_control's GazeboSimSystem.
+#
+# position_proportional_gain K turns a position command c into the joint velocity command
+# K * update_rate * (c - x), held for one controller update, so each joint moves as
+# x[k+1] = x[k] + K * (c[k] - x[k]) per 10 ms update (docs/S2_SIM_ACTUATOR_MODEL_DESIGN.md).
+# K = 1.0 is an explicitly idealized position servo: the joint reaches each command at the next
+# update. It does not model a real servo and was not chosen to pass a tracking criterion.
+#
+# This CHANGES THE SIMULATED PLANT. Every earlier Fortress run used the plugin default K = 0.1,
+# including the S2 attempt of 2026-10-29, which stays FAIL. Runtime behavior is not expected to
+# match those runs.
+#
+# Only the patched gz_ros2_control overlay applies this file (third_party/gz_ros2_control_overlay).
+# Stock gz_ros2_control 0.7.15 never applies it to its node and silently keeps K = 0.1, so verify
+# the loaded value at runtime before relying on it.
+#
+# Scope: the plugin's own node (/gz_ros2_control). The controller manager and the controllers
+# keep their configuration in spiderx_controller/config/spiderx_ros2_controllers.yaml.
+gz_ros2_control:
+  ros__parameters:
+    position_proportional_gain: 1.0

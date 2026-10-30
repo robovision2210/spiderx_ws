@@ -1,0 +1,10 @@
+7f1679375000-7f16793a6000 r--p 00000000 fe:00 1253379                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7f16793a6000-7f16793de000 r-xp 00031000 fe:00 1253379                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7f16793de000-7f16793ed000 r--p 00069000 fe:00 1253379                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7f16793ed000-7f16793f0000 r--p 00078000 fe:00 1253379                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7f16793f0000-7f16793f2000 rw-p 0007b000 fe:00 1253379                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7f169c5ef000-7f169c61c000 r--p 00000000 fe:00 1253385                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+7f169c61c000-7f169c65a000 r-xp 0002d000 fe:00 1253385                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+7f169c65a000-7f169c66a000 r--p 0006b000 fe:00 1253385                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+7f169c66a000-7f169c66d000 r--p 0007a000 fe:00 1253385                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+7f169c66d000-7f169c66f000 rw-p 0007d000 fe:00 1253385                    /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so
