@@ -36,6 +36,7 @@ install(PROGRAMS
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_config_check test/test_config_check.py)
+  ament_add_pytest_test(test_sim_actuator_model test/test_sim_actuator_model.py)
   ament_add_pytest_test(test_joint_safety test/test_joint_safety.py)
   ament_add_pytest_test(test_posture_config test/test_posture_config.py)
   ament_add_pytest_test(test_posture_metrics test/test_posture_metrics.py)
