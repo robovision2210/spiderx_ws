@@ -1,8 +1,10 @@
 # Simulated actuator model: design note (S2 follow-up)
 
-**Status:** Phase A, implementation and offline tests, on branch `claude/spiderx-sim-actuator-model`.
-- Phases B (launch-only verification) and C (S2 retry) each need their own approval and have not been executed.
-- Nothing has run in Gazebo, and no goal or cancel has been sent.
+**Status:** on branch `claude/spiderx-sim-actuator-model`.
+- Phase A (implementation and offline tests) is done.
+- Phase B (launch-only verification) ran once on 2026-10-30: PASS, loading and configuration only (§5).
+- Phase C (an S2 attempt) is NOT authorized; its draft is `docs/S2_PHASE_C_ATTEMPT_DRAFT.md`.
+- No goal or cancel has been sent on the modified plant, and the gain-response law has not been measured.
 - All three dispatch gates stay False. S2 stays **FAIL** (2026-10-29) and S3 stays blocked.
 - **Evidence:** `docs/evidence/m55/s2_fixed_base_20261029T100210Z/analysis_offline_20261029/` (commit `9c1a61b`), including `REVIEW_ADDENDUM.md`.
 
@@ -120,9 +122,12 @@ The route-(a) choice was preceded by a configuration stop. In 0.7.15 the gain ca
 | Phase-library digest | Recomputed with the committed `tools/library_fingerprint.py`: `62f8a100…e732`, 54 goals, gate False. Identical to the 2026-10-29 record |
 | Gates | All three False |
 
-**Not run:** the full historical suite. No shared code path changed:
-- the edits are a new configuration file, one xacro element in the control branch only, docs, tests and `third_party/`;
-- the M6 provenance inputs and the library inputs are untouched.
+**Not run in Phase A:** the full historical suite.
+- This is a correction: an earlier version said no shared code path changed. That was wrong.
+- The **shared** controlled-Fortress xacro (`spiderx_fortress_control.xacro`) did change. It is used by every Fortress launch with `enable_control:=true`.
+- Runtime regressions on the modified plant remain required before any motion: the full suite, the discovery checks and launch checks (`docs/S2_PHASE_C_ATTEMPT_DRAFT.md`).
+- The M6 provenance inputs and the phase-library inputs are untouched: the library digest is unchanged.
+- **Discovery gap, fixed afterwards.** `test_sim_actuator_model.py` was not registered in `spiderx_controller/CMakeLists.txt`, so `colcon test` would not have run it. It is now registered, and it passes under `colcon test` (with `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`, as in every suite run in this environment).
 
 **Limitations**
 - Only a sourced overlay applies the plant file; stock 0.7.15 silently keeps 0.1. Phase B must prove the loaded library and value.
@@ -131,7 +136,15 @@ The route-(a) choice was preceded by a configuration stop. In 0.7.15 the gain ca
 - The plugin node now receives every parameter-file entry addressed to it, wildcards included. SpiderX's files address it only through the plant file.
 - Gain 1.0 rests on assumptions A1–A4 (§2). On the welded rig they held at 0.1. **Nothing here predicts free-base (S3) behaviour.**
 
-## 5. Phase B: launch-only verification (NOT executed; separate approval)
+## 5. Phase B: launch-only verification
+
+**Ran once, 2026-10-30: PASS, loading and configuration only.**
+- Evidence: `docs/evidence/m55/actuator_phase_b_20261030T053703Z/` (commit `cbaac04`).
+- The simulator mapped only the overlay libraries, with the provenance hashes. The gain log line and `ros2 param get` both gave 1. Rate 100 Hz, physics step 0.001 s.
+- 0 goals, 0 cancels. Cleanup: DISABLED AND VERIFIED.
+- Shutdown was **not graceful**: ign SIGKILLed the Gazebo server after SIGINT.
+
+The procedure used was this one:
 
 **Preconditions:**
 - The branch head is built.
@@ -200,11 +213,20 @@ python3 -c "from spiderx_controller import m55_contract as a, m61_live_contract 
 
 **What Phase B cannot show.** A parameter query does not prove that the write loop uses the value.
 
-## 6. Phase C: S2 retry (separate authorization; requirements only)
+## 6. Phase C: S2 attempt (DRAFT, NOT AUTHORIZED)
+
+The full procedure and the draft one-attempt authorization are in `docs/S2_PHASE_C_ATTEMPT_DRAFT.md`.
 
 **Acceptance is unchanged.** Before scoring, the response law must be measured on the new bag: x[k+1] − x[k] = g·(c[k] − x[k]), with |ĝ − 1.0| < 1e-6 over every joint and update. Otherwise the run stops as *plant not as configured*.
 
-**Analysis tool.** The committed analysis tool's hold detection assumes g = 0.1. It needs a gain argument before Phase C, which is a separate small change.
+**Analysis tool.** The historical tool assumed g = 0.1 for hold detection, and it stays unchanged as evidence. Phase C uses the reusable `scripts/s2/response_law.py` instead:
+- the expected gain is given explicitly;
+- commands are recorded ones at identified updates, never inferred;
+- it fits pooled, per joint and per segment;
+- unexcited joints are reported as UNMEASURED;
+- tracking is reported separately.
+
+It is an **offline** check of a completed bag and cannot stop a run.
 
 **No claim in advance.** Nothing above claims that this verification has happened, or that S2 will pass.
 
