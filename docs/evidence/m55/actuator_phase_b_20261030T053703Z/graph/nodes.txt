@@ -1,0 +1,8 @@
+== ros2 node list
+/controller_manager
+/gz_ros2_control
+/joint_state_broadcaster
+/leg_trajectory_controller
+/robot_state_publisher
+/spiderx_gz_bridge
+/spiderx_sim_ground_truth_bridge

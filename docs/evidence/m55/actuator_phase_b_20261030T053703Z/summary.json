@@ -1,0 +1,100 @@
+{
+ "schema": "spiderx.actuator_phase_b/1",
+ "verdict": "PASS",
+ "scope": "Phase B launch-only verification of the gz_ros2_control overlay on the WELDED fixed-base simulation; loading and configuration only",
+ "branch": "claude/spiderx-sim-actuator-model",
+ "head": "502214d93cd92fda41c41114dba5375085a601aa",
+ "pr": "robovision2210/spiderx_ws#19 (open, draft)",
+ "overlay": {
+  "workspace": "/root/spiderx_gz_overlay_ws",
+  "upstream": "ros-controls/gz_ros2_control tag 0.7.15 commit bfc5845aa7f0250cbc384773dba5c9847d609b95",
+  "patch_sha256": "14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac",
+  "libgz_ros2_control-system.so": "ef37a04fda30cb0449529b12a97a7af272f00f2d4e14d4664df615815975b328",
+  "libgz_hardware_plugins.so": "c3db97f2f98af80af73174088604c9aa0a27f71463cecf2daac3c3db3747fbd3"
+ },
+ "launch": {
+  "file": "spiderx_bringup fortress_m61a_fixed_base.launch.py",
+  "harness": "frozen stage_start/stage_wait_controllers/stage_stop + run-local env.sh (one added line: overlay local_setup.bash)",
+  "start_utc": "2026-10-30T05:38:18Z",
+  "controllers_active_after_s": 40,
+  "launches": 1
+ },
+ "simulator_process": {
+  "pid": 1332,
+  "cmdline": "ign gazebo server",
+  "exe": "/opt/mm/root/envs/humble/bin/ruby",
+  "session": 1144,
+  "parent_chain": "1245 (ign gazebo) <- 1242 (sh) <- 1144 (ros2 launch)",
+  "plugin_path_env": "overlay lib only (+ rviz_ogre_vendor lib); no stock lib directory"
+ },
+ "loaded_libraries": {
+  "libgz_ros2_control-system.so": {
+   "path": "/root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so",
+   "inode_matches_overlay_file": true,
+   "mapped_object_sha256_matches_provenance": true,
+   "deleted_mappings": 0
+  },
+  "libgz_hardware_plugins.so": {
+   "path": "/root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so",
+   "inode_matches_overlay_file": true,
+   "mapped_object_sha256_matches_provenance": true,
+   "deleted_mappings": 0
+  },
+  "stock_counterparts_mapped": [],
+  "processes_outside_this_launch_mapping_them": []
+ },
+ "runtime_configuration": {
+  "gain_log_lines": 1,
+  "gain_log_value": "1",
+  "ros2_param_get_gz_ros2_control_position_proportional_gain": 1.0,
+  "controller_manager_update_rate": 100,
+  "physics_period_s_from_runtime_warning": 0.001,
+  "controller_period_s_from_runtime_warning": 0.01,
+  "invalid_gain_or_init_errors": 0
+ },
+ "graph": {
+  "controllers_active": [
+   "joint_state_broadcaster",
+   "leg_trajectory_controller"
+  ],
+  "action_servers": [
+   "/leg_trajectory_controller/follow_joint_trajectory"
+  ],
+  "action_clients": 0,
+  "trajectory_command_publishers": 0,
+  "locomotion_driver_teleop_nodes_or_processes": 0
+ },
+ "observer": {
+  "mode": "preflight",
+  "ready": true,
+  "checks_passed": 12,
+  "body_z_m": 0.125,
+  "body_z_range_m": 0.0,
+  "max_attachment_deviation_m": 0.0,
+  "goals_sent": 0,
+  "publishers_created": 0
+ },
+ "goals_sent_by_this_task": 0,
+ "cancels_sent_by_this_task": 0,
+ "cleanup": {
+  "stop": "frozen stage_stop.sh: SIGINT to process group 1144, empty after 9 s, daemon and Xvfb stopped",
+  "leftovers": "none",
+  "restore_verify_only": "DISABLED AND VERIFIED",
+  "gates": {
+   "M55_LOCOMOTION_DISPATCH_ENABLED": false,
+   "M61_LIVE_DISPATCH_ENABLED": false,
+   "LIVE_DISPATCH_ENABLED": false
+  },
+  "gate_module_dir": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller",
+  "shutdown_graceful": false,
+  "server_sigkill_escalation": "run/launch.log:295"
+ },
+ "notes": [
+  "startup waits (not launch attempts): launch.log lines 57-58, two 'robot_state_publisher service not available, waiting again...' messages 0.5 s apart inside the single launch (ros2 launch pid 1144); the plugin then loaded",
+  "shutdown NOT graceful: launch.log line 295 'Escalating to SIGKILL on [Ignition Gazebo Server]' after the harness SIGINT; line 296 'finished cleanly [pid 1242]' is the sh wrapper, not the server; no process remained afterwards"
+ ],
+ "non_claims": [
+  "Loading and configuration only. Not tracking, not the measured gain-response law (no motion), not contact behaviour, not balance, not walking.",
+  "S2 remains FAIL. Phase C is not authorized."
+ ]
+}
