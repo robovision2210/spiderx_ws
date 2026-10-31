@@ -33,7 +33,7 @@
 | ![SpiderX welded above the floor on the fixed-base rig, before the first goal](media/s2_phase_c/20261030T062140Z/s2_phase_c_before_first_goal.png) |
 
 *Simulation-only fixed-base crawl trajectory validation. The body is welded above the ground; this does not demonstrate walking, ground contact or balance.*
-The script completed (59 goals and 1 scripted cancel), but the frozen scorer rated P4 FAIL and P2 UNMEASURED. See [media/README.md](media/README.md).
+The script completed (59 goals and 1 scripted cancel), but the frozen scorer rated P4 FAIL and P2 UNMEASURED. S2 fixed-base validation accepted retrospectively under criteria revision r1. Not walking, contact or balance validation. See [media/README.md](media/README.md).
 
 Demo GIFs of standing and walking will be added only once those capabilities exist
 ([media/README.md](media/README.md)).

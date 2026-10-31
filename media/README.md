@@ -38,7 +38,8 @@ This capture was taken during the one authorized S2 Phase C attempt. It shows th
   - **P4 FAIL:** the `joint_trajectory` topic is absent from the bag, which the scorer does not count as zero messages;
   - **P2 UNMEASURED:** the scripted estop goal was cancelled before any feedback arrived;
   - **P1, P3 and P5–P8:** PASS.
-- **Evidence:** `docs/evidence/m55/s2_phase_c_20261030T062140Z/`. This is the run evidence; it is under review and not yet committed.
+- **Evidence:** `docs/evidence/m55/s2_phase_c_20261030T062140Z/` (the run, commit `47b066d`) and `docs/evidence/m55/s2_phase_c_20261030T062140Z_adjudication_r1/` (commit `a033041`).
+- **Owner decision (2026-10-31):** S2 fixed-base validation accepted retrospectively under criteria revision r1. Not walking, contact or balance validation. The frozen verdict above stays FAIL.
 - **Limitations:** the image was taken before any motion, and a static screenshot does not prove that a trajectory or cycle completed. A second capture, after the script, differs by 12 pixels at this distance, so it is not published. The rendering is software-only, not showcase quality.
 
 ## Showcase media to capture locally (placeholder)

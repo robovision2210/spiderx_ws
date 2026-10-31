@@ -1,0 +1,431 @@
+{
+ "interpolation": "cubic Hermite (positions + velocities), 1 ms",
+ "joints": {
+  "lf_foot_joint": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.605484061,
+     "q_rad": -0.092647939,
+     "t_s": 1.7
+    },
+    "min_rad": 0.3594502840239612,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 3,
+     "margin_rad": 0.3594502840239612,
+     "q_rad": 0.07688171597603884,
+     "t_s": 1.2574
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.605484061,
+     "q_rad": -0.092647939,
+     "t_s": 1.7
+    },
+    "min_rad": 0.359985185,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 3,
+     "margin_rad": 0.359985185,
+     "q_rad": 0.076346815,
+     "t_s": 1.3
+    }
+   }
+  },
+  "lf_hip": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.490978386,
+     "q_rad": -0.119886614,
+     "t_s": 2.8
+    },
+    "min_rad": 0.490978386,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.575650119,
+     "q_rad": 0.122481881,
+     "t_s": 1.7
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.490978386,
+     "q_rad": -0.119886614,
+     "t_s": 2.8
+    },
+    "min_rad": 0.490978386,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.575650119,
+     "q_rad": 0.122481881,
+     "t_s": 1.7
+    }
+   }
+  },
+  "lf_thigh_joint": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 3,
+     "margin_rad": 0.421988617,
+     "q_rad": -0.188876383,
+     "t_s": 2.4
+    },
+    "min_rad": 0.421988617,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.685237953,
+     "q_rad": 0.100160047,
+     "t_s": 2.8
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 3,
+     "margin_rad": 0.421988617,
+     "q_rad": -0.188876383,
+     "t_s": 2.4
+    },
+    "min_rad": 0.421988617,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.685237953,
+     "q_rad": 0.100160047,
+     "t_s": 2.8
+    }
+   }
+  },
+  "lr_foot_joint": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 1,
+     "margin_rad": 0.3751432965567642,
+     "q_rad": -0.0611887034432358,
+     "t_s": 1.317
+    },
+    "min_rad": 0.3751432965567642,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.605484057,
+     "q_rad": 0.092647943,
+     "t_s": 1.7
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 1,
+     "margin_rad": 0.375234152,
+     "q_rad": -0.061097848,
+     "t_s": 1.3
+    },
+    "min_rad": 0.375234152,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.605484057,
+     "q_rad": 0.092647943,
+     "t_s": 1.7
+    }
+   }
+  },
+  "lr_hip": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 1,
+     "margin_rad": 0.5640599829999999,
+     "q_rad": -0.134072017,
+     "t_s": 1.3
+    },
+    "min_rad": 0.490978386,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.490978386,
+     "q_rad": 0.119886614,
+     "t_s": 2.8
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 1,
+     "margin_rad": 0.5640599829999999,
+     "q_rad": -0.134072017,
+     "t_s": 1.3
+    },
+    "min_rad": 0.490978386,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.490978386,
+     "q_rad": 0.119886614,
+     "t_s": 2.8
+    }
+   }
+  },
+  "lr_thigh_joint": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 2,
+     "margin_rad": 0.421988618,
+     "q_rad": -0.188876382,
+     "t_s": 1.7
+    },
+    "min_rad": 0.421988618,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 1,
+     "margin_rad": 0.6627875428569909,
+     "q_rad": 0.12261045714300911,
+     "t_s": 0.939
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 2,
+     "margin_rad": 0.421988618,
+     "q_rad": -0.188876382,
+     "t_s": 1.7
+    },
+    "min_rad": 0.421988618,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 1,
+     "margin_rad": 0.663034686,
+     "q_rad": 0.122363314,
+     "t_s": 0.9
+    }
+   }
+  },
+  "rf_foot_joint": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 7,
+     "margin_rad": 0.354106011831279,
+     "q_rad": -0.082225988168721,
+     "t_s": 1.2861
+    },
+    "min_rad": 0.354106011831279,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.590079016,
+     "q_rad": 0.108052984,
+     "t_s": 2.8
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 7,
+     "margin_rad": 0.354160214,
+     "q_rad": -0.082171786,
+     "t_s": 1.3
+    },
+    "min_rad": 0.354160214,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.590079016,
+     "q_rad": 0.108052984,
+     "t_s": 2.8
+    }
+   }
+  },
+  "rf_hip": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 5,
+     "margin_rad": 0.5827961399999999,
+     "q_rad": -0.11533586000000001,
+     "t_s": 0.207
+    },
+    "min_rad": 0.48324204899999995,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 1,
+     "margin_rad": 0.48324204899999995,
+     "q_rad": 0.12762295100000004,
+     "t_s": 0.202
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.58279614,
+     "q_rad": -0.11533586,
+     "t_s": 2.8
+    },
+    "min_rad": 0.483242049,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.483242049,
+     "q_rad": 0.127622951,
+     "t_s": 1.7
+    }
+   }
+  },
+  "rf_thigh_joint": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.622227005,
+     "q_rad": -0.163170995,
+     "t_s": 1.7
+    },
+    "min_rad": 0.500376531,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 7,
+     "margin_rad": 0.500376531,
+     "q_rad": 0.110488469,
+     "t_s": 2.4
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.622227005,
+     "q_rad": -0.163170995,
+     "t_s": 1.7
+    },
+    "min_rad": 0.500376531,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 7,
+     "margin_rad": 0.500376531,
+     "q_rad": 0.110488469,
+     "t_s": 2.4
+    }
+   }
+  },
+  "rr_foot_joint": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 5,
+     "margin_rad": 0.380651989491612,
+     "q_rad": -0.055680010508388,
+     "t_s": 1.399
+    },
+    "min_rad": 0.380651989491612,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.5900790109999999,
+     "q_rad": 0.108052989,
+     "t_s": 2.8
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 5,
+     "margin_rad": 0.380652432,
+     "q_rad": -0.055679568,
+     "t_s": 1.4
+    },
+    "min_rad": 0.380652432,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 4,
+     "margin_rad": 0.5900790109999999,
+     "q_rad": 0.108052989,
+     "t_s": 2.8
+    }
+   }
+  },
+  "rr_hip": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 1,
+     "margin_rad": 0.48324204899999995,
+     "q_rad": -0.12762295100000004,
+     "t_s": 0.202
+    },
+    "min_rad": 0.48324204899999995,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 5,
+     "margin_rad": 0.5718431371749999,
+     "q_rad": 0.12628886282500001,
+     "t_s": 1.35
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 0,
+     "margin_rad": 0.483242049,
+     "q_rad": -0.127622951,
+     "t_s": 1.7
+    },
+    "min_rad": 0.483242049,
+    "nearest": "lower",
+    "upper": {
+     "goal_leaving_boundary": 5,
+     "margin_rad": 0.571898724,
+     "q_rad": 0.126233276,
+     "t_s": 1.3
+    }
+   }
+  },
+  "rr_thigh_joint": {
+   "interpolated": {
+    "lower": {
+     "goal_leaving_boundary": 5,
+     "margin_rad": 0.5923263969358317,
+     "q_rad": -0.1930716030641684,
+     "t_s": 1.0178
+    },
+    "min_rad": 0.500376531,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 6,
+     "margin_rad": 0.500376531,
+     "q_rad": 0.110488469,
+     "t_s": 1.7
+    }
+   },
+   "waypoints": {
+    "lower": {
+     "goal_leaving_boundary": 5,
+     "margin_rad": 0.5923782070000001,
+     "q_rad": -0.193019793,
+     "t_s": 1.0
+    },
+    "min_rad": 0.500376531,
+    "nearest": "upper",
+    "upper": {
+     "goal_leaving_boundary": 6,
+     "margin_rad": 0.500376531,
+     "q_rad": 0.110488469,
+     "t_s": 1.7
+    }
+   }
+  }
+ },
+ "library_goals": 54,
+ "limits_source": "joint_safety.load_limits (spiderx_legs.yaml) == expanded URDF",
+ "overall_min": {
+  "interpolated": {
+   "joint": "rf_foot_joint",
+   "margin_rad": 0.354106011831279
+  },
+  "waypoints": {
+   "joint": "rf_foot_joint",
+   "margin_rad": 0.354160214
+  }
+ },
+ "phase_lead_s": 0.2,
+ "scope": "level 0, forward, the 9 phase goals S3 sends (lead-in excluded)",
+ "stops": {
+  "joint_limit_stop_rad": 0.02,
+  "tracking_abort_rad": 0.05
+ }
+}

@@ -1,8 +1,8 @@
 # S2 Phase C: one attempt on the modified plant (DRAFT, NOT AUTHORIZED)
 
-**Status.** A draft procedure; nothing in it has been executed.
-- S2's original verdict, 2026-10-29, stays **FAIL**. S3 stays blocked.
-- **Plant evidence so far (Phase B):** loading and configuration only. The gain-response law has not been measured.
+**Status.** Executed once, on 2026-10-30, under the owner's authorization (evidence `docs/evidence/m55/s2_phase_c_20261030T062140Z/`). Frozen verdict: **FAIL** (P4 FAIL, P2 UNMEASURED).
+- **Owner decision (2026-10-31):** S2 fixed-base validation accepted retrospectively under criteria revision r1. Not walking, contact or balance validation. See `docs/evidence/m55/s2_phase_c_20261030T062140Z_adjudication_r1/`.
+- S2's 2026-10-29 verdict stays **FAIL**. This document is kept as the procedure that was followed.
 
 ## 1. Disabled baseline
 
