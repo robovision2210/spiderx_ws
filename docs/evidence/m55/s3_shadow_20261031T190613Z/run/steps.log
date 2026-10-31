@@ -1,0 +1,19 @@
+[19:11:33] gates (imported): False False False
+[19:11:33] launch
+launch pid 1377 pgid 1377 xvfb 1372
+[19:12:15] controllers: exit 0
+[19:12:18] gazebo gui pid(s) 1585  reniced +19
+[19:12:38] node up after 21 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[19:12:38] locomotion node pid(s) 1503  (launch session 1377) reniced -5
+[19:12:41] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[19:14:42] settle bag stopped
+[19:14:42] pre-shadow checks passed: pre-shadow checks PASS (premotion: r2 libraries mapped by server 1580, gain 1.0 log+param, update_rate 100, period 0.001 s, controllers active, 0 action clients, 0 command publishers, node 1503 SHADOW in launch session; settle: 10.05 s sim, z 0.05450 m, range 9.0e-6 m, tilt 1.5e-7 rad; screenshot ta
+[19:14:42] captures before
+[19:14:48] driver
+[19:17:06] driver exit 2: {"command_rejections": {}, "cycles": [{"cycle": 1, "forward_m": -3.2809850390756117e-10, "lateral_m": -4.2298066442343527e-16, "sim": 59.81, "yaw_rad": 1.6963599404457847e-14}], "estop_hold": null, "e
+[19:17:09] captures after
+[19:17:11] bag stopped
+[19:17:14] strace (signals only) attached to simulator server 1580: strace: Process 1580 attached 
+[19:17:14] stop launch
+[19:17:20] server exit (strace): +++ exited with 0 +++
+[19:17:20] end
