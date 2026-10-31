@@ -10,6 +10,10 @@ injected values; duplicate status publications and a stalled simulation clock; t
 joint limits (spiderx_legs.yaml). The synthetic library has small joint amplitudes (<= 0.16 rad),
 inside every limit.
 
+Shadow bench (S3Shadow): the same session with the node's ShadowTransport and the gate False (as
+the real build); the joint-state source holds its pose (nothing is dispatched to it), and the body
+stays put apart from injected creep, as in the 2026-10-31 shadow rehearsal (-3.28e-10 m/cycle).
+
 Usage (stdlib only): cd scripts/s3 && python3 -m unittest -v test_s3_driver_live"""
 import importlib.util
 import json
@@ -106,7 +110,7 @@ class Bench:
     """The in-memory node, teleop, free base and clock; doubles as the driver module's `time`."""
 
     def __init__(self, rtf=0.2, scenario='ok', fail_phase=1, drift_rad_s=0.05, peak_rad=None,
-                 **scn):
+                 shadow=False, **scn):
         self.cfg = fx.config()
         lib = loc.PhaseLibrary([fx.synthetic_template(s, phase_points=15, amp=0.05)
                                 for s in (0.02, 0.04, 0.06)], 0.2)
@@ -118,7 +122,10 @@ class Bench:
             self.plant = fk.FakeLocomotionTransport(lib, lib.boundary_positions(0, 0),
                                                     scenario=scenario, fail_phase=fail_phase,
                                                     drift_rad_s=drift_rad_s, use_sim=True)
-        self.s = loc.LocomotionSession(self.cfg, lib, self.plant)
+        # shadow: the node's own ShadowTransport; self.plant then only supplies joint states and
+        # never receives a goal (its .sent counts what reached the "controller")
+        self.s = loc.LocomotionSession(self.cfg, lib, loc.ShadowTransport(lib.fingerprints)
+                                       if shadow else self.plant)
         self.world = FreeBaseWorld(self.s, self.plant, scn, rtf=rtf, graph_period_s=1.0)
         self.scn = scn
         self.teleop = None
@@ -148,6 +155,7 @@ class Bench:
             self.world.cmd = None
         stall = self.scn.get('stall', lambda w: False)(w)
         self.world.sim_advancing = not stall
+        self.world.joint_states = not self.scn.get('js_off', lambda w: False)(w)
         self.world.tick()
         q = self.plant.joint_positions()
         names, pos = list(q), list(q.values())
@@ -181,10 +189,10 @@ class Bench:
             self.requests.append((service, self.s.request(service, self.world.wall)))
 
 
-def make_driver(mod, bench, out_dir):
+def make_driver(mod, bench, out_dir, shadow=False):
     class InMemoryS3Driver(mod.S3Driver):
         def __init__(self):                                         # no ROS, no threads
-            self._init_s3(LIMITS)
+            self._init_s3(LIMITS, shadow, {'bench': 'gates checked by main()'} if shadow else None)
             self.out = open(os.path.join(out_dir, 'driver.jsonl'), 'w')
             self.lock = threading.Lock()
             self.status, self.status_n = None, 0
@@ -197,7 +205,7 @@ def make_driver(mod, bench, out_dir):
             self.pid, self.teleop_alive = 1, True
             self.log(event='teleop_started')
 
-        def key(self, k, why):
+        def _press(self, k, why):                                   # the pty write
             bench.key(k)
             self.log(key=repr(k), why=why)
 
@@ -237,17 +245,25 @@ class S3Live(unittest.TestCase):
         c55.M55_LOCOMOTION_DISPATCH_ENABLED = self.gate
         self.tmp.cleanup()
 
-    def run_case(self, rtf=0.2, patch=None, **kw):
+    def run_case(self, rtf=0.2, patch=None, shadow=False, **kw):
         self.mod = load_driver()
-        bench = Bench(rtf, **kw)
-        d = make_driver(self.mod, bench, self.tmp.name)
+        bench = Bench(rtf, shadow=shadow, **kw)
+        d = make_driver(self.mod, bench, self.tmp.name, shadow=shadow)
         if patch:
             patch(d, bench)
         rc, why = self.mod.run(d)
-        sent = bench.plant.sent
+        sent = (bench.plant.sent, bench.s.transport.sent)
         bench.sleep(30.0)                                           # nothing more is dispatched
-        self.assertEqual(bench.plant.sent, sent, 'a goal was dispatched after the run ended')
+        self.assertEqual((bench.plant.sent, bench.s.transport.sent), sent,
+                         'a goal was dispatched or recorded after the run ended')
         return rc, why, bench, d, list(bench.s.log)
+
+    def keys_after(self, text):
+        """Keys the driver pressed after the first log record containing `text`."""
+        with open(os.path.join(self.tmp.name, 'driver.jsonl')) as f:
+            recs = [json.loads(ln) for ln in f]
+        i = next(i for i, r in enumerate(recs) if text in json.dumps(r))
+        return [r['key'] for r in recs[i:] if 'key' in r]
 
     def tilted_statuses_seen(self):
         with open(os.path.join(self.tmp.name, 'driver.jsonl')) as f:
@@ -368,6 +384,15 @@ class S3Live(unittest.TestCase):
         rc, why, bench, d, events = self.run_case(progress_m=0.045)
         self.assert_stopped(rc, why, bench, events, 'along body +y')
 
+    def test_live_tiny_negative_progress_stops(self):
+        # default (live) mode: the approved lower bound applies to any negative displacement
+        rc, why, bench, d, events = self.run_case(progress_m=-3.28e-10)
+        self.assert_stopped(rc, why, bench, events, 'along body +y (allowed 0..40)')
+        self.assertEqual(bench.sent_at_stop, 9)
+        self.assertLess(d.cycle_log[0]['forward_m'], 0.0)
+        self.assertNotIn('progress_lower_bound', d.cycle_log[0])
+        self.assertNotIn('shadow_rehearsal', d.summary())
+
     def test_cycle_lateral_drift_stops(self):
         rc, why, bench, d, events = self.run_case(
             lateral_by_cycle=lambda k: 0.0 if k < 2 else 0.025 * (k - 2) if k < 3 else 0.025)
@@ -469,6 +494,164 @@ class S3Live(unittest.TestCase):
         self.assertFalse(any(e.get('request') == 'arm' for e in events))
 
 
+class S3Shadow(unittest.TestCase):
+    """--shadow-rehearsal on the shadow bench (gate False, the node's ShadowTransport)."""
+    CREEP = -3.28e-10                     # m per cycle, measured in the 2026-10-31 rehearsal
+    run_case, keys_after = S3Live.run_case, S3Live.keys_after
+    tilted_statuses_seen, assert_stopped = S3Live.tilted_statuses_seen, S3Live.assert_stopped
+    count = S3Live.__dict__['count']
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.assertIs(c55.M55_LOCOMOTION_DISPATCH_ENABLED, False)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def shadow_case(self, **kw):
+        kw.setdefault('progress_m', self.CREEP)
+        return self.run_case(shadow=True, **kw)
+
+    def assert_shadow_stopped(self, rc, why, bench, events, text):
+        self.assert_stopped(rc, why, bench, events, text)
+        self.assertEqual(bench.plant.sent, 0)                       # nothing reached the plant
+
+    def test_complete_stationary_shadow_script(self):
+        rc, why, bench, d, events = self.shadow_case()
+        self.assertEqual(rc, 0, why)
+        self.assertIn('shadow rehearsal', why)
+        self.assertEqual(bench.plant.sent, 0)                       # no real goal
+        self.assertEqual(bench.s.transport.mode, 'shadow')
+        self.assertEqual(bench.s.transport.sent, 55)                # 55 planned shadow goals
+        self.assertEqual(d.expected_goals, 55)
+        self.assertEqual(self.count(events, 'cancel_sent'), 1)      # the scripted shadow cancel
+        results = [e for e in events if e.get('event') == 'result']
+        self.assertEqual([e['status'] for e in results[:-1]], [loc.STATUS_SUCCEEDED] * 54)
+        self.assertEqual((results[-1]['status'], results[-1]['error_string']),
+                         (loc.STATUS_CANCELED, 'shadow cancel'))
+        self.assertEqual(bench.s.faults, ['estop'])
+        self.assertEqual(len(d.cycle_log), 6)
+        for c in d.cycle_log:                                       # measured, recorded, < 0
+            self.assertAlmostEqual(c['forward_m'], self.CREEP, delta=1e-12)
+            self.assertLess(c['forward_m'], 0.0)
+            self.assertEqual(c['progress_lower_bound'], self.mod.SHADOW_PROGRESS_NOTE)
+        self.assertEqual(self.mod.SHADOW_PROGRESS_NOTE,
+                         'Minimum forward-progress condition not applicable: dispatch disabled.')
+        h = d.hold_summary
+        self.assertGreaterEqual(h['last_sim_s'] - h['from_sim_s'], 10.0 - 0.5)
+        sh = d.summary()['shadow_rehearsal']
+        self.assertTrue(sh['node_mode_verified'])
+        self.assertIn('not crawl acceptance', sh['note'])
+        self.assertNotIn('PASS', json.dumps(d.summary()))
+
+    def test_shadow_upper_progress_bound_still_stops(self):
+        rc, why, bench, d, events = self.shadow_case(progress_m=0.045)
+        self.assert_shadow_stopped(rc, why, bench, events, 'along body +y (shadow rehearsal')
+
+    def test_shadow_lateral_drift_stops(self):
+        rc, why, bench, d, events = self.shadow_case(
+            lateral_by_cycle=lambda k: 0.0 if k < 2 else 0.025 * (k - 2) if k < 3 else 0.025)
+        self.assert_shadow_stopped(rc, why, bench, events, 'drifted')
+
+    def test_shadow_yaw_drift_stops(self):
+        rc, why, bench, d, events = self.shadow_case(yaw_per_cycle=0.12)
+        self.assert_shadow_stopped(rc, why, bench, events, 'drifted')
+
+    def test_shadow_tilt_stops(self):
+        rc, why, bench, d, events = self.shadow_case(tilt=lambda w, k: 0.15 if k > 2.5 else 0.01)
+        self.assert_shadow_stopped(rc, why, bench, events, 'tilt')
+
+    def test_shadow_fall_stops(self):
+        rc, why, bench, d, events = self.shadow_case(z=lambda w, k: 0.040 if k > 3.2 else Z0)
+        self.assert_shadow_stopped(rc, why, bench, events, 'body z')
+
+    def test_shadow_joint_near_its_urdf_limit_stops(self):
+        lo, start = LIMITS['rf_foot_joint'][0], {}
+
+        def joint(w):
+            start.setdefault('w', w + 120.0)
+            return {'rf_foot_joint': lo + 0.015} if w > start['w'] else None
+        rc, why, bench, d, events = self.shadow_case(joint=joint)
+        self.assert_shadow_stopped(rc, why, bench, events, 'URDF limit')
+
+    def test_shadow_joint_state_outage_faults_and_stops(self):
+        start = {}
+
+        def js_off(w):
+            start.setdefault('w', w + 150.0)
+            return start['w'] < w < start['w'] + 2.0               # > 0.5 s without joint states
+        rc, why, bench, d, events = self.shadow_case(js_off=js_off)
+        self.assertEqual(rc, 2, why)
+        self.assertIn('unplanned FAULTED', why)
+        self.assertIn('joint_states_stale', why)
+        self.assertEqual(bench.plant.sent, 0)
+
+    def test_shadow_stalled_simulation_samples_are_not_fresh(self):
+        win = {'t0': None}
+
+        def stall(w):
+            return win['t0'] is not None and w - win['t0'] < 0.4
+
+        def tilt(w, k):
+            if 2.5 < k and win['t0'] is None:
+                win['t0'] = w + 0.3
+            return 0.15 if stall(w) else 0.01
+        rc, why, bench, d, events = self.shadow_case(tilt=tilt, stall=stall)
+        self.assertEqual(rc, 0, why)
+        self.assertGreaterEqual(self.tilted_statuses_seen(), 1)     # exceeded, but not fresh
+
+    # ------------------------------------------------------------------ mode verification
+    def test_refuses_dispatch_mode_status_before_arm(self):
+        c55.M55_LOCOMOTION_DISPATCH_ENABLED = True                  # a dispatching node
+        try:
+            self.mod = load_driver()
+            bench = Bench(0.2, progress_m=self.CREEP)               # dispatch mode
+            d = make_driver(self.mod, bench, self.tmp.name, shadow=True)
+            rc, why = self.mod.run(d)
+        finally:
+            c55.M55_LOCOMOTION_DISPATCH_ENABLED = False
+        self.assertEqual(rc, 2, why)
+        self.assertIn("mode 'dispatch'", why)
+        self.assertIsNone(bench.teleop)                             # never started: no key
+        self.assertEqual(self.keys_after('mono'), [])
+        self.assertFalse(any(e.get('request') == 'arm' for e in bench.s.log))
+        self.assertEqual(bench.plant.sent, 0)
+        self.assertFalse(d.shadow_verified)
+
+    def test_refuses_missing_mode_before_arm(self):
+        def edit(st, n):
+            st.pop('mode', None)
+            return st
+        rc, why, bench, d, events = self.shadow_case(status_edit=edit)
+        self.assertEqual(rc, 2, why)
+        self.assertIn('mode None', why)
+        self.assertIsNone(bench.teleop)
+        self.assertFalse(any(e.get('request') == 'arm' for e in events))
+        self.assertEqual(bench.s.transport.sent, 0)
+
+    def test_refuses_conflicting_gate_before_arm(self):
+        def edit(st, n):
+            st['dispatch_gate'] = True
+            return st
+        rc, why, bench, d, events = self.shadow_case(status_edit=edit)
+        self.assertEqual(rc, 2, why)
+        self.assertIn('dispatch_gate True', why)
+        self.assertFalse(any(e.get('request') == 'arm' for e in events))
+
+    def test_mode_change_during_the_run_stops_the_script(self):
+        def edit(st, n):
+            if st.get('cycles', 0) >= 2:
+                st['mode'] = 'dispatch'
+            return st
+        rc, why, bench, d, events = self.shadow_case(status_edit=edit)
+        self.assertEqual(rc, 2, why)
+        self.assertIn('shadow rehearsal', why)
+        self.assertEqual(self.keys_after('"mode": "dispatch"'), ["'x'"])   # no script key after
+        self.assertEqual(bench.s.state, loc.FAULTED)
+        self.assertLess(bench.s.transport.sent, 55)
+        self.assertEqual(bench.plant.sent, 0)
+
+
 class Helpers(unittest.TestCase):
     def setUp(self):
         self.mod = load_driver()
@@ -497,6 +680,41 @@ class Helpers(unittest.TestCase):
                                                                   'body_pose_age_s': 1.5}}, 10.0))
         self.assertIsNone(self.mod.fresh_pose({**st, 'ground_truth': None}, None))
         self.assertIsNone(self.mod.fresh_pose({**st, 'ground_truth': {**gt, 'tilt': None}}, None))
+
+    def test_fresh_gates_are_false_and_from_this_workspace(self):
+        g = self.mod.fresh_gates()
+        self.assertEqual(set(g), {n for _, n in self.mod.GATES})
+        for name, (value, path) in g.items():
+            self.assertIs(value, False, name)
+            self.assertTrue(os.path.realpath(path).startswith(REPO), path)
+        self.assertIsNone(self.mod.gate_refusal(g))
+
+    def test_gate_refusal(self):
+        ok = {n: [False, 'x'] for _, n in self.mod.GATES}
+        self.assertIsNone(self.mod.gate_refusal(ok))
+        for bad in (True, None, 0, 'False'):
+            g = dict(ok, M55_LOCOMOTION_DISPATCH_ENABLED=[bad, 'x'])
+            self.assertIn('M55_LOCOMOTION_DISPATCH_ENABLED', self.mod.gate_refusal(g))
+        g = dict(ok)
+        del g['LIVE_DISPATCH_ENABLED']
+        self.assertIn('LIVE_DISPATCH_ENABLED', self.mod.gate_refusal(g))
+
+    def test_main_refuses_shadow_rehearsal_unless_gates_false(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            argv = sys.argv
+            self.mod.fresh_gates = lambda: dict(
+                {n: [False, 'x'] for _, n in self.mod.GATES},
+                M55_LOCOMOTION_DISPATCH_ENABLED=[True, 'x'])
+            self.mod.S3Driver = None                        # must not be reached
+            sys.argv = ['s3_driver.py', '--out', tmp, '--shadow-rehearsal']
+            try:
+                with self.assertRaises(SystemExit) as cm:
+                    self.mod.main()
+            finally:
+                sys.argv = argv
+            self.assertEqual(cm.exception.code, 5)
+            with open(os.path.join(tmp, 'driver_summary.json')) as f:
+                self.assertTrue(json.load(f)['result'].startswith('REFUSED: dispatch gates'))
 
     def test_scope_constants(self):
         m = self.mod

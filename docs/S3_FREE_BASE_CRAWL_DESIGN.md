@@ -207,15 +207,15 @@ Missing evidence is UNMEASURED, never PASS. A completed script is not a pass.
 - **P1. Done.** S2 fixed-base validation accepted retrospectively under criteria revision r1. Not walking, contact or balance validation.
 - **P2. Done.** The restore script accepts `local/m55-s3-*`, with 4 new hermetic tests.
 - **P3. Done.** A separate S3 driver, `scripts/s3/s3_driver.py`, on the unchanged S2 driver's
-  plumbing, with the §3 script and §3.1 stops, tested on the in-memory bench (25 cases); and the
+  plumbing, with the §3 script and §3.1 stops, tested on the in-memory bench (42 cases, 17 of them for the shadow rehearsal mode); and the
   S3 scorer `scripts/s3/score_s3.py` (A1–A8, 27 cases).
-- **P4. Missing.** A free-base shadow rehearsal of the S3 script on the **gain-1.0** plant (as
+- **P4. Missing** (attempt 1 on 2026-10-31: INCONCLUSIVE, §8). A free-base shadow rehearsal of the S3 script on the **gain-1.0** plant (as
   S2's A2), with settling verification. It also measures the free-base RTF and the
   `/joint_states` stall margin. It needs an S3 run harness and its own authorization (§8).
 - **P5. Done.** The owner retained the approved limits and the 55-goal forward-only scope on
   2026-10-31 (§7).
 - **P6. Done.** The level-0 minimum planned joint margin: 0.3541 rad (§3.2, case 3).
-- **P7. Missing.** A launch-only check that the r2 overlay's shutdown backport gives a clean
+- **P7. Done** (2026-10-31, shadow rehearsal 1: PASS, §8). A launch-only check that the r2 overlay's shutdown backport gives a clean
   Gazebo exit (§8).
 
 **Enabling patch.** `docs/patches/m55_enable_s2.UNAPPLIED.patch` is reused unchanged: the gate
@@ -334,7 +334,7 @@ alive) and wall caps; it does not use the S2 script or its 0.02 rad stop.
 - **Stops:** as approved (§3.1). Tracking > 0.02 rad is recorded as a finding; > 0.05 rad (the
   node's abort) stops. A stop releases the held key and presses `x`; SIGINT and SIGTERM do the
   same (exit 4), as does any driver error (exit 3).
-- **Bench:** 25 cases on the real `LocomotionSession`, with a free-base ground truth driven by
+- **Bench:** 25 cases (42 with the shadow rehearsal mode) on the real `LocomotionSession`, with a free-base ground truth driven by
   the node's planned displacement: the full 55-goal script at RTF 0.2 and 0.6; debounce (one
   spike, a duplicate publication, a stalled sim clock, two fresh samples); fall; travel 0.15 m
   ending a run whose five completed cycles (28 mm each) lie within the bands; progress, lateral
@@ -392,13 +392,28 @@ effect is **not verified**.
 **Checks.** All three dispatch gates False on a fresh import; the phase-library digest is
 unchanged (`62f8a100…`, 54 goals); S2 driver bench 8 of 8.
 
+**Shadow rehearsal 1** (2026-10-31, `docs/evidence/m55/s3_shadow_20261031T190613Z/`): one free-base
+launch with the r2 overlay and the run-local harness, dispatch disabled.
+- **P7 PASS.** The r2 libraries are mapped with the provenance hashes; gain 1.0, 100 Hz and
+  0.001 s. The server exited with status 0 after SIGINT, with no abort and no leftovers.
+- **Settling PASS.** Standing height 0.054500 m, range 9.0 µm over 10 s of sim, tilt 1.5e-7 rad.
+- **P4 INCONCLUSIVE.** The driver stopped after the first shadow cycle: the lower progress bound
+  (< 0 m) fired on the standing body's creep, −3.28e-10 m.
+
+**Shadow rehearsal mode** (`s3_driver.py --shadow-rehearsal`, added after rehearsal 1).
+- **Refused before start** (exit 5) unless all three gates are False, both in a fresh interpreter
+  and in the driver process.
+- **Mode checks.** The node must report SHADOW with the gate False before the teleop starts, and in
+  every status and before every scripted key after that. A missing, conflicting or changed mode
+  stops the run.
+- **Progress.** Only in that verified mode is the lower forward-progress bound not applied: no
+  trajectory runs, so the measured displacement is the standing body's creep. It is still measured
+  and recorded as "Minimum forward-progress condition not applicable: dispatch disabled." Every
+  other stop is unchanged, including the 40 mm upper bound and the lateral and yaw bounds.
+- **Default behaviour** is unchanged: progress < 0 or > 40 mm stops.
+- **Not acceptance.** A shadow rehearsal is not crawl acceptance.
+
 **Remaining before any S3 motion** (each needs its own authorization):
-1. **P7, launch-only:** one welded or free-base launch with the r2 overlay, no goal: the overlay
-   libraries `3a8f2044…`/`06777e14…` mapped, gain 1.0 loaded, rate and timestep, and a clean
-   Gazebo exit without the 0.7.15 abort.
-2. **S3 run harness:** a run-local harness for `fortress_m55_walking.launch.py` (the node is
-   started by that launch) sourcing the r2 overlay between the toolchain and the workspace, with
-   the S2 recorder topics, captures, cleanup trap and watchdog.
-3. **P4, free-base shadow rehearsal** on the gain-1.0 plant: settling (the standing height at
-   gain 1.0), free-base RTF, the `/joint_states` stall margin, and the S3 script in shadow.
-4. The S3 authorization (§5), naming the baseline commit and the r2 overlay.
+1. **P4, free-base shadow rehearsal** with `--shadow-rehearsal` on the gain-1.0 plant: the full S3
+   script in shadow, which is one cycle, five cycles, the planned estop and the 10 s hold.
+2. The S3 authorization (§5), naming the baseline commit and the r2 overlay.

@@ -33,14 +33,27 @@ the body (dummy_link = base_link) z axis and the world z axis, independent of ya
 +y forward, +x right (spiderx_legs.yaml); cycle displacements use the previous boundary's yaw,
 and yaw differences are wrapped to (-pi, pi].
 
-Usage: s3_driver.py --out <dir> [--domain-id 0]
-Writes <dir>/driver.jsonl and <dir>/driver_summary.json."""
+--shadow-rehearsal (dispatch disabled; nothing moves the robot): refused (exit 5, before any ROS
+call) unless the three dispatch gates are False both in a FRESH interpreter (a subprocess) and in
+this process. Before the teleop starts, and in every status after that, the node must report mode
+'shadow' with dispatch_gate False; a missing, conflicting or changed mode stops the run like any
+other stop condition. Only then is the lower forward-progress bound (< 0 m) not applied: a shadow
+cycle moves nothing, so the measured displacement is the standing body's creep. It is still
+measured and recorded, with "Minimum forward-progress condition not applicable: dispatch
+disabled."; the 40 mm upper bound, the lateral and yaw bounds and every other stop are unchanged.
+Without the flag (the default), the behaviour is exactly as above. Shadow results are not crawl
+acceptance.
+
+Usage: s3_driver.py --out <dir> [--domain-id 0] [--shadow-rehearsal]
+Writes <dir>/driver.jsonl and <dir>/driver_summary.json. Exit: 0 script complete, 2 stop condition,
+3 driver error, 4 interrupted, 5 refused before start (--shadow-rehearsal)."""
 import argparse
 import collections
 import json
 import math
 import os
 import signal
+import subprocess
 import sys
 import time
 
@@ -68,6 +81,10 @@ SETTLE_RANGE_M = 0.005
 SETTLE_CAP_SIM_S = 60.0
 HOLD_SIM_S = 10.0
 JOINT_STATES_TOPIC = '/joint_states'
+SHADOW_PROGRESS_NOTE = 'Minimum forward-progress condition not applicable: dispatch disabled.'
+GATES = (('m55_contract', 'M55_LOCOMOTION_DISPATCH_ENABLED'),
+         ('m61_live_contract', 'M61_LIVE_DISPATCH_ENABLED'),
+         ('m6_live_contract', 'LIVE_DISPATCH_ENABLED'))
 
 
 class Interrupted(Exception):
@@ -98,6 +115,35 @@ def fresh_pose(st, last_sim):
     if last_sim is not None and not sim > last_sim:
         return None
     return gt, sim
+
+
+def imported_gates():
+    """{gate: [value, module file]} as imported in this process."""
+    import importlib
+    out = {}
+    for mod, name in GATES:
+        m = importlib.import_module('spiderx_controller.' + mod)
+        out[name] = [getattr(m, name), m.__file__]
+    return out
+
+
+def fresh_gates(python=None):
+    """{gate: [value, module file]} as a FRESH interpreter imports them (a subprocess started in
+    /, same environment). Raises if the import fails."""
+    code = ('import json, sys; sys.path.insert(0, sys.argv[1]); import s3_driver; '
+            'print(json.dumps(s3_driver.imported_gates()))')
+    r = subprocess.run([python or sys.executable, '-c', code, os.path.dirname(os.path.abspath(
+        __file__))], cwd='/', capture_output=True, text=True, timeout=120)
+    if r.returncode != 0:
+        raise RuntimeError(f'fresh gate import failed: {r.stderr.strip()[-300:]}')
+    return json.loads(r.stdout.strip().splitlines()[-1])
+
+
+def gate_refusal(gates):
+    """None if all three gates are present and exactly False, else the reason to refuse."""
+    vals = {n: (gates.get(n) or [None])[0] for _, n in GATES}
+    bad = {n: v for n, v in vals.items() if v is not False}
+    return None if not bad else f'dispatch gates not all False: {bad}'
 
 
 class Debounce:
@@ -140,11 +186,14 @@ class Settle:
 
 
 class S3Driver(s2.Driver):
-    def __init__(self, out, domain_id, limits):
-        self._init_s3(limits)
+    def __init__(self, out, domain_id, limits, shadow_rehearsal=False, gates=None):
+        self._init_s3(limits, shadow_rehearsal, gates)
         super().__init__(out, domain_id)
 
-    def _init_s3(self, limits):
+    def _init_s3(self, limits, shadow_rehearsal=False, gates=None):
+        self.shadow_rehearsal = shadow_rehearsal    # requested (gates checked by main)
+        self.shadow_verified = False        # node reported SHADOW, gate False, before the teleop
+        self.gates = gates
         self.limits = dict(limits)          # {joint: (lower, upper)}, URDF
         self.pending = []                   # statuses not yet checked, in arrival order
         self.last_fresh_sim = None
@@ -202,6 +251,17 @@ class S3Driver(s2.Driver):
                 self.joint_stop = (f'joint {worst[1]} at {worst[2]:.4f} rad is {worst[0]:.4f} rad '
                                    f'from its URDF limit (< {JOINT_LIMIT_STOP_RAD})')
 
+    # ------------------------------------------------------------------ keys
+    def key(self, k, why):
+        """Shadow rehearsal: the statuses received so far are checked before every scripted key
+        (a changed mode stops the script before its next key). x is never delayed."""
+        if self.shadow_rehearsal and k != 'x':
+            self.check()
+        self._press(k, why)
+
+    def _press(self, k, why):
+        super().key(k, why)
+
     # ------------------------------------------------------------------ stops
     def check(self):
         with self.lock:
@@ -213,6 +273,11 @@ class S3Driver(s2.Driver):
             raise s2.Abort(joint_stop)
 
     def _check_status(self, st):
+        if self.shadow_rehearsal and (st.get('mode') != 'shadow'
+                                      or st.get('dispatch_gate') is not False):
+            raise s2.Abort(f'shadow rehearsal: node status mode {st.get("mode")!r}, dispatch_gate '
+                           f'{st.get("dispatch_gate")!r} (SHADOW with the gate False required '
+                           'throughout)')
         if st.get('command_rejections'):
             raise s2.Abort(f'command rejections {st["command_rejections"]}')
         if st['state'] == 'FAULTED' and not self.planned_estop:
@@ -256,10 +321,18 @@ class S3Driver(s2.Driver):
             raise s2.Abort(f'cycle count {self.cycles_checked} -> {c}: not one forward cycle')
         fwd, lat, dyaw = body_delta(self.cycle_ref, pose)
         rec = {'cycle': c, 'sim': sim, 'forward_m': fwd, 'lateral_m': lat, 'yaw_rad': dyaw}
+        shadow = (self.shadow_verified and st.get('mode') == 'shadow'
+                  and st.get('dispatch_gate') is False)
+        if shadow:
+            rec['progress_lower_bound'] = SHADOW_PROGRESS_NOTE
         self.cycle_log.append(rec)
         self.log(cycle_check=rec)
         self.cycle_ref, self.cycles_checked = pose, c
-        if not PROGRESS_MIN_M <= fwd <= PROGRESS_MAX_M:
+        if shadow:
+            if not fwd <= PROGRESS_MAX_M:
+                raise s2.Abort(f'cycle {c} moved {fwd * 1000:.1f} mm along body +y (shadow '
+                               f'rehearsal: at most {PROGRESS_MAX_M * 1000:.0f})')
+        elif not PROGRESS_MIN_M <= fwd <= PROGRESS_MAX_M:
             raise s2.Abort(f'cycle {c} moved {fwd * 1000:.1f} mm along body +y (allowed '
                            f'{PROGRESS_MIN_M * 1000:.0f}..{PROGRESS_MAX_M * 1000:.0f})')
         if abs(lat) > LATERAL_MAX_M or abs(dyaw) > YAW_MAX_RAD:
@@ -335,6 +408,15 @@ class S3Driver(s2.Driver):
         self.log(hold=h)
 
     def script(self, levels=None):
+        if self.shadow_rehearsal:                     # before the teleop exists: no key yet
+            st = self.wait('node status SHADOW with the dispatch gate False',
+                           lambda st: st.get('mode') == 'shadow'
+                           and st.get('dispatch_gate') is False, 30.0)
+            self.shadow_verified = True
+            self.log(shadow_rehearsal={'node_mode': st.get('mode'),
+                                       'node_dispatch_gate': st.get('dispatch_gate'),
+                                       'driver_gates': self.gates,
+                                       'progress_lower_bound': SHADOW_PROGRESS_NOTE})
         self.spawn()
         self.wait('status with levels', lambda st: bool(st.get('levels_m_s')), 30.0)
         time.sleep(3.0)                               # the teleop receives the levels too
@@ -359,7 +441,13 @@ class S3Driver(s2.Driver):
                 'cycles': self.cycle_log,
                 'tracking_findings': {str(k): v for k, v in sorted(self.findings.items())},
                 'min_joint_margin': self.min_joint_margin,
-                'estop_hold': getattr(self, 'hold_summary', None)}
+                'estop_hold': getattr(self, 'hold_summary', None),
+                **({'shadow_rehearsal': {
+                    'driver_gates': self.gates, 'node_mode_verified': self.shadow_verified,
+                    'progress_lower_bound': SHADOW_PROGRESS_NOTE,
+                    'note': 'dispatch disabled: no trajectory was sent; the per-cycle '
+                            'displacements are measured and recorded, not crawl acceptance'}}
+                   if self.shadow_rehearsal else {})}
 
 
 def run(d):
@@ -367,7 +455,8 @@ def run(d):
     and presses x (the node cancels a goal in flight once and holds)."""
     try:
         d.script()
-        return 0, 'script complete'
+        return 0, ('script complete (shadow rehearsal: dispatch disabled; not crawl acceptance)'
+                   if d.shadow_rehearsal else 'script complete')
     except s2.Abort as e:
         rc, why = 2, f'STOP CONDITION: {e}'
     except (Interrupted, KeyboardInterrupt) as e:
@@ -386,19 +475,38 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', required=True)
     ap.add_argument('--domain-id', type=int, default=0)
+    ap.add_argument('--shadow-rehearsal', action='store_true',
+                    help='dispatch disabled: verify SHADOW throughout; the lower progress bound '
+                         'is not applied (see the module docstring)')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     from spiderx_controller import joint_safety
     limits, _ = joint_safety.load_limits()
+    gates = None
+    if a.shadow_rehearsal:
+        try:
+            gates = {'fresh_interpreter': fresh_gates(), 'driver_process': imported_gates()}
+            why = (gate_refusal(gates['fresh_interpreter'])
+                   or gate_refusal(gates['driver_process']))
+        except Exception as e:  # noqa: BLE001  (no gate evidence: refuse)
+            why = f'gate import failed: {e!r}'
+        if why:
+            summary = {'result': f'REFUSED: {why}', 'shadow_rehearsal': True, 'gates': gates}
+            with open(os.path.join(a.out, 'driver_summary.json'), 'w') as f:
+                json.dump(summary, f, indent=1, sort_keys=True, default=str)
+            print(json.dumps(summary, sort_keys=True, default=str), flush=True)
+            sys.exit(5)
 
     def interrupted(signum, frame):
         raise Interrupted(signal.Signals(signum).name)
     signal.signal(signal.SIGINT, interrupted)
     signal.signal(signal.SIGTERM, interrupted)
-    d = S3Driver(a.out, a.domain_id, limits)
+    d = S3Driver(a.out, a.domain_id, limits, a.shadow_rehearsal, gates)
     rc, why = run(d)
-    summary = {'result': why, 'scope': 'S3: level 0, forward only, 55 goals and 1 cancel at most',
-               **d.summary()}
+    scope = ('S3 shadow rehearsal: level 0, forward only, at most 55 planned shadow goals and 1 '
+             'shadow cancel; dispatch disabled' if a.shadow_rehearsal else
+             'S3: level 0, forward only, 55 goals and 1 cancel at most')
+    summary = {'result': why, 'scope': scope, **d.summary()}
     with open(os.path.join(a.out, 'driver_summary.json'), 'w') as f:
         json.dump(summary, f, indent=1, sort_keys=True, default=str)
     d.log(summary=summary)
