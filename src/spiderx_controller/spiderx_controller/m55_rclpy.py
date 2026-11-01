@@ -318,7 +318,7 @@ def parse_args(argv):
 def main(argv=None):
     import sys
     import rclpy
-    from rclpy.executors import SingleThreadedExecutor
+    from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
     from rclpy.utilities import remove_ros_args
     args = parse_args(remove_ros_args(sys.argv if argv is None else argv)[1:])
     cfg = loc.load_config()
@@ -333,7 +333,10 @@ def main(argv=None):
         executor.add_node(node.node)
         try:
             executor.spin()
-        except KeyboardInterrupt:
+        except (KeyboardInterrupt, ExternalShutdownException):
+            # an expected shutdown (Ctrl+C or the launch's SIGINT): rclpy raises
+            # ExternalShutdownException instead when its signal handler has already shut the
+            # context down. The cleanup below runs either way; nothing else is caught here.
             pass
     finally:
         if node is not None:

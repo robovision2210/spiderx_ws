@@ -83,6 +83,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_m55_ros test/test_m55_ros.py TIMEOUT 300)
   ament_add_pytest_test(test_m55_review test/test_m55_review.py TIMEOUT 300)
   ament_add_pytest_test(test_m55_rate_rule test/test_m55_rate_rule.py TIMEOUT 300)
+  ament_add_pytest_test(test_m55_rclpy_shutdown test/test_m55_rclpy_shutdown.py)
   ament_add_pytest_test(test_m61_discovery test/test_m61_discovery.py TIMEOUT 600)
 endif()
 
