@@ -1,0 +1,19 @@
+[12:07:16] gates (imported): True False False
+[12:07:16] launch
+launch pid 8030 pgid 8030 xvfb 8017
+[12:07:53] controllers: exit 0
+[12:07:56] gazebo gui pid(s) 8189  reniced +19
+[12:08:18] node up after 22 s: locomotion node up in DISPATCH mode (dispatch gate True); levels [1.06, 1.9, 2.34] mm/s
+[12:08:18] locomotion node pid(s) 8103  (launch session 8030) reniced -5
+[12:08:21] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[12:09:43] pre-shadow checks passed: pre-arm checks PASS (server 8186 maps the r2 libraries with provenance hashes, no stock/mixed; gain 1.0 log+param; update_rate 100; period 0.001 s; both controllers active; node 8103 DISPATCH (gate True) in the launch session, the action's only client; 0 command publishers; settle 10.09 s sim, z 0.0
+[12:09:43] captures before
+[12:09:49] driver
+[12:15:16] driver exit 0: {"command_rejections": {}, "cycles": [{"cycle": 1, "forward_m": 0.02002109031317522, "lateral_m": 2.9457996215239475e-06, "sim": 51.29, "yaw_rad": 1.0616409049994173e-05}, {"cycle": 2, "forward_m": 0.
+[12:15:19] captures after
+[12:15:21] bag stopped
+[12:15:21] screenshot 2: exit 0
+[12:15:23] strace (signals only) attached to simulator server 8186: strace: Process 8186 attached 
+[12:15:23] stop launch
+[12:15:31] server exit (strace): +++ exited with 0 +++
+[12:15:31] end
