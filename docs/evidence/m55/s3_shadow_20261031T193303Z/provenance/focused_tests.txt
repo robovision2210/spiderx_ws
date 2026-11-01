@@ -1,0 +1,46 @@
+== focused tests at 236238e8081501e76b068f453cdcf4222a598af2 2026-10-31T19:49:40Z
+test_body_frame_forward_is_plus_y (test_s3_driver_live.Helpers.test_body_frame_forward_is_plus_y) ... ok
+test_fresh_gates_are_false_and_from_this_workspace (test_s3_driver_live.Helpers.test_fresh_gates_are_false_and_from_this_workspace) ... ok
+test_fresh_pose_rejects_stale_duplicate_and_missing (test_s3_driver_live.Helpers.test_fresh_pose_rejects_stale_duplicate_and_missing) ... ok
+test_gate_refusal (test_s3_driver_live.Helpers.test_gate_refusal) ... ok
+test_main_refuses_shadow_rehearsal_unless_gates_false (test_s3_driver_live.Helpers.test_main_refuses_shadow_rehearsal_unless_gates_false) ... {"gates": {"driver_process": {"LIVE_DISPATCH_ENABLED": [false, "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py"], "M55_LOCOMOTION_DISPATCH_ENABLED": [false, "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py"], "M61_LIVE_DISPATCH_ENABLED": [false, "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py"]}, "fresh_interpreter": {"LIVE_DISPATCH_ENABLED": [false, "x"], "M55_LOCOMOTION_DISPATCH_ENABLED": [true, "x"], "M61_LIVE_DISPATCH_ENABLED": [false, "x"]}}, "result": "REFUSED: dispatch gates not all False: {'M55_LOCOMOTION_DISPATCH_ENABLED': True}", "shadow_rehearsal": true}
+test_scope_constants (test_s3_driver_live.Helpers.test_scope_constants) ... ok
+test_yaw_wrap (test_s3_driver_live.Helpers.test_yaw_wrap) ... ok
+test_complete_script_55_goals_one_cancel_at_rtf_0_2 (test_s3_driver_live.S3Live.test_complete_script_55_goals_one_cancel_at_rtf_0_2) ... ok
+test_complete_script_at_rtf_0_6 (test_s3_driver_live.S3Live.test_complete_script_at_rtf_0_6) ... ok
+test_cycle_lateral_drift_stops (test_s3_driver_live.S3Live.test_cycle_lateral_drift_stops) ... ok
+test_cycle_progress_outside_0_40_mm_stops (test_s3_driver_live.S3Live.test_cycle_progress_outside_0_40_mm_stops) ... ok
+test_cycle_yaw_drift_stops (test_s3_driver_live.S3Live.test_cycle_yaw_drift_stops) ... ok
+test_driver_error_presses_the_estop (test_s3_driver_live.S3Live.test_driver_error_presses_the_estop) ... ok
+test_duplicate_publication_does_not_complete_the_debounce (test_s3_driver_live.S3Live.test_duplicate_publication_does_not_complete_the_debounce) ... ok
+test_estop_service_fallback_without_a_live_teleop (test_s3_driver_live.S3Live.test_estop_service_fallback_without_a_live_teleop) ... ok
+test_fall_stops (test_s3_driver_live.S3Live.test_fall_stops) ... ok
+test_interruption_presses_the_estop (test_s3_driver_live.S3Live.test_interruption_presses_the_estop) ... ok
+test_joint_near_its_urdf_limit_stops (test_s3_driver_live.S3Live.test_joint_near_its_urdf_limit_stops) ... ok
+test_live_tiny_negative_progress_stops (test_s3_driver_live.S3Live.test_live_tiny_negative_progress_stops) ... ok
+test_persistent_tilt_stops_after_two_fresh_samples (test_s3_driver_live.S3Live.test_persistent_tilt_stops_after_two_fresh_samples) ... ok
+test_settle_failure_never_arms (test_s3_driver_live.S3Live.test_settle_failure_never_arms) ... ok
+test_single_tilt_spike_does_not_stop (test_s3_driver_live.S3Live.test_single_tilt_spike_does_not_stop) ... ok
+test_stalled_simulation_samples_are_not_fresh (test_s3_driver_live.S3Live.test_stalled_simulation_samples_are_not_fresh) ... ok
+test_timeout_when_nothing_moves (test_s3_driver_live.S3Live.test_timeout_when_nothing_moves) ... ok
+test_tracking_above_0_02_is_a_finding_not_a_stop (test_s3_driver_live.S3Live.test_tracking_above_0_02_is_a_finding_not_a_stop) ... ok
+test_tracking_above_0_05_aborts (test_s3_driver_live.S3Live.test_tracking_above_0_05_aborts) ... ok
+test_travel_stop_can_end_a_run_whose_cycles_are_within_the_bands (test_s3_driver_live.S3Live.test_travel_stop_can_end_a_run_whose_cycles_are_within_the_bands) ... ok
+test_two_tilted_fresh_samples_stop (test_s3_driver_live.S3Live.test_two_tilted_fresh_samples_stop) ... ok
+test_yaw_across_pi_is_wrapped (test_s3_driver_live.S3Live.test_yaw_across_pi_is_wrapped) ... ok
+test_complete_stationary_shadow_script (test_s3_driver_live.S3Shadow.test_complete_stationary_shadow_script) ... ok
+test_mode_change_during_the_run_stops_the_script (test_s3_driver_live.S3Shadow.test_mode_change_during_the_run_stops_the_script) ... ok
+test_refuses_conflicting_gate_before_arm (test_s3_driver_live.S3Shadow.test_refuses_conflicting_gate_before_arm) ... ok
+test_refuses_dispatch_mode_status_before_arm (test_s3_driver_live.S3Shadow.test_refuses_dispatch_mode_status_before_arm) ... ok
+test_refuses_missing_mode_before_arm (test_s3_driver_live.S3Shadow.test_refuses_missing_mode_before_arm) ... ok
+test_shadow_fall_stops (test_s3_driver_live.S3Shadow.test_shadow_fall_stops) ... ok
+test_shadow_joint_near_its_urdf_limit_stops (test_s3_driver_live.S3Shadow.test_shadow_joint_near_its_urdf_limit_stops) ... ok
+test_shadow_joint_state_outage_faults_and_stops (test_s3_driver_live.S3Shadow.test_shadow_joint_state_outage_faults_and_stops) ... ok
+test_shadow_lateral_drift_stops (test_s3_driver_live.S3Shadow.test_shadow_lateral_drift_stops) ... ok
+test_shadow_stalled_simulation_samples_are_not_fresh (test_s3_driver_live.S3Shadow.test_shadow_stalled_simulation_samples_are_not_fresh) ... ok
+test_shadow_tilt_stops (test_s3_driver_live.S3Shadow.test_shadow_tilt_stops) ... ok
+test_shadow_upper_progress_bound_still_stops (test_s3_driver_live.S3Shadow.test_shadow_upper_progress_bound_still_stops) ... ok
+test_shadow_yaw_drift_stops (test_s3_driver_live.S3Shadow.test_shadow_yaw_drift_stops) ... ok
+Ran 42 tests in 11.261s
+OK
+flake8 clean: s3_driver.py, test_s3_driver_live.py

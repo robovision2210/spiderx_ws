@@ -1,0 +1,13 @@
+== retry input checks 2026-10-31T19:33:34Z
+branch claude/spiderx-s3-preparation HEAD 236238e8081501e76b068f453cdcf4222a598af2 (retry baseline 236238e8081501e76b068f453cdcf4222a598af2); worktree entries: 0
+leftover processes: 0
+src/ unchanged since the install build base:  1 file changed, 47 insertions(+), 2 deletions(-)
+3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27  /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5  /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac  third_party/gz_ros2_control_overlay/patches/0001-plugin-node-parameter-overrides.patch
+520e73cc59a68025b237347e7e54df64b45739048fcc90a623011f728cba6261  third_party/gz_ros2_control_overlay/patches/0002-destructor-no-second-node-removal.patch
+0af5b90a410acfcb4b7e3967d1aaff0d8eb2e23c441aea83fe7bbf4233c612e7  scripts/s3/s3_driver.py
+44cd495913b413c3f984adb581c699258a6da5cc7495c820ce3ef5e92ed78388  scripts/s2/s2_driver.py
+fresh-interpreter gates: {"M55_LOCOMOTION_DISPATCH_ENABLED": [false, "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py"], "M61_LIVE_DISPATCH_ENABLED": [false, "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py"], "LIVE_DISPATCH_ENABLED": [false, "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py"]}
+refusal: None
+{"goals": 54, "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732", "m55_gate_imported": false}
