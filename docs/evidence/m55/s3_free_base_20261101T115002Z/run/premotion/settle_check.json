@@ -1,0 +1,37 @@
+{
+ "criteria": "z >= 0.045 m, z range <= 0.005 m, tilt <= 0.10 rad, graph 1/0/0, joint-state age <= 0.5 s, pose age <= 1.0 s, graph age <= 3.0 s, sim strictly advancing, over >= 10 s of sim; mode/gate/state ('dispatch', True, 'DISARMED')",
+ "drift_in_window": {
+  "forward_m": -1.910399725758982e-10,
+  "forward_per_level0_cycle_m": -3.5595158418502343e-10,
+  "lateral_m": -1.2385535643455406e-16,
+  "max_abs_xy_step_m": 7.154619055215718e-11,
+  "sim_span_s": 10.09,
+  "yaw_rad": 9.028563494438704e-15
+ },
+ "fresh_samples": 96,
+ "max_ages_s": {
+  "body_pose_age_s": 0.10138265399996271,
+  "graph_age_s": 1.003038829000161,
+  "joint_states_age_s": 0.16103664599995682
+ },
+ "modes_seen": [
+  [
+   "dispatch",
+   true,
+   "DISARMED"
+  ]
+ ],
+ "statuses": 96,
+ "verdict": "PASS",
+ "violation_count": 0,
+ "violations": [],
+ "wall_s": 47.7,
+ "window": {
+  "max_tilt_rad": 1.541388099311085e-07,
+  "samples": 96,
+  "sim_from_s": 7.19,
+  "sim_to_s": 17.28,
+  "z_mean_m": 0.05450019790151662,
+  "z_range_m": 9.031159226471908e-06
+ }
+}

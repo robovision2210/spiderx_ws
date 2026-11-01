@@ -1,0 +1,22 @@
+test_ambiguous_or_unrelated_estop_sources_are_rejected (test_review_a3.BracketedException.test_ambiguous_or_unrelated_estop_sources_are_rejected) ... ok
+test_contradictory_sequences_are_rejected (test_review_a3.BracketedException.test_contradictory_sequences_are_rejected) ... ok
+test_correctly_bracketed_reaction_after_the_post_write_log_qualifies (test_review_a3.BracketedException.test_correctly_bracketed_reaction_after_the_post_write_log_qualifies) ... ok
+test_fault_before_the_write_could_start_is_rejected (test_review_a3.BracketedException.test_fault_before_the_write_could_start_is_rejected) ... ok
+test_missing_cancel_response_or_canceled_result_is_rejected (test_review_a3.BracketedException.test_missing_cancel_response_or_canceled_result_is_rejected) ... ok
+test_missing_goal_acceptance_is_rejected (test_review_a3.BracketedException.test_missing_goal_acceptance_is_rejected) ... ok
+test_receiver_reacting_before_the_post_write_log_qualifies (test_review_a3.BracketedException.test_receiver_reacting_before_the_post_write_log_qualifies) ... ok
+test_controller_order (test_review_a3.Extraction.test_controller_order) ... ok
+test_esc_counts_as_an_estop_key (test_review_a3.Extraction.test_esc_counts_as_an_estop_key) ... ok
+test_key_bracket_uses_the_previous_main_thread_record (test_review_a3.Extraction.test_key_bracket_uses_the_previous_main_thread_record) ... ok
+test_key_bracket_without_a_preceding_reached_record_has_no_start (test_review_a3.Extraction.test_key_bracket_without_a_preceding_reached_record_has_no_start) ... ok
+test_scenario_is_not_mutated_between_tests (test_review_a3.Extraction.test_scenario_is_not_mutated_between_tests) ... ok
+test_teleop_responses_parse_multi_line_output (test_review_a3.Extraction.test_teleop_responses_parse_multi_line_output) ... ok
+test_final_goal_without_a_qualifying_exception_stays_unmeasured (test_review_a3.TrackingRule.test_final_goal_without_a_qualifying_exception_stays_unmeasured) ... ok
+test_measured_goals_pass_and_the_final_goal_is_na_without_a_value (test_review_a3.TrackingRule.test_measured_goals_pass_and_the_final_goal_is_na_without_a_value) ... ok
+test_missing_feedback_on_a_normal_goal_stays_unmeasured (test_review_a3.TrackingRule.test_missing_feedback_on_a_normal_goal_stays_unmeasured) ... ok
+test_thresholds_unchanged (test_review_a3.TrackingRule.test_thresholds_unchanged) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.005s
+
+OK

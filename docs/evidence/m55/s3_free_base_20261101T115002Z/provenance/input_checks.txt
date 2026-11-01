@@ -1,0 +1,33 @@
+== pre-motion input checks 2026-11-01T11:51:12Z
+branch claude/spiderx-s3-preparation HEAD d91879989138543f43b6c6733217669b773c0337 worktree entries 0
+robotics-source change from 236238e:  3 files changed, 79 insertions(+), 2 deletions(-)
+src/spiderx_controller/CMakeLists.txt
+src/spiderx_controller/spiderx_controller/m55_rclpy.py
+src/spiderx_controller/test/test_m55_rclpy_shutdown.py
+== driver identity vs the P4 PASS run (rehearsal 2 input_checks: s3_driver.py 0af5b90a..., s2_driver.py 44cd4959...)
+0af5b90a410acfcb4b7e3967d1aaff0d8eb2e23c441aea83fe7bbf4233c612e7  scripts/s3/s3_driver.py
+44cd495913b413c3f984adb581c699258a6da5cc7495c820ce3ef5e92ed78388  scripts/s2/s2_driver.py
+1c8ef9848ee771a99044210a2f0099e1aa8b2679c2639b3bfbbe3d1f8c458996  scripts/s3/score_s3.py
+0af5b90a410acfcb4b7e3967d1aaff0d8eb2e23c441aea83fe7bbf4233c612e7  scripts/s3/s3_driver.py
+44cd495913b413c3f984adb581c699258a6da5cc7495c820ce3ef5e92ed78388  scripts/s2/s2_driver.py
+== live forward-progress stop in the committed driver (default mode)
+71:PROGRESS_MIN_M, PROGRESS_MAX_M = 0.0, 0.040
+335:        elif not PROGRESS_MIN_M <= fwd <= PROGRESS_MAX_M:
+== r2 overlay: provenance, patches, libraries
+upstream https://github.com/ros-controls/gz_ros2_control.git tag 0.7.15 commit bfc5845aa7f0250cbc384773dba5c9847d609b95
+patch 14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac 0001-plugin-node-parameter-overrides.patch
+patch 520e73cc59a68025b237347e7e54df64b45739048fcc90a623011f728cba6261 0002-destructor-no-second-node-removal.patch
+library 3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27 /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+library 06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5 /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac  third_party/gz_ros2_control_overlay/patches/0001-plugin-node-parameter-overrides.patch
+520e73cc59a68025b237347e7e54df64b45739048fcc90a623011f728cba6261  third_party/gz_ros2_control_overlay/patches/0002-destructor-no-second-node-removal.patch
+3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27  /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5  /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+overlay source HEAD bfc5845aa7f0250cbc384773dba5c9847d609b95 (rehearsal-1 check: every file = upstream + 0001 + 0002)
+== enabling patch
+d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236  docs/patches/m55_enable_s2.UNAPPLIED.patch
+expected d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236
+git apply --check: PASS (applies forward to the disabled tree)
+1	1	src/spiderx_controller/spiderx_controller/m55_contract.py
+1	1	src/spiderx_controller/test/m55_gate.py
+overlay source: every present file = upstream bfc5845 + 0001 + 0002

@@ -1,0 +1,346 @@
+{
+ "bag_topics": {
+  "/cmd_vel": {
+   "messages": 6165,
+   "type": "geometry_msgs/msg/Twist"
+  },
+  "/joint_states": {
+   "messages": 13707,
+   "type": "sensor_msgs/msg/JointState"
+  },
+  "/leg_trajectory_controller/controller_state": {
+   "messages": 6416,
+   "type": "control_msgs/msg/JointTrajectoryControllerState"
+  },
+  "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": {
+   "messages": 0,
+   "present_in_bag": true,
+   "type": "control_msgs/action/FollowJointTrajectory_FeedbackMessage"
+  },
+  "/leg_trajectory_controller/joint_trajectory": {
+   "messages": 0,
+   "present_in_bag": false,
+   "type": null
+  },
+  "/spiderx/locomotion/status": {
+   "messages": 1272,
+   "type": "std_msgs/msg/String"
+  },
+  "/spiderx/sim/world_poses": {
+   "messages": 32839,
+   "type": "tf2_msgs/msg/TFMessage"
+  }
+ },
+ "controller_state": {
+  "max_reference_change_rad": 0.0,
+  "messages": 6416,
+  "reference_points_nonempty": true
+ },
+ "joint_states_main": {
+  "max_joint_motion_joint": "rr_foot_joint",
+  "max_joint_motion_rad": 5.889578958225635e-12,
+  "max_receive_gap_s": 0.2296597957611084,
+  "max_stamp_gap_s": 0.010000000000019327,
+  "rtf": 0.21714144592658846,
+  "rtf_10s_windows_max": 0.2376385236735225,
+  "rtf_10s_windows_min": 0.18888176261537365,
+  "samples": 13707,
+  "sim_s": 137.06,
+  "wall_s": 631.2014706134796
+ },
+ "launch_log": {
+  "aborted": 0,
+  "error_lines": [
+   "[ERROR] [m55_locomotion_node-7]: process has died [pid 4536, exit code 1, cmd '/home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidence-dir /root/spiderx_evidence/s3_shadow_20261031T193303Z/run/node --ros-args -r __node:=spiderx_locomotion']."
+  ],
+  "exception": 2,
+  "jtc_cancel_request": 0,
+  "jtc_canceling": 0,
+  "jtc_goal_accepted": 0,
+  "jtc_goal_received": 0,
+  "process_died": 1,
+  "process_died_lines": [
+   "[ERROR] [m55_locomotion_node-7]: process has died [pid 4536, exit code 1, cmd '/home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidence-dir /root/spiderx_evidence/s3_shadow_20261031T193303Z/run/node --ros-args -r __node:=spiderx_locomotion']."
+  ],
+  "process_exits": [
+   "create-3",
+   "spawner-5",
+   "spawner-8",
+   "robot_state_publisher-2",
+   "parameter_bridge-4",
+   "parameter_bridge-6",
+   "ign gazebo-1"
+  ],
+  "sending_signal": 0,
+  "sigkill": 0,
+  "signal_sent_by": 0,
+  "sigterm": 0,
+  "terminate_called": 0,
+  "what": 0
+ },
+ "node_events": {
+  "cancel": [
+   {
+    "event": "cancel_sent",
+    "n": 233,
+    "seq": 55,
+    "state": "FAULTED",
+    "wall": 3074.221007107
+   },
+   {
+    "code": 0,
+    "event": "cancel_response",
+    "n": 236,
+    "seq": 55,
+    "state": "FAULTED",
+    "wall": 3074.268449137
+   }
+  ],
+  "counts": {
+   "cancel_response": 1,
+   "cancel_sent": 1,
+   "fault": 1,
+   "goal_response": 55,
+   "goal_sent": 55,
+   "phase_done": 54,
+   "refused": 2,
+   "request": 6,
+   "result": 55,
+   "transition": 11
+  },
+  "faults": [
+   {
+    "event": "fault",
+    "n": 231,
+    "reason": "estop",
+    "state": "STARTING",
+    "wall": 3074.221007107
+   }
+  ],
+  "refused": [
+   {
+    "event": "refused",
+    "n": 238,
+    "reason": "faulted_reset_required",
+    "request": "disarm",
+    "state": "FAULTED",
+    "wall": 3120.411301702
+   },
+   {
+    "event": "refused",
+    "n": 240,
+    "reason": "faulted_reset_required",
+    "request": "disarm",
+    "state": "FAULTED",
+    "wall": 3120.415799872
+   }
+  ],
+  "results_not_succeeded": [
+   {
+    "error_code": 0,
+    "error_string": "shadow cancel",
+    "event": "result",
+    "n": 237,
+    "seq": 55,
+    "state": "FAULTED",
+    "status": 5,
+    "wall": 3074.268449137
+   }
+  ],
+  "transitions": [
+   [
+    "DISARMED",
+    "READY",
+    "arm"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "STOPPING",
+    "stop"
+   ],
+   [
+    "STOPPING",
+    "READY",
+    "stopped"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "STOPPING",
+    "stop"
+   ],
+   [
+    "STOPPING",
+    "READY",
+    "stopped"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "FAULTED",
+    "estop"
+   ]
+  ]
+ },
+ "node_final_status.json": {
+  "command_rejections": {},
+  "cycles": 6,
+  "dispatch_gate": false,
+  "faults": [
+   "estop"
+  ],
+  "goals_recorded": 55,
+  "mode": "shadow",
+  "state": "FAULTED"
+ },
+ "node_shadow_goals.json": 55,
+ "settle_bag": {
+  "first_pose_z_m": 0.0749706,
+  "joint_states": {
+   "max_joint_motion_joint": "rr_foot_joint",
+   "max_joint_motion_rad": 4.468657105256459e-09,
+   "max_receive_gap_s": 1.3226368427276611,
+   "max_stamp_gap_s": 0.010000000000001563,
+   "rtf": 0.17300998731417003,
+   "rtf_10s_windows_max": 0.22753228141489448,
+   "rtf_10s_windows_min": 0.009325199774082988,
+   "samples": 2272,
+   "sim_s": 22.71,
+   "wall_s": 131.264098405838
+  },
+  "max_tilt_rad": 1.541388099311085e-07,
+  "min_z_m": 0.053979,
+  "pose_samples": 5857,
+  "sim_times": "settle_timing.json: from /joint_states stamps (the bridged pose headers carry no stamp)",
+  "topics": {
+   "/joint_states": 2272,
+   "/spiderx/sim/world_poses": 5857
+  }
+ },
+ "status": {
+  "body": {
+   "tilt_max": 1.541388099311085e-07,
+   "xy_first": [
+    5.9213863806187895e-12,
+    -8.868891795762602e-09
+   ],
+   "xy_last": [
+    5.919040655901529e-12,
+    -1.1041860585504787e-08
+   ],
+   "xy_travel_m": 2.172968789743451e-09,
+   "yaw_change_rad": 1.2231865133814342e-13,
+   "z_max": 0.05450432580308211,
+   "z_min": 0.05449529464385483
+  },
+  "final": {
+   "boundary": 0,
+   "command_rejections": {},
+   "cycles": 6,
+   "faults": [
+    "estop"
+   ],
+   "goals_recorded": 55,
+   "phases_completed": 54,
+   "state": "FAULTED"
+  },
+  "joint_states_margin_to_0.5s": 0.4229860840000583,
+  "max_ages_s": {
+   "body_pose_age_s": 0.04996250299973326,
+   "graph_age_s": 1.0058007689999613,
+   "joint_states_age_s": 0.07701391599994167
+  },
+  "messages": 1272,
+  "modes": [
+   [
+    "shadow",
+    false
+   ]
+  ],
+  "state_changes_seen_in_status": [
+   {
+    "bag_receipt_unix_s": 1793475423.11,
+    "sim_s_node_joint_state_stamp": 23.71,
+    "state": "DISARMED"
+   },
+   {
+    "bag_receipt_unix_s": 1793475472.637,
+    "sim_s_node_joint_state_stamp": 34.35,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793475472.761,
+    "sim_s_node_joint_state_stamp": 34.37,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793475472.81,
+    "sim_s_node_joint_state_stamp": 34.38,
+    "state": "WALKING"
+   },
+   {
+    "bag_receipt_unix_s": 1793475556.123,
+    "sim_s_node_joint_state_stamp": 52.15,
+    "state": "STOPPING"
+   },
+   {
+    "bag_receipt_unix_s": 1793475561.61,
+    "sim_s_node_joint_state_stamp": 53.34,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793475563.211,
+    "sim_s_node_joint_state_stamp": 53.68,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793475563.262,
+    "sim_s_node_joint_state_stamp": 53.69,
+    "state": "WALKING"
+   },
+   {
+    "bag_receipt_unix_s": 1793475992.627,
+    "sim_s_node_joint_state_stamp": 147.26,
+    "state": "STOPPING"
+   },
+   {
+    "bag_receipt_unix_s": 1793475997.81,
+    "sim_s_node_joint_state_stamp": 148.4,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793475999.46,
+    "sim_s_node_joint_state_stamp": 148.76,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793475999.466,
+    "sim_s_node_joint_state_stamp": 148.76,
+    "state": "FAULTED"
+   }
+  ]
+ }
+}

@@ -1,0 +1,7 @@
+M55_LOCOMOTION_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+M61_LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+branch claude/spiderx-s3-preparation HEAD a73ea95675aaf528c6301eef9f493f4e87f78049 remote a73ea95675aaf528c6301eef9f493f4e87f78049
+local enabling branches: 0
+processes (gz/ros2/m55/driver/bag): 0
+checked 2026-11-01T13:53:44Z; read-only: imports and git queries only, no launch

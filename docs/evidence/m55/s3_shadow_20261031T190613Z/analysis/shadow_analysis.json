@@ -1,0 +1,249 @@
+{
+ "bag_topics": {
+  "/cmd_vel": {
+   "messages": 1352,
+   "type": "geometry_msgs/msg/Twist"
+  },
+  "/joint_states": {
+   "messages": 3109,
+   "type": "sensor_msgs/msg/JointState"
+  },
+  "/leg_trajectory_controller/controller_state": {
+   "messages": 1456,
+   "type": "control_msgs/msg/JointTrajectoryControllerState"
+  },
+  "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": {
+   "messages": 0,
+   "present_in_bag": true,
+   "type": "control_msgs/action/FollowJointTrajectory_FeedbackMessage"
+  },
+  "/leg_trajectory_controller/joint_trajectory": {
+   "messages": 0,
+   "present_in_bag": false,
+   "type": null
+  },
+  "/spiderx/locomotion/status": {
+   "messages": 299,
+   "type": "std_msgs/msg/String"
+  },
+  "/spiderx/sim/world_poses": {
+   "messages": 7532,
+   "type": "tf2_msgs/msg/TFMessage"
+  }
+ },
+ "controller_state": {
+  "max_reference_change_rad": 0.0,
+  "messages": 1456,
+  "reference_points_nonempty": true
+ },
+ "joint_states_main": {
+  "max_joint_motion_joint": "rr_foot_joint",
+  "max_joint_motion_rad": 5.88800287257829e-12,
+  "max_receive_gap_s": 0.13405585289001465,
+  "max_stamp_gap_s": 0.010000000000005116,
+  "rtf": 0.21247746550335606,
+  "rtf_10s_windows_max": 0.2275292139051376,
+  "rtf_10s_windows_min": 0.20066072586842146,
+  "samples": 3109,
+  "sim_s": 31.080000000000002,
+  "wall_s": 146.27433514595032
+ },
+ "launch_log": {
+  "aborted": 0,
+  "error_lines": [],
+  "exception": 0,
+  "jtc_cancel_request": 0,
+  "jtc_canceling": 0,
+  "jtc_goal_accepted": 0,
+  "jtc_goal_received": 0,
+  "process_died": 0,
+  "process_died_lines": [],
+  "process_exits": [
+   "create-3",
+   "spawner-5",
+   "spawner-8",
+   "parameter_bridge-6",
+   "parameter_bridge-4",
+   "robot_state_publisher-2",
+   "m55_locomotion_node-7",
+   "ign gazebo-1"
+  ],
+  "sending_signal": 0,
+  "sigkill": 0,
+  "signal_sent_by": 0,
+  "sigterm": 0,
+  "terminate_called": 0,
+  "what": 0
+ },
+ "node_events": {
+  "cancel": [],
+  "counts": {
+   "fault": 1,
+   "goal_response": 9,
+   "goal_sent": 9,
+   "phase_done": 9,
+   "request": 3,
+   "result": 9,
+   "transition": 6
+  },
+  "faults": [
+   {
+    "event": "fault",
+    "n": 44,
+    "reason": "estop",
+    "state": "READY",
+    "wall": 1301.37075396
+   }
+  ],
+  "refused": [],
+  "results_not_succeeded": [],
+  "transitions": [
+   [
+    "DISARMED",
+    "READY",
+    "arm"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "STOPPING",
+    "stop"
+   ],
+   [
+    "STOPPING",
+    "READY",
+    "stopped"
+   ],
+   [
+    "READY",
+    "FAULTED",
+    "estop"
+   ]
+  ]
+ },
+ "node_final_status.json": {
+  "command_rejections": {},
+  "cycles": 1,
+  "dispatch_gate": false,
+  "faults": [
+   "estop"
+  ],
+  "goals_recorded": 9,
+  "mode": "shadow",
+  "state": "FAULTED"
+ },
+ "node_shadow_goals.json": 9,
+ "settle_bag": {
+  "first_pose_sim_s": 0.0,
+  "first_pose_z_m": 0.07499019999999999,
+  "joint_states": {
+   "max_joint_motion_joint": "rr_foot_joint",
+   "max_joint_motion_rad": 4.520569409273316e-09,
+   "max_receive_gap_s": 1.1992714405059814,
+   "max_stamp_gap_s": 0.02,
+   "rtf": 0.18628167937948586,
+   "rtf_10s_windows_max": 0.23389645444235518,
+   "rtf_10s_windows_min": 0.009275841178029503,
+   "samples": 2909,
+   "sim_s": 29.09,
+   "wall_s": 156.16135787963867
+  },
+  "last_pose_sim_s": 0.0,
+  "max_tilt_rad": 1.541388099311085e-07,
+  "min_z_m": 0.053979,
+  "pose_samples": 7245,
+  "settled_band": "|z - 0.054500| <= 0.0025 m and tilt <= 0.10 rad to the end of the settle bag",
+  "settled_from_sim_s": 0.0,
+  "topics": {
+   "/joint_states": 2909,
+   "/spiderx/sim/world_poses": 7245
+  }
+ },
+ "status": {
+  "body": {
+   "tilt_max": 1.541388099311085e-07,
+   "xy_first": [
+    5.925853166581156e-12,
+    -9.008729490371425e-09
+   ],
+   "xy_last": [
+    5.925605144914936e-12,
+    -9.462200965228145e-09
+   ],
+   "xy_travel_m": 4.5347147485678706e-10,
+   "yaw_change_rad": 2.7744689456538543e-14,
+   "z_max": 0.054504325799104705,
+   "z_min": 0.05449529463987767
+  },
+  "final": {
+   "boundary": 0,
+   "command_rejections": {},
+   "cycles": 1,
+   "faults": [
+    "estop"
+   ],
+   "goals_recorded": 9,
+   "phases_completed": 9,
+   "state": "FAULTED"
+  },
+  "joint_states_margin_to_0.5s": 0.4148178950001693,
+  "max_ages_s": {
+   "body_pose_age_s": 0.06552388599993719,
+   "graph_age_s": 1.0068215679998502,
+   "joint_states_age_s": 0.0851821049998307
+  },
+  "messages": 299,
+  "modes": [
+   [
+    "shadow",
+    false
+   ]
+  ],
+  "state_changes_seen_in_status": [
+   [
+    1793474085.132,
+    29.73,
+    "DISARMED"
+   ],
+   [
+    1793474137.646,
+    40.82,
+    "READY"
+   ],
+   [
+    1793474137.782,
+    40.85,
+    "STARTING"
+   ],
+   [
+    1793474137.831,
+    40.86,
+    "WALKING"
+   ],
+   [
+    1793474221.162,
+    58.64,
+    "STOPPING"
+   ],
+   [
+    1793474226.591,
+    59.81,
+    "READY"
+   ],
+   [
+    1793474226.613,
+    59.82,
+    "FAULTED"
+   ]
+  ]
+ }
+}

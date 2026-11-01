@@ -1,0 +1,20 @@
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ERROR] [m55_locomotion_node-7]: process has died [pid 4536, exit code 1, cmd '/home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidence-dir /root/spiderx_evidence/s3_shadow_20261031T193303Z/run/node --ros-args -r __node:=spiderx_locomotion'].
+[ign gazebo-1] [INFO] [1793476056.636653827] [rclcpp]: signal_handler(signum=2)
+[ign gazebo-1] [INFO] [1793476056.640200350] [controller_manager]: Shutdown request received....
+[ign gazebo-1] [INFO] [1793476056.640457995] [controller_manager]: Shutting down all controllers in the controller manager.
+[ign gazebo-1] [INFO] [1793476056.640542022] [controller_manager]: Deactivating controller 'joint_state_broadcaster'
+[ign gazebo-1] [INFO] [1793476056.640654322] [controller_manager]: Shutting down controller 'joint_state_broadcaster'
+[ign gazebo-1] [INFO] [1793476056.640671086] [controller_manager]: Deactivating controller 'leg_trajectory_controller'
+[ign gazebo-1] [INFO] [1793476056.640740411] [controller_manager]: Shutting down controller 'leg_trajectory_controller'
+[ign gazebo-1] [INFO] [1793476056.640763362] [resource_manager]: 'deactivate' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1793476056.640772557] [resource_manager]: Successful 'deactivate' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1793476056.640775372] [resource_manager]: 'shutdown' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1793476056.640778369] [resource_manager]: Successful 'shutdown' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1793476056.640780504] [controller_manager]: Shutting down the controller manager.
+[INFO] [ign gazebo-1]: process has finished cleanly [pid 4512]
+[INFO] [launch]: process[ign gazebo-1] was required: shutting down launched system

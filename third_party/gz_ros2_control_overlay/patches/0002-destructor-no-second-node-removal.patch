@@ -1,0 +1,293 @@
+SpiderX overlay patch 2 for ros-controls/gz_ros2_control tag 0.7.15
+(commit bfc5845aa7f0250cbc384773dba5c9847d609b95), package directory gz_ros2_control/.
+Applies after 0001-plugin-node-parameter-overrides.patch.
+
+Problem: on shutdown (SIGINT), controller_manager 2.51.0's pre-shutdown callback removes its
+own node from the plugin's executor. The 0.7.15 destructor then calls
+executor_->remove_node(controller_manager_) again; rclcpp 16.0.13 throws std::runtime_error
+"Node needs to be associated with an executor." from the destructor, and the Gazebo server
+aborts (SIGABRT). Seen with the stock and the overlay library (S2 runs of 2026-10-29 and
+2026-10-30).
+
+Upstream: humble commit 366137556d1fe3adf327a99b17261dcde549e655 (2025-09-26),
+"Don't remove the node at destruction (#683) (#686)", cherry-picked from
+90c951871312862879f66d2ceb8f92b7ecc8dc55, released in 0.7.17. It deletes the removal and the
+early return on a missing controller manager, and keeps executor_->cancel() and
+thread_executor_spin_.join().
+
+Change (the upstream fix, plus guards for a partial Configure()):
+- The destructor no longer removes the controller-manager node. It calls
+  stop_executor_thread(): cancel the executor if it exists, join the spin thread if it is
+  joinable. Upstream 0.7.17 would dereference a null executor, or join a thread that never
+  started, when Configure() returned early.
+- Offline gtest test_shutdown_teardown (no Gazebo): the plugin destroyed before Configure();
+  the second removal throwing after the controller manager's self-removal (the defect); the
+  teardown after that shutdown sequence, while spinning, without a spin thread, without an
+  executor, and twice. Each spinning case first waits until the executor is spinning: a cancel()
+  issued before spin() starts is lost in rclcpp (spin() sets its own flag), which is a property
+  of the test set-up, not of the teardown.
+
+Apply from the repository root, after patch 1: git apply <this file>
+diff --git a/gz_ros2_control/CMakeLists.txt b/gz_ros2_control/CMakeLists.txt
+index 2bd5bf5..a25c6fd 100644
+--- a/gz_ros2_control/CMakeLists.txt
++++ b/gz_ros2_control/CMakeLists.txt
+@@ -124,6 +124,11 @@ if(BUILD_TESTING)
+   ament_add_gtest(test_parameter_loading test/test_parameter_loading.cpp)
+   target_include_directories(test_parameter_loading PRIVATE src)
+   ament_target_dependencies(test_parameter_loading rclcpp)
++
++  ament_add_gtest(test_shutdown_teardown test/test_shutdown_teardown.cpp)
++  target_include_directories(test_shutdown_teardown PRIVATE src)
++  target_link_libraries(test_shutdown_teardown ${PROJECT_NAME}-system ${GZ_SIM})
++  ament_target_dependencies(test_shutdown_teardown rclcpp)
+ endif()
+ 
+ ament_export_include_directories(include)
+diff --git a/gz_ros2_control/src/gz_ros2_control_plugin.cpp b/gz_ros2_control/src/gz_ros2_control_plugin.cpp
+index 49d7424..6dfb4e6 100644
+--- a/gz_ros2_control/src/gz_ros2_control_plugin.cpp
++++ b/gz_ros2_control/src/gz_ros2_control_plugin.cpp
+@@ -54,6 +54,7 @@
+ #include "gz_ros2_control/gz_ros2_control_plugin.hpp"
+ #include "gz_ros2_control/gz_system.hpp"
+ #include "parameter_loading.hpp"
++#include "shutdown_teardown.hpp"
+ 
+ namespace gz_ros2_control
+ {
+@@ -245,13 +246,9 @@ GazeboSimROS2ControlPlugin::GazeboSimROS2ControlPlugin()
+ //////////////////////////////////////////////////
+ GazeboSimROS2ControlPlugin::~GazeboSimROS2ControlPlugin()
+ {
+-  // Stop controller manager thread
+-  if (!this->dataPtr->controller_manager_) {
+-    return;
+-  }
+-  this->dataPtr->executor_->remove_node(this->dataPtr->controller_manager_);
+-  this->dataPtr->executor_->cancel();
+-  this->dataPtr->thread_executor_spin_.join();
++  // Stop the executor thread. The controller manager removes its own node from the executor in
++  // its pre-shutdown callback, so it is not removed again here (see shutdown_teardown.hpp).
++  stop_executor_thread(this->dataPtr->executor_, this->dataPtr->thread_executor_spin_);
+ }
+ 
+ //////////////////////////////////////////////////
+diff --git a/gz_ros2_control/src/shutdown_teardown.hpp b/gz_ros2_control/src/shutdown_teardown.hpp
+new file mode 100644
+index 0000000..65ff8a1
+--- /dev/null
++++ b/gz_ros2_control/src/shutdown_teardown.hpp
+@@ -0,0 +1,49 @@
++// Copyright 2026 The SpiderX authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// SpiderX overlay patch for gz_ros2_control 0.7.15; a backport of upstream humble commit
++// 366137556d1fe3adf327a99b17261dcde549e655 ("Don't remove the node at destruction (#683) (#686)",
++// released in 0.7.17), with guards for a partial Configure().
++
++#ifndef SHUTDOWN_TEARDOWN_HPP_
++#define SHUTDOWN_TEARDOWN_HPP_
++
++#include <memory>
++#include <thread>
++
++#include <rclcpp/executor.hpp>
++
++namespace gz_ros2_control
++{
++
++/// Stop the plugin's executor thread at destruction.
++/// The controller manager is not removed from the executor here: its own pre-shutdown callback
++/// (controller_manager 2.51.0) already removes it, and rclcpp's Executor::remove_node throws for
++/// a node that is no longer associated with an executor (the 0.7.15 abort at shutdown).
++/// Unlike upstream 0.7.17, a missing executor (Configure() returned before creating it) and a
++/// spin thread that never started are skipped rather than dereferenced or joined.
++inline void stop_executor_thread(
++  const std::shared_ptr<rclcpp::Executor> & executor, std::thread & spin_thread)
++{
++  if (executor) {
++    executor->cancel();
++  }
++  if (spin_thread.joinable()) {
++    spin_thread.join();
++  }
++}
++
++}  // namespace gz_ros2_control
++
++#endif  // SHUTDOWN_TEARDOWN_HPP_
+diff --git a/gz_ros2_control/test/test_shutdown_teardown.cpp b/gz_ros2_control/test/test_shutdown_teardown.cpp
+new file mode 100644
+index 0000000..95db70c
+--- /dev/null
++++ b/gz_ros2_control/test/test_shutdown_teardown.cpp
+@@ -0,0 +1,157 @@
++// Copyright 2026 The SpiderX authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// SpiderX overlay patch for gz_ros2_control 0.7.15; not part of upstream. Offline: no Gazebo.
++// Replays the shutdown of a Gazebo run in its own context: the plugin's executor spins the
++// controller-manager node in a thread (as Configure() does); on shutdown the controller manager's
++// pre-shutdown callback removes its own node and cancels the executor (as controller_manager
++// 2.51.0 does); then the plugin tears down with stop_executor_thread(), as its destructor now does.
++
++#include <gtest/gtest.h>
++
++#include <chrono>
++#include <memory>
++#include <stdexcept>
++#include <string>
++#include <thread>
++
++#include <rclcpp/rclcpp.hpp>
++
++#include "gz_ros2_control/gz_ros2_control_plugin.hpp"
++#include "shutdown_teardown.hpp"
++
++namespace
++{
++
++struct Rig
++{
++  rclcpp::Context::SharedPtr context = std::make_shared<rclcpp::Context>();
++  std::shared_ptr<rclcpp::executors::MultiThreadedExecutor> executor;
++  rclcpp::Node::SharedPtr node;
++  std::thread spin_thread;
++  rclcpp::PreShutdownCallbackHandle pre_shutdown;
++
++  explicit Rig(bool start_thread = true, bool controller_manager_self_removal = true)
++  {
++    context->init(0, nullptr);
++    rclcpp::ExecutorOptions options;
++    options.context = context;
++    executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>(options, 2);
++    node = std::make_shared<rclcpp::Node>(
++      "controller_manager", rclcpp::NodeOptions().context(context));
++    executor->add_node(node);
++    if (start_thread) {
++      auto ex = executor;
++      spin_thread = std::thread([ex]() {ex->spin();});
++      // spin() sets the executor's spinning flag itself: a cancel() before that is lost (an
++      // rclcpp race, not part of the teardown under test), so wait until it is spinning.
++      for (int i = 0; i < 5000 && !executor->is_spinning(); ++i) {
++        std::this_thread::sleep_for(std::chrono::milliseconds(1));
++      }
++    }
++    if (controller_manager_self_removal) {
++      // controller_manager 2.51.0 (controller_manager.cpp, pre-shutdown callback)
++      auto ex = executor;
++      auto base = node->get_node_base_interface();
++      pre_shutdown = context->add_pre_shutdown_callback(
++        [ex, base]() {
++          if (base->get_associated_with_executor_atomic().load()) {
++            ex->remove_node(base);
++          }
++          ex->cancel();
++        });
++    }
++  }
++
++  ~Rig()
++  {
++    if (spin_thread.joinable()) {
++      executor->cancel();
++      spin_thread.join();
++    }
++    if (context->is_valid()) {
++      context->shutdown("test end");
++    }
++  }
++};
++
++}  // namespace
++
++// The plugin destroyed before Configure(): no executor, no spin thread, no controller manager.
++TEST(ShutdownTeardown, PluginDestroyedBeforeConfigure)
++{
++  auto plugin = std::make_unique<gz_ros2_control::GazeboSimROS2ControlPlugin>();
++  EXPECT_NO_THROW(plugin.reset());
++}
++
++// The 0.7.15 defect: after the controller manager removed its own node, a second removal throws.
++TEST(ShutdownTeardown, SecondRemovalThrowsAfterSelfRemoval)
++{
++  Rig rig;
++  rig.context->shutdown("SIGINT");
++  EXPECT_FALSE(rig.node->get_node_base_interface()->get_associated_with_executor_atomic().load());
++  try {
++    rig.executor->remove_node(rig.node);
++    FAIL() << "expected std::runtime_error";
++  } catch (const std::runtime_error & e) {
++    EXPECT_EQ(std::string(e.what()), "Node needs to be associated with an executor.");
++  }
++}
++
++// The backported teardown after the full shutdown sequence: no exception, thread joined.
++TEST(ShutdownTeardown, StopsAfterControllerManagerSelfRemoval)
++{
++  Rig rig;
++  rig.context->shutdown("SIGINT");
++  std::shared_ptr<rclcpp::Executor> executor = rig.executor;
++  EXPECT_NO_THROW(gz_ros2_control::stop_executor_thread(executor, rig.spin_thread));
++  EXPECT_FALSE(rig.spin_thread.joinable());
++}
++
++// Teardown while the context is still running (no pre-shutdown callback has run yet).
++TEST(ShutdownTeardown, StopsWhileSpinning)
++{
++  Rig rig(true, false);
++  ASSERT_TRUE(rig.executor->is_spinning());
++  std::shared_ptr<rclcpp::Executor> executor = rig.executor;
++  EXPECT_NO_THROW(gz_ros2_control::stop_executor_thread(executor, rig.spin_thread));
++  EXPECT_FALSE(rig.spin_thread.joinable());
++}
++
++// Configure() returned after creating the executor but before starting the spin thread.
++TEST(ShutdownTeardown, ExecutorWithoutSpinThread)
++{
++  Rig rig(false, false);
++  std::shared_ptr<rclcpp::Executor> executor = rig.executor;
++  EXPECT_FALSE(rig.spin_thread.joinable());
++  EXPECT_NO_THROW(gz_ros2_control::stop_executor_thread(executor, rig.spin_thread));
++}
++
++// No executor at all: nothing is dereferenced or joined.
++TEST(ShutdownTeardown, NoExecutor)
++{
++  std::shared_ptr<rclcpp::Executor> executor;
++  std::thread never_started;
++  EXPECT_NO_THROW(gz_ros2_control::stop_executor_thread(executor, never_started));
++}
++
++// A second teardown does not join twice.
++TEST(ShutdownTeardown, Idempotent)
++{
++  Rig rig;
++  rig.context->shutdown("SIGINT");
++  std::shared_ptr<rclcpp::Executor> executor = rig.executor;
++  gz_ros2_control::stop_executor_thread(executor, rig.spin_thread);
++  EXPECT_NO_THROW(gz_ros2_control::stop_executor_thread(executor, rig.spin_thread));
++}

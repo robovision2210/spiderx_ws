@@ -1,0 +1,319 @@
+{
+ "bag_topics": {
+  "/cmd_vel": {
+   "messages": 3197,
+   "type": "geometry_msgs/msg/Twist"
+  },
+  "/joint_states": {
+   "messages": 14028,
+   "type": "sensor_msgs/msg/JointState"
+  },
+  "/leg_trajectory_controller/controller_state": {
+   "messages": 6113,
+   "type": "control_msgs/msg/JointTrajectoryControllerState"
+  },
+  "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": {
+   "messages": 4276,
+   "present_in_bag": true,
+   "type": "control_msgs/action/FollowJointTrajectory_FeedbackMessage"
+  },
+  "/leg_trajectory_controller/joint_trajectory": {
+   "messages": 0,
+   "present_in_bag": false,
+   "type": null
+  },
+  "/spiderx/locomotion/status": {
+   "messages": 681,
+   "type": "std_msgs/msg/String"
+  },
+  "/spiderx/sim/world_poses": {
+   "messages": 18141,
+   "type": "tf2_msgs/msg/TFMessage"
+  }
+ },
+ "controller_state": {
+  "max_reference_change_rad": 0.19307088295307578,
+  "messages": 6113,
+  "reference_points_nonempty": true
+ },
+ "joint_states_main": {
+  "max_joint_motion_joint": "rr_thigh_joint",
+  "max_joint_motion_rad": 0.19307088295317293,
+  "max_receive_gap_s": 0.22173237800598145,
+  "max_stamp_gap_s": 0.010000000000019327,
+  "rtf": 0.41831288192237176,
+  "rtf_10s_windows_max": 0.6297584029839776,
+  "rtf_10s_windows_min": 0.1936114706294161,
+  "samples": 14028,
+  "sim_s": 140.26999999999998,
+  "wall_s": 335.32316613197327
+ },
+ "launch_log": {
+  "aborted": 0,
+  "error_lines": [],
+  "exception": 0,
+  "jtc_cancel_request": 1,
+  "jtc_canceling": 1,
+  "jtc_goal_accepted": 55,
+  "jtc_goal_received": 55,
+  "process_died": 0,
+  "process_died_lines": [],
+  "process_exits": [
+   "create-3",
+   "spawner-5",
+   "spawner-8",
+   "parameter_bridge-6",
+   "parameter_bridge-4",
+   "robot_state_publisher-2",
+   "m55_locomotion_node-7",
+   "ign gazebo-1"
+  ],
+  "sending_signal": 0,
+  "sigkill": 0,
+  "signal_sent_by": 0,
+  "sigterm": 0,
+  "terminate_called": 0,
+  "what": 0
+ },
+ "node_events": {
+  "cancel": [
+   {
+    "event": "cancel_sent",
+    "n": 233,
+    "seq": 55,
+    "state": "FAULTED",
+    "wall": 1753.431099122
+   },
+   {
+    "code": 0,
+    "event": "cancel_response",
+    "n": 236,
+    "seq": 55,
+    "state": "FAULTED",
+    "wall": 1753.466092097
+   }
+  ],
+  "counts": {
+   "cancel_response": 1,
+   "cancel_sent": 1,
+   "fault": 1,
+   "goal_response": 55,
+   "goal_sent": 55,
+   "phase_done": 54,
+   "refused": 2,
+   "request": 6,
+   "result": 55,
+   "transition": 11
+  },
+  "faults": [
+   {
+    "event": "fault",
+    "n": 231,
+    "reason": "estop",
+    "state": "STARTING",
+    "wall": 1753.431099122
+   }
+  ],
+  "refused": [
+   {
+    "event": "refused",
+    "n": 238,
+    "reason": "faulted_reset_required",
+    "request": "disarm",
+    "state": "FAULTED",
+    "wall": 1802.021204164
+   },
+   {
+    "event": "refused",
+    "n": 240,
+    "reason": "faulted_reset_required",
+    "request": "disarm",
+    "state": "FAULTED",
+    "wall": 1802.023179481
+   }
+  ],
+  "results_not_succeeded": [
+   {
+    "error_code": 0,
+    "error_string": "",
+    "event": "result",
+    "n": 237,
+    "seq": 55,
+    "state": "FAULTED",
+    "status": 5,
+    "wall": 1753.517274152
+   }
+  ],
+  "transitions": [
+   [
+    "DISARMED",
+    "READY",
+    "arm"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "STOPPING",
+    "stop"
+   ],
+   [
+    "STOPPING",
+    "READY",
+    "stopped"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "STOPPING",
+    "stop"
+   ],
+   [
+    "STOPPING",
+    "READY",
+    "stopped"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "FAULTED",
+    "estop"
+   ]
+  ]
+ },
+ "node_final_status.json": {
+  "command_rejections": {},
+  "cycles": 6,
+  "dispatch_gate": true,
+  "faults": [
+   "estop"
+  ],
+  "goals_recorded": 55,
+  "mode": "dispatch",
+  "state": "FAULTED"
+ },
+ "status": {
+  "body": {
+   "tilt_max": 0.0025650164375820507,
+   "xy_first": [
+    5.926617785661488e-12,
+    -8.877802728673387e-09
+   ],
+   "xy_last": [
+    -3.7644512109690036e-05,
+    0.120137533269568
+   ],
+   "xy_travel_m": 0.12013754804523445,
+   "yaw_change_rad": -0.00023924834026353687,
+   "z_max": 0.05498980732640607,
+   "z_min": 0.05446944785414211
+  },
+  "final": {
+   "boundary": 0,
+   "command_rejections": {},
+   "cycles": 6,
+   "faults": [
+    "estop"
+   ],
+   "goals_recorded": 55,
+   "phases_completed": 54,
+   "state": "FAULTED"
+  },
+  "joint_states_margin_to_0.5s": 0.36001333099989097,
+  "max_ages_s": {
+   "body_pose_age_s": 0.08317200399983449,
+   "graph_age_s": 1.0252184639998632,
+   "joint_states_age_s": 0.13998666900010903
+  },
+  "messages": 681,
+  "modes": [
+   [
+    "dispatch",
+    true
+   ]
+  ],
+  "state_changes_seen_in_status": [
+   {
+    "bag_receipt_unix_s": 1793534986.056,
+    "sim_s_node_joint_state_stamp": 20.64,
+    "state": "DISARMED"
+   },
+   {
+    "bag_receipt_unix_s": 1793535039.097,
+    "sim_s_node_joint_state_stamp": 31.74,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793535039.212,
+    "sim_s_node_joint_state_stamp": 31.77,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793535039.255,
+    "sim_s_node_joint_state_stamp": 31.78,
+    "state": "WALKING"
+   },
+   {
+    "bag_receipt_unix_s": 1793535072.586,
+    "sim_s_node_joint_state_stamp": 50.21,
+    "state": "STOPPING"
+   },
+   {
+    "bag_receipt_unix_s": 1793535075.068,
+    "sim_s_node_joint_state_stamp": 51.29,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793535076.708,
+    "sim_s_node_joint_state_stamp": 51.6,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793535076.755,
+    "sim_s_node_joint_state_stamp": 51.61,
+    "state": "WALKING"
+   },
+   {
+    "bag_receipt_unix_s": 1793535260.56,
+    "sim_s_node_joint_state_stamp": 147.96,
+    "state": "STOPPING"
+   },
+   {
+    "bag_receipt_unix_s": 1793535262.856,
+    "sim_s_node_joint_state_stamp": 148.99,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793535264.456,
+    "sim_s_node_joint_state_stamp": 149.29,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793535264.47,
+    "sim_s_node_joint_state_stamp": 149.29,
+    "state": "FAULTED"
+   }
+  ]
+ }
+}

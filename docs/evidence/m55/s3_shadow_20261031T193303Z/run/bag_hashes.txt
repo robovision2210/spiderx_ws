@@ -1,0 +1,5 @@
+30aebb5245028e115857ad22bb91558274f9fe01b2917a5f559412d9e5a01ca4  /root/spiderx_evidence/s3_shadow_20261031T193303Z/bag/bag_0.db3
+301084672 bytes
+240508f9457e37f03941a74cd4a63006bf2108e14f14231fc430dcb32bb31cee  /root/spiderx_evidence/s3_shadow_20261031T193303Z/bag_settle/bag_settle_0.db3
+48205824 bytes
+bags kept outside the repository under /root/spiderx_evidence/s3_shadow_20261031T193303Z

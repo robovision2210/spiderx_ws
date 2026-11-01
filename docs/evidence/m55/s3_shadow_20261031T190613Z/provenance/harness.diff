@@ -1,0 +1,345 @@
+--- tools_src/env.sh	2026-10-31 19:06:13.580202824 +0000
++++ tools/env.sh	2026-10-31 19:06:31.967126188 +0000
+@@ -1,9 +1,10 @@
+ # Sourced by BOTH "terminals" (the launch shell A and the observer/CLI shell B).
+ # RoboStack ROS 2 Humble (the equivalent of /opt/ros/humble/setup.bash) + the fresh overlay.
+ source /opt/mm/activate.sh >/dev/null 2>&1
+-# Phase B run-local change (the only one): the verified gz_ros2_control overlay, after the
+-# toolchain and before the workspace, so ament, pluginlib and the launch resolve it first.
+-source /root/spiderx_gz_overlay_ws/install/local_setup.bash
++# S3 shadow run-local change (the only one): the verified r2 gz_ros2_control overlay (0.7.15 +
++# patches 0001 and 0002), after the toolchain and before the workspace, so ament, pluginlib and
++# the launch resolve it first.
++source /root/spiderx_gz_overlay_ws_r2/install/local_setup.bash
+ source /home/user/spiderx_ws/install/setup.bash
+ # Discovery: identical in every shell. Domain 0 as documented (observer --domain-id 0);
+ # localhost-only so nothing outside this machine can join or be joined.
+--- tools_src/stage_start.sh	2026-10-31 19:06:13.577569280 +0000
++++ tools/stage_start.sh	2026-10-31 19:06:31.967287078 +0000
+@@ -11,7 +11,7 @@
+ sleep 2
+ date -u +%Y-%m-%dT%H:%M:%S.%NZ > $RUN/launch_start_utc.txt
+ # own session/process group, so SIGINT to the group = Ctrl+C in a foreground terminal
+-setsid bash -c "source $EVT/env.sh; exec ros2 launch spiderx_bringup fortress_m61a_fixed_base.launch.py" > $RUN/launch.log 2>&1 &
++setsid bash -c "source $EVT/env.sh; exec ros2 launch spiderx_bringup fortress_m55_walking.launch.py evidence_dir:=$RUN/node" > $RUN/launch.log 2>&1 &
+ echo $! > $RUN/launch.pid
+ sleep 1
+ echo "launch pid $(cat $RUN/launch.pid) pgid $(ps -o pgid= -p $(cat $RUN/launch.pid) | tr -d ' ') xvfb $(cat $RUN/xvfb.pid)"
+--- tools_src/cleanup.sh	2026-10-31 19:06:13.577711312 +0000
++++ tools/cleanup.sh	2026-10-31 19:06:31.971041245 +0000
+@@ -1,14 +1,16 @@
+ #!/usr/bin/env bash
+ # Idempotent stop of everything an S2 run starts (driver, teleop, bag, node, launch, Xvfb).
+ # Runs from the run wrapper's EXIT/INT/TERM trap, so it also runs after an interruption.
++# S3 shadow adaptation: the S3 driver's name too; the locomotion node is started by the launch here,
++# so it stops with the launch (SIGINT to the launch group) and only a leftover is killed after it.
+ RUN=$1; EVT=$(dirname "$RUN")/tools
+ echo "[$(date -u +%T)] cleanup start"
+-pkill -INT -f "s2_driver.py" 2>/dev/null; sleep 1; pkill -KILL -f "s2_driver.py" 2>/dev/null
++pkill -INT -f "s[23]_driver.py" 2>/dev/null; sleep 1; pkill -KILL -f "s[23]_driver.py" 2>/dev/null
+ pkill -KILL -f "m55_teleop_keyboard" 2>/dev/null
+ pkill -INT -f "ros2 bag record" 2>/dev/null; sleep 2; pkill -KILL -f "ros2 bag record" 2>/dev/null
+ if [ -f "$RUN/node.pid" ]; then NP=$(cat "$RUN/node.pid"); kill -INT -- -"$NP" 2>/dev/null; sleep 3; kill -KILL -- -"$NP" 2>/dev/null; fi
+-pkill -KILL -f "m55_locomotion_node" 2>/dev/null
+ if [ -f "$RUN/launch.pid" ] && pgrep -g "$(cat "$RUN/launch.pid")" >/dev/null 2>&1; then bash "$EVT/stage_stop.sh" "$RUN" >/dev/null 2>&1; fi
++pkill -KILL -f "m55_locomotion_node" 2>/dev/null
+ [ -f "$RUN/xvfb.pid" ] && kill -TERM "$(cat "$RUN/xvfb.pid")" 2>/dev/null
+ echo "[$(date -u +%T)] cleanup done; remaining:"
+-pgrep -af "ign gazebo|gz sim|parameter_bridge|robot_state_publisher|ros2 launch|Xvfb|spawner|m55_|s2_driver|ros2 bag" | grep -v -E "pgrep|cleanup.sh" || echo none
++pgrep -af "ign gazebo|gz sim|parameter_bridge|robot_state_publisher|ros2 launch|Xvfb|spawner|m55_|s[23]_driver|ros2 bag|strace" | grep -v -E "pgrep|cleanup.sh" || echo none
+--- tools_src/prelaunch_checks.sh	2026-10-31 19:06:13.580315869 +0000
++++ tools/prelaunch_checks.sh	2026-10-31 19:06:31.974354821 +0000
+@@ -1,10 +1,10 @@
+ #!/usr/bin/env bash
+-# Phase C pre-launch checks (the Phase B prelaunch checks; gates now expected M55 True, M61 and
+-# M6.0-D False): the run-local env.sh resolves gz_ros2_control to the verified overlay.
++# S3 shadow pre-launch checks (the Phase C checks; the r2 overlay, and all three gates expected
++# False): the run-local env.sh resolves gz_ros2_control to the verified r2 overlay.
+ # Usage: prelaunch_checks.sh <tools dir>   Ends with "PRELAUNCH VERDICT: PASS" or "... FAIL".
+ EVT=$1
+ source $EVT/env.sh
+-O=/root/spiderx_gz_overlay_ws/install/gz_ros2_control
++O=/root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control
+ F=0
+ echo "== source order (AMENT_PREFIX_PATH, toolchain/overlay/workspace positions)"
+ echo "$AMENT_PREFIX_PATH" | tr ":" "\n" | grep -n -E "gz_overlay|envs/humble$|spiderx_ws/install/spiderx_(controller|description|bringup)$"
+@@ -26,12 +26,12 @@
+ echo "LD_LIBRARY_PATH entries:"; echo "$LD_LIBRARY_PATH" | tr ":" "\n"
+ LP=$(python3 -c "import os; from ament_index_python.packages import get_package_prefix as g; print(os.path.join(g(\"gz_ros2_control\"),\"lib\"))")
+ echo "launch-time plugin dir: $LP"; [ "$LP" = "$O/lib" ] || F=1
+-echo "== gates (fresh import; expected M55 True, M61 False, M6.0-D False)"
++echo "== gates (fresh import; expected all three False)"
+ ( cd / && python3 -c "
+ import importlib, os
+-want = {\"M55_LOCOMOTION_DISPATCH_ENABLED\": True, \"M61_LIVE_DISPATCH_ENABLED\": False, \"LIVE_DISPATCH_ENABLED\": False}
++want = {\"M55_LOCOMOTION_DISPATCH_ENABLED\": False, \"M61_LIVE_DISPATCH_ENABLED\": False, \"LIVE_DISPATCH_ENABLED\": False}
+ for mod, name in ((\"m55_contract\",\"M55_LOCOMOTION_DISPATCH_ENABLED\"),(\"m61_live_contract\",\"M61_LIVE_DISPATCH_ENABLED\"),(\"m6_live_contract\",\"LIVE_DISPATCH_ENABLED\")):
+     m = importlib.import_module(\"spiderx_controller.\"+mod); v = getattr(m, name)
+     print(name, v, os.path.realpath(m.__file__)); assert v is want[name] and os.path.realpath(m.__file__).startswith(\"/home/user/spiderx_ws/\")
+-print(\"PASS gates M55 True, M61 False, M6.0-D False, imported from this workspace\")" ) || F=1
++print(\"PASS gates M55 False, M61 False, M6.0-D False, imported from this workspace\")" ) || F=1
+ [ "$F" = 0 ] && echo "PRELAUNCH VERDICT: PASS" || echo "PRELAUNCH VERDICT: FAIL"
+--- tools_src/premotion_checks.sh	2026-10-31 19:06:13.580291856 +0000
++++ tools/premotion_checks.sh	2026-10-31 19:07:45.095002267 +0000
+@@ -1,11 +1,14 @@
+ #!/usr/bin/env bash
+-# Phase C pre-motion checks (Phase C draft §2; the Phase B checks, scripted): run while
+-# phase_c_run.sh waits after preflight READY. Read-only: no goal, publisher or parameter change.
++# S3 shadow pre-shadow checks (the Phase C pre-motion checks, adapted to the free-base launch): run
++# while s3_shadow_run.sh waits after the node is up. Read-only: no goal, publisher or parameter
++# change. Adaptations: the r2 overlay and its provenance; the launch's own locomotion node is
++# expected (in this launch's session, no action client); the weld check is replaced by
++# settle_check.py (free base); the simulator server pid is kept for the exit observation.
+ # Writes RUN/premotion/ and ends with "PREMOTION VERDICT: PASS" or "... FAIL: <items>".
+ # Usage: premotion_checks.sh <run dir>
+ RUN=$1; EVT=$(dirname "$RUN")/tools; D=$RUN/premotion; mkdir -p $D
+ source $EVT/env.sh
+-O=/root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib
++O=/root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib
+ strip() { sed 's/\x1b\[[0-9;]*m//g'; }
+ LP=$(cat $RUN/launch.pid)
+ F=""
+@@ -20,6 +23,7 @@
+   else echo "FAIL: expected exactly one mapping process, in this launch's session"; fi; } > $D/candidates.txt
+ grep -q "^PASS" $D/candidates.txt || F="$F process"
+ P=$(echo $P | awk '{print $1}')
++[ -n "$P" ] && echo $P > $RUN/server.pid
+ if [ -n "$P" ]; then
+   { echo "pid $P; ppid chain: $(ps -o ppid= -p $P | tr -d ' ') -> $(ps -o ppid= -p $(ps -o ppid= -p $P) | tr -d ' '); session $(ps -o sid= -p $P | tr -d ' ') (launch.pid $LP)"
+     echo "exe: $(readlink /proc/$P/exe)"
+@@ -32,7 +36,7 @@
+   python3 - "$P" "$O" "$D" > $D/library_checks.txt 2>&1 <<'EOF'
+ import hashlib, os, sys
+ pid, ovl, d = sys.argv[1], sys.argv[2], sys.argv[3]
+-prov = {l.split()[2]: l.split()[1] for l in open('/root/spiderx_gz_overlay_ws/OVERLAY_PROVENANCE.txt') if l.startswith('library ')}
++prov = {l.split()[2]: l.split()[1] for l in open('/root/spiderx_gz_overlay_ws_r2/OVERLAY_PROVENANCE.txt') if l.startswith('library ')}
+ rows = [l.split() for l in open(os.path.join(d, 'maps_full.txt'))]
+ ok = True
+ for name in ('libgz_ros2_control-system.so', 'libgz_hardware_plugins.so'):
+@@ -76,32 +80,31 @@
+ [ "$GAIN" = "Double value is: 1.0" ] || F="$F gain_param"
+ [ "$RATE" = "Integer value is: 100" ] || F="$F update_rate"
+ # 5. Command ownership: both controllers active, no action client, no command publisher, no
+-#    locomotion/driver/teleop process yet.
++#    driver/teleop process yet; the locomotion node only as this launch's own process, with no
++#    action client and no publisher towards the controller.
+ CTL=$(timeout 30 ros2 control list_controllers 2>&1 | strip)
+ ACT=$(timeout 30 ros2 action info /leg_trajectory_controller/follow_joint_trajectory 2>&1)
+ TOP=$(timeout 30 ros2 topic info /leg_trajectory_controller/joint_trajectory 2>&1)
+-FORB=$(pgrep -af "m55_|teleop|s2_driver|locomotion" | grep -v -E "pgrep|premotion_checks" || true)
++FORB=$(pgrep -af "teleop|s[23]_driver" | grep -v -E "pgrep|premotion_checks" || true)
++NODEP=$(pgrep -f "spiderx_controller/m55_locomotion_node" | tr '\n' ' '); NODEP=$(echo $NODEP)
++NODESID=$(for p in $NODEP; do ps -o sid= -p $p | tr -d ' '; done | sort -u | tr '\n' ' '); NODESID=$(echo $NODESID)
++NINFO=$(timeout 30 ros2 node info /spiderx_locomotion 2>&1)
++NAC=$(sed -n '/Action Clients:/,$p' <<< "$NINFO" | grep -c "^    /" || true)
++NPUB=$(sed -n '/Publishers:/,/Service Servers:/p' <<< "$NINFO" | grep -c "joint_trajectory" || true)
++NSH=$(grep -c "locomotion node up in SHADOW mode (dispatch gate False)" $RUN/launch.log)
+ { echo "== ros2 control list_controllers"; echo "$CTL"; echo "== ros2 action info"; echo "$ACT"
+-  echo "== ros2 topic info joint_trajectory"; echo "$TOP"; echo "== locomotion/driver/teleop processes"; echo "${FORB:-none}"
++  echo "== ros2 topic info joint_trajectory"; echo "$TOP"; echo "== driver/teleop processes"; echo "${FORB:-none}"
++  echo "== locomotion node processes: ${NODEP:-none} (session ${NODESID:-none}; launch session $LP)"
++  echo "== ros2 node info /spiderx_locomotion"; echo "$NINFO"
++  echo "action clients of the node: $NAC; publishers towards joint_trajectory: $NPUB; launch-log SHADOW lines: $NSH"
+   echo "== ros2 node list"; timeout 30 ros2 node list 2>&1; } > $D/ownership.txt
+ [ "$(grep -cE "^(joint_state_broadcaster|leg_trajectory_controller) .*[[:space:]]active$" <<< "$CTL")" = 2 ] || F="$F controllers"
+ grep -q "^Action clients: 0$" <<< "$ACT" && grep -q "^Action servers: 1$" <<< "$ACT" || F="$F action_clients"
+ grep -q "^Publisher count: 0$" <<< "$TOP" || F="$F command_publishers"
+ [ -z "$FORB" ] || F="$F forbidden_process"
+-# 6. Weld and attachment from the read-only preflight observation.
+-OBS=$(ls -t $RUN/observer/*/observation.json 2>/dev/null | head -1)
+-python3 - "$OBS" > $D/weld_checks.txt 2>&1 <<'EOF'
+-import json, sys
+-d = json.load(open(sys.argv[1])); c = d['checks']; xyz = c['body_pose_xyz_rpy']
+-ok = (d['ready'] is True and not d['failure_codes'] and d['goals_sent'] == 0 and d['publishers_created'] == 0
+-      and c['attachment']['ok'] and c['spawn_identity']['ok'] and abs(xyz[2] - 0.125) <= 0.001
+-      and c['action_clients']['ok'] and c['command_publishers']['ok'])
+-print('observation', sys.argv[1]); print('ready', d['ready'], 'failure_codes', d['failure_codes'],
+-      'goals_sent', d['goals_sent'], 'publishers_created', d['publishers_created'])
+-print('attachment', json.dumps(c['attachment']), '| spawn_identity', json.dumps(c['spawn_identity']))
+-print('body_pose_xyz_rpy', xyz, '| body_tilt_rad', c['body_tilt_rad'])
+-print('WELD VERDICT:', 'PASS' if ok else 'FAIL')
+-EOF
+-grep -q "WELD VERDICT: PASS" $D/weld_checks.txt || F="$F weld"
++[ "$(echo $NODEP | wc -w)" = 1 ] && [ "$NODESID" = "$LP" ] || F="$F node_process"
++[ "$NAC" = 0 ] && [ "$NPUB" = 0 ] && grep -q "^  Action Clients:" <<< "$NINFO" || F="$F node_clients"
++[ "$NSH" -ge 1 ] || F="$F node_shadow_log"
++# 6. (Phase C weld check removed: free base; settle_check.py checks the standing robot.)
+ if [ -z "$F" ]; then echo "PREMOTION VERDICT: PASS" | tee $D/verdict.txt
+ else echo "PREMOTION VERDICT: FAIL:$F" | tee $D/verdict.txt; fi
+--- tools_src/watchdog.sh	2026-10-31 19:06:13.580334733 +0000
++++ tools/watchdog.sh	2026-10-31 19:06:31.974526074 +0000
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+-# Phase C run-local safety net (the Phase B watchdog, extended): if the session is interrupted and
+-# the deadline passes, stop everything the run started (the tested S2 cleanup.sh, which ends with
+-# stage_stop.sh), then restore and verify the disabled state (restore_cmd.sh).
++# S3 shadow run-local safety net (the Phase C watchdog): if the session is interrupted and the
++# deadline passes, stop everything the run started (cleanup.sh, which ends with stage_stop.sh), then
++# verify the disabled state (restore_cmd.sh: --verify-only; nothing was enabled in this run).
+ # Exits without acting when RUN/stopped.flag exists.
+ RUN=$1; DEADLINE_S=${2:-3600}
+ EVT=$(dirname "$RUN")/tools
+--- tools_src/restore_cmd.sh	2026-10-31 19:06:13.580355358 +0000
++++ tools/restore_cmd.sh	2026-10-31 19:06:45.426639136 +0000
+@@ -1,10 +1,10 @@
+ #!/usr/bin/env bash
+-# Phase C restore (S2 design §2 F; Phase C draft §5): the exact base branch, the toolchain-only clean
+-# rebuild with st59site confined to the build, the run's pid files, and branch deletion only after
+-# every verification passed (enforced by the script).
+-R=/root/spiderx_evidence/s2_phase_c_20261030T062140Z; B=$(cat $R/enabling_branch.txt)
++# S3 shadow verification of the disabled state (adapted from the Phase C restore_cmd.sh): nothing was
++# enabled in this run, so --verify-only against the disabled baseline commit (no checkout, no
++# rebuild, no enabling ref, no branch deletion), with the run's pid files and an explicit evidence
++# directory. Exit 0 only for DISABLED AND VERIFIED.
++R=/root/spiderx_evidence/s3_shadow_20261031T190613Z
+ cd /home/user/spiderx_ws && env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+-  bash scripts/m61_restore_and_verify_disabled.sh --base claude/spiderx-sim-actuator-model \
+-  --evidence $R/restore --enabling-ref "$B" --ros-setup /opt/mm/activate.sh \
+-  --build-cmd 'rm -rf build install && PYTHONPATH=/opt/mm/st59site colcon build --symlink-install' \
+-  --launch-pid-file $R/run/launch.pid --xvfb-pid-file $R/run/xvfb.pid --delete-enabling-branch
++  bash scripts/m61_restore_and_verify_disabled.sh --base e0a952e7f0b0416e8b0276c24e98cbf914be99ae \
++  --evidence $R/restore --ros-setup /opt/mm/activate.sh --verify-only \
++  --launch-pid-file $R/run/launch.pid --xvfb-pid-file $R/run/xvfb.pid
+--- tools_src/phase_c_run.sh	2026-10-31 19:06:13.580239198 +0000
++++ tools/s3_shadow_run.sh	2026-10-31 19:08:11.526332475 +0000
+@@ -1,12 +1,18 @@
+ #!/usr/bin/env bash
+-# S2 Phase C run: the frozen s2_rehearsal.sh (welded launch, preflight, node, bag, S2 driver,
+-# captures, clean stop) with three run-local changes (phase_c_run.diff):
+-#  1. after preflight READY the run waits for the operator's pre-motion checks: go.flag starts
+-#     the node and the driver; abort.flag, or no decision within PREMOTION_WAIT_S, stops with no goal;
+-#  2. the driver's exit code is kept (DRC);
+-#  3. one Gazebo screenshot after the script, only if the driver exited 0 and the launch is up.
+-# Usage: phase_c_run.sh <run dir> <bag dir>
+-RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools
++# S3 shadow run (P7 runtime load/shutdown and P4 free-base shadow rehearsal, ONE launch, all three
++# gates False): phase_c_run.sh adapted to fortress_m55_walking.launch.py (s3_shadow_run.diff):
++#  1. the launch itself starts the M5.5 node (SHADOW: no action client, sends nothing; its evidence in
++#     RUN/node): no separate node, no m61a preflight (fixed base only); the launch's node is reniced
++#     to -5, as Phase C started its node;
++#  2. a settle bag (world poses and joint states only) runs from the launch start to the go decision;
++#  3. once the node is up the run waits for the operator's pre-shadow checks (premotion_checks.sh,
++#     settle_check.py, one screenshot): go.flag starts the S3 script; abort.flag, or no decision
++#     within PREMOTION_WAIT_S, stops with no key pressed;
++#  4. the S3 driver (scripts/s3/s3_driver.py, unchanged) replaces the S2 driver; its exit code is
++#     kept; no screenshot after the script;
++#  5. before the stop, strace (signals only, no system calls) observes the simulator server's own exit.
++# Usage: s3_shadow_run.sh <run dir> <bag dir>
++RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools; WS=/home/user/spiderx_ws
+ PREMOTION_WAIT_S=${PREMOTION_WAIT_S:-1500}
+ source $EVT/env.sh
+ step() { echo "[$(date -u +%T)] $*" | tee -a $RUN/steps.log; }
+@@ -14,34 +20,37 @@
+ step "gates (imported): $(python3 -c 'from spiderx_controller import m55_contract as a, m61_live_contract as b, m6_live_contract as c; print(a.M55_LOCOMOTION_DISPATCH_ENABLED, b.M61_LIVE_DISPATCH_ENABLED, c.LIVE_DISPATCH_ENABLED)')"
+ step "launch"; bash $EVT/stage_start.sh $RUN | tee -a $RUN/steps.log
+ abort() { step "ABORT: $*"; bash $EVT/stage_stop.sh $RUN > /dev/null; step end; exit 1; }
++# Change 2: the settle bag, from the spawn on (no action topic, no /clock)
++setsid ros2 bag record -s sqlite3 -o ${BAG}_settle /spiderx/sim/world_poses /joint_states > $RUN/bag_settle_record.log 2>&1 &
++SBP=$!
+ bash $EVT/stage_wait_controllers.sh $RUN; RC=$?; step "controllers: exit $RC"
+ [ $RC = 0 ] || abort "controllers not active (Gazebo startup race?); relaunch is a new attempt"
+ sleep 3
+-# Host load (attempt 3: a 0.8 s CPU-starvation stall of the node tripped the 0.5 s joint-state
+-# monitor while the stream itself never stopped). Thresholds unchanged; the non-essential
+-# Gazebo GUI ("ign gazebo gui": about 150 % CPU of 4 cores here, more than the server) runs at
+-# the lowest priority, the locomotion node at a higher one. Headless Gazebo is not available
+-# here (no EGL).
++# Host load (Phase C): the non-essential Gazebo GUI runs at the lowest priority, the locomotion node
++# at a higher one. Thresholds unchanged.
+ GUI=$(pgrep -x -f "ign gazebo gui" | tr '\n' ' ')
+ [ -n "$GUI" ] && renice -n 19 -p $GUI > /dev/null
+-ps -eo pid,ppid,ni,pcpu,args --forest | grep -E "ign gazebo" | grep -v grep | cut -c1-120 > $RUN/captures/priorities.txt
+ step "gazebo gui pid(s) $GUI reniced +19"
+-step "preflight"; timeout 120 ros2 run spiderx_controller m61a_observe_fixed_base --preflight --domain-id 0 --out $RUN/observer > $RUN/preflight.log 2>&1; RC=$?
+-step "preflight exit $RC $(grep -m1 -oE 'NOT READY|READY' $RUN/preflight.log)"
+-[ $RC = 0 ] || abort "preflight not READY"
+-# Phase C change 1: the operator's pre-motion checks (plugin provenance, gain, rate, timestep,
+-# ownership, weld, screenshot 1). Nothing that can send a goal exists until go.flag.
++# Change 1: the node is this launch's own (fortress_m55_walking.launch.py); no second node.
++LP=$(cat $RUN/launch.pid)
++for i in $(seq 1 400); do grep -q "locomotion node up" $RUN/launch.log && break; grep -q "process has died" $RUN/launch.log && break; sleep 1; done
++grep -q "locomotion node up" $RUN/launch.log || abort "locomotion node not up (see launch.log)"
++step "node up after ${i} s: $(grep -o 'locomotion node up[^\"]*' $RUN/launch.log | head -1 | cut -c1-160)"
++NODE=$(pgrep -s $LP -f "spiderx_controller/m55_locomotion_node" | tr '\n' ' ')
++[ -n "$NODE" ] && renice -n -5 -p $NODE > /dev/null
++ps -eo pid,ppid,sid,ni,pcpu,args --forest | grep -E "ign gazebo|m55_locomotion" | grep -v grep | cut -c1-140 > $RUN/captures/priorities.txt
++step "locomotion node pid(s) $NODE (launch session $LP) reniced -5"
++sleep 3
++# Change 3: the operator's pre-shadow checks (plugin provenance, gain, rate, timestep, ownership,
++# SHADOW mode, settling, screenshot). No key is pressed until go.flag.
+ touch $RUN/premotion_wait.flag
+-step "pre-motion checks: waiting for go.flag or abort.flag (at most $PREMOTION_WAIT_S s)"
++step "pre-shadow checks: waiting for go.flag or abort.flag (at most $PREMOTION_WAIT_S s)"
+ for i in $(seq 1 $PREMOTION_WAIT_S); do { [ -f $RUN/go.flag ] || [ -f $RUN/abort.flag ]; } && break; sleep 1; done
+-[ -f $RUN/abort.flag ] && abort "pre-motion checks failed: $(head -c 300 $RUN/abort.flag)"
+-[ -f $RUN/go.flag ] || abort "no pre-motion decision within $PREMOTION_WAIT_S s"
+-step "pre-motion checks passed: $(head -c 300 $RUN/go.flag)"
+-step "node"; setsid bash -c "source $EVT/env.sh; exec nice -n -5 ros2 run spiderx_controller m55_locomotion_node --evidence-dir $RUN/node" > $RUN/node.log 2>&1 &
+-echo $! > $RUN/node.pid
+-for i in $(seq 1 400); do grep -q "locomotion node up" $RUN/node.log && break; sleep 1; done
+-step "node up after ${i} s: $(grep -o 'locomotion node up[^\"]*' $RUN/node.log | head -1 | cut -c1-160)"
+-sleep 3
++kill -INT -- -$SBP 2>/dev/null; for i in $(seq 1 30); do pgrep -g $SBP >/dev/null || break; sleep 0.5; done
++step "settle bag stopped"
++[ -f $RUN/abort.flag ] && abort "pre-shadow checks failed: $(head -c 300 $RUN/abort.flag)"
++[ -f $RUN/go.flag ] || abort "no pre-shadow decision within $PREMOTION_WAIT_S s"
++step "pre-shadow checks passed: $(head -c 300 $RUN/go.flag)"
+ cap() { timeout 20 ros2 node info /spiderx_locomotion > $RUN/captures/$1_node_info.txt 2>&1
+   timeout 20 ros2 action info /leg_trajectory_controller/follow_joint_trajectory > $RUN/captures/$1_action_info.txt 2>&1
+   for t in /leg_trajectory_controller/joint_trajectory /cmd_vel /spiderx/locomotion/status; do echo "== $t"; timeout 20 ros2 topic info -v $t; done > $RUN/captures/$1_topics.txt 2>&1; }
+@@ -50,26 +59,27 @@
+   /spiderx/sim/world_poses /cmd_vel /leg_trajectory_controller/joint_trajectory /leg_trajectory_controller/controller_state \
+   /leg_trajectory_controller/follow_joint_trajectory/_action/feedback > $RUN/bag_record.log 2>&1 &
+ # NOT _action/status: the locomotion node counts subscribers of the action's status topic as
+-# action clients (foreign_action_clients) and refuses arm (command_owner_conflict). Attempt 1
+-# of this rehearsal recorded it and was refused, as designed.
++# action clients (foreign_action_clients). Not /clock: sim time is in the joint-state stamps.
+ BP=$!; sleep 4
+-# not /clock: about 575 Hz here (73k messages in 127 s in attempt 3); sim time is in the
+-# joint-state stamps and the status
+ ( sleep 120; top -b -n1 -w 160 | head -22 > $RUN/captures/top_during.txt;
+   ps -o pid,ni,pcpu,args -C ruby,python3,parameter_bridge,robot_state_publisher -w | cut -c1-160 >> $RUN/captures/top_during.txt ) &
+-step "driver"; python3 $EVT/s2_driver.py --out $RUN/driver --levels 0,1,2 > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
++step "driver"; python3 $WS/scripts/s3/s3_driver.py --out $RUN/driver > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
+ sleep 3; step "captures after"; cap after
+ kill -INT -- -$BP 2>/dev/null; for i in $(seq 1 30); do pgrep -g $BP >/dev/null || break; sleep 0.5; done
+-NP=$(cat $RUN/node.pid); kill -INT -- -$NP 2>/dev/null; for i in $(seq 1 30); do pgrep -g $NP >/dev/null || break; sleep 0.5; done
+-pgrep -g $NP >/dev/null && { kill -KILL -- -$NP; step "node group SIGKILL"; }
+-step "node stopped"; pkill -f m55_teleop_keyboard 2>/dev/null
+-# Phase C change 3: screenshot 2, only after a completed script (no goal in flight: the node is
+-# stopped) and only if the simulator is still up; it never delays cleanup by more than 15 s.
+-if [ "$DRC" = 0 ] && pgrep -g "$(cat $RUN/launch.pid)" > /dev/null; then
+-  env -i PATH=/usr/bin:/bin DISPLAY=:77 timeout 15 /usr/bin/import -display :77 -window root $RUN/captures/screenshot2_after_script.png > $RUN/captures/screenshot2.log 2>&1
+-  step "screenshot 2: exit $?"
++step "bag stopped"; pkill -f m55_teleop_keyboard 2>/dev/null
++# Change 5: the simulator server's own exit (the launch reports only its ruby wrapper's exit).
++SP=$(cat $RUN/server.pid 2>/dev/null); STP=""
++if [ -n "$SP" ] && [ "$(ps -o sid= -p $SP | tr -d ' ')" = "$LP" ]; then
++  strace -e trace=none -o $RUN/server_exit_strace.txt -p $SP > $RUN/server_exit_strace.log 2>&1 &
++  STP=$!; echo $STP > $RUN/strace.pid; sleep 2
++  step "strace (signals only) attached to simulator server $SP: $(cat $RUN/server_exit_strace.log | head -2 | tr '\n' ' ')"
+ else
+-  step "screenshot 2 skipped (driver exit $DRC or launch gone)"
++  step "simulator server pid unknown or not in this launch: no strace"
+ fi
+ step "stop launch"; bash $EVT/stage_stop.sh $RUN > /dev/null
++if [ -n "$STP" ]; then
++  for i in $(seq 1 20); do kill -0 $STP 2>/dev/null || break; sleep 0.5; done
++  kill -0 $STP 2>/dev/null && { kill -INT $STP; step "strace still attached after the stop: detached"; }
++  step "server exit (strace): $(tail -1 $RUN/server_exit_strace.txt 2>/dev/null)"
++fi
+ step end
+--- tools_src/phase_c_guarded.sh	2026-10-31 19:06:13.580264433 +0000
++++ tools/s3_shadow_guarded.sh	2026-10-31 19:06:45.431658928 +0000
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+-# The Phase C run with cleanup armed BEFORE launch (as the S2 s2_run_guarded.sh): cleanup.sh runs
+-# on success, failure or interruption.
++# The S3 shadow run with cleanup armed BEFORE launch (as phase_c_guarded.sh): cleanup.sh runs on
++# success, failure or interruption.
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools
+ mkdir -p "$RUN"
+ trap 'bash "$EVT/cleanup.sh" "$RUN" >> "$RUN/cleanup.log" 2>&1' EXIT INT TERM
+-bash "$EVT/phase_c_run.sh" "$RUN" "$BAG"
++bash "$EVT/s3_shadow_run.sh" "$RUN" "$BAG"
+=== new file: tools/settle_check.py (read-only status subscriber)

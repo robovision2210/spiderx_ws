@@ -1,0 +1,5 @@
+ 4512  4486  4486   0  0.0  \_ /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_descrip
+ 4514  4512  4486   0  0.3  |   \_ ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spi
+ 4620  4514  4486   0 89.4  |       \_ ign gazebo server
+ 4632  4514  4486  19  159  |       \_ ign gazebo gui
+ 4536  4486  4486  -5 89.9  \_ python3 /home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidenc

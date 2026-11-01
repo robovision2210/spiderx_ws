@@ -1,0 +1,33 @@
+== S3 shadow input checks 2026-10-31T19:09:16Z
+branch claude/spiderx-s3-preparation HEAD e0a952e7f0b0416e8b0276c24e98cbf914be99ae (expected claude/spiderx-s3-preparation e0a952e7f0b0416e8b0276c24e98cbf914be99ae)
+worktree entries (git status --porcelain): 0
+leftover processes (gz/ruby/ros2/Xvfb/m55/driver/bag): none at 19:09:16 (checked before harness preparation)
+== r2 overlay located by provenance: find / -name OVERLAY_PROVENANCE.txt -> /root/spiderx_gz_overlay_ws_r2/OVERLAY_PROVENANCE.txt
+upstream https://github.com/ros-controls/gz_ros2_control.git tag 0.7.15 commit bfc5845aa7f0250cbc384773dba5c9847d609b95
+patch 14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac 0001-plugin-node-parameter-overrides.patch
+patch 520e73cc59a68025b237347e7e54df64b45739048fcc90a623011f728cba6261 0002-destructor-no-second-node-removal.patch
+compiler x86_64-conda-linux-gnu-g++ (conda-forge gcc 15.3.0-7) 15.3.0
+toolchain /opt/mm/root/envs/humble
+library 3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27 /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+library 06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5 /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+== committed patch series
+14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac  third_party/gz_ros2_control_overlay/patches/0001-plugin-node-parameter-overrides.patch
+520e73cc59a68025b237347e7e54df64b45739048fcc90a623011f728cba6261  third_party/gz_ros2_control_overlay/patches/0002-destructor-no-second-node-removal.patch
+== installed libraries now
+3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27  /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5  /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+build-tree copies identical to install: yes (sha256 prefixes 3a8f20441caad3ca / 06777e140ea1858b)
+overlay source tree: git HEAD bfc5845aa7f0250cbc384773dba5c9847d609b95, sparse checkout of package gz_ros2_control; every present file identical to upstream bfc5845 (git archive) + 0001 + 0002 (git apply); upstream directories outside the sparse set not present (not built)
+SpiderX install: built 2026-10-30 06:50:11.907756860 +0000 with --symlink-install; 60/60 spiderx_controller modules and the launch files are symlinks into /home/user/spiderx_ws/src; no broken symlinks; no non-metadata regular files
+src changes since the build's base ca49db3:  1 file changed, 47 insertions(+), 2 deletions(-) (only src/spiderx_controller/test/test_m61_restore_script.py; tests are not installed)
+== gates, fresh import (toolchain -> r2 overlay -> workspace)
+M55_LOCOMOTION_DISPATCH_ENABLED False /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+M61_LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+== phase library (load_config + build_library; frozen tool)
+{"goals": 54, "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732", "m55_gate_imported": false}
+== driver files (run unchanged from the repository)
+6370ab789d4d9063497a00d3f8279334fd12b94c376c99066ce29a88f1df3a51  scripts/s3/s3_driver.py
+44cd495913b413c3f984adb581c699258a6da5cc7495c820ce3ef5e92ed78388  scripts/s2/s2_driver.py
+git blob check: identical to HEAD
+== focused-test evidence reused: docs/evidence/m55/s3_preparation_20261031/focused_validation.txt (s2 48 OK, s3 52 OK, restore 18 passed, flake8 clean); inputs unchanged since: 0 changed files in scripts/ src/ third_party/ between 950d54e and HEAD
