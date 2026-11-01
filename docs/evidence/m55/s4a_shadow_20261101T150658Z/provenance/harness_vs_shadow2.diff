@@ -1,0 +1,345 @@
+--- tools_shadow2/cleanup.sh	2026-11-01 15:11:56.850752750 +0000
++++ tools/cleanup.sh	2026-11-01 15:13:02.809801326 +0000
+@@ -1,11 +1,11 @@
+ #!/usr/bin/env bash
+ # Idempotent stop of everything an S2 run starts (driver, teleop, bag, node, launch, Xvfb).
+ # Runs from the run wrapper's EXIT/INT/TERM trap, so it also runs after an interruption.
+-# S3 shadow adaptation: the S3 driver's name too; the locomotion node is started by the launch here,
++# S3 shadow adaptation: the S3 driver's name too (S4a shadow: and the S4a driver's); the locomotion node is started by the launch here,
+ # so it stops with the launch (SIGINT to the launch group) and only a leftover is killed after it.
+ RUN=$1; EVT=$(dirname "$RUN")/tools
+ echo "[$(date -u +%T)] cleanup start"
+-pkill -INT -f "s[23]_driver.py" 2>/dev/null; sleep 1; pkill -KILL -f "s[23]_driver.py" 2>/dev/null
++pkill -INT -f "s[23]_driver.py|s4a_driver.py" 2>/dev/null; sleep 1; pkill -KILL -f "s[23]_driver.py|s4a_driver.py" 2>/dev/null
+ pkill -KILL -f "m55_teleop_keyboard" 2>/dev/null
+ pkill -INT -f "ros2 bag record" 2>/dev/null; sleep 2; pkill -KILL -f "ros2 bag record" 2>/dev/null
+ if [ -f "$RUN/node.pid" ]; then NP=$(cat "$RUN/node.pid"); kill -INT -- -"$NP" 2>/dev/null; sleep 3; kill -KILL -- -"$NP" 2>/dev/null; fi
+@@ -13,4 +13,4 @@
+ pkill -KILL -f "m55_locomotion_node" 2>/dev/null
+ [ -f "$RUN/xvfb.pid" ] && kill -TERM "$(cat "$RUN/xvfb.pid")" 2>/dev/null
+ echo "[$(date -u +%T)] cleanup done; remaining:"
+-pgrep -af "ign gazebo|gz sim|parameter_bridge|robot_state_publisher|ros2 launch|Xvfb|spawner|m55_|s[23]_driver|ros2 bag|strace" | grep -v -E "pgrep|cleanup.sh" || echo none
++pgrep -af "ign gazebo|gz sim|parameter_bridge|robot_state_publisher|ros2 launch|Xvfb|spawner|m55_|s[23]_driver|s4a_driver|ros2 bag|strace" | grep -v -E "pgrep|cleanup.sh" || echo none
+--- tools_shadow2/prelaunch_checks.sh	2026-11-01 15:11:56.850783627 +0000
++++ tools/prelaunch_checks.sh	2026-11-01 15:13:02.806705940 +0000
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# S3 shadow pre-launch checks (the Phase C checks; the r2 overlay, and all three gates expected
++# S4a shadow pre-launch checks (the S3 shadow-2 checks; the r2 overlay, and all three gates expected
+ # False): the run-local env.sh resolves gz_ros2_control to the verified r2 overlay.
+ # Usage: prelaunch_checks.sh <tools dir>   Ends with "PRELAUNCH VERDICT: PASS" or "... FAIL".
+ EVT=$1
+--- tools_shadow2/premotion_checks.sh	2026-11-01 15:11:56.850796227 +0000
++++ tools/premotion_checks.sh	2026-11-01 15:13:02.809267805 +0000
+@@ -1,9 +1,11 @@
+ #!/usr/bin/env bash
+ # S3 shadow pre-shadow checks (the Phase C pre-motion checks, adapted to the free-base launch): run
+-# while s3_shadow_run.sh waits after the node is up. Read-only: no goal, publisher or parameter
++# while s4a_shadow_run.sh waits after the node is up. Read-only: no goal, publisher or parameter
+ # change. Adaptations: the r2 overlay and its provenance; the launch's own locomotion node is
+ # expected (in this launch's session, no action client); the weld check is replaced by
+ # settle_check.py (free base); the simulator server pid is kept for the exit observation.
++# S4a SHADOW (the S3 shadow-2 checks): the node in SHADOW mode with no action client, the action
++# with no client, no command-topic publisher, and no driver or teleop process yet (s4a_driver too).
+ # Writes RUN/premotion/ and ends with "PREMOTION VERDICT: PASS" or "... FAIL: <items>".
+ # Usage: premotion_checks.sh <run dir>
+ RUN=$1; EVT=$(dirname "$RUN")/tools; D=$RUN/premotion; mkdir -p $D
+@@ -85,7 +87,7 @@
+ CTL=$(timeout 30 ros2 control list_controllers 2>&1 | strip)
+ ACT=$(timeout 30 ros2 action info /leg_trajectory_controller/follow_joint_trajectory 2>&1)
+ TOP=$(timeout 30 ros2 topic info /leg_trajectory_controller/joint_trajectory 2>&1)
+-FORB=$(pgrep -af "teleop|s[23]_driver" | grep -v -E "pgrep|premotion_checks" || true)
++FORB=$(pgrep -af "teleop|s[23]_driver|s4a_driver" | grep -v -E "pgrep|premotion_checks" || true)
+ NODEP=$(pgrep -f "spiderx_controller/m55_locomotion_node" | tr '\n' ' '); NODEP=$(echo $NODEP)
+ NODESID=$(for p in $NODEP; do ps -o sid= -p $p | tr -d ' '; done | sort -u | tr '\n' ' '); NODESID=$(echo $NODESID)
+ NINFO=$(timeout 30 ros2 node info /spiderx_locomotion 2>&1)
+--- tools_shadow2/settle_check.py	2026-11-01 15:11:56.850894243 +0000
++++ tools/settle_check.py	2026-11-01 15:13:02.782716792 +0000
+@@ -8,7 +8,8 @@
+ rad and graph 1/0/0, with the node's joint-state age <= 0.5 s and graph age <= 3.0 s in every
+ counted sample (a violation restarts the window). Records the window (standing height, range,
+ tilt), the body's drift within it, and the largest ages seen.
+-Usage: settle_check.py --out <json> [--timeout-s 900] [--domain-id 0]"""
++--dispatch (live run): every status must report DISPATCH mode, gate True, DISARMED instead.
++Usage: settle_check.py --out <json> [--timeout-s 900] [--domain-id 0] [--dispatch]"""
+ import argparse
+ import json
+ import math
+@@ -27,6 +28,7 @@
+     ap.add_argument('--out', required=True)
+     ap.add_argument('--timeout-s', type=float, default=900.0)
+     ap.add_argument('--domain-id', type=int, default=0)
++    ap.add_argument('--dispatch', action='store_true')
+     a = ap.parse_args()
+     import rclpy
+     from rclpy.executors import SingleThreadedExecutor
+@@ -38,6 +40,7 @@
+     node.create_subscription(String, s3.s2.STATUS_TOPIC, lambda m: q.append(m.data), 10)
+     ex = SingleThreadedExecutor(context=ctx)
+     ex.add_node(node)
++    want = ('dispatch', True, 'DISARMED') if a.dispatch else ('shadow', False, 'DISARMED')
+     settle, last, rows, viol = s3.Settle(), None, [], []
+     n_status = n_fresh = 0
+     modes, max_age = set(), {'joint_states_age_s': 0.0, 'body_pose_age_s': 0.0, 'graph_age_s': 0.0}
+@@ -59,8 +62,7 @@
+                 if isinstance(mon.get(k), (int, float)):
+                     max_age[k] = max(max_age[k], mon[k])
+             js, ga = mon.get('joint_states_age_s'), mon.get('graph_age_s')
+-            ok_mode = (st.get('mode') == 'shadow' and st.get('dispatch_gate') is False
+-                       and st.get('state') == 'DISARMED')
++            ok_mode = ((st.get('mode'), st.get('dispatch_gate'), st.get('state')) == want)
+             ok_age = (isinstance(js, (int, float)) and js <= JS_STALE_S
+                       and isinstance(ga, (int, float)) and ga <= GRAPH_STALE_S)
+             if not (ok_mode and ok_age):
+@@ -74,7 +76,7 @@
+             settle.add(sim, gt['z'], gt['tilt'], mon.get('graph'))
+     res = {'criteria': 'z >= 0.045 m, z range <= 0.005 m, tilt <= 0.10 rad, graph 1/0/0, '
+                        'joint-state age <= 0.5 s, pose age <= 1.0 s, graph age <= 3.0 s, sim '
+-                       'strictly advancing, over >= 10 s of sim; SHADOW, gate False, DISARMED',
++                       'strictly advancing, over >= 10 s of sim; mode/gate/state ' + repr(want),
+            'statuses': n_status, 'fresh_samples': n_fresh, 'violations': viol[:20],
+            'violation_count': len(viol), 'modes_seen': sorted(map(list, modes), key=str),
+            'max_ages_s': max_age, 'window': settle.done,
+@@ -88,7 +90,7 @@
+             'forward_per_level0_cycle_m': fwd / span * s3.CYCLE_S0 if span > 0 else None,
+             'max_abs_xy_step_m': max(math.hypot(b['xy'][0] - a_['xy'][0], b['xy'][1] - a_['xy'][1])
+                                      for a_, b in zip(w, w[1:])) if len(w) > 1 else None}
+-    ok = (settle.done is not None and modes == {('shadow', False, 'DISARMED')})
++    ok = (settle.done is not None and modes == {want})
+     res['verdict'] = 'PASS' if ok else 'FAIL'
+     with open(a.out, 'w') as f:
+         json.dump(res, f, indent=1, sort_keys=True)
+--- tools_shadow2/watchdog.sh	2026-11-01 15:11:56.850969348 +0000
++++ tools/watchdog.sh	2026-11-01 15:13:02.810128448 +0000
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+-# S3 shadow run-local safety net (the Phase C watchdog): if the session is interrupted and the
++# S4a shadow run-local safety net (the Phase C watchdog): if the session is interrupted and the
+ # deadline passes, stop everything the run started (cleanup.sh, which ends with stage_stop.sh), then
+-# verify the disabled state (restore_cmd.sh: --verify-only; nothing was enabled in this run).
++# verify the disabled state (restore_cmd.sh: --verify-only; nothing is enabled in this run).
+ # Exits without acting when RUN/stopped.flag exists.
+ RUN=$1; DEADLINE_S=${2:-3600}
+ EVT=$(dirname "$RUN")/tools
+--- tools_shadow2/restore_cmd.sh	2026-11-01 15:11:56.850851372 +0000
++++ tools/restore_cmd.sh	2026-11-01 15:13:02.810627492 +0000
+@@ -1,10 +1,10 @@
+ #!/usr/bin/env bash
+-# S3 shadow verification of the disabled state (adapted from the Phase C restore_cmd.sh): nothing was
++# S4a shadow verification of the disabled state (the S3 shadow-2 restore_cmd.sh): nothing is
+ # enabled in this run, so --verify-only against the disabled baseline commit (no checkout, no
+ # rebuild, no enabling ref, no branch deletion), with the run's pid files and an explicit evidence
+ # directory. Exit 0 only for DISABLED AND VERIFIED.
+-R=/root/spiderx_evidence/s3_shadow_20261031T193303Z
++R=/root/spiderx_evidence/s4a_shadow_20261101T150658Z
+ cd /home/user/spiderx_ws && env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+-  bash scripts/m61_restore_and_verify_disabled.sh --base 236238e8081501e76b068f453cdcf4222a598af2 \
++  bash scripts/m61_restore_and_verify_disabled.sh --base 7c1ecbc2654fb2bf80f23482812d8d89273cdc7e \
+   --evidence $R/restore --ros-setup /opt/mm/activate.sh --verify-only \
+   --launch-pid-file $R/run/launch.pid --xvfb-pid-file $R/run/xvfb.pid
+--- tools_shadow2/s3_shadow_run.sh	2026-11-01 15:11:56.850879930 +0000
++++ tools/s4a_shadow_run.sh	2026-11-01 15:13:02.811638313 +0000
+@@ -1,17 +1,18 @@
+ #!/usr/bin/env bash
+-# S3 shadow run (P7 runtime load/shutdown and P4 free-base shadow rehearsal, ONE launch, all three
+-# gates False): phase_c_run.sh adapted to fortress_m55_walking.launch.py (s3_shadow_run.diff):
++# S4a SHADOW rehearsal (ONE free-base launch; all three gates False; no goal or cancel may reach the
++# controller): the S3 live run script, adapted only for S4a shadow (harness_vs_s3_live.diff): the S4a
++# driver with --shadow-rehearsal replaces the S3 driver; the pre-key checks are the S3 shadow-2 SHADOW
++# checks; one recorder and the screenshot after a completed script, as the live run. As before:
+ #  1. the launch itself starts the M5.5 node (SHADOW: no action client, sends nothing; its evidence in
+ #     RUN/node): no separate node, no m61a preflight (fixed base only); the launch's node is reniced
+ #     to -5, as Phase C started its node;
+-#  2. a settle bag (world poses and joint states only) runs from the launch start to the go decision;
+ #  3. once the node is up the run waits for the operator's pre-shadow checks (premotion_checks.sh,
+ #     settle_check.py, one screenshot): go.flag starts the S3 script; abort.flag, or no decision
+ #     within PREMOTION_WAIT_S, stops with no key pressed;
+-#  4. the S3 driver (scripts/s3/s3_driver.py --shadow-rehearsal, retry baseline 236238e) replaces
+-#     the S2 driver; its exit code is kept; no screenshot after the script;
++#  4. the S4a driver (scripts/s4/s4a_driver.py --shadow-rehearsal) replaces the S3 driver; its exit
++#     code is kept; one screenshot after a completed script (driver exit 0, launch up, <= 15 s);
+ #  5. before the stop, strace (signals only, no system calls) observes the simulator server's own exit.
+-# Usage: s3_shadow_run.sh <run dir> <bag dir>
++# Usage: s4a_shadow_run.sh <run dir> <bag dir>
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools; WS=/home/user/spiderx_ws
+ PREMOTION_WAIT_S=${PREMOTION_WAIT_S:-1500}
+ source $EVT/env.sh
+@@ -20,9 +21,6 @@
+ step "gates (imported): $(python3 -c 'from spiderx_controller import m55_contract as a, m61_live_contract as b, m6_live_contract as c; print(a.M55_LOCOMOTION_DISPATCH_ENABLED, b.M61_LIVE_DISPATCH_ENABLED, c.LIVE_DISPATCH_ENABLED)')"
+ step "launch"; bash $EVT/stage_start.sh $RUN | tee -a $RUN/steps.log
+ abort() { step "ABORT: $*"; bash $EVT/stage_stop.sh $RUN > /dev/null; step end; exit 1; }
+-# Change 2: the settle bag, from the spawn on (no action topic, no /clock)
+-setsid ros2 bag record -s sqlite3 -o ${BAG}_settle /spiderx/sim/world_poses /joint_states > $RUN/bag_settle_record.log 2>&1 &
+-SBP=$!
+ bash $EVT/stage_wait_controllers.sh $RUN; RC=$?; step "controllers: exit $RC"
+ [ $RC = 0 ] || abort "controllers not active (Gazebo startup race?); relaunch is a new attempt"
+ sleep 3
+@@ -46,8 +44,6 @@
+ touch $RUN/premotion_wait.flag
+ step "pre-shadow checks: waiting for go.flag or abort.flag (at most $PREMOTION_WAIT_S s)"
+ for i in $(seq 1 $PREMOTION_WAIT_S); do { [ -f $RUN/go.flag ] || [ -f $RUN/abort.flag ]; } && break; sleep 1; done
+-kill -INT -- -$SBP 2>/dev/null; for i in $(seq 1 30); do pgrep -g $SBP >/dev/null || break; sleep 0.5; done
+-step "settle bag stopped"
+ [ -f $RUN/abort.flag ] && abort "pre-shadow checks failed: $(head -c 300 $RUN/abort.flag)"
+ [ -f $RUN/go.flag ] || abort "no pre-shadow decision within $PREMOTION_WAIT_S s"
+ step "pre-shadow checks passed: $(head -c 300 $RUN/go.flag)"
+@@ -63,10 +59,18 @@
+ BP=$!; sleep 4
+ ( sleep 120; top -b -n1 -w 160 | head -22 > $RUN/captures/top_during.txt;
+   ps -o pid,ni,pcpu,args -C ruby,python3,parameter_bridge,robot_state_publisher -w | cut -c1-160 >> $RUN/captures/top_during.txt ) &
+-step "driver"; python3 $WS/scripts/s3/s3_driver.py --out $RUN/driver --shadow-rehearsal > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
++step "driver"; python3 $WS/scripts/s4/s4a_driver.py --out $RUN/driver --shadow-rehearsal > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
+ sleep 3; step "captures after"; cap after
+ kill -INT -- -$BP 2>/dev/null; for i in $(seq 1 30); do pgrep -g $BP >/dev/null || break; sleep 0.5; done
+ step "bag stopped"; pkill -f m55_teleop_keyboard 2>/dev/null
++# Phase C change 3: one screenshot after a completed script (no goal in flight), only if the
++# simulator is still up; it never delays cleanup by more than 15 s.
++if [ "$DRC" = 0 ] && pgrep -g "$LP" > /dev/null; then
++  env -i PATH=/usr/bin:/bin DISPLAY=:77 timeout 15 /usr/bin/import -display :77 -window root $RUN/captures/screenshot2_after_script.png > $RUN/captures/screenshot2.log 2>&1
++  step "screenshot 2: exit $?"
++else
++  step "screenshot 2 skipped (driver exit $DRC or launch gone)"
++fi
+ # Change 5: the simulator server's own exit (the launch reports only its ruby wrapper's exit).
+ SP=$(cat $RUN/server.pid 2>/dev/null); STP=""
+ if [ -n "$SP" ] && [ "$(ps -o sid= -p $SP | tr -d ' ')" = "$LP" ]; then
+--- tools_shadow2/s3_shadow_guarded.sh	2026-11-01 15:11:56.850864821 +0000
++++ tools/s4a_shadow_guarded.sh	2026-11-01 15:13:02.811905073 +0000
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+-# The S3 shadow run with cleanup armed BEFORE launch (as phase_c_guarded.sh): cleanup.sh runs on
++# The S4a shadow run with cleanup armed BEFORE launch (as phase_c_guarded.sh): cleanup.sh runs on
+ # success, failure or interruption.
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools
+ mkdir -p "$RUN"
+ trap 'bash "$EVT/cleanup.sh" "$RUN" >> "$RUN/cleanup.log" 2>&1' EXIT INT TERM
+-bash "$EVT/s3_shadow_run.sh" "$RUN" "$BAG"
++bash "$EVT/s4a_shadow_run.sh" "$RUN" "$BAG"
+--- tools_shadow2/analyze_shadow.py	2026-11-01 15:11:56.850716030 +0000
++++ tools/analyze_s4a_shadow.py	2026-11-01 15:15:19.183930238 +0000
+@@ -1,6 +1,10 @@
+ #!/usr/bin/env python3
+-"""Offline, read-only analysis of the S3 shadow run (no ROS graph; bags opened read-only/immutable).
+-Usage: analyze_shadow.py <run root>   (expects run/, bag/, bag_settle/) -> prints JSON."""
++"""Offline, read-only analysis of the S4a shadow rehearsal (no ROS graph; the bag opened
++read-only/immutable). The S3 shadow-2 analyze_shadow.py, adapted: one bag (no settle bag), plus the
++S4a block (planned shadow goal sequence, cycle checks and their order, key writes and the x bracket,
++the post-estop hold from the bag, zero controller traffic, library identity, process exits).
++Displacements are recorded, never scored: this is a rehearsal with dispatch disabled.
++Usage: analyze_s4a_shadow.py <run root>   (expects run/, bag/) -> prints JSON."""
+ import collections, glob, gzip, json, math, os, re, sqlite3, sys
+ 
+ R = sys.argv[1]
+@@ -116,15 +120,8 @@
+         dev = max(max((abs(a - b) for a, b in zip(m.reference.positions, r0)), default=0.0) for _, m in cs)
+         res['controller_state'] = {'messages': len(cs), 'reference_points_nonempty': bool(r0),
+                                    'max_reference_change_rad': dev}
+-    # ---- settle bag (from the spawn)
+-    tmap2, counts2, out2 = rows(db(os.path.join(R, 'bag_settle')), {T_WP, T_JS})
+-    ps = poses(out2[T_WP], cfg)
+-    res['settle_bag'] = {'topics': dict(counts2), 'pose_samples': len(ps),
+-                         'first_pose_z_m': ps[0][2]['z'], 'min_z_m': min(p[2]['z'] for p in ps),
+-                         'max_tilt_rad': max(p[2]['tilt'] for p in ps),
+-                         'sim_times': 'settle_timing.json: from /joint_states stamps (the bridged '
+-                                      'pose headers carry no stamp)',
+-                         'joint_states': js_stats(out2[T_JS])}
++    # ---- (no settle bag in this run: one recorder; settling is premotion/settle_check.json and
++    #      the driver's own settle record)
+     # ---- node evidence
+     ev = [json.loads(l) for l in open(os.path.join(RUN, 'node', 'events.jsonl'))]
+     c = collections.Counter(e['event'] for e in ev)
+@@ -153,6 +150,94 @@
+     res['launch_log']['process_exits'] = re.findall(r'\[INFO\] \[([^\]]+)\]: process has finished cleanly \[pid \d+\]', lg)
+     res['launch_log']['process_died_lines'] = re.findall(r'.*process has died.*', lg)
+     res['launch_log']['error_lines'] = re.findall(r'.*\[ERROR\].*', lg)[:20]
++    # ---- S4a block
++    import hashlib
++    sent = [e for e in ev if e['event'] == 'goal_sent']
++    results = {e['seq']: e for e in ev if e['event'] == 'result'}
++    exp = [(9 - k, 8 - k, -1) for k in range(9)] + [(k, k + 1, 1) for k in range(9)] + [(0, 1, 1)]
++    seqd = [(g['b_from'], g['b_to'], g['direction']) for g in sent]
++    stat = collections.Counter(results.get(g['seq'], {}).get('status') for g in sent)
++    res['s4a_goals'] = {
++        'planned_shadow_goals': len(sent), 'expected': 19, 'levels': sorted({g['level'] for g in sent}),
++        'sequence_matches_script': seqd == exp, 'sequence_b_from_b_to_direction': seqd,
++        'result_status_counts': {str(k): v for k, v in stat.items()},
++        'succeeded_status4': stat.get(4, 0), 'canceled_status5': stat.get(5, 0),
++        'last_goal_result': results.get(sent[-1]['seq']) if sent else None,
++        'phase_done': c.get('phase_done', 0), 'cancel_sent': c.get('cancel_sent', 0),
++        'cancel_response': c.get('cancel_response', 0)}
++    drv = [json.loads(l) for l in open(os.path.join(RUN, 'driver', 'driver.jsonl'))]
++    keys = [(i, r) for i, r in enumerate(drv) if 'key' in r]
++    checks = [(i, r['cycle_check']) for i, r in enumerate(drv) if 'cycle_check' in r]
++
++    def first_key(why):
++        return next((i for i, r in keys if r.get('why') == why), None)
++    iF, iE = first_key('run F: one forward return cycle'), first_key('estop exercise')
++    faults = [e for e in ev if e['event'] == 'fault']
++    cancels = [e for e in ev if e['event'] == 'cancel_sent']
++    xs = [r for _, r in keys if r.get('key') == "'x'"]
++    x = xs[0] if xs else None
++    summ = json.load(open(os.path.join(RUN, 'driver', 'driver_summary.json')))
++    res['s4a_driver'] = {
++        'result': summ.get('result'), 'expected_goals': summ.get('expected_goals'),
++        'goal_seqs_seen': summ.get('goal_seqs_seen'), 'fresh_samples': summ.get('fresh_samples'),
++        'settle': summ.get('settle'), 'estop_hold': summ.get('estop_hold'),
++        'shadow_rehearsal': summ.get('shadow_rehearsal'),
++        'shadow_verified_record': next((r['shadow_rehearsal'] for r in drv if 'shadow_rehearsal' in r), None),
++        'cycle_reference': next(({'pose': r['cycle_reference'], 'cycles': r.get('cycles'), 'sim': r.get('sim')}
++                                 for r in drv if 'cycle_reference' in r), None),
++        'cycle_checks': [r for _, r in checks],
++        'direction_count_sequence': [(r.get('direction'), r.get('cycles_count')) for _, r in checks],
++        'reverse_checked_before_forward_key': bool(len(checks) > 0 and checks[0][1].get('direction') == -1
++                                                   and iF is not None and checks[0][0] < iF),
++        'forward_checked_before_estop_key': bool(len(checks) > 1 and checks[1][1].get('direction') == 1
++                                                 and iE is not None and checks[1][0] < iE),
++        'key_writes': [{k: r.get(k) for k in ('key', 'why', 't_before_write', 't_after_write',
++                                              'write_result', 'mono')} for _, r in keys],
++        'key_writes_all_result_1': all(r.get('write_result') == 1 for _, r in keys),
++        'x': None if x is None or x.get('t_before_write') is None else {
++            't_before_write': x['t_before_write'], 't_after_write': x.get('t_after_write'),
++            'write_result': x.get('write_result'),
++            'write_s': (x['t_after_write'] - x['t_before_write']) if x.get('t_after_write') is not None else None,
++            'node_fault': faults[0] if faults else None,
++            'fault_minus_write_start_s': faults[0]['wall'] - x['t_before_write'] if faults else None,
++            'fault_at_or_after_write_start': bool(faults) and faults[0]['wall'] >= x['t_before_write'],
++            'node_cancel_sent': cancels[0] if cancels else None}}
++    hold = summ.get('estop_hold') or {}
++    t0 = hold.get('from_sim_s')
++    if t0 is not None:
++        hs = [st for _, st in sts if st.get('ground_truth') and isinstance((st.get('monitors') or {}).get('sim_time_s'), (int, float))
++              and t0 <= st['monitors']['sim_time_s'] <= t0 + 10.0]
++        js = [(stamp(m.header), m) for _, m in out[T_JS] if t0 <= stamp(m.header) <= t0 + 10.0]
++        q0 = dict(zip(js[0][1].name, js[0][1].position)) if js else {}
++        jm = max((abs(q - q0[n]) for _, m in js for n, q in zip(m.name, m.position)), default=None)
++        g0 = hs[0]['ground_truth'] if hs else None
++        res['s4a_hold_from_bag'] = {
++            'from_sim_s': t0, 'status_samples': len(hs), 'joint_state_samples': len(js),
++            'sim_span_s': (js[-1][0] - js[0][0]) if js else None,
++            'max_joint_motion_rad': jm,
++            'max_body_xy_change_m': max((math.hypot(h['ground_truth']['xy'][0] - g0['xy'][0], h['ground_truth']['xy'][1] - g0['xy'][1]) for h in hs), default=None),
++            'z_min_m': min((h['ground_truth']['z'] for h in hs), default=None),
++            'tilt_max_rad': max((h['ground_truth']['tilt'] for h in hs), default=None)}
++    def action_clients(f):
++        try:
++            t = open(os.path.join(RUN, 'captures', f)).read()
++        except OSError:
++            return None
++        m = re.search(r'^Action clients: (\d+)$(.*?)^Action servers:', t, re.M | re.S)
++        return None if m is None else {'count': int(m.group(1)),
++                                       'client_nodes': re.findall(r'^    (\S+)$', m.group(2), re.M)}
++    res['s4a_controller_traffic'] = {
++        'bag_joint_trajectory_messages': res['bag_topics'][T_JT]['messages'],
++        'bag_action_feedback_messages': res['bag_topics'][T_FB]['messages'],
++        'controller_reference_max_change_rad': (res.get('controller_state') or {}).get('max_reference_change_rad'),
++        'jtc_log_goal_or_cancel_lines': sum(res['launch_log'][k] for k in ('jtc_goal_received', 'jtc_goal_accepted', 'jtc_cancel_request', 'jtc_canceling')),
++        'action_clients_before': action_clients('before_action_info.txt'),
++        'action_clients_after': action_clients('after_action_info.txt')}
++    lib = os.path.join(RUN, 'node', 'library.json')
++    res['s4a_library'] = {'node_library_json_sha256': hashlib.sha256(open(lib, 'rb').read()).hexdigest() if os.path.exists(lib) else None}
++    res['s4a_exits'] = {
++        'locomotion_node_lines': re.findall(r'.*\[m55_locomotion_node[^\]]*\].*(?:process has finished cleanly|process has died).*', lg),
++        'server_exit_strace': open(os.path.join(RUN, 'server_exit_strace.txt')).read().strip().splitlines()[-1:] if os.path.exists(os.path.join(RUN, 'server_exit_strace.txt')) else None}
+     print(json.dumps(res, indent=1, sort_keys=True, default=str))
+ 
+ 
