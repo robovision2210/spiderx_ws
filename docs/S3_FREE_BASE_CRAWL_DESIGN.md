@@ -1,8 +1,7 @@
 # S3: bounded free-base crawl at level 0 (design only)
 
 Date: 2026-10-26; preparation status updated 2026-10-31 on `claude/spiderx-s3-preparation` (§8).
-- **Status: PREPARED OFFLINE; S3 motion NOT authorized.** It needs its own owner authorization (§5)
-  after the launch-only and shadow prerequisites (§8). Nothing here has run in a simulator.
+- **Status: RUN ONCE (2026-11-01).** S3 bounded level-0 free-base crawl accepted retrospectively under criteria revision S3-r1 (§9). The frozen scorer's verdict, INCONCLUSIVE with A3 UNMEASURED, is preserved and linked in §9. S4, hardware and autonomous navigation remain unvalidated.
 - **S2 (P1):** S2 fixed-base validation accepted retrospectively under criteria revision r1. Not walking, contact or balance validation. The frozen verdicts stay FAIL (2026-10-29 tracking; 2026-10-30 Phase C).
 - **Plant:** the gain-1.0 actuator model (`docs/S2_SIM_ACTUATOR_MODEL_DESIGN.md`) through the
   overlay `~/spiderx_gz_overlay_ws_r2` (§2). Results measured at gain 0.1 (M2, S0) do **not**
@@ -209,7 +208,7 @@ Missing evidence is UNMEASURED, never PASS. A completed script is not a pass.
 - **P3. Done.** A separate S3 driver, `scripts/s3/s3_driver.py`, on the unchanged S2 driver's
   plumbing, with the §3 script and §3.1 stops, tested on the in-memory bench (42 cases, 17 of them for the shadow rehearsal mode); and the
   S3 scorer `scripts/s3/score_s3.py` (A1–A8, 27 cases).
-- **P4. Missing** (attempt 1 on 2026-10-31: INCONCLUSIVE, §8). A free-base shadow rehearsal of the S3 script on the **gain-1.0** plant (as
+- **P4. Done** (rehearsal 2 on 2026-10-31: PASS, shadow only; attempt 1 INCONCLUSIVE, §8). A free-base shadow rehearsal of the S3 script on the **gain-1.0** plant (as
   S2's A2), with settling verification. It also measures the free-base RTF and the
   `/joint_states` stall margin. It needs an S3 run harness and its own authorization (§8).
 - **P5. Done.** The owner retained the approved limits and the 55-goal forward-only scope on
@@ -413,7 +412,24 @@ launch with the r2 overlay and the run-local harness, dispatch disabled.
 - **Default behaviour** is unchanged: progress < 0 or > 40 mm stops.
 - **Not acceptance.** A shadow rehearsal is not crawl acceptance.
 
-**Remaining before any S3 motion** (each needs its own authorization):
-1. **P4, free-base shadow rehearsal** with `--shadow-rehearsal` on the gain-1.0 plant: the full S3
-   script in shadow, which is one cycle, five cycles, the planned estop and the 10 s hold.
-2. The S3 authorization (§5), naming the baseline commit and the r2 overlay.
+**Completed.** P4 passed in shadow (rehearsal 2, 2026-10-31, `docs/evidence/m55/s3_shadow_20261031T193303Z/`). The authorized live attempt ran on 2026-11-01 (§9).
+
+## 9. Execution and retrospective acceptance (2026-11-01)
+- **Run.** One authorized free-base attempt, `s3_free_base_20261101T115002Z`.
+  - Disabled baseline `d918799`, with a local enabling commit that was never pushed and was deleted after the restore verified.
+  - The r2 overlay at gain 1.0.
+  - The committed driver in live (default) mode.
+- **What ran.** The script completed with 55 goals and 1 cancel: one cycle, five cycles, the estop, and the 10 s hold.
+  - The six cycles moved 20.015–20.029 mm each, about 0.1201 m in all.
+  - Per cycle: \|lateral\| ≤ 19 µm, \|yaw\| ≤ 8.7e-5 rad, height within 35 µm, tilt ≤ 0.0026 rad.
+- **Frozen verdict, preserved: INCONCLUSIVE.** A1, A2 and A4–A8 PASS; A3 UNMEASURED. Evidence: `docs/evidence/m55/s3_free_base_20261101T115002Z/` (commit `a73ea95`).
+  - Goal 55, the scripted estop, has no feedback.
+  - The pre-specified exception's ordering check compared the node's reaction with a key time the driver logs only after its write returns.
+- **Review.** `docs/evidence/m55/s3_free_base_20261101T115002Z_a3_review/` (`2859c8c`), with `ADDENDUM_1.md` on rounding. Tool: `scripts/s3/review_a3.py` (`ea0203f`).
+- **Owner decision (2026-11-01).** "S3 bounded level-0 free-base crawl accepted retrospectively under criteria revision S3-r1." Record: `docs/evidence/m55/s3_free_base_20261101T115002Z_adoption_s3r1/README.md`.
+- **Limitations.**
+  - Goal 55's tracking is N/A, not a measured value.
+  - The estop source is inferred from the recorded chain.
+  - There is no direct contact-point-slip measurement.
+  - Simulation only, with an idealized actuator model.
+- **Not shown.** Interactive keyboard walking (S4), reverse or faster-level motion on contact, terrain, balance control, hardware or autonomous navigation. The next step is planned in `docs/S4_KEYBOARD_TELEOP_PLAN.md`; nothing there is authorized.

@@ -35,6 +35,11 @@
 *Simulation-only fixed-base crawl trajectory validation. The body is welded above the ground; this does not demonstrate walking, ground contact or balance.*
 The script completed (59 goals and 1 scripted cancel), but the frozen scorer rated P4 FAIL and P2 UNMEASURED. S2 fixed-base validation accepted retrospectively under criteria revision r1. Not walking, contact or balance validation. See [media/README.md](media/README.md).
 
+**S3 bounded free-base crawl (cloud, 2026-11-01).** S3 bounded level-0 free-base crawl accepted retrospectively under criteria revision S3-r1.
+- **What ran.** One authorized run, six scripted level-0 forward cycles, moved the body about 0.1201 m: 20.015–20.029 mm per cycle, tilt ≤ 0.0026 rad.
+- **Original verdict, preserved.** The frozen scorer rated the run INCONCLUSIVE, with A3 UNMEASURED. See the [run evidence](docs/evidence/m55/s3_free_base_20261101T115002Z/README.md) and the [adoption record](docs/evidence/m55/s3_free_base_20261101T115002Z_adoption_s3r1/README.md), which lists the limitations.
+- **Not shown.** This is simulation only, with an idealized actuator model. It is not interactive keyboard walking (S4), reverse or faster motion on contact, hardware or navigation.
+
 Demo GIFs of standing and walking will be added only once those capabilities exist
 ([media/README.md](media/README.md)).
 
@@ -56,8 +61,8 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | All-leg FK/IK and static pose hold (simulation only) | ✅ Verified locally and in the cloud (M4): 3 static four-leg poses via IK held in Gazebo. **Not** walking, gait or hardware validation |
 | Offline gait configuration and trajectory validation (M4.5) | ✅ Verified offline (cloud + local, M4.5): 6 YAML gaits checked against the URDF-derived IK, joint limits and a static-stability **approximation**. **Not** walking or hardware validation |
 | Protected one-cycle trot replay on a fixed base (M6.1 / M6.1-A) | 🟡 Implemented and verified offline/mock/isolated (Cloud): welded-base model, clearance analysis, read-only observer; **live dispatch disabled**; the one authorized Cloud attempt (2026-10-12) was refused before dispatch, with 0 goals ([Cloud report §11](docs/M61A_CLOUD_VERIFICATION.md)); readiness fixed at `61f3ffc` (§12); a second authorized cycle sent 1 goal, which was cancelled by a client tracking-reference defect, so not passed (§13); that defect is fixed at `b0d8e75` and rehearsed read-only without a goal (§14); a third authorized cycle **PASSED** in Cloud on the welded body: 1 goal, 0 cancels, 0.0085 rad, E1–E11 (§15). Not walking |
-| Continuous free-base crawl, locomotion state machine and keyboard teleop (M5.5) | 🟡 Implemented in **shadow mode** and verified offline/mock/isolated (Cloud): 3 validated crawl speed levels, `/cmd_vel` lease, `m55_teleop_keyboard`; **dispatch hard-disabled, nothing walks yet, not run in Gazebo** ([M5.5](docs/M55_KEYBOARD_WALKING.md)) |
-| Walking demonstrated in simulation | ⚪ Pending the local acceptance phases (M5.5 §10) |
+| Continuous free-base crawl, locomotion state machine and keyboard teleop (M5.5) | 🟡 Implemented; **dispatch hard-disabled in every pushed build**. S2 (fixed base) and S3 (free base, level 0, forward, scripted keys) each ran once in Cloud Gazebo from a local, never-pushed enabling branch, and were accepted retrospectively under criteria revisions r1 and S3-r1 ([S3 adoption](docs/evidence/m55/s3_free_base_20261101T115002Z_adoption_s3r1/README.md)). Interactive keyboard walking (S4) is **not validated** ([M5.5](docs/M55_KEYBOARD_WALKING.md), [S4 plan](docs/S4_KEYBOARD_TELEOP_PLAN.md)) |
+| Walking demonstrated in simulation | 🟡 Bounded crawl only: S3 bounded level-0 free-base crawl accepted retrospectively under criteria revision S3-r1 (six scripted cycles, ≈ 0.1201 m; frozen verdict INCONCLUSIVE preserved). Keyboard walking (S4), reverse and faster levels on contact are not validated |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
 | Autonomous navigation | ⛔ Blocked until locomotion and odometry exist |
