@@ -1,0 +1,5 @@
+29742 29699 29699   0  0.0  \_ /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_descrip
+29744 29742 29699   0  0.2  |   \_ ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spi
+29834 29744 29699   0 89.2  |       \_ ign gazebo server
+29840 29744 29699  19  158  |       \_ ign gazebo gui
+29759 29699 29699  -5 90.2  \_ python3 /home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidenc

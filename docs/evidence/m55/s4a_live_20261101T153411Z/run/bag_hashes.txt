@@ -1,0 +1,3 @@
+45a8fc78b1043799cee3453da97f8fa423723ff7819813edd570418c01b486ce  /root/spiderx_evidence/s4a_live_20261101T153411Z/bag/bag_0.db3
+93208576 bytes
+bag kept outside the repository under /root/spiderx_evidence/s4a_live_20261101T153411Z

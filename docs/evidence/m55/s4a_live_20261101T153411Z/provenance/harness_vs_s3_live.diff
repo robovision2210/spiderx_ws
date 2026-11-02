@@ -1,0 +1,132 @@
+--- tools_s3_live/cleanup.sh	2026-11-01 15:34:11.789837467 +0000
++++ tools/cleanup.sh	2026-11-01 15:37:14.632235172 +0000
+@@ -1,11 +1,11 @@
+ #!/usr/bin/env bash
+ # Idempotent stop of everything an S2 run starts (driver, teleop, bag, node, launch, Xvfb).
+ # Runs from the run wrapper's EXIT/INT/TERM trap, so it also runs after an interruption.
+-# S3 shadow adaptation: the S3 driver's name too; the locomotion node is started by the launch here,
++# S3 shadow adaptation: the S3 driver's name too (S4a shadow: and the S4a driver's); the locomotion node is started by the launch here,
+ # so it stops with the launch (SIGINT to the launch group) and only a leftover is killed after it.
+ RUN=$1; EVT=$(dirname "$RUN")/tools
+ echo "[$(date -u +%T)] cleanup start"
+-pkill -INT -f "s[23]_driver.py" 2>/dev/null; sleep 1; pkill -KILL -f "s[23]_driver.py" 2>/dev/null
++pkill -INT -f "s[23]_driver.py|s4a_driver.py" 2>/dev/null; sleep 1; pkill -KILL -f "s[23]_driver.py|s4a_driver.py" 2>/dev/null
+ pkill -KILL -f "m55_teleop_keyboard" 2>/dev/null
+ pkill -INT -f "ros2 bag record" 2>/dev/null; sleep 2; pkill -KILL -f "ros2 bag record" 2>/dev/null
+ if [ -f "$RUN/node.pid" ]; then NP=$(cat "$RUN/node.pid"); kill -INT -- -"$NP" 2>/dev/null; sleep 3; kill -KILL -- -"$NP" 2>/dev/null; fi
+@@ -13,4 +13,4 @@
+ pkill -KILL -f "m55_locomotion_node" 2>/dev/null
+ [ -f "$RUN/xvfb.pid" ] && kill -TERM "$(cat "$RUN/xvfb.pid")" 2>/dev/null
+ echo "[$(date -u +%T)] cleanup done; remaining:"
+-pgrep -af "ign gazebo|gz sim|parameter_bridge|robot_state_publisher|ros2 launch|Xvfb|spawner|m55_|s[23]_driver|ros2 bag|strace" | grep -v -E "pgrep|cleanup.sh" || echo none
++pgrep -af "ign gazebo|gz sim|parameter_bridge|robot_state_publisher|ros2 launch|Xvfb|spawner|m55_|s[23]_driver|s4a_driver|ros2 bag|strace" | grep -v -E "pgrep|cleanup.sh" || echo none
+--- tools_s3_live/prelaunch_checks.sh	2026-11-01 15:34:11.791000499 +0000
++++ tools/prelaunch_checks.sh	2026-11-01 15:37:14.661031138 +0000
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env bash
+-# S3 live pre-launch checks (the shadow-rehearsal checks for the ENABLED build: gates expected M55
+-# True, M61 and M6.0-D False): the run-local env.sh resolves gz_ros2_control to the r2 overlay.
++# S4a live pre-launch checks (the S3 live checks for the ENABLED build: gates expected M55 True,
++# M61 and M6.0-D False): the run-local env.sh resolves gz_ros2_control to the r2 overlay.
+ # Usage: prelaunch_checks.sh <tools dir>   Ends with "PRELAUNCH VERDICT: PASS" or "... FAIL".
+ EVT=$1
+ source $EVT/env.sh
+--- tools_s3_live/premotion_checks.sh	2026-11-01 15:34:11.791077889 +0000
++++ tools/premotion_checks.sh	2026-11-01 15:37:14.663593911 +0000
+@@ -1,10 +1,11 @@
+ #!/usr/bin/env bash
+ # S3 shadow pre-shadow checks (the Phase C pre-motion checks, adapted to the free-base launch): run
+-# while s3_shadow_run.sh waits after the node is up. Read-only: no goal, publisher or parameter
++# while s4a_shadow_run.sh waits after the node is up. Read-only: no goal, publisher or parameter
+ # change. Adaptations: the r2 overlay and its provenance; the launch's own locomotion node is
+ # expected (in this launch's session); the weld check is replaced by settle_check.py (free base);
+-# the simulator server pid is kept for the exit observation. LIVE: the node is in DISPATCH mode
+-# and its action client is the action's only client; no command-topic publisher.
++# the simulator server pid is kept for the exit observation. LIVE (the S3 live checks): the node is
++# in DISPATCH mode and its action client is the action's only client; no command-topic publisher;
++# no driver or teleop process yet (s4a_driver too).
+ # Writes RUN/premotion/ and ends with "PREMOTION VERDICT: PASS" or "... FAIL: <items>".
+ # Usage: premotion_checks.sh <run dir>
+ RUN=$1; EVT=$(dirname "$RUN")/tools; D=$RUN/premotion; mkdir -p $D
+@@ -86,7 +87,7 @@
+ CTL=$(timeout 30 ros2 control list_controllers 2>&1 | strip)
+ ACT=$(timeout 30 ros2 action info /leg_trajectory_controller/follow_joint_trajectory 2>&1)
+ TOP=$(timeout 30 ros2 topic info /leg_trajectory_controller/joint_trajectory 2>&1)
+-FORB=$(pgrep -af "teleop|s[23]_driver" | grep -v -E "pgrep|premotion_checks" || true)
++FORB=$(pgrep -af "teleop|s[23]_driver|s4a_driver" | grep -v -E "pgrep|premotion_checks" || true)
+ NODEP=$(pgrep -f "spiderx_controller/m55_locomotion_node" | tr '\n' ' '); NODEP=$(echo $NODEP)
+ NODESID=$(for p in $NODEP; do ps -o sid= -p $p | tr -d ' '; done | sort -u | tr '\n' ' '); NODESID=$(echo $NODESID)
+ NINFO=$(timeout 30 ros2 node info /spiderx_locomotion 2>&1)
+--- tools_s3_live/watchdog.sh	2026-11-01 15:34:11.791649136 +0000
++++ tools/watchdog.sh	2026-11-01 15:37:14.665863633 +0000
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# S3 live run-local safety net (the Phase C watchdog): if the session is interrupted and the
++# S4a live run-local safety net (the Phase C watchdog): if the session is interrupted and the
+ # deadline passes, stop everything the run started (cleanup.sh, which ends with stage_stop.sh), then
+ # restore and verify the disabled state (restore_cmd.sh: the clean restore of the disabled baseline).
+ # Exits without acting when RUN/stopped.flag exists.
+--- tools_s3_live/restore_cmd.sh	2026-11-01 15:34:11.791200883 +0000
++++ tools/restore_cmd.sh	2026-11-01 15:37:14.666570473 +0000
+@@ -1,10 +1,10 @@
+ #!/usr/bin/env bash
+-# S3 live restore (the Phase C restore_cmd.sh): the exact disabled baseline d918799, the
++# S4a live restore (the S3 live restore_cmd.sh): the exact disabled baseline e5899f4, the
+ # toolchain-only clean rebuild with st59site confined to the build, the run's pid files, and the
+ # enabling branch deleted only after every verification passed (enforced by the script).
+-R=/root/spiderx_evidence/s3_free_base_20261101T115002Z; B=$(cat $R/enabling_branch.txt)
++R=/root/spiderx_evidence/s4a_live_20261101T153411Z; B=$(cat $R/enabling_branch.txt)
+ cd /home/user/spiderx_ws && env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+-  bash scripts/m61_restore_and_verify_disabled.sh --base d91879989138543f43b6c6733217669b773c0337 \
++  bash scripts/m61_restore_and_verify_disabled.sh --base e5899f40482891b9eba026c40de97daa3931d84a \
+   --evidence $R/restore --enabling-ref "$B" --ros-setup /opt/mm/activate.sh \
+   --build-cmd 'rm -rf build install && PYTHONPATH=/opt/mm/st59site colcon build --symlink-install' \
+   --launch-pid-file $R/run/launch.pid --xvfb-pid-file $R/run/xvfb.pid --delete-enabling-branch
+--- tools_s3_live/s3_live_run.sh	2026-11-01 15:34:11.791337062 +0000
++++ tools/s4a_live_run.sh	2026-11-01 15:37:14.664960854 +0000
+@@ -1,18 +1,18 @@
+ #!/usr/bin/env bash
+-# S3 LIVE run (ONE free-base attempt; enabled build: M55 gate True, M61 and M6.0-D False): the
+-# shadow-rehearsal-2 run script, adapted only for the enabled build and the live driver
+-# (s3_live_run.diff): the driver runs WITHOUT --shadow-rehearsal; no settle bag (one recorder, the
+-# command the committed scorer reads); the Phase C screenshot after a completed script. As before:
++# S4a LIVE run (ONE free-base attempt; enabled build: M55 gate True, M61 and M6.0-D False): the S4a
++# shadow run script, adapted only for live operation (harness_vs_s4a_shadow.diff): the S4a driver in
++# its default LIVE mode (no --shadow-rehearsal); the pre-arm checks are the S3 live DISPATCH checks;
++# one recorder and the screenshot after a completed script, as before. As before:
+ #  1. the launch itself starts the M5.5 node (SHADOW: no action client, sends nothing; its evidence in
+ #     RUN/node): no separate node, no m61a preflight (fixed base only); the launch's node is reniced
+ #     to -5, as Phase C started its node;
+ #  3. once the node is up the run waits for the operator's pre-shadow checks (premotion_checks.sh,
+ #     settle_check.py, one screenshot): go.flag starts the S3 script; abort.flag, or no decision
+ #     within PREMOTION_WAIT_S, stops with no key pressed;
+-#  4. the S3 driver (scripts/s3/s3_driver.py, LIVE/default mode) replaces the S2 driver; its exit
++#  4. the S4a driver (scripts/s4/s4a_driver.py, LIVE/default mode) replaces the S3 driver; its exit
+ #     code is kept; one screenshot after a completed script (driver exit 0, launch up, <= 15 s);
+ #  5. before the stop, strace (signals only, no system calls) observes the simulator server's own exit.
+-# Usage: s3_shadow_run.sh <run dir> <bag dir>
++# Usage: s4a_live_run.sh <run dir> <bag dir>
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools; WS=/home/user/spiderx_ws
+ PREMOTION_WAIT_S=${PREMOTION_WAIT_S:-1500}
+ source $EVT/env.sh
+@@ -59,7 +59,7 @@
+ BP=$!; sleep 4
+ ( sleep 120; top -b -n1 -w 160 | head -22 > $RUN/captures/top_during.txt;
+   ps -o pid,ni,pcpu,args -C ruby,python3,parameter_bridge,robot_state_publisher -w | cut -c1-160 >> $RUN/captures/top_during.txt ) &
+-step "driver"; python3 $WS/scripts/s3/s3_driver.py --out $RUN/driver > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
++step "driver"; python3 $WS/scripts/s4/s4a_driver.py --out $RUN/driver > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
+ sleep 3; step "captures after"; cap after
+ kill -INT -- -$BP 2>/dev/null; for i in $(seq 1 30); do pgrep -g $BP >/dev/null || break; sleep 0.5; done
+ step "bag stopped"; pkill -f m55_teleop_keyboard 2>/dev/null
+--- tools_s3_live/s3_live_guarded.sh	2026-11-01 15:34:11.791264816 +0000
++++ tools/s4a_live_guarded.sh	2026-11-01 15:37:14.665501767 +0000
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+-# The S3 live run with cleanup armed BEFORE launch (as phase_c_guarded.sh): cleanup.sh runs on
++# The S4a live run with cleanup armed BEFORE launch (as phase_c_guarded.sh): cleanup.sh runs on
+ # success, failure or interruption.
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools
+ mkdir -p "$RUN"
+ trap 'bash "$EVT/cleanup.sh" "$RUN" >> "$RUN/cleanup.log" 2>&1' EXIT INT TERM
+-bash "$EVT/s3_live_run.sh" "$RUN" "$BAG"
++bash "$EVT/s4a_live_run.sh" "$RUN" "$BAG"
