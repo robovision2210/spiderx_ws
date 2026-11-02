@@ -1,8 +1,10 @@
 # S4: interactive keyboard teleop validation: plan (design only)
 
-Date: 2026-11-01, branch `claude/spiderx-s3-preparation`.
+Date: 2026-11-01. Written on branch `claude/spiderx-s3-preparation`; the S4a decisions and corrections were added on `claude/spiderx-s4a-preparation`.
 
-**Status: PLAN ONLY; NOTHING HERE IS AUTHORIZED.** Each stage below needs its own owner authorization, its own local enabling branch (never pushed) and one launch. The dispatch gates stay `False` on every pushed commit.
+**Status: S4a PASSED; S4b–S4e PLAN.** S4a level-0 reverse-and-return validation passed in simulation using automated input through the keyboard-teleop path (2026-11-01, §3.1, [evidence](evidence/m55/s4a_live_20261101T153411Z/README.md)). **No further S4 stage is authorized to run.** Each stage needs its own owner authorization, its own local enabling branch (never pushed) and one launch. The dispatch gates stay `False` on every pushed commit.
+
+**Automated keyboard path versus human operation.** Every Cloud stage (S4a–S4d) drives the real `m55_teleop_keyboard` from a script, through a pseudo-terminal with emulated key repeat. That tests the teleop's key decoding, hold window, lease and service calls, and the node's response. It is **not** human operation. A person at a physical keyboard is only S4e, on the owner's PC: real key repeat and reaction times, checks 1.11 and 1.13.
 
 Sources:
 - [M5.5 §8 teleop and §10 phases 3–4](M55_KEYBOARD_WALKING.md);
@@ -25,7 +27,7 @@ Sources:
 
 | Item | Status |
 |---|---|
-| Reverse motion (`s`) | Never on contact. The approved S3 scope was forward only; S2 ran reverse on the welded base only |
+| Reverse motion (`s`) | Never on contact in S3 (forward only); S2 ran reverse on the welded base only. S4a later ran one level-0 reverse cycle on contact (§3.1) |
 | Levels 1–2 (`+`/`-`, 40 and 60 mm strides) | Never on contact; S2 fixed base only. The PATH doc forbids combining S3's first contact with any level above 0 |
 | Key release mid-cycle; `home`; reversal; speed change at a boundary | Never on contact (S0 and the shadow runs only) |
 | Teleop close or kill (lease loss), and `r`/`a` after an estop | Never on contact |
@@ -47,11 +49,35 @@ Wherever a stage needs a value these criteria do not give (stop limits, per-leve
 
 | Stage | Purpose | Script (level, keys) | Budget |
 |---|---|---|---|
-| **S4a (recommended first)** | First contact in **reverse**, at the validated level 0 | arm; hold `s` for 1 cycle, space at the boundary; hold `w` for 1 cycle back, space; estop (`x` with a goal in flight); 10 s hold; `q` | ≤ 19 goals, 1 cancel; net ≈ 0 m |
-| S4b | Operator input on contact, level 0 | release mid-cycle (READY by the 1.7 sim bound); `h` home; reversal at a boundary; teleop kill (lease, check 1.9); `r`, `a` after an estop | To be fixed in its authorization (≈ 30 goals, 1 cancel) |
-| S4c | First contact at level 1, then at level 2, with the owner's go/no-go between them | 1 cycle forward and 1 back per level; space at each boundary | ≤ 36 goals, plus 1 cancel for the estop |
+| **S4a (passed 2026-11-01, §3.1)** | First contact in **reverse**, at the validated level 0 | settle, arm; hold `s` for 1 cycle, space at the boundary; hold `w` for 1 cycle back, space; estop (`x` with a goal in flight); 10 s hold; `q` | ≤ 19 goals, 1 cancel; the return need not land on the arm pose |
+| S4b | Operator input on contact, level 0 | release mid-cycle (READY by the 1.7 sim bound); `h` home; reversal at a boundary; teleop kill (lease, check 1.9). After a mid-phase estop, `r` gives DISARMED, but **re-arm is not assumed to succeed**: the node accepts arm only at the neutral stance or its own rest record, and a cancelled goal clears the record. No recovery motion is planned | Unresolved; fixed in its authorization |
+| S4c | First contact at level 1, then at level 2, with the owner's go/no-go between them | 1 cycle forward and 1 back per level; space at each boundary; optionally one estop exercise | Cycles: 2 levels × 2 cycles × 9 = 36 goals. One estop exercise would add its in-flight goal and the cancel: **at most 37 goals and 1 cancel**. Unresolved |
 | S4d | The S4 acceptance run (§2) | 0.3 m forward at level 3/3 (5 cycles of 60 mm), then back; release, speed change, reversal, `home`, `x`, close | ≈ 90 cycle goals plus checks, fixed in its authorization |
 | S4e (optional, owner's PC) | A physical keyboard | checks 1.11 (key repeat) and 1.13 (crash path) on the owner's machine | Owner-run |
+
+### 3.1 S4a decisions (owner, 2026-11-01)
+- **Scope.** Level 0 only: settle and arm; one reverse cycle stopped at its boundary; one forward return cycle stopped at its boundary; a final scripted estop with one goal in flight; the existing 10 s sim-time contact hold; quit.
+- **Budget.** At most 19 goals and 1 cancel. No faster level, extra cycle, recovery motion or retry.
+- **Cycle rules.** Measured along body +y in the frame of the cycle's start boundary, with yaw wrapped.
+
+  | Cycle | Live stop if outside | Acceptance |
+  |---|---|---|
+  | Reverse | [−40, 0] mm | [−30, −10] mm |
+  | Forward return | [0, 40] mm | [10, 30] mm |
+
+  The return is measured from the end of the reverse cycle; it need not land on the arm pose.
+- **Unchanged.** Travel cap 0.15 m. Every other approved S3 safety and acceptance limit.
+- **Tools** (offline, `claude/spiderx-s4a-preparation`): `scripts/s4/s4a_driver.py`, `scripts/s4/score_s4a.py`, and the `local/m55-s4a-*` restore pattern. The driver records a timestamp immediately before and after each key write, with the write result.
+- **Results.**
+  - Shadow rehearsal: PASS, shadow only ([evidence](evidence/m55/s4a_shadow_20261101T150658Z/README.md)).
+  - One live attempt: PASS, A1–A8 ([evidence](evidence/m55/s4a_live_20261101T153411Z/README.md)).
+    - Reverse −19.992 mm, return +20.024 mm, net +0.031 mm after the return.
+    - Drift ≤ 14 µm lateral and ≤ 3.8e-5 rad yaw; tilt ≤ 0.0026 rad.
+    - Maximum tracking error 0.00225 rad. Goal 19 is N/A under the estop exception (17/17 checks).
+    - Measured 10 s hold.
+    - 19 goals, 1 cancel.
+  - The simulator server exited 0, with no forced termination, and the restore was DISABLED AND VERIFIED.
+  - This was automated input through the keyboard-teleop path, not human operation.
 
 **Why S4a first.** It adds exactly one physical unknown: reverse on contact. Everything else stays as validated in S3:
 - the same speed level, plant, launch, harness, stops and evidence;
@@ -82,20 +108,21 @@ Its acceptance bands already exist: M5.5 phase 3 says "10–30 mm forward / back
 - **Cleanup.** The tested watchdog and trap: SIGINT, the server exit observed, then the full restore (clean rebuild, `--delete-enabling-branch`). The result must be DISABLED AND VERIFIED with all three gates `False`. A failed script never waives cleanup.
 
 ## 5. Offline work needed before any S4 run (separately authorized; no motion)
-1. **S4 driver** (`scripts/s4/`). The S3 driver is forward-only by design and its tests enforce that. The new driver:
+1. **S4 driver** (`scripts/s4/`; **done for S4a only**, `s4a_driver.py`; S4b–S4d are not implemented). The S3 driver is forward-only by design and its tests enforce that. The new driver:
    - reuses the tested S3 helpers: fresh samples, debounce, the body frame, the settle check and `--shadow-rehearsal`;
    - adds reverse and mirrored checks, level keys at boundaries, `home`, release mid-cycle, a lease exercise and reset/re-arm;
    - is tested on the in-memory bench.
 
    It should record a timestamp **before** each key write as well as after. That removes the inferred-window issue S3-r1 had to handle retrospectively.
-2. **S4 scorer, written before any run.** It covers the §2 criteria and the stage's bands, and specifies in advance the S3-r1 bracketed estop exception (not retrospectively). Missing evidence is UNMEASURED.
+2. **S4 scorer, written before any run** (**done for S4a only**, `score_s4a.py`). It covers the §2 criteria and the stage's bands. It specifies in advance the bracketed estop exception, using the recorded before- and after-write times rather than a retrospective inference. Missing evidence is UNMEASURED.
 3. **One shadow rehearsal of each stage's script** (as P4 for S3), with no goal reaching the controller.
 
 ## 6. Owner decisions needed
-1. **Reverse stop rule:** completed reverse-cycle progress > 0 or < −40 mm along body +y (the mirror of S3's rule). Acceptance band −10 to −30 mm (M5.5 phase 3). Confirm.
-2. **Travel limits:** keep 0.15 m for S4a to c; set one for S4d. S3 used 0.15 m for 0.12 m planned.
+1. ~~Reverse stop rule~~ **Decided for S4a** (§3.1).
+2. **Travel limits:** 0.15 m is decided for S4a. **Unresolved** for S4b–S4d; S4d needs its own. S3 used 0.15 m for 0.12 m planned.
 3. **Per-cycle bands for levels 1–2** (40 and 60 mm strides); none is specified today.
 4. **Whether S4 acceptance needs a human at a physical keyboard** (S4e), or whether the Cloud pseudo-terminal emulation is enough for simulation.
 5. **The order S4a → S4b → S4c → S4d**, each with its own authorization and go/no-go. This plan recommends it; combining stages needs the owner's explicit choice.
+6. **For S4b–S4d,** these all remain unresolved: scripts, budgets, stop limits, whether an estop exercise is included, and authorizations. This plan does not change their acceptance criteria (§2).
 
-**Not authorized by this plan:** any launch, enabling branch, goal, cancel, driver or scorer implementation, S4 run, hardware or navigation work.
+**Not authorized by this plan:** any launch, enabling branch, goal, cancel, S4b–S4e execution, S4c–S4e implementation, hardware or navigation work. The S4a tools ran once each in shadow and live, as authorized (§3.1).

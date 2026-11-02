@@ -1,0 +1,730 @@
+{
+ "bag_topics": {
+  "/cmd_vel": {
+   "messages": 2976,
+   "type": "geometry_msgs/msg/Twist"
+  },
+  "/joint_states": {
+   "messages": 6091,
+   "type": "sensor_msgs/msg/JointState"
+  },
+  "/leg_trajectory_controller/controller_state": {
+   "messages": 2888,
+   "type": "control_msgs/msg/JointTrajectoryControllerState"
+  },
+  "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": {
+   "messages": 0,
+   "present_in_bag": true,
+   "type": "control_msgs/action/FollowJointTrajectory_FeedbackMessage"
+  },
+  "/leg_trajectory_controller/joint_trajectory": {
+   "messages": 0,
+   "present_in_bag": false,
+   "type": null
+  },
+  "/spiderx/locomotion/status": {
+   "messages": 638,
+   "type": "std_msgs/msg/String"
+  },
+  "/spiderx/sim/world_poses": {
+   "messages": 16071,
+   "type": "tf2_msgs/msg/TFMessage"
+  }
+ },
+ "controller_state": {
+  "max_reference_change_rad": 0.0,
+  "messages": 2888,
+  "reference_points_nonempty": true
+ },
+ "joint_states_main": {
+  "max_joint_motion_joint": "rr_foot_joint",
+  "max_joint_motion_rad": 5.888278527788554e-12,
+  "max_receive_gap_s": 0.33054327964782715,
+  "max_stamp_gap_s": 0.010000000000005116,
+  "rtf": 0.19424543340088773,
+  "rtf_10s_windows_max": 0.21431328655573353,
+  "rtf_10s_windows_min": 0.17229825072755417,
+  "samples": 6091,
+  "sim_s": 60.89999999999999,
+  "wall_s": 313.5208840370178
+ },
+ "launch_log": {
+  "aborted": 0,
+  "error_lines": [
+   "[ign gazebo-1] [ERROR] [1793546207.001214704] [gz_ros2_control]: robot_state_publisher service not available, waiting again..."
+  ],
+  "exception": 0,
+  "jtc_cancel_request": 0,
+  "jtc_canceling": 0,
+  "jtc_goal_accepted": 0,
+  "jtc_goal_received": 0,
+  "process_died": 0,
+  "process_died_lines": [],
+  "process_exits": [
+   "create-3",
+   "spawner-5",
+   "spawner-8",
+   "parameter_bridge-4",
+   "parameter_bridge-6",
+   "robot_state_publisher-2",
+   "m55_locomotion_node-7",
+   "ign gazebo-1"
+  ],
+  "sending_signal": 0,
+  "sigkill": 0,
+  "signal_sent_by": 0,
+  "sigterm": 0,
+  "terminate_called": 0,
+  "what": 0
+ },
+ "node_events": {
+  "cancel": [
+   {
+    "event": "cancel_sent",
+    "n": 89,
+    "seq": 19,
+    "state": "FAULTED",
+    "wall": 3167.045494141
+   },
+   {
+    "code": 0,
+    "event": "cancel_response",
+    "n": 92,
+    "seq": 19,
+    "state": "FAULTED",
+    "wall": 3167.054516204
+   }
+  ],
+  "counts": {
+   "cancel_response": 1,
+   "cancel_sent": 1,
+   "fault": 1,
+   "goal_response": 19,
+   "goal_sent": 19,
+   "phase_done": 18,
+   "refused": 2,
+   "request": 6,
+   "result": 19,
+   "transition": 11
+  },
+  "faults": [
+   {
+    "event": "fault",
+    "n": 87,
+    "reason": "estop",
+    "state": "STARTING",
+    "wall": 3167.045494141
+   }
+  ],
+  "refused": [
+   {
+    "event": "refused",
+    "n": 94,
+    "reason": "faulted_reset_required",
+    "request": "disarm",
+    "state": "FAULTED",
+    "wall": 3217.826184317
+   },
+   {
+    "event": "refused",
+    "n": 96,
+    "reason": "faulted_reset_required",
+    "request": "disarm",
+    "state": "FAULTED",
+    "wall": 3217.83329113
+   }
+  ],
+  "results_not_succeeded": [
+   {
+    "error_code": 0,
+    "error_string": "shadow cancel",
+    "event": "result",
+    "n": 93,
+    "seq": 19,
+    "state": "FAULTED",
+    "status": 5,
+    "wall": 3167.054516204
+   }
+  ],
+  "transitions": [
+   [
+    "DISARMED",
+    "READY",
+    "arm"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "STOPPING",
+    "stop"
+   ],
+   [
+    "STOPPING",
+    "READY",
+    "stopped"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "STOPPING",
+    "stop"
+   ],
+   [
+    "STOPPING",
+    "READY",
+    "stopped"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "FAULTED",
+    "estop"
+   ]
+  ]
+ },
+ "node_final_status.json": {
+  "command_rejections": {},
+  "cycles": 0,
+  "dispatch_gate": false,
+  "faults": [
+   "estop"
+  ],
+  "goals_recorded": 19,
+  "mode": "shadow",
+  "state": "FAULTED"
+ },
+ "node_shadow_goals.json": 19,
+ "s4a_controller_traffic": {
+  "action_clients_after": {
+   "client_nodes": [
+    "/rosbag2_recorder"
+   ],
+   "count": 1
+  },
+  "action_clients_before": {
+   "client_nodes": [],
+   "count": 0
+  },
+  "bag_action_feedback_messages": 0,
+  "bag_joint_trajectory_messages": 0,
+  "controller_reference_max_change_rad": 0.0,
+  "jtc_log_goal_or_cancel_lines": 0
+ },
+ "s4a_driver": {
+  "cycle_checks": [
+   {
+    "cycle": 1,
+    "cycles_count": -1,
+    "direction": -1,
+    "forward_m": -2.967349886453306e-10,
+    "lateral_m": -3.762978660184701e-17,
+    "progress_sign_bound": "Signed progress condition not applicable: dispatch disabled.",
+    "sim": 52.02,
+    "yaw_rad": 1.6956752406028995e-14
+   },
+   {
+    "cycle": 2,
+    "cycles_count": 0,
+    "direction": 1,
+    "forward_m": -3.3278181155021273e-10,
+    "lateral_m": -3.976448484075047e-16,
+    "progress_sign_bound": "Signed progress condition not applicable: dispatch disabled.",
+    "sim": 71.29,
+    "yaw_rad": 1.7241677056301727e-14
+   }
+  ],
+  "cycle_reference": {
+   "cycles": 0,
+   "pose": {
+    "xy": [
+     5.932443047887478e-12,
+     -9.022865638788679e-09
+    ],
+    "yaw": -2.1096442542629184e-11
+   },
+   "sim": 33.07
+  },
+  "direction_count_sequence": [
+   [
+    -1,
+    -1
+   ],
+   [
+    1,
+    0
+   ]
+  ],
+  "estop_hold": {
+   "from_sim_s": 71.6,
+   "last_sim_s": 81.64,
+   "max_joint_motion_rad": 5.888781247688435e-12,
+   "max_tilt_rad": 1.541388099311085e-07,
+   "min_z_m": 0.05449529463546648,
+   "samples": 102,
+   "within_A6_limits": true
+  },
+  "expected_goals": 19,
+  "forward_checked_before_estop_key": true,
+  "fresh_samples": 612,
+  "goal_seqs_seen": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19
+  ],
+  "key_writes": [
+   {
+    "key": "'a'",
+    "mono": 2967.8327,
+    "t_after_write": 2967.83268066,
+    "t_before_write": 2967.832637795,
+    "why": "arm",
+    "write_result": 1
+   },
+   {
+    "key": "'s'",
+    "mono": 2967.8832,
+    "t_after_write": 2967.883152842,
+    "t_before_write": 2967.883126508,
+    "why": "run R: one reverse cycle",
+    "write_result": 1
+   },
+   {
+    "key": "' '",
+    "mono": 3056.3348,
+    "t_after_write": 3056.334773698,
+    "t_before_write": 3056.334741393,
+    "why": "run R: one reverse cycle: stop at the cycle boundary",
+    "write_result": 1
+   },
+   {
+    "key": "'w'",
+    "mono": 3065.6962,
+    "t_after_write": 3065.696184148,
+    "t_before_write": 3065.6961583,
+    "why": "run F: one forward return cycle",
+    "write_result": 1
+   },
+   {
+    "key": "' '",
+    "mono": 3158.8424,
+    "t_after_write": 3158.842393239,
+    "t_before_write": 3158.842366233,
+    "why": "run F: one forward return cycle: stop at the cycle boundary",
+    "write_result": 1
+   },
+   {
+    "key": "'w'",
+    "mono": 3166.9417,
+    "t_after_write": 3166.941669928,
+    "t_before_write": 3166.941629947,
+    "why": "estop exercise",
+    "write_result": 1
+   },
+   {
+    "key": "'x'",
+    "mono": 3167.0443,
+    "t_after_write": 3167.044271597,
+    "t_before_write": 3167.044239053,
+    "why": "estop exercise: x",
+    "write_result": 1
+   },
+   {
+    "key": "'q'",
+    "mono": 3217.8191,
+    "t_after_write": 3217.819118818,
+    "t_before_write": 3217.819089869,
+    "why": "quit teleop",
+    "write_result": 1
+   }
+  ],
+  "key_writes_all_result_1": true,
+  "result": "script complete (shadow rehearsal: dispatch disabled; not acceptance)",
+  "reverse_checked_before_forward_key": true,
+  "settle": {
+   "max_tilt_rad": 1.541388099311085e-07,
+   "samples": 103,
+   "sim_from_s": 23.04,
+   "sim_to_s": 33.05,
+   "z_mean_m": 0.054499705979651446,
+   "z_range_m": 9.03115922708253e-06
+  },
+  "shadow_rehearsal": {
+   "driver_gates": {
+    "driver_process": {
+     "LIVE_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py"
+     ],
+     "M55_LOCOMOTION_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py"
+     ],
+     "M61_LIVE_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py"
+     ]
+    },
+    "fresh_interpreter": {
+     "LIVE_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py"
+     ],
+     "M55_LOCOMOTION_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py"
+     ],
+     "M61_LIVE_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py"
+     ]
+    }
+   },
+   "node_mode_verified": true,
+   "note": "dispatch disabled: no trajectory was sent; per-cycle displacements are measured and recorded, not acceptance",
+   "progress_sign_bound": "Signed progress condition not applicable: dispatch disabled."
+  },
+  "shadow_verified_record": {
+   "driver_gates": {
+    "driver_process": {
+     "LIVE_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py"
+     ],
+     "M55_LOCOMOTION_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py"
+     ],
+     "M61_LIVE_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py"
+     ]
+    },
+    "fresh_interpreter": {
+     "LIVE_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py"
+     ],
+     "M55_LOCOMOTION_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py"
+     ],
+     "M61_LIVE_DISPATCH_ENABLED": [
+      false,
+      "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py"
+     ]
+    }
+   },
+   "node_dispatch_gate": false,
+   "node_mode": "shadow",
+   "progress_sign_bound": "Signed progress condition not applicable: dispatch disabled."
+  },
+  "x": {
+   "fault_at_or_after_write_start": true,
+   "fault_minus_write_start_s": 0.00125508799965246,
+   "node_cancel_sent": {
+    "event": "cancel_sent",
+    "n": 89,
+    "seq": 19,
+    "state": "FAULTED",
+    "wall": 3167.045494141
+   },
+   "node_fault": {
+    "event": "fault",
+    "n": 87,
+    "reason": "estop",
+    "state": "STARTING",
+    "wall": 3167.045494141
+   },
+   "t_after_write": 3167.044271597,
+   "t_before_write": 3167.044239053,
+   "write_result": 1,
+   "write_s": 3.2543999623158015e-05
+  }
+ },
+ "s4a_exits": {
+  "locomotion_node_lines": [
+   "[INFO] [m55_locomotion_node-7]: process has finished cleanly [pid 18355]"
+  ],
+  "server_exit_strace": [
+   "+++ exited with 0 +++"
+  ]
+ },
+ "s4a_goals": {
+  "cancel_response": 1,
+  "cancel_sent": 1,
+  "canceled_status5": 1,
+  "expected": 19,
+  "last_goal_result": {
+   "error_code": 0,
+   "error_string": "shadow cancel",
+   "event": "result",
+   "n": 93,
+   "seq": 19,
+   "state": "FAULTED",
+   "status": 5,
+   "wall": 3167.054516204
+  },
+  "levels": [
+   0
+  ],
+  "phase_done": 18,
+  "planned_shadow_goals": 19,
+  "result_status_counts": {
+   "4": 18,
+   "5": 1
+  },
+  "sequence_b_from_b_to_direction": [
+   [
+    9,
+    8,
+    -1
+   ],
+   [
+    8,
+    7,
+    -1
+   ],
+   [
+    7,
+    6,
+    -1
+   ],
+   [
+    6,
+    5,
+    -1
+   ],
+   [
+    5,
+    4,
+    -1
+   ],
+   [
+    4,
+    3,
+    -1
+   ],
+   [
+    3,
+    2,
+    -1
+   ],
+   [
+    2,
+    1,
+    -1
+   ],
+   [
+    1,
+    0,
+    -1
+   ],
+   [
+    0,
+    1,
+    1
+   ],
+   [
+    1,
+    2,
+    1
+   ],
+   [
+    2,
+    3,
+    1
+   ],
+   [
+    3,
+    4,
+    1
+   ],
+   [
+    4,
+    5,
+    1
+   ],
+   [
+    5,
+    6,
+    1
+   ],
+   [
+    6,
+    7,
+    1
+   ],
+   [
+    7,
+    8,
+    1
+   ],
+   [
+    8,
+    9,
+    1
+   ],
+   [
+    0,
+    1,
+    1
+   ]
+  ],
+  "sequence_matches_script": true,
+  "succeeded_status4": 18
+ },
+ "s4a_hold_from_bag": {
+  "from_sim_s": 71.6,
+  "joint_state_samples": 1001,
+  "max_body_xy_change_m": 2.043941546056951e-10,
+  "max_joint_motion_rad": 5.888001581249265e-12,
+  "sim_span_s": 10.0,
+  "status_samples": 102,
+  "tilt_max_rad": 1.541388099311085e-07,
+  "z_min_m": 0.05449529463546648
+ },
+ "s4a_library": {
+  "node_library_json_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e"
+ },
+ "status": {
+  "body": {
+   "tilt_max": 1.541388099311085e-07,
+   "xy_first": [
+    5.932561244617011e-12,
+    -8.855051753130668e-09
+   ],
+   "xy_last": [
+    5.9319423080056745e-12,
+    -9.827551340609105e-09
+   ],
+   "xy_travel_m": 9.724995874786337e-10,
+   "yaw_change_rad": 5.4410092730774364e-14,
+   "z_max": 0.054504325794693866,
+   "z_min": 0.05449529463546646
+  },
+  "final": {
+   "boundary": 0,
+   "command_rejections": {},
+   "cycles": 0,
+   "faults": [
+    "estop"
+   ],
+   "goals_recorded": 19,
+   "phases_completed": 18,
+   "state": "FAULTED"
+  },
+  "joint_states_margin_to_0.5s": 0.3724444989998119,
+  "max_ages_s": {
+   "body_pose_age_s": 0.08647523499985255,
+   "graph_age_s": 1.0802477080001154,
+   "joint_states_age_s": 0.1275555010001881
+  },
+  "messages": 638,
+  "modes": [
+   [
+    "shadow",
+    false
+   ]
+  ],
+  "state_changes_seen_in_status": [
+   {
+    "bag_receipt_unix_s": 1793546356.027,
+    "sim_s_node_joint_state_stamp": 22.35,
+    "state": "DISARMED"
+   },
+   {
+    "bag_receipt_unix_s": 1793546411.067,
+    "sim_s_node_joint_state_stamp": 33.06,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793546411.178,
+    "sim_s_node_joint_state_stamp": 33.07,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793546411.227,
+    "sim_s_node_joint_state_stamp": 33.08,
+    "state": "WALKING"
+   },
+   {
+    "bag_receipt_unix_s": 1793546499.561,
+    "sim_s_node_joint_state_stamp": 50.36,
+    "state": "STOPPING"
+   },
+   {
+    "bag_receipt_unix_s": 1793546507.378,
+    "sim_s_node_joint_state_stamp": 52.02,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793546509.027,
+    "sim_s_node_joint_state_stamp": 52.36,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793546509.077,
+    "sim_s_node_joint_state_stamp": 52.38,
+    "state": "WALKING"
+   },
+   {
+    "bag_receipt_unix_s": 1793546602.068,
+    "sim_s_node_joint_state_stamp": 70.1,
+    "state": "STOPPING"
+   },
+   {
+    "bag_receipt_unix_s": 1793546608.629,
+    "sim_s_node_joint_state_stamp": 71.29,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793546610.229,
+    "sim_s_node_joint_state_stamp": 71.59,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793546610.271,
+    "sim_s_node_joint_state_stamp": 71.6,
+    "state": "FAULTED"
+   }
+  ]
+ }
+}

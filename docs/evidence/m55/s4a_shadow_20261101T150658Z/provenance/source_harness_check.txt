@@ -1,0 +1,3 @@
+== source harness copies 2026-11-01T15:11:56Z (committed copies at HEAD 7c1ecbc; the historical copies are not modified)
+PASS tools_s3_live = the S3 live run's committed harness (harness_SHA256SUMS.txt, 15 files)
+PASS tools_shadow2 = the S3 shadow-2 (P4 PASS) committed harness
