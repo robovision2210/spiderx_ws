@@ -1,0 +1,55 @@
+{
+ "A_install": "/root/spiderx_fresh_disabled_20261102T185957Z/install",
+ "B_install": "/home/user/spiderx_ws/install",
+ "differ": [
+  {
+   "A": [
+    "file",
+    "076d79728dfb68cd157961a0d46f8fceb3f694dc06e26a8a4859c410d4684340"
+   ],
+   "B": [
+    "file",
+    "68b7e76095a0a7d5db9c9190afb1f253b8ea74d12964b6309a031f8d79171d9b"
+   ],
+   "path": "setup.bash"
+  },
+  {
+   "A": [
+    "file",
+    "5f734817ae743bd06b1896f3224a94fee77e2e910ebe391a68ab32e359f5a5d1"
+   ],
+   "B": [
+    "file",
+    "ee7bfefd5a27410ced8a593ecc838bec62cc8f23549ac8ef356dcbb354fccd63"
+   ],
+   "path": "setup.ps1"
+  },
+  {
+   "A": [
+    "file",
+    "c5f9edd2d6c3e2a6419ecfda47a089bfc0644fa7202279ea3ca4f3a6c12987c3"
+   ],
+   "B": [
+    "file",
+    "21d38361e1105f3be3569c69c46ee4536464e5216ea633e69451dc1599e4a898"
+   ],
+   "path": "setup.sh"
+  },
+  {
+   "A": [
+    "file",
+    "e30670124f5c1859f57d71247f0adda7c81418dfdbaa4e180fbb6de5eb5ffce3"
+   ],
+   "B": [
+    "file",
+    "4229148441a0e9b557b375e4d8e24d768755ee7be1cccba6e074678561a72655"
+   ],
+   "path": "setup.zsh"
+  }
+ ],
+ "files_A": 359,
+ "files_B": 359,
+ "only_in_A": [],
+ "only_in_B": [],
+ "same": 355
+}
