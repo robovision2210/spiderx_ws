@@ -1,0 +1,200 @@
+--- tools_s4b_shadow/prelaunch_checks.sh	2026-11-02 09:23:27.105605595 +0000
++++ tools/prelaunch_checks.sh	2026-11-02 09:25:19.700142115 +0000
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env bash
+-# S4b shadow pre-launch checks (the S4a shadow checks, unchanged in function; the S3 shadow-2 checks; the r2 overlay, and all three gates expected
+-# False): the run-local env.sh resolves gz_ros2_control to the verified r2 overlay.
++# S4b live pre-launch checks (the S4a live checks, unchanged in function; ENABLED build: gates expected M55 True,
++# M61 and M6.0-D False): the run-local env.sh resolves gz_ros2_control to the r2 overlay.
+ # Usage: prelaunch_checks.sh <tools dir>   Ends with "PRELAUNCH VERDICT: PASS" or "... FAIL".
+ EVT=$1
+ source $EVT/env.sh
+@@ -26,12 +26,12 @@
+ echo "LD_LIBRARY_PATH entries:"; echo "$LD_LIBRARY_PATH" | tr ":" "\n"
+ LP=$(python3 -c "import os; from ament_index_python.packages import get_package_prefix as g; print(os.path.join(g(\"gz_ros2_control\"),\"lib\"))")
+ echo "launch-time plugin dir: $LP"; [ "$LP" = "$O/lib" ] || F=1
+-echo "== gates (fresh import; expected all three False)"
++echo "== gates (fresh import; expected M55 True, M61 False, M6.0-D False)"
+ ( cd / && python3 -c "
+ import importlib, os
+-want = {\"M55_LOCOMOTION_DISPATCH_ENABLED\": False, \"M61_LIVE_DISPATCH_ENABLED\": False, \"LIVE_DISPATCH_ENABLED\": False}
++want = {\"M55_LOCOMOTION_DISPATCH_ENABLED\": True, \"M61_LIVE_DISPATCH_ENABLED\": False, \"LIVE_DISPATCH_ENABLED\": False}
+ for mod, name in ((\"m55_contract\",\"M55_LOCOMOTION_DISPATCH_ENABLED\"),(\"m61_live_contract\",\"M61_LIVE_DISPATCH_ENABLED\"),(\"m6_live_contract\",\"LIVE_DISPATCH_ENABLED\")):
+     m = importlib.import_module(\"spiderx_controller.\"+mod); v = getattr(m, name)
+     print(name, v, os.path.realpath(m.__file__)); assert v is want[name] and os.path.realpath(m.__file__).startswith(\"/home/user/spiderx_ws/\")
+-print(\"PASS gates M55 False, M61 False, M6.0-D False, imported from this workspace\")" ) || F=1
++print(\"PASS gates M55 True, M61 False, M6.0-D False, imported from this workspace\")" ) || F=1
+ [ "$F" = 0 ] && echo "PRELAUNCH VERDICT: PASS" || echo "PRELAUNCH VERDICT: FAIL"
+--- tools_s4b_shadow/premotion_checks.sh	2026-11-02 09:23:27.105627716 +0000
++++ tools/premotion_checks.sh	2026-11-02 09:25:19.701051920 +0000
+@@ -2,10 +2,10 @@
+ # S3 shadow pre-shadow checks (the Phase C pre-motion checks, adapted to the free-base launch): run
+ # while s4a_shadow_run.sh waits after the node is up. Read-only: no goal, publisher or parameter
+ # change. Adaptations: the r2 overlay and its provenance; the launch's own locomotion node is
+-# expected (in this launch's session, no action client); the weld check is replaced by
+-# settle_check.py (free base); the simulator server pid is kept for the exit observation.
+-# S4a SHADOW (the S3 shadow-2 checks): the node in SHADOW mode with no action client, the action
+-# with no client, no command-topic publisher, and no driver or teleop process yet (s4a/s4b drivers too).
++# expected (in this launch's session); the weld check is replaced by settle_check.py (free base);
++# the simulator server pid is kept for the exit observation. LIVE (the S3 live checks): the node is
++# in DISPATCH mode and its action client is the action's only client; no command-topic publisher;
++# no driver or teleop process yet (s4a/s4b drivers too).
+ # Writes RUN/premotion/ and ends with "PREMOTION VERDICT: PASS" or "... FAIL: <items>".
+ # Usage: premotion_checks.sh <run dir>
+ RUN=$1; EVT=$(dirname "$RUN")/tools; D=$RUN/premotion; mkdir -p $D
+@@ -91,21 +91,22 @@
+ NODEP=$(pgrep -f "spiderx_controller/m55_locomotion_node" | tr '\n' ' '); NODEP=$(echo $NODEP)
+ NODESID=$(for p in $NODEP; do ps -o sid= -p $p | tr -d ' '; done | sort -u | tr '\n' ' '); NODESID=$(echo $NODESID)
+ NINFO=$(timeout 30 ros2 node info /spiderx_locomotion 2>&1)
+-NAC=$(sed -n '/Action Clients:/,$p' <<< "$NINFO" | grep -c "^    /" || true)
++NAC=$(sed -n '/Action Clients:/,$p' <<< "$NINFO" | grep -c "^    /leg_trajectory_controller/follow_joint_trajectory: control_msgs/action/FollowJointTrajectory$" || true)
++NACALL=$(sed -n '/Action Clients:/,$p' <<< "$NINFO" | grep -c "^    /" || true)
+ NPUB=$(sed -n '/Publishers:/,/Service Servers:/p' <<< "$NINFO" | grep -c "joint_trajectory" || true)
+-NSH=$(grep -c "locomotion node up in SHADOW mode (dispatch gate False)" $RUN/launch.log)
++NSH=$(grep -c "locomotion node up in DISPATCH mode (dispatch gate True)" $RUN/launch.log)
+ { echo "== ros2 control list_controllers"; echo "$CTL"; echo "== ros2 action info"; echo "$ACT"
+   echo "== ros2 topic info joint_trajectory"; echo "$TOP"; echo "== driver/teleop processes"; echo "${FORB:-none}"
+   echo "== locomotion node processes: ${NODEP:-none} (session ${NODESID:-none}; launch session $LP)"
+   echo "== ros2 node info /spiderx_locomotion"; echo "$NINFO"
+-  echo "action clients of the node: $NAC; publishers towards joint_trajectory: $NPUB; launch-log SHADOW lines: $NSH"
++  echo "node action clients: $NACALL, of which the trajectory action: $NAC; publishers towards joint_trajectory: $NPUB; launch-log DISPATCH lines: $NSH"
+   echo "== ros2 node list"; timeout 30 ros2 node list 2>&1; } > $D/ownership.txt
+ [ "$(grep -cE "^(joint_state_broadcaster|leg_trajectory_controller) .*[[:space:]]active$" <<< "$CTL")" = 2 ] || F="$F controllers"
+-grep -q "^Action clients: 0$" <<< "$ACT" && grep -q "^Action servers: 1$" <<< "$ACT" || F="$F action_clients"
++grep -q "^Action clients: 1$" <<< "$ACT" && grep -q "^    /spiderx_locomotion$" <<< "$ACT" && grep -q "^Action servers: 1$" <<< "$ACT" || F="$F action_clients"
+ grep -q "^Publisher count: 0$" <<< "$TOP" || F="$F command_publishers"
+ [ -z "$FORB" ] || F="$F forbidden_process"
+ [ "$(echo $NODEP | wc -w)" = 1 ] && [ "$NODESID" = "$LP" ] || F="$F node_process"
+-[ "$NAC" = 0 ] && [ "$NPUB" = 0 ] && grep -q "^  Action Clients:" <<< "$NINFO" || F="$F node_clients"
++[ "$NAC" = 1 ] && [ "$NACALL" = 1 ] && [ "$NPUB" = 0 ] || F="$F node_clients"
+ [ "$NSH" -ge 1 ] || F="$F node_shadow_log"
+ # 6. (Phase C weld check removed: free base; settle_check.py checks the standing robot.)
+ if [ -z "$F" ]; then echo "PREMOTION VERDICT: PASS" | tee $D/verdict.txt
+--- tools_s4b_shadow/watchdog.sh	2026-11-02 09:23:27.106059799 +0000
++++ tools/watchdog.sh	2026-11-02 09:25:19.701335869 +0000
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+-# S4b shadow run-local safety net (the Phase C watchdog): if the session is interrupted and the
++# S4b live run-local safety net (the Phase C watchdog): if the session is interrupted and the
+ # deadline passes, stop everything the run started (cleanup.sh, which ends with stage_stop.sh), then
+-# verify the disabled state (restore_cmd.sh: --verify-only; nothing is enabled in this run).
++# restore and verify the disabled state (restore_cmd.sh: the clean restore of the disabled baseline).
+ # Exits without acting when RUN/stopped.flag exists.
+ RUN=$1; DEADLINE_S=${2:-3600}
+ EVT=$(dirname "$RUN")/tools
+--- tools_s4b_shadow/restore_cmd.sh	2026-11-02 09:23:27.105742259 +0000
++++ tools/restore_cmd.sh	2026-11-02 09:25:19.702259678 +0000
+@@ -1,10 +1,10 @@
+ #!/usr/bin/env bash
+-# S4b shadow verification of the disabled state (the S4a shadow restore_cmd.sh): nothing is
+-# enabled in this run, so --verify-only against the disabled baseline commit (no checkout, no
+-# rebuild, no enabling ref, no branch deletion), with the run's pid files and an explicit evidence
+-# directory. Exit 0 only for DISABLED AND VERIFIED.
+-R=/root/spiderx_evidence/s4b_shadow_20261102T085832Z
++# S4b live restore (the S4a live restore_cmd.sh): the exact disabled baseline 2b22e44, the
++# toolchain-only clean rebuild with st59site confined to the build, the run's pid files, and the
++# enabling branch deleted only after every verification passed (enforced by the script).
++R=/root/spiderx_evidence/s4b_live_20261102T092327Z; B=$(cat $R/enabling_branch.txt)
+ cd /home/user/spiderx_ws && env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+-  bash scripts/m61_restore_and_verify_disabled.sh --base e406590a98ead5052b610316a5d23aba0c6edaf6 \
+-  --evidence $R/restore --ros-setup /opt/mm/activate.sh --verify-only \
+-  --launch-pid-file $R/run/launch.pid --xvfb-pid-file $R/run/xvfb.pid
++  bash scripts/m61_restore_and_verify_disabled.sh --base 2b22e443dd6abb1f80c61d8f52e670c9860e6a22 \
++  --evidence $R/restore --enabling-ref "$B" --ros-setup /opt/mm/activate.sh \
++  --build-cmd 'rm -rf build install && PYTHONPATH=/opt/mm/st59site colcon build --symlink-install' \
++  --launch-pid-file $R/run/launch.pid --xvfb-pid-file $R/run/xvfb.pid --delete-enabling-branch
+--- tools_s4b_shadow/input_checks.sh	2026-11-02 09:23:27.105547177 +0000
++++ tools/input_checks.sh	2026-11-02 09:23:27.175029574 +0000
+@@ -1,10 +1,12 @@
+ #!/usr/bin/env bash
+-# S4b shadow input checks (the S4a shadow checks, adapted; read-only; no build, install or launch). Usage: input_checks.sh <scratch dir>
++# S4b LIVE input checks (the S4b shadow checks at the disabled baseline 2b22e44, plus the S4a live sections:
++# robotics source = e406590, the enabling patch hash and applicability, the shadow evidence vs now).
++# Read-only; no build, install or launch. Usage: input_checks.sh <scratch dir>
+ # Branch/HEAD/worktree; toolchain and r2 overlay provenance (both patches, both built libraries,
+ # overlay source = upstream + patches); installed SpiderX runtime vs HEAD; fresh-import gates;
+ # phase-library identity; S4a driver/scorer identity at HEAD.
+ SP=$1; WS=/home/user/spiderx_ws; OV=/root/spiderx_gz_overlay_ws_r2
+-EXP_HEAD=e406590a98ead5052b610316a5d23aba0c6edaf6
++EXP_HEAD=2b22e443dd6abb1f80c61d8f52e670c9860e6a22
+ S3E=$WS/docs/evidence/m55/s3_free_base_20261101T115002Z
+ cd $WS
+ F=""
+@@ -121,4 +123,28 @@
+   && echo "PASS s4a_driver.py and score_s4a.py = the S4a tools that ran and scored S4a" || F="$F s4a_tools"
+ I=$(git diff --name-only e5899f40482891b9eba026c40de97daa3931d84a HEAD -- src/ | grep -v '^src/spiderx_controller/test/' || true)
+ [ -z "$I" ] && echo "PASS since the reused build (e5899f4): no installed src/ file changed (tests only)" || { echo "FAIL src changed since the build: $I"; F="$F build_stale"; }
++echo "== disabled baseline: robotics source = e406590 (the reviewed S4b commit)"
++NE=$(git diff --name-only e406590a98ead5052b610316a5d23aba0c6edaf6 $EXP_HEAD | grep -v '^docs/evidence/m55/s4b_shadow_20261102T085832Z/' || true)
++echo "files changed e406590..$EXP_HEAD outside the shadow evidence: ${NE:-none}"; [ -z "$NE" ] || F="$F baseline_source"
++echo "== enabling patch (applied only on the local enabling branch, later)"
++P=docs/patches/m55_enable_s2.UNAPPLIED.patch; h=$(sha256sum < $P | cut -c1-64); echo "$h  $P"
++[ "$h" = d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236 ] && echo "PASS patch hash" || F="$F patch_hash"
++git apply --check $P && echo "PASS git apply --check (applies forward to the disabled tree)" || F="$F patch_apply"
++NS=$(git apply --numstat $P); echo "$NS"
++[ "$(echo "$NS" | wc -l)" = 2 ] && grep -qP "^1\t1\tsrc/spiderx_controller/spiderx_controller/m55_contract.py$" <<< "$NS" \
++  && grep -qP "^1\t1\tsrc/spiderx_controller/test/m55_gate.py$" <<< "$NS" && echo "PASS exactly the M55 gate and its test pin" || F="$F patch_scope"
++git apply --stat $P | tail -1
++echo "== the S4b shadow evidence (PASS, SHADOW ONLY) vs the current inputs"
++SH=docs/evidence/m55/s4b_shadow_20261102T085832Z; (cd $SH && sha256sum -c SHA256SUMS --quiet) && echo "PASS shadow evidence manifest" || F="$F shadow_manifest"
++for k in "scripts/s4/s4b_driver.py" "scripts/s4/score_s4b.py" "scripts/s4/s4a_driver.py" "scripts/s4/score_s4a.py" "scripts/s3/s3_driver.py" "scripts/s2/s2_driver.py"; do
++  now=$(sha256sum < $k | cut -c1-64); grep -q "^$now  $k = HEAD blob" $SH/provenance/input_checks.txt && echo "PASS $k $now = the shadow run's" || { echo "FAIL $k"; F="$F shadow_$k"; }
++done
++for x in 3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27 06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5 \
++         62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732; do
++  grep -q $x $SH/provenance/input_checks.txt && echo "PASS shadow inputs record ${x:0:16}... (same as now)" || { echo "FAIL $x"; F="$F shadow_input"; }
++done
++grep -q "mapped-object sha256=3a8f2044" $SH/run/premotion/library_checks.txt && grep -q "mapped-object sha256=06777e14" $SH/run/premotion/library_checks.txt \
++  && echo "PASS the shadow launch's server mapped these r2 libraries" || F="$F shadow_maps"
++a=$(sha256sum < $SH/node/library.json | cut -c1-64); b=$(sha256sum < docs/evidence/m55/s3_free_base_20261101T115002Z/disabled/library.json | cut -c1-64)
++echo "library.json: shadow node $a; S3 disabled (committed) $b"; [ "$a" = "$b" ] && [ "$a" = 917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e ] || F="$F library_json"
+ [ -z "$F" ] && echo "INPUT VERDICT: PASS" || echo "INPUT VERDICT: FAIL:$F"
+--- tools_s4b_shadow/s4b_shadow_run.sh	2026-11-02 09:23:27.105785068 +0000
++++ tools/s4b_live_run.sh	2026-11-02 09:25:19.703467070 +0000
+@@ -1,18 +1,19 @@
+ #!/usr/bin/env bash
+-# S4b SHADOW rehearsal (ONE free-base launch; all three gates False; no goal or cancel may reach the
+-# controller): the S4a shadow run script, adapted only for S4b (harness_vs_s4a_shadow.diff): the S4b
+-# driver with --shadow-rehearsal replaces the S4a driver (its scripted lease test kills the TELEOP with
+-# SIGKILL, never the simulator); after it, nothing but this script's process-level stop. As before:
++# S4b LIVE run (ONE free-base attempt; enabled build: M55 gate True, M61 and M6.0-D False): the S4b
++# shadow run script, adapted only for live operation (harness_vs_s4b_shadow.diff): the S4b driver in its
++# default LIVE mode (no --shadow-rehearsal); the pre-arm checks are the S4a live DISPATCH checks. Its
++# scripted lease test kills the TELEOP with SIGKILL, never the simulator; after it, nothing but this
++# script's process-level stop. As before:
+ #  1. the launch itself starts the M5.5 node (SHADOW: no action client, sends nothing; its evidence in
+ #     RUN/node): no separate node, no m61a preflight (fixed base only); the launch's node is reniced
+ #     to -5, as Phase C started its node;
+ #  3. once the node is up the run waits for the operator's pre-shadow checks (premotion_checks.sh,
+ #     settle_check.py, one screenshot): go.flag starts the S3 script; abort.flag, or no decision
+ #     within PREMOTION_WAIT_S, stops with no key pressed;
+-#  4. the S4b driver (scripts/s4/s4b_driver.py --shadow-rehearsal) replaces the S4a driver; its exit
++#  4. the S4b driver (scripts/s4/s4b_driver.py, LIVE/default mode) replaces the S4a driver; its exit
+ #     code is kept; one screenshot after a completed script (driver exit 0, launch up, <= 15 s);
+ #  5. before the stop, strace (signals only, no system calls) observes the simulator server's own exit.
+-# Usage: s4b_shadow_run.sh <run dir> <bag dir>
++# Usage: s4b_live_run.sh <run dir> <bag dir>
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools; WS=/home/user/spiderx_ws
+ PREMOTION_WAIT_S=${PREMOTION_WAIT_S:-1500}
+ source $EVT/env.sh
+@@ -59,7 +60,7 @@
+ BP=$!; sleep 4
+ ( sleep 120; top -b -n1 -w 160 | head -22 > $RUN/captures/top_during.txt;
+   ps -o pid,ni,pcpu,args -C ruby,python3,parameter_bridge,robot_state_publisher -w | cut -c1-160 >> $RUN/captures/top_during.txt ) &
+-step "driver"; python3 $WS/scripts/s4/s4b_driver.py --out $RUN/driver --shadow-rehearsal > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
++step "driver"; python3 $WS/scripts/s4/s4b_driver.py --out $RUN/driver > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
+ sleep 3; step "captures after"; cap after
+ kill -INT -- -$BP 2>/dev/null; for i in $(seq 1 30); do pgrep -g $BP >/dev/null || break; sleep 0.5; done
+ step "bag stopped"; pkill -f m55_teleop_keyboard 2>/dev/null
+--- tools_s4b_shadow/s4b_shadow_guarded.sh	2026-11-02 09:23:27.105764301 +0000
++++ tools/s4b_live_guarded.sh	2026-11-02 09:25:19.703771059 +0000
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+-# The S4b shadow run with cleanup armed BEFORE launch (as phase_c_guarded.sh): cleanup.sh runs on
++# The S4b live run with cleanup armed BEFORE launch (as phase_c_guarded.sh): cleanup.sh runs on
+ # success, failure or interruption.
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools
+ mkdir -p "$RUN"
+ trap 'bash "$EVT/cleanup.sh" "$RUN" >> "$RUN/cleanup.log" 2>&1' EXIT INT TERM
+-bash "$EVT/s4b_shadow_run.sh" "$RUN" "$BAG"
++bash "$EVT/s4b_live_run.sh" "$RUN" "$BAG"

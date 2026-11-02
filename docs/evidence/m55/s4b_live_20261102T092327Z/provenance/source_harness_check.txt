@@ -1,0 +1,3 @@
+== source harness copies 2026-11-02T09:23:27Z (committed at baseline 2b22e44; historical copies unchanged)
+PASS tools_s4b_shadow = the committed S4b shadow harness
+PASS tools_s4a_live = the committed S4a live harness (DISPATCH checks, full restore)

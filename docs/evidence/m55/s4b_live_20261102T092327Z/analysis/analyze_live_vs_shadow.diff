@@ -1,0 +1,51 @@
+--- /root/spiderx_evidence/s4b_live_20261102T092327Z/tools/analyze_s4b_shadow.py	2026-11-02 09:25:19.676976824 +0000
++++ /root/spiderx_evidence/s4b_live_20261102T092327Z/tools/analyze_s4b_live_supplementary.py	2026-11-02 09:52:34.568911078 +0000
+@@ -1,12 +1,9 @@
+ #!/usr/bin/env python3
+-"""Offline, read-only analysis of the S4b shadow rehearsal (no ROS graph; the bag opened
+-read-only/immutable). The S4a shadow analysis, adapted: the generic part unchanged; the S4a block
+-replaced by the COMMITTED S4b scorer, unchanged (score_s4b.load_and_score).
+-- B1-B5 and the bag-measured stillness after lease loss are the rehearsal's checks: the plan,
+-  release, reversal, home and lease loss (the scorer's own repeat/tick-aware release formula).
+-- B6 (cycle band), B7 (tracking) and B9's controller-log term describe live contact. In shadow
+-  they are recorded only, never scored: no trajectory runs.
+-Usage: analyze_s4b_shadow.py <run root> <disabled library.json> <restore report> -> prints JSON."""
++"""SUPPLEMENTARY, read-only analysis of the ONE live S4b run (no ROS graph; the bag opened
++read-only/immutable). It is the S4b shadow analysis with the generic part unchanged and the
++scorer block removed: the verdict is the committed score_s4b.py output (score/summary.json),
++never this file. It records RTF, node-observed ages, transitions, controller traffic and exits.
++Usage: analyze_s4b_live_supplementary.py <run root> -> prints JSON."""
+ import collections, glob, gzip, json, math, os, re, sqlite3, sys
+ 
+ R = sys.argv[1]
+@@ -152,7 +149,7 @@
+     res['launch_log']['process_exits'] = re.findall(r'\[INFO\] \[([^\]]+)\]: process has finished cleanly \[pid \d+\]', lg)
+     res['launch_log']['process_died_lines'] = re.findall(r'.*process has died.*', lg)
+     res['launch_log']['error_lines'] = re.findall(r'.*\[ERROR\].*', lg)[:20]
+-    # ---- S4b block: the committed scorer, unchanged
++    # ---- controller traffic and exits (no verdict here)
+     def action_clients(f):
+         try:
+             t = open(os.path.join(RUN, 'captures', f)).read()
+@@ -171,21 +168,6 @@
+     res['exits'] = {
+         'locomotion_node_lines': re.findall(r'.*\[m55_locomotion_node[^\]]*\].*(?:process has finished cleanly|process has died).*', lg),
+         'server_exit_strace': open(os.path.join(RUN, 'server_exit_strace.txt')).read().strip().splitlines() if os.path.exists(os.path.join(RUN, 'server_exit_strace.txt')) else None}
+-    sys.path.insert(0, '/home/user/spiderx_ws/scripts/s4')
+-    import score_s4b as sb
+-    sc = sb.load_and_score(RUN, db(os.path.join(R, 'bag')), sys.argv[2] if len(sys.argv) > 2 else None,
+-                           sys.argv[3] if len(sys.argv) > 3 else None,
+-                           os.path.join(R, 'tools', 's4b_shadow_run.sh'))
+-    B = sc['B']
+-    res['s4b_scorer_unchanged'] = sc
+-    res['s4b_rehearsal'] = {
+-        'checks': {k: B[k]['verdict'] for k in ('B1', 'B2', 'B3', 'B4', 'B5', 'B8', 'B10', 'B11')},
+-        'still_after_lease_loss': B['B5'].get('still'),
+-        'recorded_only_in_shadow': {'B6_cycle': B['B6'], 'B7_tracking': B['B7']['verdict'],
+-                                    'B9_ownership': B['B9']},
+-        'release_detection_latency_s': [B['B2'].get('detection_latency_s'),
+-                                        (B['B3'].get('release') or {}).get('detection_latency_s')],
+-        'lease_stopping_latency_s': B['B5'].get('stopping_latency_s')}
+     print(json.dumps(res, indent=1, sort_keys=True, default=str))
+ 
+ 

@@ -1,0 +1,28 @@
+Starting >>> spiderx_description
+Starting >>> spiderx_firmware
+Starting >>> spiderx_localization
+Starting >>> spiderx_mapping
+Finished <<< spiderx_description [1.00s]
+Finished <<< spiderx_firmware [1.00s]
+Finished <<< spiderx_mapping [0.99s]
+Finished <<< spiderx_localization [0.99s]
+Starting >>> spiderx_controller
+Starting >>> spiderx_navigation
+Finished <<< spiderx_navigation [0.01s]
+Finished <<< spiderx_controller [10min 12s]
+Starting >>> spiderx_bringup
+Starting >>> spiderx_scripts
+/opt/mm/root/envs/humble/lib/python3.11/site-packages/setuptools/_distutils/dist.py:318: UserWarning: Unknown distribution option: 'tests_require'
+  warnings.warn(msg)
+Finished <<< spiderx_bringup [0.23s]
+--- stderr: spiderx_scripts
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.000s
+
+OK
+---
+Finished <<< spiderx_scripts [0.28s]
+
+Summary: 8 packages finished [10min 14s]
+  1 package had stderr output: spiderx_scripts
