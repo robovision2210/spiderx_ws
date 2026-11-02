@@ -1,0 +1,5 @@
+ 1639  1534  1534   0  0.0  \_ /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_descrip
+ 1641  1639  1534   0  0.4  |   \_ ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spi
+ 1717  1641  1534   0 58.6  |       \_ ign gazebo server
+ 1720  1641  1534  19 88.3  |       \_ ign gazebo gui
+ 1653  1534  1534  -5 95.0  \_ python3 /home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidenc

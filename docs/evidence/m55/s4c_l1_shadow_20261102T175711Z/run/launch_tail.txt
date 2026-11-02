@@ -1,0 +1,20 @@
+[parameter_bridge-6] [INFO] [1793642991.625422356] [rclcpp]: signal_handler(signum=2)
+[INFO] [parameter_bridge-4]: process has finished cleanly [pid 1647]
+[INFO] [parameter_bridge-6]: process has finished cleanly [pid 1651]
+[INFO] [robot_state_publisher-2]: process has finished cleanly [pid 1642]
+[INFO] [m55_locomotion_node-7]: process has finished cleanly [pid 1653]
+[ign gazebo-1] [INFO] [1793642997.310088904] [rclcpp]: signal_handler(signum=2)
+[ign gazebo-1] [INFO] [1793642997.314469963] [controller_manager]: Shutdown request received....
+[ign gazebo-1] [INFO] [1793642997.315223285] [controller_manager]: Shutting down all controllers in the controller manager.
+[ign gazebo-1] [INFO] [1793642997.315581126] [controller_manager]: Deactivating controller 'joint_state_broadcaster'
+[ign gazebo-1] [INFO] [1793642997.315616868] [controller_manager]: Shutting down controller 'joint_state_broadcaster'
+[ign gazebo-1] [INFO] [1793642997.315652333] [controller_manager]: Deactivating controller 'leg_trajectory_controller'
+[ign gazebo-1] [INFO] [1793642997.315690517] [controller_manager]: Shutting down controller 'leg_trajectory_controller'
+[ign gazebo-1] [INFO] [1793642997.315711378] [resource_manager]: 'deactivate' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1793642997.315721039] [resource_manager]: Successful 'deactivate' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1793642997.315724301] [resource_manager]: 'shutdown' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1793642997.315727936] [resource_manager]: Successful 'shutdown' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1793642997.315730634] [controller_manager]: Shutting down the controller manager.
+[ign gazebo-1] Escalating to SIGKILL on [Ignition Gazebo GUI]
+[INFO] [ign gazebo-1]: process has finished cleanly [pid 1639]
+[INFO] [launch]: process[ign gazebo-1] was required: shutting down launched system
