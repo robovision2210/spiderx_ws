@@ -1,0 +1,279 @@
+{
+ "close": {
+  "disarmed_sim_s": 79.45,
+  "event": "teleop_closed",
+  "exit_code": 0,
+  "pid": 13847,
+  "t_exit_seen": 1751.254006055,
+  "wait_status": 0
+ },
+ "close_observation": {
+  "from_sim_s": 79.45,
+  "goals_recorded_after": 18,
+  "last_sim_s": 89.51,
+  "max_joint_motion_rad": 1.1718234618920284e-11,
+  "max_seq": 18,
+  "max_tilt_rad": 2.691011092586654e-06,
+  "min_z_m": 0.05449529474795805,
+  "samples": 109,
+  "state_after": "DISARMED",
+  "within_A6_limits": true
+ },
+ "command_rejections": {},
+ "cycles": [
+  {
+   "cycle": 1,
+   "cycles_count": 1,
+   "direction": 1,
+   "forward_m": 0.04005219808301481,
+   "lateral_m": 0.00037190388217630594,
+   "level": 1,
+   "sim": 57.07,
+   "yaw_rad": -0.00018364971315526605
+  },
+  {
+   "cycle": 2,
+   "cycles_count": 0,
+   "direction": -1,
+   "forward_m": -0.0399672216632733,
+   "lateral_m": 0.0002971404153392664,
+   "level": 1,
+   "net_return_recorded_only": {
+    "forward_m": 8.492252398134095e-05,
+    "lateral_m": 0.000661704323751899,
+    "note": "from the arm pose; recorded only, never a band",
+    "yaw_rad": -0.00036412671430700384
+   },
+   "sim": 79.14,
+   "yaw_rad": -0.0001804770011517378
+  }
+ ],
+ "expected_cancels": 0,
+ "expected_goals": 18,
+ "faults": [],
+ "final_state": "DISARMED",
+ "fresh_samples": 383,
+ "goal_seqs_seen": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18
+ ],
+ "goals_recorded": 18,
+ "key_writes": [
+  {
+   "key": "'+'",
+   "t_after_write": 1672.51057549,
+   "t_before_write": 1672.510551775,
+   "write_result": 1
+  },
+  {
+   "key": "'a'",
+   "t_after_write": 1672.56086865,
+   "t_before_write": 1672.560856116,
+   "write_result": 1
+  },
+  {
+   "key": "'w'",
+   "t_after_write": 1672.611603538,
+   "t_before_write": 1672.611082411,
+   "write_result": 1
+  },
+  {
+   "key": "' '",
+   "t_after_write": 1708.013715314,
+   "t_before_write": 1708.013701455,
+   "write_result": 1
+  },
+  {
+   "key": "'s'",
+   "t_after_write": 1711.830479782,
+   "t_before_write": 1711.830449611,
+   "write_result": 1
+  },
+  {
+   "key": "' '",
+   "t_after_write": 1745.536547246,
+   "t_before_write": 1745.536529626,
+   "write_result": 1
+  },
+  {
+   "key": "'q'",
+   "t_after_write": 1751.053180087,
+   "t_before_write": 1751.053163126,
+   "write_result": 1
+  }
+ ],
+ "level": 1,
+ "level_spec": {
+  "stop_m": {
+   "forward": [
+    0.0,
+    0.06
+   ],
+   "reverse": [
+    -0.06,
+    0.0
+   ]
+  },
+  "stride_m": 0.04,
+  "teleop_label": "2/3"
+ },
+ "max_seq": 18,
+ "min_joint_margin": [
+  0.342831696994901,
+  "lf_thigh_joint",
+  -0.268033303005099
+ ],
+ "net_return_recorded_only": {
+  "forward_m": 8.492252398134095e-05,
+  "lateral_m": 0.000661704323751899,
+  "note": "from the arm pose; recorded only, never a band",
+  "yaw_rad": -0.00036412671430700384
+ },
+ "plan": [
+  [
+   0,
+   1,
+   1
+  ],
+  [
+   1,
+   2,
+   1
+  ],
+  [
+   2,
+   3,
+   1
+  ],
+  [
+   3,
+   4,
+   1
+  ],
+  [
+   4,
+   5,
+   1
+  ],
+  [
+   5,
+   6,
+   1
+  ],
+  [
+   6,
+   7,
+   1
+  ],
+  [
+   7,
+   8,
+   1
+  ],
+  [
+   8,
+   9,
+   1
+  ],
+  [
+   9,
+   8,
+   -1
+  ],
+  [
+   8,
+   7,
+   -1
+  ],
+  [
+   7,
+   6,
+   -1
+  ],
+  [
+   6,
+   5,
+   -1
+  ],
+  [
+   5,
+   4,
+   -1
+  ],
+  [
+   4,
+   3,
+   -1
+  ],
+  [
+   3,
+   2,
+   -1
+  ],
+  [
+   2,
+   1,
+   -1
+  ],
+  [
+   1,
+   0,
+   -1
+  ]
+ ],
+ "result": "script complete",
+ "scope": "S4c: level 1 only, one forward cycle, one reverse return cycle, the close; 18 goals and 0 cancels at most",
+ "scripted_keys": [
+  "'+'",
+  "'a'",
+  "'w'",
+  "' '",
+  "'s'",
+  "' '",
+  "'q'"
+ ],
+ "selection": {
+  "confirmations": [
+   {
+    "label": "2/3",
+    "press": 1,
+    "received_before_the_write_returned": false,
+    "speed_mm_s": "1.90",
+    "t_after_write": 1672.51057549,
+    "t_before_write": 1672.510551775,
+    "t_receipt": 1672.512209395
+   }
+  ],
+  "level": 1,
+  "speed_m_s": 0.001895734597156398,
+  "stride_m": 0.04,
+  "teleop_label": "2/3"
+ },
+ "settle": {
+  "max_tilt_rad": 1.541388099311085e-07,
+  "samples": 108,
+  "sim_from_s": 25.19,
+  "sim_to_s": 35.28,
+  "z_mean_m": 0.05449983659343526,
+  "z_range_m": 9.031159226888241e-06
+ },
+ "stage": "closed",
+ "status_messages": 385,
+ "tracking_findings": {}
+}

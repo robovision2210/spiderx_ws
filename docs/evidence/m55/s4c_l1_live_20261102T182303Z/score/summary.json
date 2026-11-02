@@ -1,0 +1,490 @@
+{
+ "C": {
+  "C1": {
+   "cancels": 0,
+   "checks": {
+    "all_succeeded": true,
+    "arm_once_before_goal_1": true,
+    "eighteen_planned_goals_in_order": true,
+    "event_order_consistent": true,
+    "every_key_write_complete": true,
+    "keys_exactly_as_scripted": true,
+    "no_cancel": true,
+    "no_fault": true,
+    "no_refusal": true,
+    "node_dispatch_gate_true_throughout": true,
+    "one_goal_sent_per_seq": true,
+    "requests_before_q_exactly_arm_stop_stop": true
+   },
+   "faults": [],
+   "goals": [
+    [
+     0,
+     1,
+     1
+    ],
+    [
+     1,
+     2,
+     1
+    ],
+    [
+     2,
+     3,
+     1
+    ],
+    [
+     3,
+     4,
+     1
+    ],
+    [
+     4,
+     5,
+     1
+    ],
+    [
+     5,
+     6,
+     1
+    ],
+    [
+     6,
+     7,
+     1
+    ],
+    [
+     7,
+     8,
+     1
+    ],
+    [
+     8,
+     9,
+     1
+    ],
+    [
+     9,
+     8,
+     -1
+    ],
+    [
+     8,
+     7,
+     -1
+    ],
+    [
+     7,
+     6,
+     -1
+    ],
+    [
+     6,
+     5,
+     -1
+    ],
+    [
+     5,
+     4,
+     -1
+    ],
+    [
+     4,
+     3,
+     -1
+    ],
+    [
+     3,
+     2,
+     -1
+    ],
+    [
+     2,
+     1,
+     -1
+    ],
+    [
+     1,
+     0,
+     -1
+    ]
+   ],
+   "verdict": "PASS"
+  },
+  "C10": {
+   "checks": {
+    "gates_false_imported": true,
+    "m6_gait_replay_live_exit_3": true,
+    "m6_live_playback_live_exit_3": true,
+    "no_simulation_or_node_leftover": true,
+    "verdict_disabled_and_verified": true
+   },
+   "verdict": "PASS"
+  },
+  "C11": {
+   "disabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+   "enabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+   "verdict": "PASS"
+  },
+  "C2": {
+   "checks": {
+    "each_level_key_confirmed_by_the_teleop": true,
+    "every_goal_at_level_L": true,
+    "exactly_L_plus_keys_and_no_other_level_key": true,
+    "level_keys_before_the_arm_key_and_request": true,
+    "level_keys_while_disarmed_without_goal": true,
+    "node_stride_for_the_level": true,
+    "one_level_change_0_to_L_between_arm_and_goal_1": true,
+    "recorded_level_equals_the_requested_level": true
+   },
+   "confirmations": [
+    {
+     "attributed": 1,
+     "expected_label": "2/3",
+     "expected_speed_mm_s": "1.90",
+     "press": 1,
+     "received_before_the_write_returned": false,
+     "t_after_write": 1672.51057549,
+     "t_before_write": 1672.510551775,
+     "t_receipt": 1672.512209395
+    }
+   ],
+   "level": 1,
+   "stride_m": 0.04,
+   "teleop_label": "2/3",
+   "verdict": "PASS"
+  },
+  "C3": {
+   "checks": {
+    "cycle_checked_before_the_next_key": true,
+    "cycle_count_changed_by_the_direction": true,
+    "displacement": true,
+    "no_goal_between_the_space_and_ready": true,
+    "one_stopping_stop_in_the_last_goal": true,
+    "ready_stopped_at_boundary_0": true,
+    "ready_within_sim_bound": true,
+    "ready_within_wall_backstop": true,
+    "space_written_while_the_last_goal_was_in_flight": true
+   },
+   "direction": 1,
+   "displacement": {
+    "band_forward_m": [
+     0.03,
+     0.05
+    ],
+    "checks": {
+     "height_within_10_mm": true,
+     "lateral_within_10_mm": true,
+     "progress_in_band": true,
+     "progress_within_the_outer_bound": true,
+     "tilt_within_0_10_rad": true,
+     "yaw_within_0_05_rad": true
+    },
+    "forward_m": 0.04005219806023548,
+    "height_vs_standing_m": -3.6729985569625145e-06,
+    "lateral_m": 0.000371903882176559,
+    "live_stop_band_m": [
+     0.0,
+     0.06
+    ],
+    "max_tilt_rad": 0.005031333083850692,
+    "verdict": "PASS",
+    "within_live_stop_band_recorded": true,
+    "yaw_rad": -0.000183649713155257,
+    "z_end_m": 0.05449619347203795
+   },
+   "ready_sim_s": 1.0399999999999991,
+   "sim_bound_s": 2.2,
+   "verdict": "PASS"
+  },
+  "C4": {
+   "checks": {
+    "cycle_checked_before_the_next_key": true,
+    "cycle_count_changed_by_the_direction": true,
+    "displacement": true,
+    "no_goal_between_the_space_and_ready": true,
+    "one_stopping_stop_in_the_last_goal": true,
+    "ready_stopped_at_boundary_0": true,
+    "ready_within_sim_bound": true,
+    "ready_within_wall_backstop": true,
+    "space_written_while_the_last_goal_was_in_flight": true
+   },
+   "direction": -1,
+   "displacement": {
+    "band_forward_m": [
+     -0.05,
+     -0.03
+    ],
+    "checks": {
+     "height_within_10_mm": true,
+     "lateral_within_10_mm": true,
+     "progress_in_band": true,
+     "progress_within_the_outer_bound": true,
+     "tilt_within_0_10_rad": true,
+     "yaw_within_0_05_rad": true
+    },
+    "forward_m": -0.0399673723568078,
+    "height_vs_standing_m": 4.076050814164067e-07,
+    "lateral_m": 0.00029691725059230077,
+    "live_stop_band_m": [
+     -0.06,
+     0.0
+    ],
+    "max_tilt_rad": 0.004976944267418868,
+    "verdict": "PASS",
+    "within_live_stop_band_recorded": true,
+    "yaw_rad": -0.000180476641414049,
+    "z_end_m": 0.05450027407567633
+   },
+   "net_return_recorded_only": {
+    "forward_m": 8.477184865420461e-05,
+    "lateral_m": 0.0006614811313341259,
+    "note": "arm pose to the end of the reverse; recorded only, never a band",
+    "yaw_rad": -0.000364126354569306
+   },
+   "ready_sim_s": 1.6599999999999966,
+   "sim_bound_s": 2.8,
+   "verdict": "PASS"
+  },
+  "C5": {
+   "checks": {
+    "disarmed_without_goal_over_10_s_of_sim": true,
+    "exactly_the_close_requests_after_q": true,
+    "no_goal_after_q": true,
+    "no_key_after_q": true,
+    "no_refusal_after_q": true,
+    "one_transition_ready_to_disarmed_disarm": true,
+    "q_after_the_reverse_ready": true,
+    "q_at_ready_boundary_0_without_goal": true,
+    "q_written_completely": true,
+    "still_after_the_close": true,
+    "teleop_exit_code_0": true
+   },
+   "requests_after_q": {
+    "disarm": 2,
+    "stop": 2
+   },
+   "still": {
+    "joint_samples": 1000,
+    "max_joint_motion_rad": 5.8901194910868765e-12,
+    "max_tilt_rad": 5.465923859453429e-06,
+    "min_z_m": 0.054495294747949105,
+    "pose_samples": 2767,
+    "verdict": "PASS",
+    "window_sim_s": [
+     79.45,
+     89.45
+    ]
+   },
+   "teleop_closed": {
+    "disarmed_sim_s": 79.45,
+    "event": "teleop_closed",
+    "exit_code": 0,
+    "mono": 1751.254,
+    "pid": 13847,
+    "t_exit_seen": 1751.254006055,
+    "wait_status": 0
+   },
+   "transitions_after_q": [
+    [
+     "READY",
+     "DISARMED",
+     "disarm"
+    ]
+   ],
+   "verdict": "PASS"
+  },
+  "C6": {
+   "final_goal_exception": null,
+   "findings_above_0_02_rad": {},
+   "goals": [
+    {
+     "feedback_samples": 98,
+     "max_abs_error_rad": 0.002213357467144045,
+     "seq": 1,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 98,
+     "max_abs_error_rad": 0.0021972280192359044,
+     "seq": 2,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 39,
+     "max_abs_error_rad": 0.002245582733552548,
+     "seq": 3,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 98,
+     "max_abs_error_rad": 0.00220502413548386,
+     "seq": 4,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 102,
+     "max_abs_error_rad": 0.0021801427576691734,
+     "seq": 5,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 107,
+     "max_abs_error_rad": 0.002224915358109203,
+     "seq": 6,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 44,
+     "max_abs_error_rad": 0.0022357879846410236,
+     "seq": 7,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 91,
+     "max_abs_error_rad": 0.002246960656588616,
+     "seq": 8,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 48,
+     "max_abs_error_rad": 0.0021905976660145585,
+     "seq": 9,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 65,
+     "max_abs_error_rad": 0.002189950237721505,
+     "seq": 10,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 98,
+     "max_abs_error_rad": 0.0022461798333991492,
+     "seq": 11,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 38,
+     "max_abs_error_rad": 0.0022393966851246457,
+     "seq": 12,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 106,
+     "max_abs_error_rad": 0.0022249090770793956,
+     "seq": 13,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 101,
+     "max_abs_error_rad": 0.0021800836996985345,
+     "seq": 14,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 94,
+     "max_abs_error_rad": 0.002204121555404684,
+     "seq": 15,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 41,
+     "max_abs_error_rad": 0.00224558273484049,
+     "seq": 16,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 98,
+     "max_abs_error_rad": 0.0021978452671503716,
+     "seq": 17,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 84,
+     "max_abs_error_rad": 0.002212161021067388,
+     "seq": 18,
+     "verdict": "PASS"
+    }
+   ],
+   "unattributed_feedback_ids": [],
+   "verdict": "PASS"
+  },
+  "C7": {
+   "continuity_refusals": [],
+   "max_continuity_error_rad": 4.456939203870083e-09,
+   "verdict": "PASS"
+  },
+  "C8": {
+   "command_topic": {
+    "messages": null,
+    "present_in_bag": false,
+    "support": {
+     "captures_before_after_zero_publishers": true,
+     "discovery_demonstrated_after_start": true,
+     "node_monitored_streams_continuous": true,
+     "owner_monitor_zero_throughout": true,
+     "recorder_log_without_failure": true,
+     "recording_covers_goal_interval": true,
+     "requested_from_recorder": true
+    },
+    "term": "PASS"
+   },
+   "terms": {
+    "cancels_0": true,
+    "command_publishers_0": true,
+    "controller_log_18_received_18_accepted_0_cancel": true,
+    "foreign_clients_0": true,
+    "goals_18": true
+   },
+   "verdict": "PASS"
+  },
+  "C9": {
+   "checks": {
+    "driver_script_complete": true,
+    "min_joint_margin_at_least_0_02_rad": true,
+    "node_observed_ages_within_monitor_limits": true
+   },
+   "driver_result": "script complete",
+   "max_ages_s": {
+    "body_pose_age_s": 0.018475787999932436,
+    "graph_age_s": 1.0055737700001828,
+    "joint_states_age_s": 0.058316599999898244
+   },
+   "min_joint_margin": [
+    0.342831696994901,
+    "lf_thigh_joint",
+    -0.268033303005099
+   ],
+   "verdict": "PASS"
+  }
+ },
+ "alignment": {
+  "of_driver_statuses": 385,
+  "offset_s": 1793643708.6893091,
+  "p05_p95_ms": [
+   -1.31,
+   1.13
+  ],
+  "pairs": 385,
+  "tolerance_s": 0.031658172607421875
+ },
+ "bag": {
+  "messages": {
+   "/joint_states": 6629,
+   "/leg_trajectory_controller/controller_state": 2986,
+   "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": 1450,
+   "/spiderx/locomotion/status": 402
+  },
+  "open_mode": "sqlite3 mode=ro&immutable=1",
+  "path": "/root/spiderx_evidence/s4c_l1_live_20261102T182303Z/bag/bag_0.db3",
+  "sha256_after": "ef7603838a540b28a2d4706e13076d73cd05bc8b3cf5f0861e437628f0d4bd24",
+  "sha256_after_pose_scan": "ef7603838a540b28a2d4706e13076d73cd05bc8b3cf5f0861e437628f0d4bd24",
+  "sha256_before": "ef7603838a540b28a2d4706e13076d73cd05bc8b3cf5f0861e437628f0d4bd24",
+  "unchanged": true
+ },
+ "level": 1,
+ "overall": "PASS",
+ "schema": "spiderx.s4c_score/1",
+ "shadow": false
+}

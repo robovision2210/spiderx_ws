@@ -1,0 +1,24 @@
+[18:46:01] gates (imported): True False False
+[18:46:01] launch
+launch pid 12745 pgid 12745 xvfb 12740
+both controllers active after 13 s of polling
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+[18:46:21] controllers: exit 0
+[18:46:24] gazebo gui pid(s) 12890  reniced +19
+[18:47:11] node up after 48 s: locomotion node up in DISPATCH mode (dispatch gate True); levels [1.06, 1.9, 2.34] mm/s
+[18:47:11] locomotion node pid(s) 12798  (launch session 12745) reniced -5
+[18:47:14] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[18:48:39] pre-shadow checks passed: pre-arm checks PASS (server 12887 maps only the r2 libraries with provenance hashes, no stock/mixed; gain 1.0 log+param; update_rate 100; period 0.001 s; both controllers active; node 12798 DISPATCH (gate True) in the launch session, the action's only client; 0 command publishers; settle 10.01 s sim
+[18:48:39] captures before
+[18:48:45] driver
+[18:51:54] driver exit 0: {"close": {"disarmed_sim_s": 79.45, "event": "teleop_closed", "exit_code": 0, "pid": 13847, "t_exit_seen": 1751.254006055, "wait_status": 0}, "close_observation": {"from_sim_s": 79.45, "goals_recorded
+[18:51:57] captures after
+[18:51:59] bag stopped
+[18:51:59] teleop processes after the driver (its q close should leave none): none
+[18:52:00] screenshot 2: exit 0
+[18:52:02] strace (signals only) attached to simulator server 12887: strace: Process 12887 attached 
+[18:52:02] stop launch
+[18:52:07] server exit (strace): +++ exited with 0 +++
+[18:52:07] end
+guarded run exit 0

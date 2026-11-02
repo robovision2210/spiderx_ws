@@ -1,0 +1,7 @@
+M55_LOCOMOTION_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+M61_LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+branch claude/spiderx-s4c-preparation HEAD ea69d3fbff36d210d0bcf9a3e8e152e84f162782 worktree entries 0
+local/* branches: 0; remote refs for local/*: 0; remote branch: ea69d3f
+processes (gz/ros2/m55/driver/bag/watchdog): 0
+checked 2026-11-02T18:53:03Z
