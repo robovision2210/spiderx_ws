@@ -40,6 +40,17 @@ The script completed (59 goals and 1 scripted cancel), but the frozen scorer rat
 - **Original verdict, preserved.** The frozen scorer rated the run INCONCLUSIVE, with A3 UNMEASURED. See the [run evidence](docs/evidence/m55/s3_free_base_20261101T115002Z/README.md) and the [adoption record](docs/evidence/m55/s3_free_base_20261101T115002Z_adoption_s3r1/README.md), which lists the limitations.
 - **Not shown.** This is simulation only, with an idealized actuator model. It is not interactive keyboard walking (S4), reverse or faster motion on contact, hardware or navigation.
 
+**S4a reverse and return (cloud, 2026-11-01).** S4a level-0 reverse-and-return validation passed in simulation using automated input through the keyboard-teleop path.
+- **What ran.** One authorized run on the S3 plant:
+  - one reverse cycle, −19.992 mm along body +y;
+  - one forward return cycle, +20.024 mm;
+  - each stopped at its boundary;
+  - then a planned estop with goal 19 in flight, and a measured 10 s hold.
+- **Result.** 19 goals and 1 cancel. The committed scorer rated A1–A8 PASS; goal 19 tracking is N/A under its pre-specified estop exception. See the [run evidence](docs/evidence/m55/s4a_live_20261101T153411Z/README.md).
+- **How keys reached the robot.** A driver script wrote them into the real `m55_teleop_keyboard` through a pseudo-terminal. No human operated a keyboard.
+- **Shutdown.** The simulator server exited 0, with no forced termination, and the restore verified the disabled state.
+- **Not shown.** Human keyboard operation and the rest of S4: operator input, faster levels and the 0.3 m run. Also hardware and navigation.
+
 Demo GIFs of standing and walking will be added only once those capabilities exist
 ([media/README.md](media/README.md)).
 
@@ -61,8 +72,8 @@ Demo GIFs of standing and walking will be added only once those capabilities exi
 | All-leg FK/IK and static pose hold (simulation only) | ✅ Verified locally and in the cloud (M4): 3 static four-leg poses via IK held in Gazebo. **Not** walking, gait or hardware validation |
 | Offline gait configuration and trajectory validation (M4.5) | ✅ Verified offline (cloud + local, M4.5): 6 YAML gaits checked against the URDF-derived IK, joint limits and a static-stability **approximation**. **Not** walking or hardware validation |
 | Protected one-cycle trot replay on a fixed base (M6.1 / M6.1-A) | 🟡 Implemented and verified offline/mock/isolated (Cloud): welded-base model, clearance analysis, read-only observer; **live dispatch disabled**; the one authorized Cloud attempt (2026-10-12) was refused before dispatch, with 0 goals ([Cloud report §11](docs/M61A_CLOUD_VERIFICATION.md)); readiness fixed at `61f3ffc` (§12); a second authorized cycle sent 1 goal, which was cancelled by a client tracking-reference defect, so not passed (§13); that defect is fixed at `b0d8e75` and rehearsed read-only without a goal (§14); a third authorized cycle **PASSED** in Cloud on the welded body: 1 goal, 0 cancels, 0.0085 rad, E1–E11 (§15). Not walking |
-| Continuous free-base crawl, locomotion state machine and keyboard teleop (M5.5) | 🟡 Implemented; **dispatch hard-disabled in every pushed build**. S2 (fixed base) and S3 (free base, level 0, forward, scripted keys) each ran once in Cloud Gazebo from a local, never-pushed enabling branch, and were accepted retrospectively under criteria revisions r1 and S3-r1 ([S3 adoption](docs/evidence/m55/s3_free_base_20261101T115002Z_adoption_s3r1/README.md)). Interactive keyboard walking (S4) is **not validated** ([M5.5](docs/M55_KEYBOARD_WALKING.md), [S4 plan](docs/S4_KEYBOARD_TELEOP_PLAN.md)) |
-| Walking demonstrated in simulation | 🟡 Bounded crawl only: S3 bounded level-0 free-base crawl accepted retrospectively under criteria revision S3-r1 (six scripted cycles, ≈ 0.1201 m; frozen verdict INCONCLUSIVE preserved). Keyboard walking (S4), reverse and faster levels on contact are not validated |
+| Continuous free-base crawl, locomotion state machine and keyboard teleop (M5.5) | 🟡 Implemented; **dispatch hard-disabled in every pushed build**. S2 (fixed base) and S3 (free base, level 0, forward, scripted keys) each ran once in Cloud Gazebo from a local, never-pushed enabling branch, and were accepted retrospectively under criteria revisions r1 and S3-r1 ([S3 adoption](docs/evidence/m55/s3_free_base_20261101T115002Z_adoption_s3r1/README.md)). S4a level-0 reverse-and-return validation passed in simulation using automated input through the keyboard-teleop path ([S4a evidence](docs/evidence/m55/s4a_live_20261101T153411Z/README.md)). The rest of S4 and human keyboard operation are **not validated** ([M5.5](docs/M55_KEYBOARD_WALKING.md), [S4 plan](docs/S4_KEYBOARD_TELEOP_PLAN.md)) |
+| Walking demonstrated in simulation | 🟡 Bounded crawl only: S3 bounded level-0 free-base crawl accepted retrospectively under criteria revision S3-r1 (six scripted cycles, ≈ 0.1201 m; frozen verdict INCONCLUSIVE preserved). S4a level-0 reverse-and-return validation passed in simulation using automated input through the keyboard-teleop path (−19.992 mm, +20.024 mm). Full S4, faster levels and human keyboard operation are not validated |
 | Odometry | ⚪ Planned (never faked) |
 | SLAM / AMCL / Nav2 | 🟡 Configured, **blocked until locomotion and odometry exist** |
 | Autonomous navigation | ⛔ Blocked until locomotion and odometry exist |
