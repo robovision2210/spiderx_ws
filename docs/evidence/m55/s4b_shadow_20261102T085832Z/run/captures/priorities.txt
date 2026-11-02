@@ -1,0 +1,5 @@
+ 5767  5673  5673   0  0.0  \_ /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_descrip
+ 5770  5767  5673   0  0.3  |   \_ ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spi
+ 5825  5770  5673   0 66.0  |       \_ ign gazebo server
+ 5828  5770  5673  19  101  |       \_ ign gazebo gui
+ 5783  5673  5673  -5 94.7  \_ python3 /home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidenc
