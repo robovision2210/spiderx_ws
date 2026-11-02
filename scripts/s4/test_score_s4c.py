@@ -25,16 +25,17 @@ PASS = {'verdict': 'PASS'}
 MOTION_PASS = {'forward': PASS, 'reverse': PASS, 'still': PASS}
 
 
-def bench_run(level, shadow=False):
-    """One normal S4c bench run per (level, shadow), cached: (rc, node events, driver records)."""
-    key = (level, shadow)
+def bench_run(level, shadow=False, **opts):
+    """One S4c bench run per (level, shadow, bench options), cached: (rc, node events, driver
+    records). opts: the S4c bench's output timing options (write_s, confirm_delay_s, ...)."""
+    key = (level, shadow, tuple(sorted(opts.items())))
     if key not in _RUNS:
         saved = s4ct.c55.M55_LOCOMOTION_DISPATCH_ENABLED
         s4ct.c55.M55_LOCOMOTION_DISPATCH_ENABLED = not shadow       # tests only, in memory
         try:
             with tempfile.TemporaryDirectory() as tmp:
                 mod = s4ct.load_driver()
-                bench = s4ct.make_bench(0.4, shadow=shadow,
+                bench = s4ct.make_bench(0.4, shadow=shadow, **opts,
                                         **({'progress_m': -3.28e-10} if shadow else {}))
                 d = s4ct.make_driver(mod, bench, tmp, level, shadow=shadow)
                 rc, why = mod.run(d)
@@ -71,8 +72,9 @@ class BenchRuns(unittest.TestCase):
                     C = score(ev, drv, level, shadow=shadow)
                     self.assertEqual({k: v['verdict'] for k, v in C.items()},
                                      {f'C{i}': 'PASS' for i in range(1, 6)}, C)
-                    self.assertEqual([c['label'] for c in C['C2']['confirmations']],
-                                     ['2/3', '3/3'][:level])
+                    self.assertEqual([(c['expected_label'], c['attributed'])
+                                      for c in C['C2']['confirmations']],
+                                     [('2/3', 1), ('3/3', 1)][:level])
                     for k in ('C3', 'C4'):
                         self.assertLessEqual(C[k]['ready_sim_s'], C[k]['sim_bound_s'])
                     self.assertEqual(C['C5']['requests_after_q'], {'stop': 2, 'disarm': 2})
@@ -184,9 +186,9 @@ class Contradictions(unittest.TestCase):
             d = next(d for d in drv if 'speed level 2/3' in (d.get('teleop_out') or ''))
             d['teleop_out'] = d['teleop_out'].replace('2/3', '3/3')
 
-        def confirmation_before_key(ev, drv):
+        def confirmation_before_key(ev, drv):                       # stale
             d = next(d for d in drv if 'speed level 2/3' in (d.get('teleop_out') or ''))
-            d['mono'] = key_rec(drv, "'+'")['t_before_write'] - 1.0
+            d['t_receipt'] = key_rec(drv, "'+'")['t_before_write'] - 1e-6
 
         def two_level_changes(ev, drv):
             lc = ev_of(ev, 'level_change')[0]
@@ -307,6 +309,111 @@ class Contradictions(unittest.TestCase):
         C = self.mutate(no_exit)
         self.assertEqual(C['C5']['verdict'], 'UNMEASURED')
         self.assertIsNone(C['C5']['checks']['teleop_exit_code_0'])
+
+
+SPEEDS = [0.00106, 0.0019, 0.00234]                 # m/s, levels 0-2
+
+
+def plus(tb, ta, key="'+'"):
+    return {'key': key, 't_before_write': tb, 't_after_write': ta, 'write_result': 1}
+
+
+def out(t, text):
+    return {'mono': round(t, 4), 'teleop_out': text, 't_receipt': t}
+
+
+class ConfirmationEvidence(unittest.TestCase):
+    """C2's confirmation path on synthetic driver records: lines rebuilt across chunks, each
+    attributed by full-precision receipt to the one '+' whose window holds it."""
+
+    def attribute(self, keys, drv, speeds=SPEEDS):
+        p_i = [i for i, k in enumerate(keys) if k['key'] == "'+'"]
+        uppers = [keys[i + 1]['t_before_write'] if i + 1 < len(keys) else None for i in p_i]
+        return s4c.attribute_confirmations([keys[i] for i in p_i], s4c.confirmations(drv),
+                                           uppers, speeds)
+
+    L1 = [plus(10.0, 10.002), plus(20.0, 20.001, "'a'")]
+    L2 = [plus(10.0, 10.002), plus(11.0, 11.002), plus(20.0, 20.001, "'a'")]
+
+    def test_received_during_the_write_bracket_or_after_it_returned(self):
+        for t in (10.001, 10.5):
+            ok, rows = self.attribute(self.L1, [out(t, 'speed level 2/3: 1.90 mm/s\r\n')])
+            self.assertIs(ok, True)
+            self.assertEqual((rows[0]['t_receipt'], rows[0]['received_before_the_write_returned']),
+                             (t, t < 10.002))
+
+    def test_a_line_split_across_chunks_is_rebuilt_with_the_completing_receipt(self):
+        drv = [out(10.001, 'state DISARMED | mode SHADOW\r\nspeed level 2/3: 1.'),
+               out(10.004, '90 mm'), out(10.007, '/s\r\n')]
+        ok, rows = self.attribute(self.L1, drv)
+        self.assertIs(ok, True)
+        self.assertEqual(rows[0]['t_receipt'], 10.007)
+        self.assertEqual(s4c.confirmations(drv)[0]['speed_mm_s'], '1.90')
+        ok, _ = self.attribute(self.L1, [out(10.001, 'speed level 2/3: 1.9'),
+                                         out(10.004, '9 mm/s\r\n')])
+        self.assertIs(ok, False)                               # 1.99 is the wrong speed
+
+    def test_two_presses_need_two_distinct_confirmations_in_order(self):
+        drv = [out(10.5, 'speed level 2/3: 1.90 mm/s\r\n'),
+               out(11.001, 'speed level 3/3: 2.34 mm/s\r\n')]
+        ok, rows = self.attribute(self.L2, drv)
+        self.assertIs(ok, True)
+        self.assertEqual([r['expected_label'] for r in rows], ['2/3', '3/3'])
+        swapped = [out(10.5, 'speed level 3/3: 2.34 mm/s\r\n'),
+                   out(11.5, 'speed level 2/3: 1.90 mm/s\r\n')]
+        self.assertIs(self.attribute(self.L2, swapped)[0], False)
+
+    def test_stale_duplicate_wrong_late_and_ambiguous_confirmations_fail(self):
+        line2, line3 = 'speed level 2/3: 1.90 mm/s\r\n', 'speed level 3/3: 2.34 mm/s\r\n'
+        cases = {
+            'stale (before the write began)': (self.L1, [out(9.999, line2)]),
+            'duplicate': (self.L1, [out(10.1, line2), out(10.2, line2)]),
+            'wrong level': (self.L1, [out(10.1, line3)]),
+            'wrong speed': (self.L1, [out(10.1, 'speed level 2/3: 1.06 mm/s\r\n')]),
+            'after the next key began': (self.L1, [out(20.0001, line2)]),
+            'press 1 confirmed only after press 2 began': (self.L2, [out(11.0001, line2),
+                                                                     out(11.2, line3)]),
+            'missing': (self.L1, [out(10.1, 'state READY\r\n')]),
+            'one too many for two presses': (self.L2, [out(10.5, line2), out(11.5, line3),
+                                                       out(11.6, line3)]),
+        }
+        for name, (keys, drv) in cases.items():
+            with self.subTest(case=name):
+                self.assertIs(self.attribute(keys, drv)[0], False)
+
+    def test_missing_receipt_evidence_is_unmeasured(self):
+        no_receipt = [{'mono': 10.1, 'teleop_out': 'speed level 2/3: 1.90 mm/s\r\n'}]
+        self.assertIsNone(s4c.confirmations(no_receipt))
+        self.assertIsNone(self.attribute(self.L1, no_receipt)[0])
+        half = [out(10.1, 'speed level 2/3: 1.'), {'mono': 10.1, 'teleop_out': '90 mm/s\r\n'}]
+        self.assertIsNone(self.attribute(self.L1, half)[0])    # one chunk without its receipt
+        self.assertIsNone(self.attribute(self.L1, [])[0])
+        self.assertIsNone(self.attribute(self.L1, [out(10.1, 'x')], speeds=[])[0])
+
+    def test_bench_runs_with_every_receipt_timing_pass_c2(self):
+        for level in LEVELS:
+            for opts in ({'write_s': 0.1}, {'confirm_delay_s': 0.3},
+                         {'split_at': 19, 'split_gap_s': 0.2}):
+                with self.subTest(level=level, **opts):
+                    rc, ev, drv = bench_run(level, **opts)
+                    self.assertEqual(rc, 0)
+                    C = score(ev, drv, level)
+                    self.assertEqual(C['C2']['verdict'], 'PASS', C['C2'])
+                    rows = C['C2']['confirmations']
+                    self.assertEqual([r['attributed'] for r in rows], [1] * level)
+                    if 'write_s' in opts:
+                        self.assertTrue(all(r['received_before_the_write_returned']
+                                            for r in rows))
+
+    def test_a_bench_run_without_receipt_times_is_unmeasured(self):
+        for level in LEVELS:
+            rc, ev, drv = bench_run(level)
+            for d in drv:
+                d.pop('t_receipt', None)
+            with self.subTest(level=level):
+                C = score(ev, drv, level)
+                self.assertEqual(C['C2']['verdict'], 'UNMEASURED')
+                self.assertIsNone(C['C2']['checks']['each_level_key_confirmed_by_the_teleop'])
 
 
 def pose(fwd=0.0, lat=0.0, yaw=0.0, z=0.0545, tilt=0.01):

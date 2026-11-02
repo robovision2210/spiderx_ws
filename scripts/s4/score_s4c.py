@@ -20,8 +20,12 @@ overall is FAIL, PASS or INCONCLUSIVE.
   - The run's recorded level equals --level, and the node's stride for it is 40 or 60 mm.
   - Exactly L '+' keys, no '-' or '='. Each is written while the node is DISARMED with no goal,
     before the 'a' key and before the arm request.
-  - Each '+' is confirmed by the teleop's own line "speed level <index + 1>/3: <speed> mm/s",
-    after its write and before the next key: 2/3, then 3/3 at level 2, at the node's speeds.
+  - Each '+' is confirmed by the teleop's own line "speed level <index + 1>/3: <speed> mm/s":
+    2/3, then 3/3 at level 2, at the node's speeds. The line is rebuilt across the teleop's output
+    chunks, and its receipt is the full-precision receipt time of the chunk that completed it. It
+    belongs to the one '+' whose write began at or before that receipt (during the write bracket
+    is fine) and before or when the next key's write began. Stale, duplicate, wrong-level,
+    wrong-speed or ambiguous confirmations FAIL; missing receipt times are UNMEASURED.
   - Exactly one node level_change, 0 -> L, after the arm and at or before goal 1.
   - Every goal at level L.
 - C3 forward cycle and C4 reverse return cycle. Each checks:
@@ -69,9 +73,11 @@ Missing evidence is UNMEASURED; a contradiction FAILs. No threshold changes afte
 Usage: score_s4c.py --level {1,2} --run <run dir> --bag <bag_0.db3> --disabled-library <file>
                     --restore-report <report> --harness <run script> --out <new dir> [--shadow]"""
 import argparse
+import bisect
 import collections
 import gzip
 import json
+import math
 import os
 import re
 import statistics
@@ -160,43 +166,81 @@ def assess_plan(ev, goals, cancels, faults, refusals, keys, requests, sts, level
 
 
 # ------------------------------------------------------------------ C2
+def teleop_chunks(drv):
+    """The teleop's output as the driver received it, in order: [(t_receipt, text)]. None when
+    there is no output, or when any chunk lacks its full-precision receipt time (the record's
+    rounded 'mono' never stands in for it): missing evidence."""
+    chunks = [(d.get('t_receipt'), d['teleop_out']) for d in drv
+              if isinstance(d.get('teleop_out'), str)]
+    if not chunks or any(isinstance(t, bool) or not isinstance(t, (int, float))
+                         for t, _ in chunks):
+        return None
+    return chunks
+
+
 def confirmations(drv):
-    """[(mono, label index, count, speed text)] from the teleop's own output, in order."""
-    out = []
-    for d in drv:
-        for m in CONFIRM_RE.finditer(d.get('teleop_out') or ''):
-            out.append((d['mono'], int(m.group(1)), int(m.group(2)), m.group(3)))
-    return out
+    """The teleop's level confirmations, each line rebuilt across successive output chunks:
+    [{'label_index', 'count', 'speed_mm_s', 't_receipt'}], t_receipt being the receipt time of the
+    chunk that completed the line. None without receipt evidence."""
+    chunks = teleop_chunks(drv)
+    if chunks is None:
+        return None
+    ends, n = [], 0
+    for _, x in chunks:
+        n += len(x)
+        ends.append(n)
+    text = ''.join(x for _, x in chunks)
+    return [{'label_index': int(m.group(1)), 'count': int(m.group(2)),
+             'speed_mm_s': m.group(3), 't_receipt': chunks[bisect.bisect_left(ends, m.end())][0]}
+            for m in CONFIRM_RE.finditer(text)]
+
+
+def attribute_confirmations(plus, conf, uppers, speeds):
+    """Attribute each confirmation to the one '+' it can belong to: received no earlier than that
+    write began (during its write bracket is fine: the sender need not have returned) and no later
+    than the next key's write began (the driver writes it only after the confirmation), with that
+    press's label (index + 1)/3 and speed. uppers[i]: the write start of the key written next
+    after press i, by order (None: no later key). Every press needs exactly one; a confirmation
+    that fits no press, or more than one, is stale, duplicate, wrong or ambiguous. Returns (True,
+    False or None, rows); None when the receipt evidence or the node's speeds are missing."""
+    if conf is None or not plus or len(speeds) <= len(plus):
+        return None, []
+    windows = [(k['t_before_write'], math.inf if u is None else u) for k, u in zip(plus, uppers)]
+    want = [(i + 1, 3, f'{speeds[i] * 1000:.2f}') for i in range(1, len(plus) + 1)]
+    owners, unattributed = collections.defaultdict(list), []
+    for c in conf:
+        fits = [i for i, (lo, hi) in enumerate(windows) if lo <= c['t_receipt'] <= hi
+                and (c['label_index'], c['count'], c['speed_mm_s']) == want[i]]
+        (owners[fits[0]].append(c) if len(fits) == 1 else unattributed.append(c))
+    rows = []
+    for i, k in enumerate(plus):
+        cs = owners.get(i, [])
+        row = {'press': i + 1, 'expected_label': f'{want[i][0]}/3',
+               'expected_speed_mm_s': want[i][2], 't_before_write': k['t_before_write'],
+               't_after_write': k['t_after_write'], 'attributed': len(cs)}
+        if len(cs) == 1:
+            row.update(t_receipt=cs[0]['t_receipt'], received_before_the_write_returned=(
+                cs[0]['t_receipt'] < k['t_after_write']))
+        rows.append(row)
+    ok = all(len(owners.get(i, [])) == 1 for i in range(len(plus))) and not unattributed
+    return ok, rows + ([{'unattributed': unattributed}] if unattributed else [])
 
 
 def assess_level(ev, goals, keys, requests, transitions, drv, sts, level, run_level):
     spec = LEVELS[level]
-    plus = [k for k in keys if k['key'] == "'+'"]
+    plus_i = [i for i, k in enumerate(keys) if k['key'] == "'+'"]
+    plus = [keys[i] for i in plus_i]
+    uppers = [keys[i + 1]['t_before_write'] if i + 1 < len(keys) else None for i in plus_i]
     other = [k for k in keys if k['key'] in LEVEL_KEYS and k['key'] != "'+'"]
     a_key = next((k for k in keys if k['key'] == "'a'"), None)
     arm_req = next((r['t'] for r in requests if r['request'] == 'arm'), None)
     t_arm = next((tr['t'] for tr in transitions if tr['why'] == 'arm'), None)
     first_sent = next(iter(goals.values()))['sent'] if goals else None
     lc = [e for e in ev if e['event'] == 'level_change']
-    conf = confirmations(drv)
     st0 = next((st for _, _, st in sts if st.get('levels_m_s')), None)
     speeds = (st0 or {}).get('levels_m_s') or []
     strides = (st0 or {}).get('strides_m') or []
-
-    def confirmed():
-        if not plus or not conf:
-            return None
-        if len(conf) != len(plus):
-            return False
-        nxt = [k['t_before_write'] for k in keys if k['t_before_write'] > plus[-1]['t_after_write']]
-        for i, (k, c) in enumerate(zip(plus, conf), start=1):
-            limit = plus[i]['t_before_write'] if i < len(plus) else (nxt[0] if nxt else None)
-            if not (k['t_after_write'] <= c[0] and (limit is None or c[0] <= limit)):
-                return False
-            if (c[1], c[2]) != (i + 1, 3) or i >= len(speeds) \
-                    or c[3] != f'{speeds[i] * 1000:.2f}':
-                return False
-        return True
+    confirmed, rows = attribute_confirmations(plus, confirmations(drv), uppers, speeds)
 
     def while_disarmed(k):
         st = status_before(sts, k['t_before_write'])
@@ -213,7 +257,7 @@ def assess_level(ev, goals, keys, requests, transitions, drv, sts, level, run_le
                  for k in plus),
         'level_keys_while_disarmed_without_goal': None if not plus or None in states
         else all(states),
-        'each_level_key_confirmed_by_the_teleop': confirmed(),
+        'each_level_key_confirmed_by_the_teleop': confirmed,
         'one_level_change_0_to_L_between_arm_and_goal_1': None if t_arm is None
         or first_sent is None else (len(lc) == 1 and lc[0].get('previous') == 0
                                     and lc[0].get('level') == level
@@ -223,7 +267,7 @@ def assess_level(ev, goals, keys, requests, transitions, drv, sts, level, run_le
     }
     return {'verdict': verdict_of(checks), 'checks': checks, 'level': level,
             'teleop_label': spec['teleop_label'], 'stride_m': spec['stride_m'],
-            'confirmations': [{'label': f'{c[1]}/{c[2]}', 'speed_mm_s': c[3]} for c in conf]}
+            'confirmations': rows}
 
 
 # ------------------------------------------------------------------ C3, C4

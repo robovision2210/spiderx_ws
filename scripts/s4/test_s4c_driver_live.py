@@ -15,6 +15,7 @@ Usage (stdlib only): cd scripts/s4 && python3 -m unittest -v test_s4c_driver_liv
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -40,12 +41,42 @@ def load_driver():
 
 
 class S4cBench(s3t.Bench):
-    """The S3 bench; the teleop's messages reach the driver, and 'q' closes as m55_teleop does."""
+    """The S3 bench; the teleop's messages reach the driver as pty output chunks with their
+    receipt times, and 'q' closes as m55_teleop does. Output options: confirm_delay_s (received
+    after the write returned), split_at/split_gap_s (one line in two chunks), duplicate_output,
+    mangle (altered text); write_s: the pty write takes that long, so output can arrive inside
+    the write bracket."""
 
-    def __init__(self, *a, ignore=(), swap=None, **kw):
+    def __init__(self, *a, ignore=(), swap=None, write_s=0.0, confirm_delay_s=0.0, split_at=None,
+                 split_gap_s=0.0, duplicate_output=False, mangle=None, **kw):
         super().__init__(*a, **kw)
         self.ignore, self.swap = set(ignore), dict(swap or {})
         self.teleop_exit = None
+        self.write_s, self.confirm_delay_s = write_s, confirm_delay_s
+        self.split_at, self.split_gap_s = split_at, split_gap_s
+        self.duplicate_output, self.mangle = duplicate_output, mangle
+        self.pending_out = []                    # [(due wall, text)]
+
+    def say(self, text):
+        text = self.mangle(text) if self.mangle else text
+        parts = [(self.confirm_delay_s, text)]
+        if self.split_at is not None:
+            n = self.split_at
+            parts = [(self.confirm_delay_s, text[:n]),
+                     (self.confirm_delay_s + self.split_gap_s, text[n:])]
+        for _ in range(2 if self.duplicate_output else 1):
+            for delay, part in parts:
+                if delay <= 0:
+                    self.driver._on_teleop_out(part, self.world.wall)
+                else:
+                    self.pending_out.append((self.world.wall + delay, part))
+
+    def tick(self):
+        due = [p for p in self.pending_out if p[0] <= self.world.wall + 1e-9]
+        self.pending_out = [p for p in self.pending_out if p not in due]
+        for _, part in due:                      # received now, in order
+            self.driver._on_teleop_out(part, self.world.wall)
+        super().tick()
 
     def key(self, ch):
         ch = self.swap.get(ch, ch)
@@ -54,7 +85,7 @@ class S4cBench(s3t.Bench):
         action = tp.KEYMAP[ch]
         service, message = self.teleop.key(action, self.world.wall)
         if message and self.driver is not None:
-            self.driver._on_teleop_out(message + '\n')
+            self.say(message + '\n')
         if action == tp.QUIT:              # handle(q): stop, disarm; then _shutdown_sequence
             for name in (tp.STOP, tp.DISARM, tp.STOP, tp.DISARM):
                 self.requests.append((name, self.s.request(name, self.world.wall)))
@@ -91,7 +122,11 @@ def make_driver(mod, bench, out_dir, level, shadow=False, write_hook=None):
         def _write(self, data):                                     # the pty write only
             if write_hook:
                 write_hook(bench, data)
+            if bench.write_s:
+                bench.sleep(bench.write_s / 2)
             bench.key(data.decode())
+            if bench.write_s:
+                bench.sleep(bench.write_s / 2)
             return len(data)
 
         def _teleop_exit_status(self):                              # the wait status only
@@ -227,6 +262,9 @@ class Live(Base):
                             for i in plus))
         sel = next(r['selection'] for r in recs if 'selection' in r)
         self.assertEqual(sel['level'], level)
+        for c in sel['confirmations']:
+            self.assertGreaterEqual(c['t_receipt'], c['t_before_write'])
+        self.assertTrue(all('t_receipt' in r for r in recs if 'teleop_out' in r))
         q = next(r for r in recs if r.get('key') == "'q'")
         self.assertEqual([r for r in recs if r.get('mono', 0) > q['mono'] and 'key' in r], [])
         checks = [r for r in recs if 'cycle_check' in r]
@@ -396,6 +434,66 @@ class Live(Base):
                 self.assertEqual(rc, 2, why)
                 self.assertIn('teleop confirms speed level 2/3', why)
                 self.assertNotIn("'a'", self.keys())
+
+    def selection(self):
+        return next(r['selection'] for r in self.records() if 'selection' in r)
+
+    def test_confirmation_received_before_or_after_the_write_returned(self):
+        for level in LEVELS:
+            for case, kw in (('during the write bracket', {'write_s': 0.1}),
+                             ('after the write returned', {'confirm_delay_s': 0.3})):
+                with self.subTest(level=level, case=case):
+                    rc, why, bench, d, events = self.run_case(level, **kw)
+                    self.check_complete(level, rc, why, bench, d, events)
+                    for c in self.selection()['confirmations']:
+                        inside = c['t_before_write'] < c['t_receipt'] < c['t_after_write']
+                        after = c['t_receipt'] > c['t_after_write']
+                        self.assertTrue(inside if 'during' in case else after, c)
+                        self.assertEqual(c['received_before_the_write_returned'], inside)
+
+    def test_a_confirmation_split_across_output_chunks(self):
+        for level in LEVELS:
+            for gap in (0.0, 0.2):
+                with self.subTest(level=level, gap=gap):
+                    rc, why, bench, d, events = self.run_case(level, split_at=19,
+                                                              split_gap_s=gap,
+                                                              confirm_delay_s=gap)
+                    self.check_complete(level, rc, why, bench, d, events)
+                    chunks = [r['teleop_out'] for r in self.records() if 'teleop_out' in r]
+                    heads = [c for c in chunks if 'speed level' in c and 'mm/s' not in c]
+                    tails = [c for c in chunks if 'mm/s' in c and 'speed level' not in c]
+                    self.assertEqual((len(heads), len(tails)), (level, level))   # split lines
+                    for c in self.selection()['confirmations']:       # the completing chunk
+                        self.assertGreaterEqual(c['t_receipt'], c['t_before_write'] + 2 * gap)
+
+    def test_two_presses_have_distinct_ordered_confirmations(self):
+        rc, why, bench, d, events = self.run_case(2, write_s=0.1)
+        self.check_complete(2, rc, why, bench, d, events)
+        c1, c2 = self.selection()['confirmations']
+        self.assertEqual((c1['label'], c2['label']), ('2/3', '3/3'))
+        self.assertNotEqual(c1['speed_mm_s'], c2['speed_mm_s'])
+        self.assertLess(c1['t_receipt'], c2['t_before_write'])
+        self.assertLess(c2['t_before_write'], c2['t_receipt'])
+
+    def test_stale_duplicate_or_wrong_confirmations_stop_before_arm(self):
+        def stale(bench, data):                  # a confirmation received before the write
+            if data == b'+':
+                bench.driver._on_teleop_out('speed level 2/3: 1.90 mm/s\n',
+                                            bench.world.wall - 0.001)
+
+        def wrong_speed(text):
+            return re.sub(r': [0-9.]+ mm/s', ': 9.99 mm/s', text)
+        for level in LEVELS:
+            for case, kw, text in (
+                    ('stale', {'ignore': {'+'}, 'write_hook': stale}, 'stale level confirmation'),
+                    ('duplicate', {'duplicate_output': True}, 'level confirmations for one key'),
+                    ('wrong speed', {'mangle': wrong_speed}, 'expected 2/3')):
+                with self.subTest(level=level, case=case):
+                    rc, why, bench, d, events = self.run_case(level, **kw)
+                    self.assertEqual(rc, 2, why)
+                    self.assertIn(text, why)
+                    self.assertNotIn("'a'", self.keys())
+                    self.assertEqual((bench.plant.sent, self.of(events, 'goal_sent')), (0, []))
 
     def test_level_keys_are_refused_unless_disarmed_before_arm(self):
         for level in LEVELS:

@@ -59,7 +59,10 @@ Stops added to every S3 and S4a stop:
 - the node's level other than 0 before goal 1, or other than L from goal 1 on; an intent level
   other than L;
 - any FAULTED state (no planned cancel);
-- a level key unless DISARMED with no goal before arm; a missing or different confirmation;
+- a level key unless DISARMED with no goal before arm; a missing, stale (received before the '+'
+  write began), duplicate or different confirmation. Each output chunk's receipt time is
+  time.monotonic() right after os.read(), logged at full precision with the chunk; a line split
+  across chunks is rebuilt, and receipt during the key's write bracket is accepted;
 - after 'q': a goal, or a state other than READY or DISARMED; after DISARMED: anything but
   DISARMED with no goal; the teleop still running 15 s after DISARMED, or exiting non-zero.
 
@@ -121,7 +124,7 @@ class S4cDriver(s4a.S4aDriver):
             raise ValueError(f'S4c runs level 1 or 2 (internal index), not {level!r}')
         self.level_index = level
         self.spec = LEVELS[level]
-        self.teleop_out = []                # [(mono, text)] as the pty delivered it
+        self.teleop_out = []                # [(t_receipt, text)] as the pty delivered it
         self.selection = None
         self.stage = 'pre'                  # pre, selected, armed, closing, closed
         self.checked_max_seq = 0            # the highest goal seq among the statuses checked
@@ -132,27 +135,25 @@ class S4cDriver(s4a.S4aDriver):
 
     # ------------------------------------------------------------------ the teleop's output
     def _pump(self, fd):
-        """S2's pump (the teleop's output, logged), also kept for the level confirmations."""
+        """S2's pump (the teleop's output, logged), also kept for the level confirmations. Each
+        chunk's receipt time is time.monotonic() immediately after os.read() returns, logged at
+        full precision (the record's own 'mono' is rounded)."""
         while True:
             try:
                 r, _, _ = select.select([fd], [], [], 0.1)
                 if r:
                     data = os.read(fd, 4096)
+                    t_receipt = time.monotonic()
                     if not data:
                         return
-                    self._on_teleop_out(data.decode(errors='replace'))
+                    self._on_teleop_out(data.decode(errors='replace'), t_receipt)
             except (OSError, ValueError):
                 return
 
-    def _on_teleop_out(self, text):
+    def _on_teleop_out(self, text, t_receipt):
         with self.lock:
-            self.teleop_out.append((time.monotonic(), text))
-        self.log(teleop_out=text)
-
-    def _teleop_text_from(self, k):
-        """The teleop's output from chunk k on (a cursor, never a time: chunks can share one)."""
-        with self.lock:
-            return ''.join(x for _, x in self.teleop_out[k:])
+            self.teleop_out.append((t_receipt, text))
+        self.log(teleop_out=text, t_receipt=t_receipt)
 
     def _teleop_exit_status(self):
         """The teleop's wait status once it has exited, else None (the bench replaces only this)."""
@@ -293,28 +294,53 @@ class S4cDriver(s4a.S4aDriver):
                 k0 = len(self.teleop_out)
             self.key('+', f'select level {L} (internal index; teleop label '
                           f'{self.spec["teleop_label"]}): + {i} of {L}')
+            kw = self.key_writes[-1]                # this press's full-precision write bracket
+            tb = kw['t_before_write']
             self.wait(f'teleop confirms speed level {i + 1}/{n}',
-                      lambda st, k0=k0: self._confirmation(k0) is not None, CONFIRM_SIM_S)
-            got = self._confirmation(k0)
-            if got != want:
+                      lambda st, k0=k0, tb=tb: self._confirmation(k0, tb) is not None,
+                      CONFIRM_SIM_S)
+            got = self._confirmation(k0, tb)
+            if got[:3] != want:
                 raise s2.Abort(f'teleop confirmed speed level {got[0]}/{got[1]} at {got[2]} mm/s; '
                                f'expected {want[0]}/{want[1]} at {want[2]} mm/s')
             confirmations.append({'press': i, 'label': f'{got[0]}/{got[1]}',
-                                  'speed_mm_s': got[2]})
+                                  'speed_mm_s': got[2], 't_before_write': tb,
+                                  't_after_write': kw['t_after_write'], 't_receipt': got[3],
+                                  'received_before_the_write_returned':
+                                  got[3] < kw['t_after_write']})
         self.selection = {'level': L, 'teleop_label': self.spec['teleop_label'],
                           'stride_m': strides[L], 'speed_m_s': levels[L],
                           'confirmations': confirmations}
         self.stage = 'selected'
         self.log(selection=self.selection)
 
-    def _confirmation(self, k0):
-        txt = self._teleop_text_from(k0)
+    def _confirmation(self, k0, t_before):
+        """The one confirmation line in the teleop's output from chunk k0 on (a cursor, never a
+        time), rebuilt across chunks: (label index, count, speed, receipt time of the chunk that
+        completed it), or None while there is none. Received during the key's write bracket is
+        fine; received before the write began is stale. Stale, duplicate or unknown-level output
+        stops the script."""
+        with self.lock:
+            chunks = list(self.teleop_out[k0:])
+        txt = ''.join(x for _, x in chunks)
         if UNKNOWN_LEVELS in txt:
             raise s2.Abort('the teleop had no speed levels yet: the level key was not applied')
-        m = CONFIRM_RE.findall(txt)
-        if len(m) > 1:
-            raise s2.Abort(f'{len(m)} level confirmations for one key: {m}')
-        return m[0] if m else None
+        ms = list(CONFIRM_RE.finditer(txt))
+        if len(ms) > 1:
+            raise s2.Abort(f'{len(ms)} level confirmations for one key: '
+                           f'{[m.group(0) for m in ms]}')
+        if not ms:
+            return None
+        end, t_receipt = 0, None
+        for t, x in chunks:
+            end += len(x)
+            if end >= ms[0].end():
+                t_receipt = t
+                break
+        if not isinstance(t_receipt, (int, float)) or t_receipt < t_before:
+            raise s2.Abort(f'stale level confirmation: received at {t_receipt!r}, before the + '
+                           f'write began at {t_before!r}')
+        return ms[0].group(1), ms[0].group(2), ms[0].group(3), t_receipt
 
     def run_cycle(self, direction, why):
         """S4a's run_cycle with the selected level's cycle time: one cycle in `direction`, stopped
