@@ -1,0 +1,23 @@
+[09:43:28] gates (imported): True False False
+[09:43:28] launch
+launch pid 10753 pgid 10753 xvfb 10741
+both controllers active after 15 s of polling
+[INFO] [1793612623.913061906] [_ros2cli_11055]: waiting for service /controller_manager/list_controllers to become available...
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+[09:43:50] controllers: exit 0
+[09:43:53] gazebo gui pid(s) 10912  reniced +19
+[09:44:41] node up after 48 s: locomotion node up in DISPATCH mode (dispatch gate True); levels [1.06, 1.9, 2.34] mm/s
+[09:44:41] locomotion node pid(s) 10813  (launch session 10753) reniced -5
+[09:44:44] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[09:46:07] pre-shadow checks passed: pre-arm checks PASS (server 10909 maps the r2 libraries with provenance hashes, no stock/mixed; gain 1.0 log+param; update_rate 100; period 0.001 s; both controllers active; node 10813 DISPATCH (gate True) in the launch session, the action's only client; 0 command publishers; settle 10.01 s sim, z 0
+[09:46:07] captures before
+[09:46:13] driver
+[09:48:17] driver exit 0: {"command_rejections": {}, "cycles": [{"cycle": 1, "cycles_count": 1, "direction": 1, "forward_m": 0.020025517285390954, "lateral_m": 1.4637428791228599e-05, "sim": 60.33, "yaw_rad": -5.64129663446617
+[09:48:20] captures after
+[09:48:22] bag stopped
+[09:48:23] screenshot 2: exit 0
+[09:48:25] strace (signals only) attached to simulator server 10909: strace: Process 10909 attached 
+[09:48:25] stop launch
+[09:48:31] server exit (strace): +++ exited with 0 +++
+[09:48:31] end

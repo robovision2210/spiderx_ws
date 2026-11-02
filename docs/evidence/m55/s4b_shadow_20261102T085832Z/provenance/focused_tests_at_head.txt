@@ -1,0 +1,13 @@
+== focused tests 2026-11-02T09:00:18Z at e406590a98ead5052b610316a5d23aba0c6edaf6 (worktree entries 0)
+Ran 90 tests in 14.691s
+OK
+31 passed in 15.41s
+flake8 clean: scripts/s4
+243974e75a5784b3a482364f29e6e1b978cc24e12a847927f2c2bfb00643bc50  scripts/s4/s4a_driver.py
+f0e68c648232304a0acb580a8b47e8d57e56431b21a199622627df3a6596051a  scripts/s4/s4b_driver.py
+631fe2ec8cab638780511d919df51617410868508b9073ff61e83aab39d6e66a  scripts/s4/score_s4a.py
+a9716d5297163d2d11d2b77ad6cf19784b4bda0a2c855e72ec82c53a02c08126  scripts/s4/score_s4b.py
+a06c8ba4204c1eba97e4a81cb80e312d83e31811bc66992b00cd68a8125ea317  scripts/s4/test_s4a_driver_live.py
+a9e47d1cd176e74823f3277c0b106a28345a89b32b412a0c8f103edddd76603e  scripts/s4/test_s4b_driver_live.py
+82e3cd2547da8270a6ccf860e7e26ea1c6a4eae1ea42559a492d29b7d3354f2f  scripts/s4/test_score_s4a.py
+5d73b5ea0a21dd199854f59d623d72e41bcef109da0d1e10e4f0c0405a936446  scripts/s4/test_score_s4b.py

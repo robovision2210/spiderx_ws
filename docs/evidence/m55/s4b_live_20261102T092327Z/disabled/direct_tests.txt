@@ -1,0 +1,10 @@
+== direct tests (not collected by colcon) 2026-11-02T09:35:43Z at 2b22e443dd6abb1f80c61d8f52e670c9860e6a22
+-- src/spiderx_scripts/test (pytest)
+2 passed in 0.11s
+-- scripts/s3 (unittest; the S4b driver builds on it)
+Ran 69 tests in 13.639s
+OK
+-- scripts/s4 (unittest; S4a and S4b drivers and scorers)
+Ran 90 tests in 14.680s
+OK
+(the restore-script test is colcon-collected: in the suite above)

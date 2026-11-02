@@ -1,0 +1,19 @@
+[09:03:42] gates (imported): False False False
+[09:03:42] launch
+launch pid 5673 pgid 5673 xvfb 5668
+[09:04:27] controllers: exit 0
+[09:04:30] gazebo gui pid(s) 5828  reniced +19
+[09:04:58] node up after 29 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[09:04:58] locomotion node pid(s) 5783  (launch session 5673) reniced -5
+[09:05:01] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[09:06:29] pre-shadow checks passed: pre-key checks PASS (server 5825 maps the r2 libraries with provenance hashes, no stock/mixed; gain 1.0 log+param; update_rate 100; period 0.001 s; both controllers active; node 5783 SHADOW (gate False) in the launch session, no action client; action clients 0; 0 command publishers; settle 10.07 s s
+[09:06:29] captures before
+[09:06:35] driver
+[09:11:03] driver exit 0: {"command_rejections": {}, "cycles": [{"cycle": 1, "cycles_count": 1, "direction": 1, "forward_m": -4.048669552723507e-10, "lateral_m": -2.1835290716971314e-16, "progress_sign_bound": "Signed progress
+[09:11:06] captures after
+[09:11:09] bag stopped
+[09:11:09] screenshot 2: exit 0
+[09:11:11] strace (signals only) attached to simulator server 5825: strace: Process 5825 attached 
+[09:11:11] stop launch
+[09:11:18] server exit (strace): +++ exited with 0 +++
+[09:11:18] end
