@@ -1,0 +1,70 @@
+== input checks 2026-11-03T09:44:44Z
+branch claude/spiderx-s4c-preparation HEAD 0cb2cccfd60864809ef44f104ffea2ded7ee1e95 worktree entries 0 local/* branches 0
+== toolchain (installed 2026-10-29 by scripts/env/cloud_env_setup.sh 57cc33f8...)
+57cc33f84f9968dff4960bc85b1c1e7baf60025e42ade94061679673996c6193  scripts/env/cloud_env_setup.sh
+compiler: x86_64-conda-linux-gnu-g++ (conda-forge gcc 15.3.0-7) 15.3.0
+PASS compiler = overlay provenance
+ROS_DISTRO=humble prefix=/opt/mm/root/envs/humble
+6.16.0
+== r2 overlay provenance
+PASS overlay provenance = the S3 run's committed copy
+PASS patch 0001-plugin-node-parameter-overrides 14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac
+PASS patch 0002-destructor-no-second-node-removal 520e73cc59a68025b237347e7e54df64b45739048fcc90a623011f728cba6261
+PASS library libgz_ros2_control-system.so 3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27 (2026-10-31 15:38:27)
+PASS library libgz_hardware_plugins.so 06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5 (2026-10-31 15:38:27)
+overlay source HEAD bfc5845aa7f0250cbc384773dba5c9847d609b95
+PASS overlay source: every present file = upstream bfc5845 + 0001 + 0002
+overlay reference tree kept, not deleted: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/l2_inputs/overlay_ref.t2v0iY
+== installed SpiderX runtime vs HEAD (layout 2026-11-02 18:25:26, setup 2026-11-02 18:52:53: the S4c level-1 live restore's incremental rebuild of ea69d3f, verified disabled by the restoration follow-up d5a6692)
+src changes ea69d3f..HEAD: 
+files 413: symlinks into src/ equal to the HEAD blob 169; generated build outputs 164 (modified after the build: 0); toolchain ament env-hook symlinks 14; bytecode caches 66; problems 0
+  spiderx_bringup/share/spiderx_bringup/launch/fortress_m55_walking.launch.py -> src/spiderx_bringup/launch/fortress_m55_walking.launch.py
+  spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_locomotion.py -> src/spiderx_controller/spiderx_controller/m55_locomotion.py
+  spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_rclpy.py -> src/spiderx_controller/spiderx_controller/m55_rclpy.py
+  spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_teleop.py -> src/spiderx_controller/spiderx_controller/m55_teleop.py
+  spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py -> src/spiderx_controller/spiderx_controller/m55_contract.py
+PASS no src/ file changed since the reused build (ea69d3f)
+== gates (fresh import, env -i, from /) and phase library
+M55_LOCOMOTION_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+M61_LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+{"goals": 54, "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732", "m55_gate_imported": false}
+PASS phase library 54 goals 62f8a100...
+== S4c tools at HEAD (s4c_driver imports s4a_driver, s3_driver, s2_driver; score_s4c imports score_s4b, score_s4a, score_s3)
+d0ff8acbe73433d3831f854a747680a94dcea64f1914de7dce3af2054390b8a7  scripts/s4/s4c_driver.py = HEAD blob
+fe1b5c03879efc264bc6762ed340e93c969682c0c2fbd32af9b758d5b32e6f4d  scripts/s4/score_s4c.py = HEAD blob
+243974e75a5784b3a482364f29e6e1b978cc24e12a847927f2c2bfb00643bc50  scripts/s4/s4a_driver.py = HEAD blob
+631fe2ec8cab638780511d919df51617410868508b9073ff61e83aab39d6e66a  scripts/s4/score_s4a.py = HEAD blob
+a9716d5297163d2d11d2b77ad6cf19784b4bda0a2c855e72ec82c53a02c08126  scripts/s4/score_s4b.py = HEAD blob
+0af5b90a410acfcb4b7e3967d1aaff0d8eb2e23c441aea83fe7bbf4233c612e7  scripts/s3/s3_driver.py = HEAD blob
+44cd495913b413c3f984adb581c699258a6da5cc7495c820ce3ef5e92ed78388  scripts/s2/s2_driver.py = HEAD blob
+1c8ef9848ee771a99044210a2f0099e1aa8b2679c2639b3bfbbe3d1f8c458996  scripts/s3/score_s3.py = HEAD blob
+PASS s3_driver.py and s2_driver.py = the drivers that ran S3 (P4 and live)
+== the S4c tools = those of the level-1 shadow and live runs (driver d0ff8acb..., scorer fe1b5c03...)
+PASS scripts/s4/s4c_driver.py d0ff8acb... = the level-1 shadow and live runs' tool
+PASS scripts/s4/score_s4c.py fe1b5c03... = the level-1 shadow and live runs' tool
+PASS scripts/s4/s4a_driver.py 243974e7... = the level-1 shadow and live runs' tool
+PASS scripts/s4/score_s4a.py 631fe2ec... = the level-1 shadow and live runs' tool
+PASS scripts/s4/score_s4b.py a9716d52... = the level-1 shadow and live runs' tool
+PASS scripts/s3/s3_driver.py 0af5b90a... = the level-1 shadow and live runs' tool
+PASS scripts/s2/s2_driver.py 44cd4959... = the level-1 shadow and live runs' tool
+PASS scripts/s3/score_s3.py 1c8ef984... = the level-1 shadow and live runs' tool
+== reuse of the recorded fresh disabled build and suite (restoration follow-up d5a6692, run at 0d84ebd)
+PASS manifest docs/evidence/m55/s4c_l1_live_20261102T182303Z_restore_followup_20261102T185957Z
+PASS manifest docs/evidence/m55/s4c_l1_shadow_20261102T175711Z
+PASS manifest docs/evidence/m55/s4c_l1_live_20261102T182303Z
+start 2026-11-02T19:00:06Z branch claude/spiderx-s4c-preparation head 0d84ebd3a7a972719e656638a7f2fa0c4558a98b worktree 0
+Summary: 1972 tests, 0 errors, 0 failures, 0 skipped
+COLLECTION VERDICT: PASS
+INSTALLATION A VERDICT: PASS
+INSTALLATION B VERDICT: PASS
+PASS recorded fresh build + suite (1972 tests, 0 failures) and both installation checks
+PASS src/, scripts/ and third_party/ unchanged since the fresh build (0d84ebd): reuse, no rebuild
+changes 0d84ebd..HEAD (expected: evidence and documentation only): README.md STATUS.md docs/S4_KEYBOARD_TELEOP_PLAN.md docs/evidence/m55/s4c_l1_live_20261102T182303Z_restore_followup_20261102T185957Z/ 
+== processes
+no leftover processes
+display :77 free
+PASS s4a_driver.py and score_s4a.py = the S4a tools that ran and scored S4a
+PASS score_s4b.py = the S4b scorer that scored S4b (score_s4c imports it)
+PASS since the reused build (ea69d3f): no src/ file changed
+INPUT VERDICT: PASS

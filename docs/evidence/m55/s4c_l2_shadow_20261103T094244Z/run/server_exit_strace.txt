@@ -1,0 +1,2 @@
+--- SIGINT {si_signo=SIGINT, si_code=SI_USER, si_pid=1636, si_uid=0} ---
++++ exited with 0 +++

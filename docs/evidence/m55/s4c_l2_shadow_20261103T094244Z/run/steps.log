@@ -1,0 +1,20 @@
+[09:49:10] gates (imported): False False False
+[09:49:10] launch
+launch pid 1508 pgid 1508 xvfb 1488
+[09:49:56] controllers: exit 0
+[09:49:59] gazebo gui pid(s) 1734  reniced +19
+[09:50:33] node up after 35 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[09:50:33] locomotion node pid(s) 1651  (launch session 1508) reniced -5
+[09:50:36] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[09:52:10] pre-shadow checks passed: pre-shadow checks PASS (server 1730 maps only the r2 libraries with provenance hashes, no stock/mixed; gain 1.0 log+param; update_rate 100; period 0.001 s; both controllers active; node 1651 SHADOW (gate False) in the launch session, 0 action clients, 0 command publishers; settle 10.05 s sim, z 0.05
+[09:52:10] captures before
+[09:52:16] driver
+[09:59:31] driver exit 0: {"close": {"disarmed_sim_s": 84.25, "event": "teleop_closed", "exit_code": 0, "pid": 2863, "t_exit_seen": 1567.463489188, "wait_status": 0}, "close_observation": {"from_sim_s": 84.25, "goals_recorded_
+[09:59:34] captures after
+[09:59:37] bag stopped
+[09:59:37] teleop processes after the driver (its q close should leave none): none
+[09:59:37] screenshot 2: exit 0
+[09:59:39] strace (signals only) attached to simulator server 1730: strace: Process 1730 attached 
+[09:59:39] stop launch
+[09:59:45] server exit (strace): +++ exited with 0 +++
+[09:59:45] end
