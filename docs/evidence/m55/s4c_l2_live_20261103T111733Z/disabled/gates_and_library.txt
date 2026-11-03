@@ -1,0 +1,9 @@
+== fresh import from / (toolchain, r2 overlay, workspace) 2026-11-03T11:19:37Z
+M55_LOCOMOTION_DISPATCH_ENABLED False imported as /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+M61_LIVE_DISPATCH_ENABLED False imported as /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+LIVE_DISPATCH_ENABLED False imported as /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+config /home/user/spiderx_ws/install/spiderx_controller/share/spiderx_controller/config/m55_locomotion.yaml -> /home/user/spiderx_ws/src/spiderx_controller/config/m55_locomotion.yaml
+ros2 pkg prefix spiderx_controller: /home/user/spiderx_ws/install/spiderx_controller
+{"goals": 54, "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732", "m55_gate_imported": false}
+{"m55_gate_imported": false, "out": "/root/spiderx_evidence/s4c_l2_live_20261103T111733Z/disabled/library.json"}
+library.json sha256 917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e

@@ -1,0 +1,16 @@
+commit 78501f90d7ab3e1341b182b976eb45d01fc5338c
+Author: Claude <noreply@anthropic.com>
+Date:   Tue Nov 3 11:22:29 2026 +0000
+
+    LOCAL ONLY, never pushed: enable M5.5 dispatch for the one S4c level-2 live attempt
+    
+    Applies docs/patches/m55_enable_s2.UNAPPLIED.patch (sha256 d1dacac5...)
+    to the disabled baseline 77d97fc765a54dcc95f2f8857b70511e4454ea70: the
+    M55 gate and its test pin only. M61 and M6.0-D stay False.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01QzFL2kguRig19KtzFfqEm3
+
+ src/spiderx_controller/spiderx_controller/m55_contract.py | 2 +-
+ src/spiderx_controller/test/m55_gate.py                   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
