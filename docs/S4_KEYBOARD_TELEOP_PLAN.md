@@ -2,7 +2,7 @@
 
 Date: 2026-11-01. Written on branch `claude/spiderx-s3-preparation`; the S4a decisions and corrections were added on `claude/spiderx-s4a-preparation`.
 
-**Status: S4a and S4b PASSED; S4c internal level 1 PASSED (§3.3); S4c internal level 2 not authorized; S4d–S4e PLAN.** S4a level-0 reverse-and-return validation passed in simulation using automated input through the keyboard-teleop path (2026-11-01, §3.1, [evidence](evidence/m55/s4a_live_20261101T153411Z/README.md)). S4b level-0 release, boundary reversal, home and lease-loss validation passed in simulation using automated keyboard-path input (2026-11-02, §3.2, [evidence](evidence/m55/s4b_live_20261102T092327Z/README.md)). S4c internal level 1 (40 mm stride, teleop label 2/3) passed one free-base forward/reverse simulation test: 18 goals succeeded, zero cancels, C1–C11 PASS. The run used incremental enabled and restore builds; a subsequent fresh disabled build and verification passed. Internal level 2 and S4d remain not authorized. The run was on 2026-11-02 (§3.3; [evidence](evidence/m55/s4c_l1_live_20261102T182303Z/README.md), [restoration follow-up](evidence/m55/s4c_l1_live_20261102T182303Z_restore_followup_20261102T185957Z/README.md)). **No further S4 stage is authorized to run.** Each stage needs its own owner authorization, its own local enabling branch (never pushed) and one launch. The dispatch gates stay `False` on every pushed commit.
+**Status: S4a, S4b and S4c PASSED (S4c at internal levels 1 and 2, §3.3); S4d unimplemented and not authorized; S4d–S4e PLAN.** S4a level-0 reverse-and-return validation passed in simulation using automated input through the keyboard-teleop path (2026-11-01, §3.1, [evidence](evidence/m55/s4a_live_20261101T153411Z/README.md)). S4b level-0 release, boundary reversal, home and lease-loss validation passed in simulation using automated keyboard-path input (2026-11-02, §3.2, [evidence](evidence/m55/s4b_live_20261102T092327Z/README.md)). S4c internal level 1 (40 mm stride, teleop label 2/3) passed one free-base forward/reverse simulation test: 18 goals succeeded, zero cancels, C1–C11 PASS. The run used incremental enabled and restore builds; a subsequent fresh disabled build and verification passed. Internal level 2 and S4d remain not authorized. That level-1 record dates from 2026-11-02 (§3.3; [evidence](evidence/m55/s4c_l1_live_20261102T182303Z/README.md), [restoration follow-up](evidence/m55/s4c_l1_live_20261102T182303Z_restore_followup_20261102T185957Z/README.md)). S4c internal level 2 (60 mm stride, teleop label 3/3) followed on 2026-11-03, separately authorized (§3.3; [shadow rehearsal](evidence/m55/s4c_l2_shadow_20261103T094244Z/README.md), [evidence](evidence/m55/s4c_l2_live_20261103T111733Z/README.md)). S4c passed its separately authorized internal-level-1 and internal-level-2 free-base simulation tests, using automated input through the keyboard-teleop path. Each test completed one forward and one reverse cycle: 18 successful goals, zero cancels, and C1–C11 PASS. This does not complete full S4 acceptance or demonstrate human keyboard operation, hardware operation or unrestricted walking. S4d remains unimplemented and not authorized. **No further S4 stage is authorized to run.** Each stage needs its own owner authorization, its own local enabling branch (never pushed) and one launch. The dispatch gates stay `False` on every pushed commit.
 
 **Automated keyboard path versus human operation.** Every Cloud stage (S4a–S4d) drives the real `m55_teleop_keyboard` from a script, through a pseudo-terminal with emulated key repeat. That tests the teleop's key decoding, hold window, lease and service calls, and the node's response. It is **not** human operation. A person at a physical keyboard is only S4e, on the owner's PC: real key repeat and reaction times, checks 1.11 and 1.13.
 
@@ -51,7 +51,7 @@ Wherever a stage needs a value these criteria do not give (stop limits, per-leve
 |---|---|---|---|
 | **S4a (passed 2026-11-01, §3.1)** | First contact in **reverse**, at the validated level 0 | settle, arm; hold `s` for 1 cycle, space at the boundary; hold `w` for 1 cycle back, space; estop (`x` with a goal in flight); 10 s hold; `q` | ≤ 19 goals, 1 cancel; the return need not land on the arm pose |
 | **S4b (passed 2026-11-02, §3.2)** | Operator input on contact, level 0 | key release mid-phase (no space); reversal at a phase boundary; `h` home; teleop SIGKILL (lease, check 1.9); no estop, reset or re-arm (§3.2) | 12 goals, 0 cancels (§3.2) |
-| **S4c (level 1 passed 2026-11-02; level 2 not authorized, §3.3)** | First contact at level 1, then at level 2, with the owner's go/no-go between them | one level per invocation: settle; `+` × L while disarmed (teleop 2/3 or 3/3); arm; hold `w` 1 cycle, space at the boundary; hold `s` 1 cycle back, space; `q` close; no estop | 18 goals and 0 cancels per level (§3.3) |
+| **S4c (passed: level 1 on 2026-11-02, level 2 on 2026-11-03, §3.3)** | First contact at level 1, then at level 2, with the owner's go/no-go between them | one level per invocation: settle; `+` × L while disarmed (teleop 2/3 or 3/3); arm; hold `w` 1 cycle, space at the boundary; hold `s` 1 cycle back, space; `q` close; no estop | 18 goals and 0 cancels per level (§3.3) |
 | S4d | The S4 acceptance run (§2) | 0.3 m forward at level 3/3 (5 cycles of 60 mm), then back; release, speed change, reversal, `home`, `x`, close | ≈ 90 cycle goals plus checks, fixed in its authorization |
 | S4e (optional, owner's PC) | A physical keyboard | checks 1.11 (key repeat) and 1.13 (crash path) on the owner's machine | Owner-run |
 
@@ -121,7 +121,7 @@ Wherever a stage needs a value these criteria do not give (stop limits, per-leve
   - The simulator server exited 0, with no forced termination, and the restore was DISABLED AND VERIFIED. A 0.23 s startup wait of `gz_ros2_control` for `robot_state_publisher` is recorded as a finding.
   - This was automated keyboard-path input, not human operation. It does not validate faster levels, full S4, hardware or navigation.
 
-### 3.3 S4c scope (owner, 2026-11-02): level 1 passed; level 2 not authorized
+### 3.3 S4c scope (owner, 2026-11-02): levels 1 and 2 passed
 - **Scope.** First contact at ONE faster level per invocation, named explicitly with `--level`. The value is the node's internal index; the teleop shows index + 1 of 3.
 
   | `--level` | Stride | Teleop label | Keys to select |
@@ -189,6 +189,16 @@ Wherever a stage needs a value these criteria do not give (stop limits, per-leve
     - Tracking feedback for every goal, maximum error 0.00225 rad. Normal teleop close; DISARMED stillness measured over 10 s of sim.
   - The enabled build and the restore rebuild were **incremental**: a safety check stopped the clean-build deletion. A later fresh disabled build in new colcon bases passed the full suite, and both installations (symlink installs that share one `src/`) verified disabled ([restoration follow-up](evidence/m55/s4c_l1_live_20261102T182303Z_restore_followup_20261102T185957Z/README.md)). This is not a clean enabled-build run.
   - This was automated keyboard-path input in simulation, not human operation, unrestricted walking or hardware. Internal level 2 needs its own authorization after the owner's go/no-go.
+- **Results, internal level 2** (the shadow rehearsal and the live attempt were each separately authorized by the owner after the level-1 result).
+  - Shadow rehearsal: PASS, shadow only ([evidence](evidence/m55/s4c_l2_shadow_20261103T094244Z/README.md)).
+  - One live attempt: PASS, C1–C11 ([evidence](evidence/m55/s4c_l2_live_20261103T111733Z/README.md)).
+    - 18 goals succeeded, zero cancels, no emergency response.
+    - Forward +60.015 mm, reverse return −59.959 mm (from the end of the forward cycle). Net return error +0.056 mm forward, −0.011 mm lateral; recorded only.
+    - Tracking feedback for all 18 goals, maximum error 0.00225 rad. Normal teleop close; DISARMED stillness measured over 10 s of sim.
+    - Close requests: the teleop issues stop, then disarm, twice, as asynchronous calls; the node recorded disarm, stop, disarm, stop. C5 compares them as counts.
+  - Builds: before the attempt, the owner authorized the established incremental enabled and restore builds (`colcon build --symlink-install`), recorded before enabling. This is not a clean enabled-build run. The level-1 caveat and its fresh disabled follow-up, above, are unchanged.
+  - This was automated keyboard-path input in simulation, not human operation, unrestricted walking or hardware.
+- **S4c result.** S4c passed its separately authorized internal-level-1 and internal-level-2 free-base simulation tests, using automated input through the keyboard-teleop path. Each test completed one forward and one reverse cycle: 18 successful goals, zero cancels, and C1–C11 PASS. This does not complete full S4 acceptance or demonstrate human keyboard operation, hardware operation or unrestricted walking. S4d remains unimplemented and not authorized.
 
 **Why S4a first.** It adds exactly one physical unknown: reverse on contact. Everything else stays as validated in S3:
 - the same speed level, plant, launch, harness, stops and evidence;
@@ -219,13 +229,13 @@ Its acceptance bands already exist: M5.5 phase 3 says "10–30 mm forward / back
 - **Cleanup.** The tested watchdog and trap: SIGINT, the server exit observed, then the full restore (clean rebuild, `--delete-enabling-branch`). The result must be DISABLED AND VERIFIED with all three gates `False`. A failed script never waives cleanup.
 
 ## 5. Offline work needed before any S4 run (separately authorized; no motion)
-1. **S4 driver** (`scripts/s4/`; **done for S4a** (`s4a_driver.py`) and **S4b** (`s4b_driver.py`, §3.2); **S4c** (`s4c_driver.py`, §3.3: level 1 ran; level 2 prepared, not authorized); S4d is not implemented). The S3 driver is forward-only by design and its tests enforce that. The new driver:
+1. **S4 driver** (`scripts/s4/`; **done for S4a** (`s4a_driver.py`) and **S4b** (`s4b_driver.py`, §3.2); **S4c** (`s4c_driver.py`, §3.3: levels 1 and 2 ran); S4d is not implemented). The S3 driver is forward-only by design and its tests enforce that. The new driver:
    - reuses the tested S3 helpers: fresh samples, debounce, the body frame, the settle check and `--shadow-rehearsal`;
    - adds reverse and mirrored checks, level keys at boundaries, `home`, release mid-cycle, a lease exercise and reset/re-arm;
    - is tested on the in-memory bench.
 
    It should record a timestamp **before** each key write as well as after. That removes the inferred-window issue S3-r1 had to handle retrospectively.
-2. **S4 scorer, written before any run** (**done for S4a** (`score_s4a.py`) and **S4b** (`score_s4b.py`, §3.2); **S4c** (`score_s4c.py`, §3.3: level 1 scored)). It covers the §2 criteria and the stage's bands. It specifies in advance the bracketed estop exception, using the recorded before- and after-write times rather than a retrospective inference. Missing evidence is UNMEASURED.
+2. **S4 scorer, written before any run** (**done for S4a** (`score_s4a.py`) and **S4b** (`score_s4b.py`, §3.2); **S4c** (`score_s4c.py`, §3.3: levels 1 and 2 scored)). It covers the §2 criteria and the stage's bands. It specifies in advance the bracketed estop exception, using the recorded before- and after-write times rather than a retrospective inference. Missing evidence is UNMEASURED.
 3. **One shadow rehearsal of each stage's script** (as P4 for S3), with no goal reaching the controller.
 
 ## 6. Owner decisions needed
@@ -234,6 +244,6 @@ Its acceptance bands already exist: M5.5 phase 3 says "10–30 mm forward / back
 3. ~~Per-cycle bands for levels 1–2~~ **Decided for S4c** (§3.3).
 4. **Whether S4 acceptance needs a human at a physical keyboard** (S4e), or whether the Cloud pseudo-terminal emulation is enough for simulation.
 5. **The order S4a → S4b → S4c → S4d**, each with its own authorization and go/no-go. This plan recommends it; combining stages needs the owner's explicit choice.
-6. **For S4d,** these all remain unresolved: scripts, budgets, stop limits, whether an estop exercise is included, and authorizations. S4c's scope is decided (§3.3); level 1 ran once in shadow and once live, as authorized, and level 2 needs its own authorization. S4b ran once in shadow and once live, as authorized (§3.2). This plan does not change their acceptance criteria (§2).
+6. **For S4d,** these all remain unresolved: scripts, budgets, stop limits, whether an estop exercise is included, and authorizations. S4c's scope is decided (§3.3); each level ran once in shadow and once live, as authorized. S4b ran once in shadow and once live, as authorized (§3.2). This plan does not change their acceptance criteria (§2).
 
-**Not authorized by this plan:** any launch, enabling branch, goal, cancel, S4c internal level-2, S4d or S4e execution, S4d–S4e implementation, hardware or navigation work. The S4a and S4b tools each ran once in shadow and once live, as authorized (§3.1, §3.2). The S4c tools ran once in shadow and once live at internal level 1, as authorized (§3.3).
+**Not authorized by this plan:** any launch, enabling branch, goal, cancel, further S4c run, S4d or S4e execution, S4d–S4e implementation, hardware or navigation work. The S4a and S4b tools each ran once in shadow and once live, as authorized (§3.1, §3.2). The S4c tools ran once in shadow and once live at each internal level, 1 and 2, as authorized (§3.3).
