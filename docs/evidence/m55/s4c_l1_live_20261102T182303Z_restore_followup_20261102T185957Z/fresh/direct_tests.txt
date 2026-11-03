@@ -1,0 +1,11 @@
+== direct tests (not collected by colcon) 2026-11-02T19:10:20Z at 0d84ebd3a7a972719e656638a7f2fa0c4558a98b, fresh installation /root/spiderx_fresh_disabled_20261102T185957Z/install sourced
+-- src/spiderx_scripts/test (pytest)
+2 passed in 0.12s
+-- scripts/s3 (unittest, all three test files)
+Ran 86 tests in 13.477s
+
+OK
+-- scripts/s4 (unittest, S4a, S4b and S4c drivers and scorers)
+Ran 146 tests in 29.100s
+
+OK

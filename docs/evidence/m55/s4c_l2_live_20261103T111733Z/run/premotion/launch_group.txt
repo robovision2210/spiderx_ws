@@ -1,0 +1,11 @@
+launch pid = session 2602
+  PID  PPID   SID  PGID ELAPSED COMMAND
+ 2602     1  2602  2602      95 /opt/mm/root/envs/humble/bin/python /opt/mm/root/envs/humble/bin/ros2 launch spiderx_bringup fortress_m55_walking.launch.py evidence_dir:=/root/spiderx_evidence/s4c_l2_
+ 2673  2602  2602  2602      94 /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spiderx_fortress.sdf 
+ 2675  2673  2602  2602      94 ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spiderx_fortress.sdf
+ 2676  2602  2602  2602      94 /opt/mm/root/envs/humble/lib/robot_state_publisher/robot_state_publisher --ros-args -r __node:=robot_state_publisher --params-file /tmp/launch_params_11ksiq26
+ 2681  2602  2602  2602      94 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge --ros-args -r __node:=spiderx_gz_bridge --params-file /tmp/launch_params_f2i56487
+ 2685  2602  2602  2602      93 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge /world/spiderx_fortress/pose/info@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V --ros-args -r __node:=spiderx_
+ 2687  2602  2602  2602      93 python3 /home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidence-dir /root/spiderx_evidence/s4c_l2_live_20261103T111733Z/r
+ 2759  2675  2602  2759      92 ign gazebo server
+ 2764  2675  2602  2764      92 ign gazebo gui

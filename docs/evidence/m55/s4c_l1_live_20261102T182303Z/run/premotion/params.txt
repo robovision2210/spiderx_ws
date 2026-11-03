@@ -1,0 +1,4 @@
+== ros2 param get /gz_ros2_control position_proportional_gain
+Double value is: 1.0
+== ros2 param get /controller_manager update_rate
+Integer value is: 100

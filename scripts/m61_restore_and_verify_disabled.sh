@@ -39,8 +39,9 @@
 #     d. the CALLING environment must not import an enabled module, or one from elsewhere. Open
 #        a new shell, or re-source, if it does.
 #  6. Only if 1-5 passed and --delete-enabling-branch was given: delete the local enabling branch.
-#     It must be named local/m61-one-cycle-*, local/m55-s2-*, local/m55-s3-*, local/m55-s4a-* or
-#     local/m55-s4b-*, have no remote-tracking ref and not be the base.
+#     It must be named local/m61-one-cycle-*, local/m55-s2-*, local/m55-s3-*, local/m55-s4a-*,
+#     local/m55-s4b-*, local/m55-s4c-l1-* or local/m55-s4c-l2-* (S4c: one branch per level), have
+#     no remote-tracking ref and not be the base.
 # --verify-only skips the checkout in 3 and the rebuild in 4. The comparison in 3, and steps 1
 # and 5, still run.
 # Exit 0: disabled and verified. 1: a check failed (do not continue; fix and re-run). 2: usage.
@@ -272,9 +273,10 @@ if [ "$DELETE" = 1 ]; then
     say "no local branch ${ENABLING:-<none>} to delete"
   elif { [[ "$ENABLING" != local/m61-one-cycle-* ]] && [[ "$ENABLING" != local/m55-s2-* ]] &&
          [[ "$ENABLING" != local/m55-s3-* ]] && [[ "$ENABLING" != local/m55-s4a-* ]] &&
-         [[ "$ENABLING" != local/m55-s4b-* ]]; } ||
+         [[ "$ENABLING" != local/m55-s4b-* ]] && [[ "$ENABLING" != local/m55-s4c-l1-* ]] &&
+         [[ "$ENABLING" != local/m55-s4c-l2-* ]]; } ||
        [ "$ENABLING" = "$BASE" ]; then
-    fail "refusing to delete $ENABLING: not a local/m61-one-cycle-*, local/m55-s2-*, local/m55-s3-*, local/m55-s4a-* or local/m55-s4b-* branch, or it is the base"
+    fail "refusing to delete $ENABLING: not a local/m61-one-cycle-*, local/m55-s2-*, local/m55-s3-*, local/m55-s4a-*, local/m55-s4b-*, local/m55-s4c-l1-* or local/m55-s4c-l2-* branch, or it is the base"
   elif [ -n "$(git_ws for-each-ref "refs/remotes/*/$ENABLING")" ]; then
     fail "refusing to delete $ENABLING: a remote-tracking ref exists (it was pushed)"
   elif [ ! -s "$EVIDENCE/enabling_commit.patch" ]; then
@@ -285,7 +287,7 @@ if [ "$DELETE" = 1 ]; then
 else
   say "kept (no --delete-enabling-branch)"
 fi
-git_ws branch --list 'local/m61-one-cycle-*' 'local/m55-s2-*' 'local/m55-s3-*' 'local/m55-s4a-*' 'local/m55-s4b-*' | sed 's/^/local branch: /' | tee -a "$REPORT"
+git_ws branch --list 'local/m61-one-cycle-*' 'local/m55-s2-*' 'local/m55-s3-*' 'local/m55-s4a-*' 'local/m55-s4b-*' 'local/m55-s4c-l1-*' 'local/m55-s4c-l2-*' | sed 's/^/local branch: /' | tee -a "$REPORT"
 
 if [ "$FAILED" = 0 ]; then say "VERDICT: DISABLED AND VERIFIED"; exit 0; fi
 say "VERDICT: NOT VERIFIED - do not continue; fix and re-run"

@@ -1,0 +1,1 @@
+watchdog armed 2026-11-02T18:01:09Z deadline 3600 s (cleanup.sh then restore_cmd.sh --verify-only against 069385c) BEFORE launch: pid 1409

@@ -1,0 +1,15 @@
+== focused tests at HEAD 069385c8e49008b2b6f1c66d12c105f2d75923de (2026-11-02T18:12:30Z); scripts/s4 only, not the historical suite
+-- test_s4c_driver_live
+Ran 26 tests in 13.144s
+
+OK
+-- test_score_s4c
+Ran 30 tests in 3.018s
+
+OK
+-- all of scripts/s4 together (S4a, S4b and S4c drivers and scorers)
+Ran 146 tests in 28.759s
+
+OK
+-- flake8 --max-line-length 100
+clean
