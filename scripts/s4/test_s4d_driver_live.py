@@ -74,7 +74,8 @@ class S4dBench(s4ct.S4cBench):
     """The S4c bench with the teleop's status lines, a second teleop, the close orders and late
     deliveries. delay: {(key, occurrence): seconds} delivers that write late; close_order: the
     node's handling order of the close (requests, 'zero' heartbeat, 'tick'); zero_after_q_s: zero
-    heartbeats continue that long after 'q'; exit_codes: {spawn number: wait status};
+    heartbeats continue after 'q', up to that long, while the phase is in flight (as when 'q'
+    lands within the lease of the phase's end); exit_codes: {spawn number: wait status};
     blind_spawn: that teleop never receives a node status."""
 
     def __init__(self, *a, close_order=CLOSE_DEFAULT, zero_after_q_s=0.0, delay=None,
@@ -112,7 +113,7 @@ class S4dBench(s4ct.S4cBench):
         for _, ch in due:
             self.key(ch)
         if self.zero_until is not None and self.world.wall < self.zero_until and \
-                self.world.wall >= self.next_zero - 1e-9:
+                self.s.goal is not None and self.world.wall >= self.next_zero - 1e-9:
             self.s.on_command(self.world.wall, (0.0, 0.0, 0.0), (0.0, 0.0, 0.0))
             self.next_zero = self.world.wall + 0.1
         if self.held in self.swap:                     # a key read as another, repeats too
@@ -151,6 +152,7 @@ def make_bench(rtf=0.6, shadow=False, **kw):
     b = S4dBench(rtf, shadow=shadow, **kw)
     b.world = S4dWorld(b.s, b.plant, b.scn, rtf=rtf, graph_period_s=1.0)
     b.next_status = b.world.wall
+    b.s.log = collections.deque(maxlen=None)  # every event, as the node's events.jsonl keeps them
     return b
 
 
