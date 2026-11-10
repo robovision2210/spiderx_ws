@@ -12,6 +12,13 @@ Open `dist/spiderx_console.html` in a browser. Nothing needs to be installed.
 python3 tools/engineering_console/build.py
 ```
 
+To build from another checkout or worktree (for example the latest development branch), point the
+build at it. The console then describes that commit:
+
+```bash
+SPIDERX_REPO=/path/to/checkout SPIDERX_REF=claude/spiderx-s4d-preparation python3 tools/engineering_console/build.py
+```
+
 Python 3 standard library only. The build reads the URDF, the STL meshes, eight screenshots and
 one committed evidence CSV. It imports nothing from the robot packages, runs none of the
 repository scripts and changes nothing outside this folder. It stops with an error if a file path
@@ -30,10 +37,10 @@ derived foot tip, the 0.1223 rad crouch figure and both negative inverse kinemat
 |---|---|
 | `extract.py` | Read only extraction: links, joints, quantised meshes, derived foot tips, recorded playback, images |
 | `build.py` | Assembles the page and checks every cited path |
-| `src/05_content.js` | All text and evidence labels shown by the console |
+| `src/05_content.js`, `src/06_content2.js` | All text and evidence labels shown by the console |
 | `src/10_robot.js` | URDF forward kinematics and a port of the analytic inverse kinematics and gait phase rules |
 | `src/20_gl.js` | Small WebGL viewer for the real meshes, no external library |
-| `src/30_ui.js` | The nine stations, the evidence drawer and the image viewer |
+| `src/30_ui.js`, `src/35_ui2.js`, `src/40_boot.js` | The stations, the evidence drawer, the image viewer and routing |
 | `src/styles.css`, `src/body.html` | Presentation |
 
 ## Evidence labels

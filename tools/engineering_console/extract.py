@@ -14,7 +14,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
+REPO = os.path.abspath(os.environ.get('SPIDERX_REPO') or os.path.join(HERE, '..', '..'))
 DESC = os.path.join(REPO, 'src', 'spiderx_description')
 URDF = os.path.join(DESC, 'urdf', 'spiderx.urdf.xacro')
 RUN = 'docs/evidence/m61_cloud_one_cycle/20261012T103615Z'
@@ -77,7 +77,20 @@ def parse_urdf():
                 cyl = {'radius': float(c.get('radius')), 'length': float(c.get('length'))}
         inertial = el.find('inertial')
         mass = float(inertial.find('mass').get('value')) if inertial is not None else None
+        com = vec(inertial.find('origin').get('xyz')) if inertial is not None else None
+        ine = ({k: float(inertial.find('inertia').get(k)) for k in ('ixx', 'iyy', 'izz')}
+               if inertial is not None else None)
+        col = el.find('collision')
+        cm = col.find('geometry/mesh') if col is not None else None
+        same = bool(cm is not None and vis is not None and vis.find('geometry/mesh') is not None
+                    and cm.get('filename') == vis.find('geometry/mesh').get('filename')
+                    and col.find('origin').get('xyz') == vis.find('origin').get('xyz'))
+        start = line_of(lines, f'<link name="{name}">')
+        end = next(i for i in range(start, len(lines) + 1) if '</link>' in lines[i - 1])
         links.append({'name': name, 'mesh': mesh, 'visual_xyz': vxyz, 'cylinder': cyl, 'mass': mass,
+                      'com': com, 'inertia': ine, 'collision_same_as_visual': same,
+                      'placeholder_inertia': 'PLACEHOLDER inertia' in '\n'.join(lines[start - 1:end]),
+                      'xml': '\n'.join(lines[start - 1:end]) if end - start < 30 else None, 'end': end,
                       'line': line_of(lines, f'<link name="{name}">')})
     for el in root.findall('joint'):
         o = el.find('origin')
@@ -88,6 +101,7 @@ def parse_urdf():
              'xyz': vec(o.get('xyz')) if o is not None else [0.0, 0.0, 0.0],
              'rpy': vec(o.get('rpy')) if o is not None else [0.0, 0.0, 0.0],
              'line': line_of(lines, f'<joint name="{el.get("name")}"')}
+        j['xml'] = '\n'.join(lines[j['line'] - 1:next(i for i in range(j['line'], len(lines) + 1) if '</joint>' in lines[i - 1])])
         if el.get('type') == 'revolute':
             j['axis'] = [x + 0.0 for x in vec(ax.get('xyz'))]
             j['lower'], j['upper'] = float(lim.get('lower')), float(lim.get('upper'))
@@ -218,6 +232,9 @@ IMAGES = [
     ('cloud_m2', 'media/cloud_validation/m2_cad_neutral_posture_hold.png'),
     ('m61_side', RUN + '/run/captures/screenshot_gui_side.png'),
     ('m61_foot', RUN + '/run/captures/screenshot_gui_foot_level.png'),
+    ('s3_before', 'docs/evidence/m55/s3_free_base_20261101T115002Z/media/screenshot1_rest_before_first_goal.png'),
+    ('s3_after', 'docs/evidence/m55/s3_free_base_20261101T115002Z/media/screenshot2_after_script.png'),
+    ('s2_before', 'media/s2_phase_c/20261030T062140Z/s2_phase_c_before_first_goal.png'),
 ]
 
 
@@ -225,6 +242,8 @@ def images():
     out = {}
     for key, rel in IMAGES:
         path = os.path.join(REPO, rel)
+        if not os.path.exists(path):
+            continue
         with open(path, 'rb') as f:
             data = f.read()
         w, h = struct.unpack('>II', data[16:24])
@@ -235,11 +254,37 @@ def images():
 
 
 def snapshot():
-    return {'branch': git('rev-parse', '--abbrev-ref', 'HEAD'), 'commit': git('rev-parse', 'HEAD'),
-            'short': git('rev-parse', '--short', 'HEAD'),
-            'date': git('log', '-1', '--format=%ad', '--date=short'),
-            'subject': git('log', '-1', '--format=%s'),
-            'commits': int(git('rev-list', '--count', 'HEAD'))}
+    ref = os.environ.get('SPIDERX_REF') or git('rev-parse', '--abbrev-ref', 'HEAD')
+    out = {'branch': ref, 'commit': git('rev-parse', 'HEAD'), 'short': git('rev-parse', '--short', 'HEAD'),
+           'date': git('log', '-1', '--format=%ad', '--date=short'),
+           'subject': git('log', '-1', '--format=%s'), 'commits': int(git('rev-list', '--count', 'HEAD')),
+           'src_commit': git('log', '-1', '--format=%h', '--', 'src'),
+           'src_date': git('log', '-1', '--format=%ad', '--date=short', '--', 'src'),
+           'desc_commit': git('log', '-1', '--format=%h', '--', 'src/spiderx_description/urdf/spiderx.urdf.xacro',
+                              'src/spiderx_description/meshes'),
+           'desc_date': git('log', '-1', '--format=%ad', '--date=short', '--',
+                            'src/spiderx_description/urdf/spiderx.urdf.xacro', 'src/spiderx_description/meshes')}
+    try:
+        out['main_short'] = git('rev-parse', '--short', 'origin/main')
+        out['main_date'] = git('log', '-1', '--format=%ad', '--date=short', 'origin/main')
+        out['ahead_of_main'] = int(git('rev-list', '--count', 'origin/main..HEAD'))
+        out['behind_main'] = int(git('rev-list', '--count', 'HEAD..origin/main'))
+    except Exception:
+        pass
+    return out
+
+
+def s3_cycles():
+    """Per-cycle body motion of the one free-base crawl run, from the committed frozen scorer output."""
+    rel = 'docs/evidence/m55/s3_free_base_20261101T115002Z/score/summary.json'
+    path = os.path.join(REPO, rel)
+    if not os.path.exists(path):
+        return None
+    with open(path) as f:
+        d = json.load(f)
+    cyc = [{k: c[k] for k in ('cycle', 'forward_m', 'lateral_m', 'yaw_rad', 'max_tilt_rad', 'height_vs_standing_m')}
+           for c in d['A']['A2']['cycles']]
+    return {'source': rel, 'cycles': cyc, 'verdicts': {k: v.get('verdict') for k, v in d['A'].items() if isinstance(v, dict)}}
 
 
 def extract():
@@ -257,10 +302,12 @@ def extract():
                    'meshes': len(mesh_index), 'triangles': total_tris},
         'bbox': {'min': lo, 'max': hi, 'size': [hi[k] - lo[k] for k in range(3)]},
         'mass_total': sum(l['mass'] for l in links if l['mass']),
+        'com_total': [sum(l['mass'] * (origins[l['name']][k] + l['com'][k]) for l in links if l['mass'])
+                      / sum(l['mass'] for l in links if l['mass']) for k in range(3)],
         'origins': origins,
     }
     return {'snapshot': snapshot(), 'robot': robot, 'mesh_b64': base64.b64encode(blob).decode(),
-            'playback': playback(), 'images': images()}
+            'playback': playback(), 'images': images(), 's3': s3_cycles()}
 
 
 if __name__ == '__main__':

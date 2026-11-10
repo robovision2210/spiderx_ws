@@ -244,3 +244,27 @@ ol.rank small{color:var(--ink3);font-family:var(--fm);font-size:11.5px}
 }
 @media (min-width:981px){.snap.m{display:none}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+.navh{font:600 11px var(--fd);letter-spacing:.16em;text-transform:uppercase;color:var(--or);padding:12px 10px 4px;display:flex;flex-direction:column;gap:1px}
+.navh small{font:400 11px var(--fb);letter-spacing:0;text-transform:none;color:var(--ink3)}
+.rail nav a{padding:6px 10px}
+.qa{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.qa div{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--bg2)}
+.qa h4{font:600 11px var(--fm);letter-spacing:.1em;color:var(--cy);text-transform:uppercase;margin-bottom:4px}
+.qa p{font-size:13.5px}
+.simple{font-size:17px;color:var(--ink);max-width:60ch}
+details.more{border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;background:var(--bg2)}
+details.more summary{cursor:pointer;color:var(--cy);font-family:var(--fd);letter-spacing:.04em}
+details.more>*+*{margin-top:8px}
+.steps{display:flex;flex-direction:column;gap:4px}
+.steps button{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;text-align:left;background:none;border:1px solid transparent;border-radius:var(--r);padding:7px 9px;color:var(--ink2)}
+.steps button.on{border-color:var(--line2);background:var(--panel2);color:var(--ink)}
+.steps i{font:500 11px var(--fm);font-style:normal;color:var(--ink3)}
+.eq{font-family:var(--fm);font-size:13px;color:var(--ink);background:#04090b;border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;overflow-x:auto;white-space:pre}
+.bars{display:grid;grid-template-columns:70px minmax(0,1fr) 84px;gap:6px 10px;align-items:center;font:12.5px var(--fm)}
+.bars .bar{height:16px;background:var(--bg2);border:1px solid var(--line);border-radius:3px;position:relative}
+.bars .bar span{position:absolute;left:0;top:0;bottom:0;background:var(--cy2);border-radius:0 3px 3px 0}
+.scope{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.scope div{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--bg2);font-size:13px;color:var(--ink2)}
+.scope b{display:block;font:600 11px var(--fd);letter-spacing:.12em;text-transform:uppercase;color:var(--or);margin-bottom:4px}
+@media (max-width:980px){.navh{flex-direction:row;padding:6px 6px 6px 10px;white-space:nowrap;align-items:center}.navh small{display:none}}
