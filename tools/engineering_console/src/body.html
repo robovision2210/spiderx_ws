@@ -1,0 +1,22 @@
+<div class="boot" id="boot" role="dialog" aria-label="Startup sequence">
+  <div class="in">
+    <svg viewBox="0 0 100 100" fill="none" stroke="#35d6e0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M38 34h24l8 16-8 16H38l-8-16z"/><path d="M38 34 24 22 12 30M62 34l14-12 12 8M38 66 24 78l-12-8M62 66l14 12 12-8" stroke="#ff9140"/><circle cx="50" cy="50" r="6"/></svg>
+    <h1>SPIDERX</h1>
+    <ul id="bootLines" aria-live="polite"></ul>
+    <button class="btn pri" id="bootSkip">Skip intro</button>
+  </div>
+</div>
+<div class="app" id="app">
+  <aside class="rail">
+    <div class="brand">
+      <svg viewBox="0 0 100 100" fill="none" stroke="#35d6e0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M38 34h24l8 16-8 16H38l-8-16z"/><path d="M38 34 24 22 12 30M62 34l14-12 12 8M38 66 24 78l-12-8M62 66l14 12 12-8" stroke="#ff9140"/></svg>
+      <div><b>SPIDERX</b><span>Engineering Command Center</span></div>
+    </div>
+    <nav id="nav" aria-label="Stations"></nav>
+    <button class="toggle" id="motionBtn" aria-pressed="true" title="Pause or resume every repeating animation">❙❙ <span>Pause motion</span></button>
+    <div class="snap" id="snap"></div>
+  </aside>
+  <main id="main"></main>
+</div>
+<aside class="drawer" id="drawer" hidden aria-label="Evidence drawer"></aside>
+<div class="lb" id="lb" hidden role="dialog" aria-label="Image viewer"></div>
