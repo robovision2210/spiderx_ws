@@ -13,10 +13,16 @@ check sees the boundary pose exactly). The S4d bench adds:
 - the close as m55_teleop does it, in each asynchronous order: handle(q) calls stop and disarm, the
   shutdown sequence publishes one zero heartbeat and calls them again (default); disarm first (as
   S4c L2 live recorded); or the zero heartbeat handled, with a tick, before either request;
-- late key deliveries (a late space, release, switch or q).
+- late key deliveries (a late space, release, switch or q);
+- the node's status cadence: every 0.5 s wall AND on every state change, as m55_rclpy publishes
+  (_after: a status in the same callback as each transition);
+- optionally (ActualDurations) a bench library whose phase durations are the FROZEN r2 library's
+  own (library.json, sha256 917fc4d7...; read only, never rebuilt): goals 0.8-4.7 s at level 2,
+  in both directions. Joint waypoints stay synthetic; only the timing is the real gait's.
 
 Usage (stdlib only): cd scripts/s4 && python3 -m unittest -v test_s4d_driver_live"""
 import collections
+import hashlib
 import importlib.util
 import json
 import os
@@ -32,6 +38,7 @@ import test_s4c_driver_live as s4ct  # noqa: E402  (the S4c bench, unchanged)
 
 s4at, s3t = s4ct.s4at, s4ct.s3t
 c55, loc, tp, fk, LIMITS, Z0 = s3t.c55, s3t.loc, s3t.tp, s3t.fk, s3t.LIMITS, s3t.Z0
+fx = s3t.fx
 RTFS = (0.1, 0.3, 0.6, 1.0)
 UM = 1e-6
 CLOSE_DEFAULT = ('stop', 'disarm', 'zero', 'stop', 'disarm')    # handle(q), then the shutdown
@@ -120,12 +127,29 @@ class S4dBench(s4ct.S4cBench):
             self.held = self.swap[self.held]
         n = self.n_status
         super().tick()
+        if self.s.state != self.last_state:            # m55_rclpy _after: publish on a change
+            self.last_state = self.s.state
+            if self.n_status == n and self.driver is not None:
+                self._publish()
         if self.n_status != n and self.teleop is not None and not self.blind and \
                 self.driver is not None:
             line = tp.status_line(self.s.status(self.world.wall))
             if line != self.last_line:
                 self.last_line = line
                 self.driver._on_teleop_out(line + '\n', self.world.wall)
+
+    def _publish(self):
+        """One status publication, as S3's bench does its periodic one."""
+        msg = s3t.Msg(json.dumps(self.s.status(self.world.wall), sort_keys=True, default=repr))
+        if self.teleop is not None:
+            self.teleop.on_status(json.loads(msg.data))
+        self.n_status += 1
+        edit = self.scn.get('status_edit')
+        if edit:
+            msg = s3t.Msg(json.dumps(edit(json.loads(msg.data), self.n_status), sort_keys=True))
+        self.driver._on_status(msg)
+        if self.scn.get('duplicate', lambda n: False)(self.n_status):
+            self.driver._on_status(s3t.Msg(msg.data))
 
     def key(self, ch):
         ch = self.swap.get(ch, ch)
@@ -148,12 +172,75 @@ class S4dBench(s4ct.S4cBench):
             self.zero_until, self.next_zero = w + self.zero_after_q_s, w + 0.1
 
 
-def make_bench(rtf=0.6, shadow=False, **kw):
+def make_bench(rtf=0.6, shadow=False, library=None, **kw):
     b = S4dBench(rtf, shadow=shadow, **kw)
+    if library is not None:                  # as S3's bench builds them, with this library
+        b.plant = fk.FakeLocomotionTransport(library, library.boundary_positions(0, 0),
+                                             scenario='ok', fail_phase=1, drift_rad_s=0.05,
+                                             use_sim=True)
+        b.s = loc.LocomotionSession(b.cfg, library, loc.ShadowTransport(library.fingerprints)
+                                    if shadow else b.plant)
     b.world = S4dWorld(b.s, b.plant, b.scn, rtf=rtf, graph_period_s=1.0)
     b.next_status = b.world.wall
     b.s.log = collections.deque(maxlen=None)  # every event, as the node's events.jsonl keeps them
+    b.last_state = b.s.state
     return b
+
+
+FROZEN_LIBRARY = os.path.join(HERE, '..', '..', 'docs', 'evidence', 'm55',
+                              's4c_l2_shadow_20261103T094244Z', 'node', 'library.json')
+FROZEN_LIBRARY_SHA256 = '917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e'
+_ACTUAL = {}
+
+
+def frozen_durations():
+    """(lead_s, {level: [phase durations, s]}) from the frozen r2 library (read only)."""
+    with open(FROZEN_LIBRARY, 'rb') as f:
+        raw = f.read()
+    if hashlib.sha256(raw).hexdigest() != FROZEN_LIBRARY_SHA256:
+        raise AssertionError('the frozen library.json changed')
+    lib = json.loads(raw)['library']
+    return lib['lead_s'], {L['level']: L['phase_durations_s'] for L in lib['levels']}
+
+
+def actual_duration_template(stride, durations_s, dt=0.1, amp=0.05):
+    """m55_fixtures.synthetic_template with phase k lasting durations_s[k] (the frozen gait's own
+    phase durations). Synthetic joint waypoints; rest at every boundary."""
+    P, scale = len(fx.PHASES), stride / 0.02
+
+    def boundary(k):
+        return [amp * scale * s4at.math.sin(s4at.math.pi * k / P) * (1 + 0.5 * k / P)
+                * (1 + 0.1 * j) for j in range(len(fx.JOINTS))]
+    pts, bounds, t = [], [0], 0.0
+    for k in range(P):
+        n = int(round(durations_s[k] / dt))
+        a, b = boundary(k), boundary(k + 1)
+        for i in range(n + (1 if k == 0 else 0)):
+            s = (i if k == 0 else i + 1) / n
+            h, dh = 3 * s * s - 2 * s ** 3, (6 * s - 6 * s * s) / (n * dt)
+            pts.append({'time_from_start_s': round(t + s * n * dt, 9),
+                        'positions': [x + (y - x) * h for x, y in zip(a, b)],
+                        'velocities': [(y - x) * dh for x, y in zip(a, b)]})
+        t = round(t + n * dt, 9)
+        bounds.append(len(pts) - 1)
+    for i in bounds:
+        pts[i]['velocities'] = [0.0] * len(fx.JOINTS)
+    pts[-1]['positions'] = [0.0] * len(fx.JOINTS)
+    params = fx.cr.CrawlParams(stride, 0.012, 0.5, 0.6, 0.02, 0.015, 0.25, 0.9, dt, 0.02, 0.002)
+    body = [(0.0, stride * k / P) for k in range(P + 1)]
+    report = {'schema': fx.cr.SCHEMA, 'failures': [], 'speed_m_s': stride / t,
+              'phase_durations_s': list(durations_s)}
+    return fx.cr.CrawlTemplate(params, 1, list(fx.JOINTS), pts, report, bounds, list(fx.PHASES),
+                               body)
+
+
+def actual_library():
+    """A bench PhaseLibrary with the frozen library's strides, lead-in and phase durations."""
+    if 'lib' not in _ACTUAL:
+        lead, durations = frozen_durations()
+        _ACTUAL['lib'] = loc.PhaseLibrary([actual_duration_template(s, durations[L])
+                                           for L, s in enumerate((0.02, 0.04, 0.06))], lead)
+    return _ACTUAL['lib']
 
 
 def make_driver(mod, bench, out_dir, shadow=False, write_hook=None):
@@ -245,6 +332,7 @@ class Base(unittest.TestCase):
     def run_case(self, rtf=0.6, patch=None, shadow=False, write_hook=None, **kw):
         self.mod = load_driver()
         bench = make_bench(rtf, shadow=shadow, **kw)
+        self.bench = bench
         d = make_driver(self.mod, bench, self.tmp.name, shadow=shadow, write_hook=write_hook)
         self.addCleanup(d.out.close)
         if patch:
@@ -276,7 +364,9 @@ class Base(unittest.TestCase):
         self.assertIn(len(self.of(events, 'cancel_sent')), cancels)
 
 
-class Live(Base):
+class Complete(Base):
+    """check_complete only: the full-script assertions shared by Live and ActualDurations."""
+
     def check_complete(self, rc, why, bench, d, events, close_order=CLOSE_DEFAULT):
         m = self.mod
         self.assertEqual((rc, why), (0, 'script complete'))
@@ -345,6 +435,8 @@ class Live(Base):
                                  ('disarm', 'already disarmed')] * 2))
         return s
 
+
+class Live(Complete):
     def test_complete_script_111_goals_zero_cancels_across_the_rtf_range(self):
         for rtf in RTFS:
             with self.subTest(rtf=rtf):
@@ -746,6 +838,110 @@ class Live(Base):
         rc, why, bench, d, events = self.run_case(exit_codes={1: 256})
         self.assert_stopped(rc, why, bench, events, 'Q: the teleop exited with 1')
         self.assertEqual(bench.n_spawn, 1)
+
+
+class ActualDurations(Complete):
+    """The complete plan on a bench library with the FROZEN r2 gait's phase durations
+    (library.json, read only): level-2 goals of 0.8-4.7 s in both directions, the 1.2 s final
+    phase under the space, the 3.2 s and 4.2 s release goals, the 1.9 s goal under 'q'; at RTF
+    0.1-1.0, with the node's status cadence (2 Hz and on every state change)."""
+
+    def run_actual(self, rtf=0.6, **kw):
+        return self.run_case(rtf, library=actual_library(), **kw)
+
+    def test_the_plan_goals_carry_the_frozen_durations(self):
+        lead, durations = frozen_durations()
+        lib, m = actual_library(), load_driver()
+        used = set()
+        for level, b0, b1, d in m.PLANNED:
+            k = b0 if d > 0 else b1
+            g = lib.goal(level, b0, d)
+            self.assertEqual((g.level, g.b_from, g.b_to), (level, b0, b1))
+            self.assertAlmostEqual(g.duration_s, lead + durations[level][k], places=9)
+            used.add((level, k, d, round(g.duration_s, 6)))
+        self.assertTrue({(2, 2, 1, 0.8), (2, 6, 1, 0.8), (2, 2, -1, 0.8), (2, 6, -1, 0.8),
+                         (2, 8, 1, 1.2), (2, 0, -1, 1.9), (2, 4, 1, 3.2),
+                         (2, 5, -1, 4.2), (2, 3, 1, 4.7), (1, 1, 1, 3.2)} <= used, used)
+        self.assertEqual([round(sum(lib.goal(L, b, 1).duration_s for b in range(9)), 6)
+                          for L in (0, 1, 2)], [18.8, 21.1, 25.6])
+        self.assertEqual([f'{v * 1000:.2f}' for v in lib.speeds_m_s], ['1.06', '1.90', '2.34'])
+
+    def test_complete_script_at_the_frozen_durations_across_the_rtf_range(self):
+        lead, durations = frozen_durations()
+        for rtf in (0.1, 0.17, 0.3, 0.6, 1.0):
+            with self.subTest(rtf=rtf):
+                rc, why, bench, d, events = self.run_actual(rtf)
+                s = self.check_complete(rc, why, bench, d, events)
+                for g in self.of(events, 'goal_sent'):
+                    k = g['b_from'] if g['direction'] > 0 else g['b_to']
+                    self.assertAlmostEqual(g['duration_s'], lead + durations[g['level']][k],
+                                           places=9)
+                self.assertEqual((s['selection']['confirmations'][0]['speed_mm_s'],
+                                  s['speed_change']['speed_mm_s']), ('1.90', '2.34'))
+                tr = self.of(events, 'transition')
+                self.assertEqual(tr[-1]['why'], 'lease_expired')     # q early in the 1.9 s goal
+
+    def test_late_actions_at_the_frozen_durations_produce_an_off_plan_goal_and_stop(self):
+        def keep_repeating(d, bench):
+            d._stop_repeat = lambda: d.log(note='test: the repeat continued')
+
+        def late_release(d, bench):
+            original = d.release
+
+            def release(why, step=None):
+                if step == 'X_release':
+                    d.log(note='test: the release never reached the teleop')
+                    d.releases.append({'step': step})
+                    return
+                original(why, step)
+            d.release = release
+
+        def q_unread(d, bench):
+            orig = d._stop_repeat_timed
+
+            def timed(why):
+                if why.startswith('Q:'):
+                    return {'key': repr(d.hold_key), 'why': why, 't_before_stop': 0.0,
+                            't_after_stop': 0.0}
+                return orig(why)
+            d._stop_repeat_timed = timed
+        cases = (
+            ('space after the final 1.2 s phase', {'patch': keep_repeating,
+                                                   'delay': {(' ', 1): 30.0}},
+             'goal 55 is (2, 0, 1, 1), planned (2, 9, 8, -1)', 55),
+            ('release never in effect', {'patch': late_release},
+             'goal seq 105 above the step budget (104)', 105),
+            ('switch not in effect at boundary 6',
+             {'write_hook': nth_write('s', 2, lambda b: b.swap.update(s='w'))},
+             'goal 106 is (2, 6, 7, 1), planned (2, 6, 5, -1)', 106),
+            ('q never read, w still held', {'ignore': {'q'}, 'patch': q_unread}, 'goal 112',
+             112))
+        for name, kw, text, n in cases:
+            with self.subTest(case=name):
+                rc, why, bench, d, events = self.run_actual(1.0, **kw)
+                self.assert_stopped(rc, why, bench, events, text)
+                self.assertEqual(bench.plant.sent, n)
+
+    def test_missing_and_duplicate_evidence_at_the_frozen_durations(self):
+        rc, why, bench, d, events = self.run_actual(0.3, duplicate=lambda n: True)
+        self.check_complete(rc, why, bench, d, events)
+        stale_sims = []
+
+        def stale(st, n):                    # the first 6 statuses after the count reaches 1
+            if st.get('cycles') == 1 and len(stale_sims) < 6 and st.get('ground_truth'):
+                stale_sims.append(st['monitors']['sim_time_s'])
+                st['monitors']['body_pose_age_s'] = 5.0
+            return st
+        rc, why, bench, d, events = self.run_actual(0.3, status_edit=stale)
+        self.assertEqual((rc, why), (0, 'script complete'))
+        self.assertGreater(d.cycle_log[0]['sim'], max(stale_sims))
+
+        def blind_f1(st, n):
+            if st.get('cycles') == 2:
+                st['monitors']['body_pose_age_s'] = 5.0
+            return st
+        rc, why, bench, d, events = self.run_actual(0.3, status_edit=blind_f1)
+        self.assert_stopped(rc, why, bench, events, 'cycle count 1 -> 3: not one forward cycle')
 
 
 class Shadow(Base):

@@ -28,17 +28,18 @@ EVENT_PARTS = ('M1', 'M2', 'M7', 'M8', 'M16')
 MOTION_PARTS = ('M3', 'M4', 'M5', 'M6', 'M9', 'M10')
 
 
-def bench_run(shadow=False, rtf=0.6, **opts):
-    """One S4d bench run per (shadow, RTF, bench options), cached: (rc, node events, driver
-    records)."""
-    key = (shadow, rtf, tuple(sorted((k, repr(v)) for k, v in opts.items())))
+def bench_run(shadow=False, rtf=0.6, actual=False, **opts):
+    """One S4d bench run per (shadow, RTF, library, bench options), cached: (rc, node events,
+    driver records). actual: the bench library with the frozen r2 gait's phase durations."""
+    key = (shadow, rtf, actual, tuple(sorted((k, repr(v)) for k, v in opts.items())))
     if key not in _RUNS:
         saved = s4dt.c55.M55_LOCOMOTION_DISPATCH_ENABLED
         s4dt.c55.M55_LOCOMOTION_DISPATCH_ENABLED = not shadow       # tests only, in memory
         try:
             with tempfile.TemporaryDirectory() as tmp:
                 mod = s4dt.load_driver()
-                bench = s4dt.make_bench(rtf, shadow=shadow, **opts)
+                bench = s4dt.make_bench(rtf, shadow=shadow, **opts, **(
+                    {'library': s4dt.actual_library()} if actual else {}))
                 d = s4dt.make_driver(mod, bench, tmp, shadow=shadow)
                 rc, why = mod.run(d)
                 d.log(summary={'result': why, **d.summary()})          # as main() does
@@ -114,21 +115,45 @@ class BenchRuns(unittest.TestCase):
                 self.assertEqual(M['M10']['reason_evidence']['expected'], reason)
                 if basis:
                     self.assertEqual(M['M10']['reason_evidence']['basis'], basis)
-        # the lease kept fresh to the phase end: the node disarms with 'disarm', decided by the
-        # lease age at the last in-flight status (RTF 0.3) or by a command after it (RTF 0.4). At
-        # RTF 0.6 the last such status is 0.5 s before the transition and the lease 0.6 s old:
-        # undecidable, so UNMEASURED; never a FAIL
-        for rtf, basis in ((0.3, 'the lease was fresh at the last status'),
-                           (0.4, 'a command after the last status, within the lease'),
-                           (0.6, None)):
+        # zero heartbeats for up to 6 s after 'q' while goal 111 is in flight (the bench's node
+        # also publishes a status on every state change, as m55_rclpy does):
+        # - RTF 0.3: the lease is fresh to the phase end; the node disarms with 'disarm', proven by
+        #   the lease age at the last in-flight status;
+        # - RTF 0.17: the zeros stop before the 11 s phase ends; 'lease_expired', proven by an
+        #   unchanged count;
+        # - RTF 0.6: the last in-flight status is exactly 0.5 s before the transition on the
+        #   bench's 0.05 s clock grid and the lease 0.6 s old: undecidable, UNMEASURED, never FAIL
+        for rtf, expected, basis in ((0.3, 'disarm', 'the lease was fresh at the last status'),
+                                     (0.17, 'lease_expired', 'no command after the last status'),
+                                     (0.6, None, None)):
             with self.subTest(rtf=rtf):
                 rc, ev, drv = bench_run(rtf=rtf, zero_after_q_s=6.0)
                 M = score(ev, drv)
-                self.assertEqual(M['M10']['transitions_after_q'][-1][2], 'disarm')
+                actual = M['M10']['transitions_after_q'][-1][2]
+                self.assertEqual(actual, expected or 'disarm')
                 r = M['M10']['reason_evidence']
-                self.assertEqual(r.get('basis'), basis, r)
-                self.assertEqual(r['expected'], 'disarm' if basis else None)
-                self.assertEqual(M['M10']['verdict'], 'PASS' if basis else 'UNMEASURED')
+                self.assertEqual((r['expected'], r.get('basis')), (expected, basis), r)
+                self.assertEqual(M['M10']['verdict'], 'PASS' if expected else 'UNMEASURED')
+
+    def test_frozen_duration_runs_pass_and_meet_the_sim_bounds(self):
+        # the frozen gait's phase durations (1.2 s under the F space, 1.9 s under the R space and
+        # 'q', 3.2 s and 4.2 s release goals, a 10.4 s home), at the RTF extremes, live and shadow
+        for shadow, rtf in ((False, 0.17), (False, 1.0), (True, 0.17)):
+            with self.subTest(shadow=shadow, rtf=rtf):
+                rc, ev, drv = bench_run(shadow, rtf=rtf, actual=True)
+                self.assertEqual(rc, 0)
+                M = score(ev, drv, shadow=shadow)
+                self.assertEqual(verdicts(M, EVENT_PARTS + MOTION_PARTS),
+                                 dict.fromkeys(EVENT_PARTS + MOTION_PARTS, 'PASS'), M)
+                self.assertEqual((M['M10']['reason_evidence']['expected'],
+                                  M['M10']['transitions_after_q'][-1][2]),
+                                 ('lease_expired', 'lease_expired'))
+                self.assertTrue(10.4 <= M['M9']['home']['home_sim_s'] <= 12.0,
+                                M['M9']['home']['home_sim_s'])
+                for row in ('row_9', 'row_12'):
+                    lat = M['M7'][row]['detection_latency_s']
+                    self.assertGreaterEqual(lat, 0.717)
+                    self.assertLessEqual(M['M7'][row]['ready_sim_s'], M['M7'][row]['sim_bound_s'])
 
     def test_shadow_and_live_runs_are_never_scored_as_each_other(self):
         rc, ev, drv = bench_run(shadow=True)
@@ -689,6 +714,34 @@ class BoundaryExtraction(unittest.TestCase):
                                    'tolerance_s': 0.67})
         self.assertTrue(ok['ok'])                                 # outliers do not count
         self.assertAlmostEqual(ok['uncertainty_s'], 0.0023)
+
+
+class RealContinuousBoundaries(unittest.TestCase):
+    """The S4d boundary extraction on REAL continuous boundary-0 transitions: a compact fixture
+    extracted read-only from the retained S3 free-base bag (level 0, 20 mm stride, real contact;
+    provenance hashes in the fixture). Run A ends stopped at goal 9; run C walks THROUGH
+    boundaries 18, 27, 36 and 45 and stops at 54. Level 2 is not covered by this recording."""
+    FIXTURE = os.path.join(HERE, 'fixtures', 's3_free_base_boundaries.json')
+    BAG_SHA256 = '52fdb5aea5a3426fe3a7edd6c67642457eb28c3d479d2a590802dc7e3403d73b'
+
+    def test_real_boundaries_are_found_at_rest_and_match_the_committed_s3_cycles(self):
+        with open(self.FIXTURE) as fh:
+            f = json.load(fh)
+        self.assertEqual(f['provenance']['bag_sha256'], self.BAG_SHA256)
+        poses = [(r[0], {'xy': (r[1], r[2]), 'yaw': r[3], 'z': r[4], 'tilt': r[5]})
+                 for r in f['poses']]
+        jts = [tuple(r) for r in f['joint_stamps']]
+        inst = {int(k): v for k, v in f['instants'].items()}
+        goals = {k: {'done_t': v} for k, v in inst.items() if k}
+        m = s4d.motion_from_samples(poses, jts, {'ok': True}, goals, inst[0], None)
+        b = m['boundaries']
+        for k in (0, 9, 18, 27, 36, 45, 54):                   # 18-45: walked through
+            self.assertIsNotNone(b[k]['pose'], (k, b[k]))
+            self.assertLess(b[k]['moved_mm'], 0.2)
+        pairs = ((0, 9), (9, 18), (18, 27), (27, 36), (36, 45), (45, 54))
+        got = [s4d.body_delta(b[k0]['pose'], b[k1]['pose'])[0] for k0, k1 in pairs]
+        for g, c in zip(got, f['committed_s3_cycles_m']):
+            self.assertAlmostEqual(g, c, delta=0.5e-6)          # the committed S3 score, +-0.5 um
 
 
 class Parts(unittest.TestCase):
