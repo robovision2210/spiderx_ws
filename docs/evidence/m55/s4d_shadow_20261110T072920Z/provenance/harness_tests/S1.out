@@ -1,0 +1,6 @@
+[07:38:14] gates (imported): False False False /root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/harness_tests2/S1/tools/s4d_shadow_run.sh: line 33: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/harness_tests2/S1/run/watchdog.pid: No such file or directory
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/harness_tests2/S1/tools/s4d_shadow_run.sh: line 33: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/harness_tests2/S1/run/watchdog_deadline_epoch.txt: No such file or directory
+[07:38:14] OD8 before the launch: FAIL: the watchdog is not running
+[07:38:14] REFUSED before the launch (nothing launched, no key): OD8 time budget
+[07:38:14] end

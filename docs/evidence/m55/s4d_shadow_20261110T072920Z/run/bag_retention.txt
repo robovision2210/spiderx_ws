@@ -1,0 +1,32 @@
+S4d-M shadow rehearsal raw recording (rosbag2), recorded 2026-11-10 in the cloud session container.
+The bag is NOT in the repository. This file records what is needed to identify and read it.
+
+Location (cloud container only):  /root/spiderx_evidence/s4d_shadow_20261110T072920Z/bag/
+  bag_0.db3      760479744 bytes  sha256 c285b2e6ddd39029e323a7aef08a7e7ba57fad5853cbb32143277951647d69c3
+  metadata.yaml       3550 bytes  sha256 4d885d0e3b37f6b308d0ceab2aba7237297986baf40c39fedc15ca2b5c734301
+  (metadata.yaml is byte-identical to run/bag_metadata.yaml here; hashes before/after scoring: run/bag_hashes.txt)
+
+Format: rosbag2 metadata version 5, storage plugin sqlite3, serialization cdr, no compression, one file.
+Recorded with ROS 2 Humble (RoboStack) by `ros2 bag record -s sqlite3 --include-hidden-topics` (tools/s4d_shadow_run.sh).
+Start 1794296816.451053249 s since the epoch (2026-11-10T07:46:56Z); duration 1605.225976081 s; 151711 messages.
+
+Topics (type; messages):
+  /spiderx/locomotion/status                                         std_msgs/msg/String (JSON text)              3235
+  /joint_states                                                      sensor_msgs/msg/JointState                  34052
+  /spiderx/sim/world_poses                                           tf2_msgs/msg/TFMessage                      82987
+  /cmd_vel                                                           geometry_msgs/msg/Twist                     15313
+  /leg_trajectory_controller/controller_state                        control_msgs/msg/JointTrajectoryControllerState 16124
+  /leg_trajectory_controller/follow_joint_trajectory/_action/feedback  control_msgs/action/FollowJointTrajectory_FeedbackMessage 0
+  /leg_trajectory_controller/joint_trajectory: requested, never published, so absent from the bag (no publisher).
+  Not recorded by design: _action/status and /clock.
+
+To read it later:
+- Keep bag_0.db3 and metadata.yaml together in one directory. `ros2 bag info <dir>` and `ros2 bag play <dir>` need
+  ROS 2 Humble with the rosbag2 sqlite3 plugin and the message packages above.
+- score_s4d.py (at 8f99bcc) reads bag_0.db3 directly with sqlite3 (read-only, immutable) and rclpy deserialization.
+  Re-scoring also needs this evidence directory's run/, provenance/library_disabled.json,
+  restore/restore_verify_20261110T081410Z.txt, run_install/run_install_gates.json and tools/s4d_shadow_run.sh.
+- Check the bytes first: `sha256sum bag_0.db3` must print c285b2e6ddd39029e323a7aef08a7e7ba57fad5853cbb32143277951647d69c3.
+
+Preservation: when this file was committed, the only copy of the raw bytes was in the cloud container. A committed hash
+is not a backup.

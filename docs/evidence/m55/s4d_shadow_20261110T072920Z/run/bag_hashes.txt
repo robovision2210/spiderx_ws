@@ -1,0 +1,9 @@
+before scoring 2026-11-10T08:14:40Z:
+c285b2e6ddd39029e323a7aef08a7e7ba57fad5853cbb32143277951647d69c3  /root/spiderx_evidence/s4d_shadow_20261110T072920Z/bag/bag_0.db3
+760479744 bytes
+after scoring 2026-11-10T08:17:32Z:
+c285b2e6ddd39029e323a7aef08a7e7ba57fad5853cbb32143277951647d69c3  /root/spiderx_evidence/s4d_shadow_20261110T072920Z/bag/bag_0.db3
+760479744 bytes
+after the supplementary analysis 2026-11-10T08:18:38Z:
+c285b2e6ddd39029e323a7aef08a7e7ba57fad5853cbb32143277951647d69c3  /root/spiderx_evidence/s4d_shadow_20261110T072920Z/bag/bag_0.db3
+760479744 bytes

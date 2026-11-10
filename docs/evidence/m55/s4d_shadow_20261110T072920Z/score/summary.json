@@ -1,0 +1,812 @@
+{
+ "M": {
+  "M1": {
+   "cancels": 0,
+   "checks": {
+    "all_succeeded": true,
+    "event_order_consistent": true,
+    "every_key_write_complete": true,
+    "exactly_111_planned_goals_in_order": true,
+    "main_keys_exactly_as_scripted": true,
+    "no_cancel": true,
+    "no_fault": true,
+    "no_refusal": true,
+    "node_shadow_gate_false_throughout": true,
+    "one_arm_before_goal_1": true,
+    "one_goal_sent_per_seq": true,
+    "requests_before_q_exactly_arm_stop_stop_home": true
+   },
+   "faults": [],
+   "goals": 111,
+   "verdict": "PASS"
+  },
+  "M10": {
+   "checks": {
+    "disarmed_reason_matches_the_node_clock_evidence": true,
+    "disarmed_within_sim_bound": true,
+    "disarmed_within_wall_backstop": true,
+    "disarmed_without_goal_over_10_s_of_sim": true,
+    "exactly_the_close_requests_after_q": true,
+    "no_goal_after_q": true,
+    "no_key_after_q_before_the_probe": true,
+    "no_refusal_after_q": true,
+    "q_written_while_goal_111_in_flight": true,
+    "repeat_stopped_then_q_within_the_hold_window": true,
+    "still_after_the_close": true,
+    "stopping_after_the_q_write_inside_goal_111": true,
+    "stopping_then_disarmed_at_boundary_1": true,
+    "teleop_exit_code_0_within_15_s": true
+   },
+   "disarmed_sim_s": 1.8900000000000432,
+   "reason_evidence": {
+    "basis": "no command after the last status",
+    "commands_at_status": 15248,
+    "commands_at_transition": 15248,
+    "contradiction": false,
+    "expected": "lease_expired",
+    "last_command_node": 4338.818688574,
+    "lease_s": 0.5,
+    "since_last_command_s": 8.132889362000242,
+    "since_status_s": 0.2512879010000688,
+    "t_disarmed_node": 4346.951577936,
+    "t_status_node": 4346.700290035
+   },
+   "request_order_recorded": [
+    "disarm",
+    "stop",
+    "disarm",
+    "stop"
+   ],
+   "requests_after_q": {
+    "disarm": 2,
+    "stop": 2
+   },
+   "still": {
+    "joint_samples": 1000,
+    "max_joint_motion_rad": 5.887818659620483e-12,
+    "max_tilt_rad": 1.541388099311085e-07,
+    "min_z_m": 0.054495294635466464,
+    "pose_samples": 2484,
+    "verdict": "PASS",
+    "window_sim_s": [
+     347.97,
+     357.97
+    ]
+   },
+   "timeline_recorded_only": {
+    "disarmed_sim_s": 347.97,
+    "q_write_driver": 4338.816655135,
+    "sim_before_q_s": 346.08,
+    "teleop_exit_seen_driver": 4346.966549321
+   },
+   "transitions_after_q": [
+    [
+     "WALKING",
+     "STOPPING",
+     "disarm"
+    ],
+    [
+     "STOPPING",
+     "DISARMED",
+     "lease_expired"
+    ]
+   ],
+   "verdict": "PASS"
+  },
+  "M11": {
+   "note": "not applicable: dispatch disabled (shadow rehearsal)",
+   "verdict": "N/A"
+  },
+  "M12": {
+   "continuity_refusals": [],
+   "max_continuity_error_rad": 2.220446049250313e-16,
+   "verdict": "PASS"
+  },
+  "M13": {
+   "command_topic": {
+    "messages": null,
+    "present_in_bag": false,
+    "support": {
+     "captures_before_after_zero_publishers": true,
+     "discovery_demonstrated_after_start": true,
+     "node_monitored_streams_continuous": true,
+     "owner_monitor_zero_throughout": true,
+     "recorder_log_without_failure": true,
+     "recording_covers_goal_interval": true,
+     "requested_from_recorder": true
+    },
+    "term": "PASS"
+   },
+   "terms": {
+    "cancels_0": true,
+    "command_publishers_0": true,
+    "controller_log_0_received_0_accepted_0_cancel": true,
+    "foreign_clients_0": true,
+    "goals_111": true,
+    "no_feedback_in_the_bag": true
+   },
+   "verdict": "PASS"
+  },
+  "M14": {
+   "checks": {
+    "driver_script_complete": true,
+    "min_joint_margin_at_least_0_02_rad": true,
+    "node_observed_ages_within_monitor_limits": true
+   },
+   "driver_result": "script complete (shadow rehearsal: dispatch disabled; not acceptance)",
+   "max_ages_s": {
+    "body_pose_age_s": 0.03224920000002385,
+    "graph_age_s": 1.0080015840003398,
+    "joint_states_age_s": 0.08371351999994658
+   },
+   "min_joint_margin": [
+    0.4363319954217693,
+    "rr_foot_joint",
+    -4.578230683172661e-09
+   ],
+   "verdict": "PASS"
+  },
+  "M15": {
+   "checks": {
+    "library_identity": true,
+    "restore_report_normal_installation": true,
+    "run_installation_imports_all_three_gates_false": true
+   },
+   "library": {
+    "disabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+    "enabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+    "verdict": "PASS"
+   },
+   "restore": {
+    "checks": {
+     "gates_false_imported": true,
+     "m6_gait_replay_live_exit_3": true,
+     "m6_live_playback_live_exit_3": true,
+     "no_simulation_or_node_leftover": true,
+     "verdict_disabled_and_verified": true
+    },
+    "verdict": "PASS"
+   },
+   "run_installation": {
+    "gates": {
+     "spiderx_controller.m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED": false,
+     "spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED": false,
+     "spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED": false
+    },
+    "install_base": "/root/spiderx_fresh_disabled_20261110T071506Z/install"
+   },
+   "verdict": "PASS"
+  },
+  "M16": {
+   "checks": {
+    "close_requests_accepted_as_no_ops": true,
+    "commands_accepted_rising": true,
+    "commands_delivered_forward_at_level_2": true,
+    "confirmations_within_5_s": true,
+    "disarmed_without_goal_throughout": true,
+    "held_w_5_to_6_s": true,
+    "intent_stopped_within_5_s_of_the_release": true,
+    "level_confirmations_2_3_and_3_3_attributed": true,
+    "no_arm_goal_transition_or_refusal": true,
+    "no_command_rejection": true,
+    "no_request_before_the_probe_q": true,
+    "probe_after_the_close_observation": true,
+    "probe_keys_exactly_plus_plus_w_q": true,
+    "startup_within_30_s": true,
+    "teleop_exit_code_0_within_15_s": true
+   },
+   "commands_accepted": {
+    "before": 15248,
+    "last": 15317
+   },
+   "confirmations": [
+    {
+     "attributed": 1,
+     "expected_label": "2/3",
+     "expected_speed_mm_s": "1.90",
+     "press": 1,
+     "received_before_the_write_returned": false,
+     "t_after_write": 4397.291692618,
+     "t_before_write": 4397.291670064,
+     "t_receipt": 4397.291934124
+    },
+    {
+     "attributed": 1,
+     "expected_label": "3/3",
+     "expected_speed_mm_s": "2.34",
+     "press": 2,
+     "received_before_the_write_returned": false,
+     "t_after_write": 4397.342049002,
+     "t_before_write": 4397.342030527,
+     "t_receipt": 4397.34257083
+    }
+   ],
+   "requests_after_the_probe_q": [
+    [
+     "disarm",
+     "already disarmed"
+    ],
+    [
+     "stop",
+     "not moving (DISARMED); held until a zero command"
+    ],
+    [
+     "disarm",
+     "already disarmed"
+    ],
+    [
+     "stop",
+     "not moving (DISARMED); held until a zero command"
+    ]
+   ],
+   "verdict": "PASS"
+  },
+  "M2": {
+   "checks": {
+    "each_plus_confirmed_by_the_teleop": true,
+    "exactly_two_level_changes": true,
+    "exactly_two_plus_keys_and_no_other_level_key": true,
+    "first_plus_while_disarmed_before_the_arm": true,
+    "goals_1_to_9_at_level_1_and_10_to_111_at_level_2": true,
+    "level_change_0_to_1_between_the_arm_and_goal_1": true,
+    "level_change_1_to_2_walking_between_goal_9_and_goal_10": true,
+    "node_strides_40_and_60_mm": true,
+    "second_plus_while_goal_2_in_flight": true
+   },
+   "confirmations": [
+    {
+     "attributed": 1,
+     "expected_label": "2/3",
+     "expected_speed_mm_s": "1.90",
+     "press": 1,
+     "received_before_the_write_returned": false,
+     "t_after_write": 2859.724740257,
+     "t_before_write": 2859.724706382,
+     "t_receipt": 2859.725610548
+    },
+    {
+     "attributed": 1,
+     "expected_label": "3/3",
+     "expected_speed_mm_s": "2.34",
+     "press": 2,
+     "received_before_the_write_returned": false,
+     "t_after_write": 2869.203823085,
+     "t_before_write": 2869.203801864,
+     "t_receipt": 2869.204179837
+    }
+   ],
+   "verdict": "PASS"
+  },
+  "M3": {
+   "checks": {
+    "cycle_count_1_after_goal_9": true,
+    "displacement": true,
+    "tilt_within_0_10_rad": true
+   },
+   "cycle": {
+    "band_forward_m": [
+     0.03,
+     0.05
+    ],
+    "checks": {
+     "height_within_10_mm": true,
+     "lateral_within_10_mm": true,
+     "progress_within_the_outer_bound": true,
+     "yaw_within_0_05_rad": true
+    },
+    "forward_m": -3.531690678969178e-10,
+    "from_goal": 0,
+    "height_vs_standing_m": -3.4790141668211705e-07,
+    "lateral_m": -3.625897655917935e-16,
+    "outer_bound_m": 0.06,
+    "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+    "to_goal": 9,
+    "verdict": "PASS",
+    "yaw_rad": 1.9000424507905955e-14
+   },
+   "verdict": "PASS"
+  },
+  "M4": {
+   "checks": {
+    "cycle_count_6_at_ready": true,
+    "every_cycle": true,
+    "last_cycle_checked_before_the_next_key": true,
+    "no_goal_between_the_space_and_ready": true,
+    "one_stopping_stop_in_the_last_goal": true,
+    "ready_stopped_at_boundary_0": true,
+    "ready_within_sim_bound": true,
+    "ready_within_wall_backstop": true,
+    "space_written_while_the_last_goal_was_in_flight": true,
+    "tilt_within_0_10_rad": true,
+    "walking_continuously": true
+   },
+   "cycles": {
+    "F1": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -4.143099860506536e-10,
+     "from_goal": 9,
+     "height_vs_standing_m": -1.6754477355704345e-06,
+     "lateral_m": -1.7997256761359772e-16,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 18,
+     "verdict": "PASS",
+     "yaw_rad": 2.3055704055104366e-14
+    },
+    "F2": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -3.609861200310847e-10,
+     "from_goal": 18,
+     "height_vs_standing_m": 3.4028099433966452e-06,
+     "lateral_m": -3.259563366856428e-17,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 27,
+     "verdict": "PASS",
+     "yaw_rad": 2.3043030783254255e-14
+    },
+    "F3": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -4.128291867540428e-10,
+     "from_goal": 27,
+     "height_vs_standing_m": 2.1900734920518583e-06,
+     "lateral_m": -1.600860246970644e-16,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 36,
+     "verdict": "PASS",
+     "yaw_rad": 2.3019438726568813e-14
+    },
+    "F4": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -4.3533114944811744e-10,
+     "from_goal": 36,
+     "height_vs_standing_m": -1.675448003619906e-06,
+     "lateral_m": -4.614930636633904e-16,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 45,
+     "verdict": "PASS",
+     "yaw_rad": 2.3037226484890865e-14
+    },
+    "F5": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -3.607475195709308e-10,
+     "from_goal": 45,
+     "height_vs_standing_m": 3.4028099433827674e-06,
+     "lateral_m": -3.288572725365667e-17,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 54,
+     "verdict": "PASS",
+     "yaw_rad": 2.3057689910782335e-14
+    }
+   },
+   "leg": {
+    "band_forward_m": [
+     0.285,
+     0.315
+    ],
+    "claim": "approximately 0.3 m (0.300 m +- 0.015 m, OD1); never \"at least 0.3 m\"",
+    "forward_m": -1.9842039618548294e-09,
+    "from_goal": 9,
+    "lateral_m": -8.670329262084552e-16,
+    "note": "not applicable: dispatch disabled (shadow rehearsal)",
+    "to_goal": 54,
+    "verdict": "N/A",
+    "yaw_rad": 1.1521308996060063e-13
+   },
+   "verdict": "PASS"
+  },
+  "M5": {
+   "checks": {
+    "cycle_count_1_at_ready": true,
+    "every_cycle": true,
+    "last_cycle_checked_before_the_next_key": true,
+    "no_goal_between_the_space_and_ready": true,
+    "one_stopping_stop_in_the_last_goal": true,
+    "ready_stopped_at_boundary_0": true,
+    "ready_within_sim_bound": true,
+    "ready_within_wall_backstop": true,
+    "space_written_while_the_last_goal_was_in_flight": true,
+    "tilt_within_0_10_rad": true,
+    "walking_continuously": true
+   },
+   "cycles": {
+    "R1": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -4.290849998361594e-10,
+     "from_goal": 54,
+     "height_vs_standing_m": 9.40215364314545e-07,
+     "lateral_m": -4.0949923760422597e-16,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 63,
+     "verdict": "PASS",
+     "yaw_rad": 2.3381672776759854e-14
+    },
+    "R2": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -3.929975848255022e-10,
+     "from_goal": 63,
+     "height_vs_standing_m": 2.190073713971563e-06,
+     "lateral_m": -2.1896917316821233e-16,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 72,
+     "verdict": "PASS",
+     "yaw_rad": 2.303662875468058e-14
+    },
+    "R3": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -3.7686590026652183e-10,
+     "from_goal": 72,
+     "height_vs_standing_m": -4.451632607559153e-06,
+     "lateral_m": -4.272786548341167e-16,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 81,
+     "verdict": "PASS",
+     "yaw_rad": 2.306792243283834e-14
+    },
+    "R4": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -4.613938285290339e-10,
+     "from_goal": 81,
+     "height_vs_standing_m": -1.675447735272062e-06,
+     "lateral_m": 2.1400172511712678e-16,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 90,
+     "verdict": "PASS",
+     "yaw_rad": 2.3018867630840777e-14
+    },
+    "R5": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -3.512660901976911e-10,
+     "from_goal": 90,
+     "height_vs_standing_m": 4.579526618614382e-06,
+     "lateral_m": -3.0678867690228556e-16,
+     "outer_bound_m": 0.08,
+     "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+     "to_goal": 99,
+     "verdict": "PASS",
+     "yaw_rad": 2.3032746994085154e-14
+    }
+   },
+   "leg": {
+    "band_forward_m": [
+     -0.315,
+     -0.285
+    ],
+    "claim": "approximately 0.3 m (0.300 m +- 0.015 m, OD1); never \"at least 0.3 m\"",
+    "forward_m": -2.0116084036549084e-09,
+    "from_goal": 54,
+    "lateral_m": -1.148533926154881e-15,
+    "note": "not applicable: dispatch disabled (shadow rehearsal)",
+    "to_goal": 99,
+    "verdict": "N/A",
+    "yaw_rad": 1.155378385892047e-13
+   },
+   "verdict": "PASS"
+  },
+  "M6": {
+   "all_sample_maxima_recorded_only": {
+    "heading_rad": 2.3075293060828745e-13,
+    "lateral_m": 2.626717379196597e-15,
+    "note": "every bag sample from B9 to B99 in B9's frame, designed sway included; recorded only (OD2)",
+    "samples": 62683
+   },
+   "boundaries": [
+    {
+     "goal": 9,
+     "heading_rad": 0.0,
+     "lateral_m": 0.0
+    },
+    {
+     "goal": 18,
+     "heading_rad": 2.3055704055104366e-14,
+     "lateral_m": -1.7997256761359772e-16
+    },
+    {
+     "goal": 27,
+     "heading_rad": 4.609873483835862e-14,
+     "lateral_m": -2.1256819295937286e-16
+    },
+    {
+     "goal": 36,
+     "heading_rad": 6.911817356492743e-14,
+     "lateral_m": -3.7265419862553405e-16
+    },
+    {
+     "goal": 45,
+     "heading_rad": 9.21554000498183e-14,
+     "lateral_m": -8.341472321996305e-16
+    },
+    {
+     "goal": 54,
+     "heading_rad": 1.1521308996060063e-13,
+     "lateral_m": -8.670329262084552e-16
+    },
+    {
+     "goal": 63,
+     "heading_rad": 1.385947627373605e-13,
+     "lateral_m": -1.2765321143764726e-15
+    },
+    {
+     "goal": 72,
+     "heading_rad": 1.6163139149204107e-13,
+     "lateral_m": -1.4955012330772779e-15
+    },
+    {
+     "goal": 81,
+     "heading_rad": 1.846993139248794e-13,
+     "lateral_m": -1.9227798269980345e-15
+    },
+    {
+     "goal": 90,
+     "heading_rad": 2.0771818155572019e-13,
+     "lateral_m": -1.7087780166617843e-15
+    },
+    {
+     "goal": 99,
+     "heading_rad": 2.3075092854980534e-13,
+     "lateral_m": -2.0155666205997165e-15
+    }
+   ],
+   "checks": {
+    "cumulative_heading_within_0_10_rad_at_every_boundary_0": true,
+    "cumulative_lateral_within_30_mm_at_every_boundary_0": true,
+    "tilt_within_0_10_rad_from_the_arm_to_the_close": true
+   },
+   "net_return_recorded_only": {
+    "from_arm": {
+     "forward_m": -4.348981433406656e-09,
+     "lateral_m": -2.3781563102693785e-15,
+     "yaw_rad": 2.497513530577113e-13
+    },
+    "from_b9": {
+     "forward_m": -3.995812365509738e-09,
+     "lateral_m": -2.0155666205997165e-15,
+     "yaw_rad": 2.3075092854980534e-13
+    }
+   },
+   "verdict": "PASS"
+  },
+  "M7": {
+   "checks": {
+    "row_12_release_during_goal_106": true,
+    "row_9_release_during_goal_104": true
+   },
+   "row_12": {
+    "checks": {
+     "no_goal_between_release_and_ready": true,
+     "one_stopping_intent_stop": true,
+     "ready_stopped_at_boundary": true,
+     "ready_within_sim_bound": true,
+     "ready_within_wall_backstop": true,
+     "released_while_goal_in_flight": true,
+     "stopping_after_the_hold_window": true
+    },
+    "detection_latency_s": 0.8251829679993534,
+    "finding_detection_above_documented": false,
+    "goal": 106,
+    "ready_sim_s": 4.139999999999986,
+    "sim_bound_s": 5.2,
+    "verdict": "PASS"
+   },
+   "row_9": {
+    "checks": {
+     "no_goal_between_release_and_ready": true,
+     "one_stopping_intent_stop": true,
+     "ready_stopped_at_boundary": true,
+     "ready_within_sim_bound": true,
+     "ready_within_wall_backstop": true,
+     "released_while_goal_in_flight": true,
+     "stopping_after_the_hold_window": true
+    },
+    "detection_latency_s": 0.8470632110002043,
+    "finding_detection_above_documented": false,
+    "goal": 104,
+    "ready_sim_s": 3.1200000000000045,
+    "sim_bound_s": 4.2,
+    "verdict": "PASS"
+   },
+   "two_goal_allowance": "not exercised (OD7): READY within the in-flight goal + 1.0 s",
+   "verdict": "PASS"
+  },
+  "M8": {
+   "checks": {
+    "forward_then_same_phase_back": true,
+    "reverse_sent_at_the_boundary": true,
+    "s_written_while_forward_goal_in_flight": true,
+    "switch_without_release": true,
+    "then_released": true
+   },
+   "release": {
+    "checks": {
+     "no_goal_between_release_and_ready": true,
+     "one_stopping_intent_stop": true,
+     "ready_stopped_at_boundary": true,
+     "ready_within_sim_bound": true,
+     "ready_within_wall_backstop": true,
+     "released_while_goal_in_flight": true,
+     "stopping_after_the_hold_window": true
+    },
+    "detection_latency_s": 0.8251829679993534,
+    "finding_detection_above_documented": false,
+    "goal": 106,
+    "ready_sim_s": 4.139999999999986,
+    "sim_bound_s": 5.2,
+    "verdict": "PASS"
+   },
+   "verdict": "PASS"
+  },
+  "M9": {
+   "checks": {
+    "cycle_count_2_at_homed": true,
+    "home_rules": true,
+    "tilt_within_0_10_rad": true,
+    "x_composite_cycle": true
+   },
+   "cycle": {
+    "band_forward_m": [
+     0.05,
+     0.07
+    ],
+    "checks": {
+     "height_within_10_mm": true,
+     "lateral_within_10_mm": true,
+     "progress_within_the_outer_bound": true,
+     "yaw_within_0_05_rad": true
+    },
+    "forward_m": -5.606968611644263e-10,
+    "from_goal": 99,
+    "height_vs_standing_m": 3.4028099435631787e-06,
+    "lateral_m": -2.5900668669910694e-16,
+    "outer_bound_m": 0.08,
+    "progress_band": "not applicable: dispatch disabled (shadow rehearsal)",
+    "to_goal": 110,
+    "verdict": "PASS",
+    "yaw_rad": 3.14943907357375e-14
+   },
+   "home": {
+    "checks": {
+     "goals_forward_to_the_cycle_boundary": true,
+     "h_at_ready_boundary_5": true,
+     "no_motion_key_during_home": true,
+     "one_homing_forward_4_phases": true,
+     "ready_homed_at_boundary_0": true,
+     "within_documented_homing_bound": true,
+     "within_wall_backstop": true
+    },
+    "home_sim_s": 10.490000000000009,
+    "verdict": "PASS"
+   },
+   "verdict": "PASS"
+  }
+ },
+ "alignment": {
+  "adjudicate_s2": {
+   "of_driver_statuses": 3215,
+   "offset_s": 1794294012.2501469,
+   "p05_p95_ms": [
+    -1.91,
+    0.98
+   ],
+   "pairs": 3215,
+   "tolerance_s": 0.10773682594299316
+  },
+  "offset_s": 1794294012.2501469,
+  "ok": true,
+  "reason": null,
+  "uncertainty_s": 0.00191
+ },
+ "bag": {
+  "messages": {
+   "/joint_states": 34052,
+   "/leg_trajectory_controller/controller_state": 16124,
+   "/spiderx/locomotion/status": 3235
+  },
+  "open_mode": "sqlite3 mode=ro&immutable=1",
+  "path": "/root/spiderx_evidence/s4d_shadow_20261110T072920Z/bag/bag_0.db3",
+  "sha256_after": "c285b2e6ddd39029e323a7aef08a7e7ba57fad5853cbb32143277951647d69c3",
+  "sha256_after_pose_scan": "c285b2e6ddd39029e323a7aef08a7e7ba57fad5853cbb32143277951647d69c3",
+  "sha256_before": "c285b2e6ddd39029e323a7aef08a7e7ba57fad5853cbb32143277951647d69c3",
+  "unchanged": true
+ },
+ "lease_s": 0.5,
+ "overall": "PASS (SHADOW ONLY: not S4d acceptance)",
+ "schema": "spiderx.s4d_score/1",
+ "shadow": true
+}

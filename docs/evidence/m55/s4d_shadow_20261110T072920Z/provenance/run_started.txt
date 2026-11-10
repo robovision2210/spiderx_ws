@@ -1,0 +1,2 @@
+2026-11-10T07:44:21Z guarded run started: wrapper pid 16842 (setsid, nohup); watchdog 16828
+(correction 2026-11-10T07:44:30Z: pid 16842 was the setsid parent (forked under the tool shell's job control) and exited; the running wrapper processes are listed in wrapper_processes.txt)

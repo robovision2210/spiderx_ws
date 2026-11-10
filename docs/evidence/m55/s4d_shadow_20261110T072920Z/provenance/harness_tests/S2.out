@@ -1,0 +1,4 @@
+[07:38:16] gates (imported): False False False /root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[07:38:16] OD8 before the launch: FAIL: watchdog 15695 has 5998 s left < 5400 + 900 s
+[07:38:16] REFUSED before the launch (nothing launched, no key): OD8 time budget
+[07:38:16] end

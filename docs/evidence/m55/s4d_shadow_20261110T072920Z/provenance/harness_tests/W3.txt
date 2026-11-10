@@ -1,0 +1,2 @@
+W3 (no deadline argument): deadline epoch - start = 7200 s (expected 7200, +1 at most); watchdog exit 0 after the stand-down; acted: no
+2026-11-10T07:36:03Z watchdog armed: pid 15214, deadline 7200s, epoch 1794303363 (2026-11-10T09:36:03Z)
