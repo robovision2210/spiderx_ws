@@ -1,0 +1,13 @@
+== protected runtime-source identity 2026-11-10T07:28:45Z at HEAD 8f99bcc4ab27294265da91a31ce03999423acc7f
+-- src/ and third_party/ changes 0cb2cccfd60864809ef44f104ffea2ded7ee1e95..HEAD:
+   M	src/spiderx_controller/test/test_m61_restore_script.py
+-- src/ and third_party/ changes 40f5f2c..HEAD:
+   M	src/spiderx_controller/test/test_m61_restore_script.py
+-- runtime (non-test) src/ files changed 0cb2ccc..HEAD (expected none):
+   none
+PASS no runtime source, config, launch, description or third_party file changed since the S4c level-2 shadow baseline 0cb2ccc
+-- worktree: 0 entries
+fresh run installation /root/spiderx_fresh_disabled_20261110T071506Z/install: files 410; symlinks into src/ equal to the HEAD blob 169; generated build outputs 164; toolchain ament env-hook symlinks 14; bytecode caches 63; problems 0
+PASS installed runtime = HEAD sources
+-- fresh bases footprint (OD16: account for a new build and install): 11154692 B total; build 4622780 B, install 1681446 B, log 4850466 B
+-- filesystem: 22404222976 /

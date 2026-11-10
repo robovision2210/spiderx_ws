@@ -1,0 +1,22 @@
+S4d-M batch step 2: ONE fresh DISABLED build and full suite (2026-11-10, cloud workspace)
+Tested executable SHA: 8f99bcc4ab27294265da91a31ce03999423acc7f (branch claude/spiderx-s4d-preparation, worktree clean)
+New bases (did not exist before): /root/spiderx_fresh_disabled_20261110T071506Z/{build,install,log}; nothing deleted or overwritten.
+Procedure: fresh env -i shells; /opt/mm/activate.sh; r2 overlay local_setup; st59site on PYTHONPATH for the build only;
+  colcon build --symlink-install; colcon test with PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 and explicit --build-base,
+  --install-base and --test-result-base; colcon test-result on the same base (tools/fresh_build_test.sh).
+Build: exit 0, 8 packages (27.3 s).
+Discovery: spiderx_controller 50 registered CTest targets = 50 CTest entries, 1933 xunit testcases; no missing,
+  not-passed or stale result; other packages register no tests. COLLECTION VERDICT: PASS.
+Suite: 1983 tests, 0 errors, 0 failures, 0 skipped (previous follow-up 1972 = 1922 + 50; +11 = the 11 restore-script
+  tests added in 6a780ec). No historical total forced.
+Direct tests (not collected by colcon), fresh installation sourced:
+  src/spiderx_scripts/test 2 passed; scripts/s2 48 OK (3 skipped: OriginalBagRegression, skipUnless S2_BAG, unchanged
+  since e1ed37a 2026-10-30: an expected existing skip, not new); scripts/s3 86 OK; scripts/s4 206 OK.
+Installation A (fresh, /root/spiderx_fresh_disabled_20261110T071506Z/install): PASS - modules imported from it
+  (symlinks into src/), three gates False, library 54 goals 62f8a100..., library.json = disabled baseline 917fc4d7...,
+  config = src; then both M6 --live refusals: exit 3, HARD-DISABLED.
+Installation B (existing /home/user/spiderx_ws/install): PASS (same checks).
+Protected runtime sources: no non-test src/ or third_party/ change since 0cb2ccc (S4c L2 shadow baseline) or 40f5f2c;
+  the fresh installation's 169 runtime symlinks equal their HEAD blobs; 0 problems (runtime_source_identity.txt).
+Footprint: fresh bases 11,154,692 B (build 4.6 MB, install 1.7 MB, log 4.9 MB); / has 22.4 GB available.
+STEP 2 VERDICT: PASS

@@ -1,0 +1,10 @@
+start 2026-11-10T07:15:14Z branch claude/spiderx-s4d-preparation head 8f99bcc4ab27294265da91a31ce03999423acc7f worktree 0
+bases: build /root/spiderx_fresh_disabled_20261110T071506Z/build install /root/spiderx_fresh_disabled_20261110T071506Z/install log /root/spiderx_fresh_disabled_20261110T071506Z/log (created now; previously nonexistent)
+build exit=0
+test exit=0
+result exit=0
+Summary: 1983 tests, 0 errors, 0 failures, 0 skipped
+xunit testcases 1933 + CTest entries 50 = 1983; colcon test-result: ('1983', '0', '0', '0')
+COLLECTION VERDICT: PASS
+end 2026-11-10T07:26:17Z
+script exit=0

@@ -1,0 +1,55 @@
+{
+ "all_gates_false_and_from_this_installation": true,
+ "config": {
+  "equals_src": true,
+  "path": "/root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/share/spiderx_controller/config/m55_locomotion.yaml",
+  "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/config/m55_locomotion.yaml",
+  "sha256": "ab0dccd43fefe877fac21e1c51d1fdd0ae197ac456b8c42502b0bb7ba5e42a93",
+  "src_sha256": "ab0dccd43fefe877fac21e1c51d1fdd0ae197ac456b8c42502b0bb7ba5e42a93"
+ },
+ "gates": {
+  "LIVE_DISPATCH_ENABLED": false,
+  "M55_LOCOMOTION_DISPATCH_ENABLED": false,
+  "M61_LIVE_DISPATCH_ENABLED": false
+ },
+ "install_prefix": "/root/spiderx_fresh_disabled_20261110T071506Z/install",
+ "library": {
+  "baseline_library_json_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+  "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732",
+  "goals": 54,
+  "library_json_equals_baseline": true,
+  "library_json_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e"
+ },
+ "modules": {
+  "m55_contract": {
+   "imported_as": "/root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py",
+   "imported_from_this_installation": true,
+   "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py"
+  },
+  "m55_locomotion": {
+   "imported_as": "/root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_locomotion.py",
+   "imported_from_this_installation": true,
+   "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_locomotion.py"
+  },
+  "m55_teleop": {
+   "imported_as": "/root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_teleop.py",
+   "imported_from_this_installation": true,
+   "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_teleop.py"
+  },
+  "m61_live_contract": {
+   "imported_as": "/root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py",
+   "imported_from_this_installation": true,
+   "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py"
+  },
+  "m6_action_client": {
+   "imported_as": "/root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_action_client.py",
+   "imported_from_this_installation": true,
+   "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_action_client.py"
+  },
+  "m6_live_contract": {
+   "imported_as": "/root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py",
+   "imported_from_this_installation": true,
+   "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py"
+  }
+ }
+}
