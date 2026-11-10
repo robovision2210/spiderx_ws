@@ -364,10 +364,12 @@ Each check is True, False or None (missing evidence). Any False FAILs the M-chec
   - Exactly two transitions: STOPPING (`stop`, `disarm` or `intent_stop`) after the `q` write, then DISARMED (`lease_expired` or `disarm`) at boundary 1. A READY in between FAILs.
   - DISARMED within goal 111's duration + 1.0 s sim (from the last status before `q`), 120 s wall backstop.
   - **The reason matches the node-clock evidence.** The scorer recomputes the node's own decision (§4.8):
-    - each status received with goal 111 in flight (WALKING or STOPPING) gives the node time `t_s = goal_sent(111) + goal.elapsed_s` and the last valid command `t_s − lease_age_s`, both on the node clock;
-    - that value is final when the status's `commands_accepted` equals the count in the status published at the DISARMED transition (published in the same callback, §1);
-    - expected reason: `lease_expired` if the DISARMED event's node time minus the final last-command time exceeds `lease_s` (0.5 s, from the run's configuration), otherwise `disarm`;
-    - if a command was accepted after the last such status, `disarm` is still proven when that status is within `lease_s` of the transition; otherwise, or when the difference is within 1 µs of `lease_s`, or when the statuses are missing, the check is UNMEASURED.
+    - the last status received before the transition with goal 111 in flight (WALKING or STOPPING) gives the node time `t_s = goal_sent(111) + goal.elapsed_s` and the last valid command as of then, `lv_s = t_s − lease_age_s`, both on the node clock; `t_tr` is the DISARMED event's node time and `lease_s` comes from the run's configuration (0.5 s);
+    - the count at the transition is that of the first DISARMED status received after it, and only while that status's `lease_age_s` is empty: the transition clears the lease (905–906), so an empty lease age proves no command was accepted since;
+    - `t_tr − lv_s ≤ lease_s`: expected `disarm` (later commands only renew the lease);
+    - otherwise, if the count at the transition equals the status's count: expected `lease_expired`;
+    - otherwise, if the count rose and `t_tr − t_s ≤ lease_s`: expected `disarm` (a command arrived after the status);
+    - otherwise, within 1 µs of `lease_s`, or without that evidence: UNMEASURED. A falling count is a contradiction (FAIL).
     - Key-write times (driver clock), the teleop's exit (driver clock) and sim time are recorded for the timeline only; none of them sets the expected reason.
   - The teleop's exit seen within 15 s wall of the DISARMED status, with code 0.
   - 10 s of sim DISARMED with no goal, and still (S3 hold limits, from the bag).
@@ -375,7 +377,7 @@ Each check is True, False or None (missing evidence). Any False FAILs the M-chec
 - **M12 Continuity** (C7, unchanged).
 - **M13 Ownership.** 111 goals and 0 cancels; the controller log shows 111 received, 111 accepted and 0 cancel requests; no foreign client or command publisher; no `joint_trajectory` message.
 - **M14 Margins and freshness** (C9, unchanged), plus the driver result `script complete`.
-- **M15 Restore and library** (C10 and C11, unchanged), plus OD12's second verification: the run's own installation imports all three gates `False` after restoration.
+- **M15 Restore and library** (C10 and C11, unchanged), plus OD12's second verification: the run's own installation imports all three gates `False` after restoration. The harness records it as JSON (`--run-install-gates`): `{"install_base": …, "gates": {"spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED": false, "spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED": false, "spiderx_controller.m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED": false}}`; exactly those three keys, each `false`.
 - **M16 Reconnect probe (OD11).** §5.5, from the node events, the driver's statuses and the teleop's output.
 
 **Missing evidence is UNMEASURED; a contradiction FAILs.**
