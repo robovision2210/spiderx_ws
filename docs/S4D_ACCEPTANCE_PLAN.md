@@ -1,8 +1,8 @@
 # S4d: simulation acceptance at internal level 2 (S4d-M): design, owner decisions and offline contract
 
-**STATUS (2026-11-11): S4d-M PASSED one simulation acceptance attempt at internal level 2 (M1–M16; §16). S4d-E is not validated, and a live S4d-E attempt is not authorized.**
+**STATUS (2026-11-11): S4d-M PASSED one simulation acceptance attempt at internal level 2 (M1–M16; §16). S4d-E PASSED one live simulation attempt at internal level 2 under its frozen contract (E1–E12; §17). Its cancel came before measurable motion.**
 
-History: on 2026-11-09 this header read **OWNER DECISIONS OD1–OD16 RECORDED (2026-11-09) — OFFLINE S4d-M PREPARATION ONLY — NO SHADOW OR LIVE RUN AUTHORIZED.**
+History: on 2026-11-09 this header read **OWNER DECISIONS OD1–OD16 RECORDED (2026-11-09) — OFFLINE S4d-M PREPARATION ONLY — NO SHADOW OR LIVE RUN AUTHORIZED.** Earlier on 2026-11-11, before the S4d-E attempt, its second sentence read **S4d-E is not validated, and a live S4d-E attempt is not authorized.**
 
 Draft: 2026-11-03, commit `34396cf` on `claude/spiderx-s4d-plan`. Amended 2026-11-09 on `claude/spiderx-s4d-preparation` with the owner's decisions (§10).
 
@@ -527,7 +527,7 @@ No runtime source, threshold, gain, rate, trajectory, phase library, physics, hi
 3. Fresh disabled build and full suite in new bases (§13.1). No launch. Not authorized (2026-11-09). **Authorized and done 2026-11-10:** 1983 tests, 0 failures, 0 skipped ([evidence](evidence/m55/s4d_fresh_disabled_20261110T071506Z/README.md)).
 4. One S4d-M **shadow** rehearsal (one launch, SHADOW, no goal at the controller). Not authorized (2026-11-09). **Authorized and done 2026-11-10:** PASS (SHADOW ONLY) ([evidence](evidence/m55/s4d_shadow_20261110T072920Z/README.md)).
 5. One S4d-M **live** attempt, only after the shadow result is reviewed. Not authorized (2026-11-09). **Authorized and done 2026-11-11:** PASS, M1–M16 (§16).
-6. S4d-E design review, then its own shadow and live runs (OD10). Not authorized (2026-11-09). 2026-11-11: the offline S4d-E preparation and one S4d-E **shadow** rehearsal were authorized, on a separate branch; a live S4d-E attempt is not authorized.
+6. S4d-E design review, then its own shadow and live runs (OD10). Not authorized (2026-11-09). 2026-11-11: the offline S4d-E preparation and one S4d-E **shadow** rehearsal were authorized, on a separate branch; a live S4d-E attempt is not authorized. Later on 2026-11-11, ONE live S4d-E attempt was separately authorized and run: PASS under the frozen contract (§17).
 7. Optional S4e on the owner's PC (OD9). Not authorized.
 
 No step continues automatically into the next. There is no retry, recovery or second launch inside an attempt. Enabling branches are never pushed. The gates stay `False` on every pushed commit.
@@ -560,3 +560,23 @@ It would not support:
 - **Shadow rehearsal.** 2026-11-10, PASS (SHADOW ONLY) ([evidence](evidence/m55/s4d_shadow_20261110T072920Z/README.md)).
 - **Claim (§15).** Keyboard-path crawl walking in simulation at internal level 2: approximately 0.3 m forward and back, with release, speed change, reversal, `home` and a close while moving, within the stated limits. The "clean close while moving" of §15 is the teleop close (M10), not the simulator's shutdown.
 - **Not shown.** S4d-E (the level-2 estop), S4e and physical-keyboard operation, hardware, navigation, unrestricted walking and full S4 acceptance.
+
+## 17. S4d-E outcome (recorded 2026-11-11; the frozen contract `docs/S4D_E_CONTRACT.md` is unchanged)
+**S4d-E: PASS, under its frozen contract.** One authorized live attempt in Cloud Gazebo on 2026-11-11, from a local enabling branch that was never pushed. The committed `score_s4d_e.py`, run without `--shadow`, rated E1–E12 PASS ([evidence](evidence/m55/s4d_e_live_20261111T113831Z/README.md)).
+- **Attempt.**
+  - `+ +` while DISARMED (2/3, then 3/3), then `a`.
+  - ONE level-2 0→1 S1 shift goal, received and accepted by the real controller.
+  - ONE real feedback sample attributed to it, then `x`.
+  - ONE cancel, a measured hold, then `q`. Automated keyboard-path input through the real teleop.
+- **Measured.**
+  - FAULTED (`estop`) on the request's node-clock instant (R4 ≤ 0.050 s). The key-write latency, 0.51 ms, is recorded only.
+  - Cancel response 0, then result CANCELED. The controller logged the cancel.
+  - The controller reference was unchanged over the 10 s (sim) hold. Joint motion was 5.9e-12 rad.
+  - Exactly the two `faulted_reset_required` disarm refusals at `q`. There was no reset, re-arm, home or second goal.
+- **Qualification.** The cancel came about 0.04 s of sim after the goal started, about 2% of its 1.9 s duration, before measurable motion (≤ 1.2e-10 rad).
+  - The attempt shows the estop, cancel and hold path with a real active goal. It does not show a moving body being stopped.
+  - Tracking (E8) rests on one feedback sample (0.0 rad).
+  - This follows the frozen design; no criterion was changed after the result.
+- **Shutdown and restoration.** The simulator server exited 0 on SIGINT. The full restore gave DISABLED AND VERIFIED. Both installations import all three gates `False`.
+- **Shadow rehearsal.** 2026-11-11, PASS (SHADOW ONLY) ([evidence](evidence/m55/s4d_e_shadow_20261111T104429Z/README.md)).
+- **Not shown.** S4e and physical-keyboard operation, hardware, navigation, unrestricted walking and full S4 acceptance.
