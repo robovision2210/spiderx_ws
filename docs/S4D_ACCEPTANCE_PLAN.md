@@ -1,12 +1,14 @@
 # S4d: simulation acceptance at internal level 2 (S4d-M): design, owner decisions and offline contract
 
-**OWNER DECISIONS OD1–OD16 RECORDED (2026-11-09) — OFFLINE S4d-M PREPARATION ONLY — NO SHADOW OR LIVE RUN AUTHORIZED.**
+**STATUS (2026-11-11): S4d-M PASSED one simulation acceptance attempt at internal level 2 (M1–M16; §16). S4d-E is not validated, and a live S4d-E attempt is not authorized.**
+
+History: on 2026-11-09 this header read **OWNER DECISIONS OD1–OD16 RECORDED (2026-11-09) — OFFLINE S4d-M PREPARATION ONLY — NO SHADOW OR LIVE RUN AUTHORIZED.**
 
 Draft: 2026-11-03, commit `34396cf` on `claude/spiderx-s4d-plan`. Amended 2026-11-09 on `claude/spiderx-s4d-preparation` with the owner's decisions (§10).
 
 The decisions authorize only offline work: the S4d-M driver, scorer and bench tests, and the narrow `local/m55-s4d-m-*` restore support (§12). They authorize no build, enabling patch or branch, simulator launch, ROS graph, goal, cancel, S4d-E work, hardware run or merge (§14).
 
-Nothing here changes historical evidence, README or STATUS verdicts, runtime code, the phase library, existing scorers, shared constants or the dispatch gates. **S4d has not been run and has not passed.**
+As written on 2026-11-09: nothing here changes historical evidence, README or STATUS verdicts, runtime code, the phase library, existing scorers, shared constants or the dispatch gates, and **S4d had not been run and had not passed**. The outcome since then is recorded in §16; the criteria of this document are unchanged.
 
 Identifiers are kept distinct:
 - **R1–R8**: existing requirements (§2).
@@ -522,10 +524,10 @@ No runtime source, threshold, gain, rate, trajectory, phase library, physics, hi
 ## 14. Authorization boundaries (each step needs its own approval)
 1. The owner decides OD1–OD16 — **done 2026-11-09 (§10).**
 2. Offline S4d-M implementation on `claude/spiderx-s4d-preparation` (§12), reviewed as a draft PR. **Authorized 2026-11-09, offline only.** No build, launch, enabling, goal, S4d-E or merge.
-3. Fresh disabled build and full suite in new bases (§13.1). No launch. Not authorized.
-4. One S4d-M **shadow** rehearsal (one launch, SHADOW, no goal at the controller). Not authorized.
-5. One S4d-M **live** attempt, only after the shadow result is reviewed. Not authorized.
-6. S4d-E design review, then its own shadow and live runs (OD10). Not authorized.
+3. Fresh disabled build and full suite in new bases (§13.1). No launch. Not authorized (2026-11-09). **Authorized and done 2026-11-10:** 1983 tests, 0 failures, 0 skipped ([evidence](evidence/m55/s4d_fresh_disabled_20261110T071506Z/README.md)).
+4. One S4d-M **shadow** rehearsal (one launch, SHADOW, no goal at the controller). Not authorized (2026-11-09). **Authorized and done 2026-11-10:** PASS (SHADOW ONLY) ([evidence](evidence/m55/s4d_shadow_20261110T072920Z/README.md)).
+5. One S4d-M **live** attempt, only after the shadow result is reviewed. Not authorized (2026-11-09). **Authorized and done 2026-11-11:** PASS, M1–M16 (§16).
+6. S4d-E design review, then its own shadow and live runs (OD10). Not authorized (2026-11-09). 2026-11-11: the offline S4d-E preparation and one S4d-E **shadow** rehearsal were authorized, on a separate branch; a live S4d-E attempt is not authorized.
 7. Optional S4e on the owner's PC (OD9). Not authorized.
 
 No step continues automatically into the next. There is no retry, recovery or second launch inside an attempt. Enabling branches are never pushed. The gates stay `False` on every pushed commit.
@@ -544,3 +546,17 @@ It would not support:
 - dynamic stability or unrestricted walking;
 - the level-2 estop (S4d-E, OD10);
 - the level-2 crash-path close.
+
+## 16. Outcome (recorded 2026-11-11; the criteria above are unchanged)
+**S4d-M: PASS, for the approved simulation scope only.** One authorized live attempt in Cloud Gazebo on 2026-11-11, from a local enabling branch that was never pushed. The committed `score_s4d.py`, run without `--shadow`, rated M1–M16 PASS ([evidence](evidence/m55/s4d_live_20261111T052817Z/README.md)).
+- **Attempt.** One attempt: exactly the 111 planned goals, all succeeded, zero cancels. Automated keyboard-path input through the real teleop.
+- **Measured.**
+  - Approximately 0.3 m forward and back (OD1): F leg +0.30006 m, R leg −0.29985 m.
+  - Cumulative drift at every boundary 0: at most 0.56 mm lateral and 0.0068 rad heading.
+  - Tracking feedback for all 111 goals, maximum error 0.00225 rad.
+  - The close while moving ended `lease_expired`, matching the node-clock evidence (M10). The reconnect probe stayed DISARMED with no goal (M16).
+- **Shutdown: not graceful.** After the script and the recording had ended, the simulator server did not exit within the `ign gazebo` launcher's 5 s grace period after SIGINT, and the launcher killed it with SIGKILL. No stated cleanup criterion was violated; the cause is not established ([postmortem](evidence/m55/s4d_live_20261111T052817Z_shutdown_postmortem_20261111T101720Z/README.md)).
+- **Restoration.** The full restore gave DISABLED AND VERIFIED. Both the workspace and the run installation import all three gates `False`.
+- **Shadow rehearsal.** 2026-11-10, PASS (SHADOW ONLY) ([evidence](evidence/m55/s4d_shadow_20261110T072920Z/README.md)).
+- **Claim (§15).** Keyboard-path crawl walking in simulation at internal level 2: approximately 0.3 m forward and back, with release, speed change, reversal, `home` and a close while moving, within the stated limits. The "clean close while moving" of §15 is the teleop close (M10), not the simulator's shutdown.
+- **Not shown.** S4d-E (the level-2 estop), S4e and physical-keyboard operation, hardware, navigation, unrestricted walking and full S4 acceptance.
