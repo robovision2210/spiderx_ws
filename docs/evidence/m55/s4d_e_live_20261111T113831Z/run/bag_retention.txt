@@ -31,5 +31,7 @@ To read it later:
   run_install/run_install_gates.json and tools/s4d_e_live_run.sh, without --shadow.
 - Check the bytes first: `sha256sum bag_0.db3` must print 858c6eb4c393a08e33a57f30027ba81f9c8b7c26068b229957ada2bce6128741.
 
-Preservation: when this file was written, the only copy of the raw bytes was in the cloud container. A committed hash
-is not a backup.
+Export: the ORIGINAL bag_0.db3 and metadata.yaml were delivered as conversation attachments by 2026-11-11T17:27:17Z
+  (uncompressed: 51060736 bytes is below the 500 MiB attachment limit, so no compression was needed; the copies sent
+  were verified against the sha256 values above before sending).
+Preservation: a durable off-container copy is UNCONFIRMED. A committed hash is not a backup.

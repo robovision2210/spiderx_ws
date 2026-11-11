@@ -246,7 +246,8 @@ without `--shadow`, and exited 0. Alignment uncertainty: 1.05 ms.
 - **Startup.** No `gz_ros2_control` startup `[ERROR]` retries this time; the S4d-M live run had six.
 
 ## Files
-- **Bag:** kept outside the repository; see `run/bag_retention.txt`.
+- **Bag:** kept outside the repository; see `run/bag_retention.txt`. The original bag and `metadata.yaml` were delivered
+  as conversation attachments; a durable off-container copy is unconfirmed.
 - **Gzipped here:** `run/driver/driver.jsonl` and `run/premotion/maps_full.txt`. Their original hashes and sizes are in
   `provenance/gzipped_originals_SHA256SUMS.txt`. Every other log is unchanged.
 - **Operator steps:** `provenance/operator_steps/` holds the operator's commands and outputs: enabling, post-run, scoring
