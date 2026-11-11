@@ -1,0 +1,18 @@
+[10:49:46] cleanup start
+driver: no pid recorded: not running
+teleop sessions: none recorded
+recorder: no pid recorded: not running
+launch group 17064: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 17064 still has: 17064 [sleep] <defunct>;
+launch session 17064: SIGKILL to those
+[10:49:47] cleanup done; relevant processes still present (listed, not killed):
+none
+[10:49:47] cleanup start
+driver: no pid recorded: not running
+teleop sessions: none recorded
+recorder: no pid recorded: not running
+launch group 17064: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 17064 still has: 17064 [sleep] <defunct>;
+launch session 17064: SIGKILL to those
+[10:49:48] cleanup done; relevant processes still present (listed, not killed):
+none

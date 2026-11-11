@@ -1,0 +1,24 @@
+[10:58:32] gates (imported): False False False /root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[10:58:32] OD8 before the launch: PASS: watchdog 29922 has 7198 s left >= 1800 + 900 s
+[10:58:32] OD16 before the launch: PASS: 21171458048 B free on /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z; T 7198 s; E = 2 x 30.8 MB/min (planning assumption) x T = 7389946667 B; need max(5 GiB, 2E + 100000000 B) = 14879893333 B
+[10:58:32] launch
+launch pid 30042 pgid 30042 xvfb 30037
+[10:59:05] controllers: exit 0
+[10:59:08] gazebo gui pid(s) 30219  reniced +19
+[10:59:30] node up after 23 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[10:59:30] locomotion node pid(s) 30117  (launch session 30042) reniced -5
+[10:59:33] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[11:10:03] pre-shadow checks passed: pre-shadow checks PASS (server 30216 alone maps only the r2 libraries with provenance hashes 3a8f2044/06777e14, no stock/mixed; gain 1.0 log+param; update_rate 100; period 0.001 s; both controllers active; node 30117 SHADOW (gate False) in the launch session 30042, 0 action clients, 0 command publis
+[11:10:03] OD8 before the first key: PASS: watchdog 29922 has 6507 s left >= 1800 + 900 s
+[11:10:03] captures before
+[11:10:05] OD16 before recording: PASS: 21170798592 B free on /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z; T 6505 s; E = 2 x 30.8 MB/min (planning assumption) x T = 6678466667 B; need max(5 GiB, 2E + 100000000 B) = 13456933333 B
+[11:10:09] driver
+[11:11:45] driver exit 0: {"after_close": {"goals_recorded": 1, "last_refusal": {"reason": "faulted_reset_required", "request": "disarm", "wall": 3618.242132091}, "max_seq": 1, "state": "FAULTED"}, "close": {"event": "teleop_c
+[11:11:48] captures after
+[11:11:50] bag stopped
+[11:11:50] teleop sessions the driver logged: 32677 ; teleop processes left in them after the driver (its two q closes should leave none): none
+[11:11:51] screenshot 2: exit 0
+[11:11:53] strace (signals only) attached to simulator server 30216: strace: Process 30216 attached 
+[11:11:53] stop launch
+[11:12:00] server exit (strace): +++ exited with 0 +++
+[11:12:00] end

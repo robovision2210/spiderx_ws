@@ -1,0 +1,20 @@
+[10:51:01] cleanup start
+driver: 28356: not running
+teleop sessions: none recorded
+recorder group 28331: SIGINT, then SIGKILL after 15 s
+launch group 17618: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 17618 still has: 17618 [sleep] <defunct>;
+launch session 17618: SIGKILL to those
+[10:51:17] cleanup done; relevant processes still present (listed, not killed):
+28219 /opt/mm/root/envs/humble/bin/python3 -u /opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py /root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/test_results/spiderx_controller/test_m55_gait.xunit.xml --package-name spiderx_controller --output-file /root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/ament_cmake_pytest/test_m55_gait.txt --command /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m55_gait.py -o cache_dir=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/ament_cmake_pytest/test_m55_gait/.cache --junit-xml=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/test_results/spiderx_controller/test_m55_gait.xunit.xml --junit-prefix=spiderx_controller
+28220 /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m55_gait.py -o cache_dir=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/ament_cmake_pytest/test_m55_gait/.cache --junit-xml=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/test_results/spiderx_controller/test_m55_gait.xunit.xml --junit-prefix=spiderx_controller
+[10:51:17] cleanup start
+driver: 28356: not running
+teleop sessions: none recorded
+recorder: 28331: not running
+launch group 17618: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 17618 still has: 17618 [sleep] <defunct>;
+launch session 17618: SIGKILL to those
+[10:51:18] cleanup done; relevant processes still present (listed, not killed):
+28219 /opt/mm/root/envs/humble/bin/python3 -u /opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py /root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/test_results/spiderx_controller/test_m55_gait.xunit.xml --package-name spiderx_controller --output-file /root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/ament_cmake_pytest/test_m55_gait.txt --command /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m55_gait.py -o cache_dir=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/ament_cmake_pytest/test_m55_gait/.cache --junit-xml=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/test_results/spiderx_controller/test_m55_gait.xunit.xml --junit-prefix=spiderx_controller
+28220 /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m55_gait.py -o cache_dir=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/ament_cmake_pytest/test_m55_gait/.cache --junit-xml=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/test_results/spiderx_controller/test_m55_gait.xunit.xml --junit-prefix=spiderx_controller

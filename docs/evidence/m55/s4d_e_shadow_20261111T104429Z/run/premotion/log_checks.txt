@@ -1,0 +1,6 @@
+== plugin gain log entries
+61:[ign gazebo-1] [INFO] [1794394728.289986519] [gz_ros2_control]: The position_proportional_gain has been set to: 1
+exact 'has been set to: 1' lines: 1; all 'has been set to' lines: 1
+== controller/physics period (plugin warning)
+[ign gazebo-1] [WARN] [1794394730.456290016] [gz_ros2_control]:  Desired controller update period (0.01 s) is slower than the gazebo simulation period (0.001 s).
+== invalid-gain or init errors: 0

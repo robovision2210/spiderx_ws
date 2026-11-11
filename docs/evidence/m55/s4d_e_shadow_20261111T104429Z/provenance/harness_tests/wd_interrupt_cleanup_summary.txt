@@ -1,0 +1,31 @@
+W1 (6 s): exit 0 after 10 s; stopped.flag yes; actions: STUB cleanup.sh STUB restore_cmd.sh 
+W2 (60 s, stopped.flag at 2 s): exit 0 after 5 s; acted: no
+W3 (default): deadline - start = 7200 s; exit 0; acted: no
+I1: wrapper group 17003 gone: yes; Terminated; cleanup runs: 2
+run_wd_interrupt_cleanup.sh: line 20: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_harness_tests/I1/run/driver/stub_driver.log: No such file or directory
+   launch session 17064: 0 left; xvfb 17065 alive: no; recorder group none: n/a left; driver.pid: none; stub driver log: 
+   cleanup.log: driver: no pid recorded: not running|recorder: no pid recorded: not running|launch group 17064: stage_stop.sh (SIGINT; shutdown.txt)|launch session 17064 still has: 17064 [sleep] <defunct>;|launch session 17064: SIGKILL to those|driver: no pid recorded: not ru
+I2 before the interruption: driver 28356 running: yes; cmdline: python3 /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpa; recorder group 28331: 1 process(es)
+I2: wrapper group 17557 gone: yes; Terminated; cleanup runs: 2
+   launch session 17618: 0 left; xvfb 17619 alive: no; recorder group 28331: 0 left; driver.pid: 28356; stub driver log: started pid 28356 args ['--out', '/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_harness_tests/I2/run/driver', '--shadow-rehearsal']|interrupted by SIGTERM|
+   cleanup.log: driver: 28356: not running|recorder group 28331: SIGINT, then SIGKILL after 15 s|launch group 17618: stage_stop.sh (SIGINT; shutdown.txt)|launch session 17618 still has: 17618 [sleep] <defunct>;|launch session 17618: SIGKILL to those|driver: 28356: not running
+C2 == cleanup.sh (E driver name)
+   [10:51:22] cleanup start
+   driver 28576: SIGINT, then SIGKILL after 10 s
+   teleop session 28585: SIGKILL to: 28585 ros2 run spiderx_controller m55_teleop_keyboard 600;28586 m55_teleop_keyboard child-of-teleop-session 600;
+   recorder group 28578: SIGINT, then SIGKILL after 15 s
+   launch group 28579: stage_stop.sh (SIGINT; shutdown.txt)
+   launch session 28579 still has: 28579 ros2 launch dummy 600;28583 gz sim server dummy-ignores-SIGINT 600;28584 ign gazebo dummy 600;
+   launch session 28579: SIGKILL to those
+   Xvfb 28580: SIGTERM
+   [10:51:49] cleanup done; relevant processes still present (listed, not killed):
+   28219 /opt/mm/root/envs/humble/bin/python3 -u /opt/mm/root/envs/humble/share/ament_cmake_test/cmake/run_test.py /root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/test_results/spiderx_controller/test_m55_gait.xunit.xml --package-name spiderx_controller --output-file /root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/ament_cmake_pytest/test_m55_gait.txt --command /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m55_gait.py -o cache_dir=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/ament_cmake_pytest/test_m55_gait/.cache --junit-xml=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/test_results/spiderx_controller/test_m55_gait.xunit.xml --junit-prefix=spiderx_controller
+   28220 /opt/mm/root/envs/humble/bin/python3 -u -m pytest /home/user/spiderx_ws/src/spiderx_controller/test/test_m55_gait.py -o cache_dir=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/ament_cmake_pytest/test_m55_gait/.cache --junit-xml=/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_controller/test_results/spiderx_controller/test_m55_gait.xunit.xml --junit-prefix=spiderx_controller
+   28577 python3 -c  import os, pty, sys, time pid, fd = pty.fork() if pid == 0:     os.execvp("bash", ["bash", "-c", "(exec -a \"m55_teleop_keyboard child-of-teleop-session\" sleep 600) & exec -a \"ros2 run spiderx_controller m55_teleop_keyboard\" sleep 600"]) open("teleop.pid", "w").write(str(pid)); time.sleep(600)
+run_wd_interrupt_cleanup.sh: line 39: 28576 Killed                  bash -c 'echo $$ > driver.pid; exec -a "python3 /x/scripts/s4/s4d_e_driver.py --out d --shadow-rehearsal" sleep 600'
+run_wd_interrupt_cleanup.sh: line 39: 28578 Killed                  setsid bash -c 'exec -a "python3 ros2 bag record -s sqlite3 dummy" sleep 600'
+run_wd_interrupt_cleanup.sh: line 39: 28579 Killed                  setsid bash -c 'set -m; (trap "" INT; exec -a "gz sim server dummy-ignores-SIGINT" sleep 600) & (exec -a "ign gazebo dummy" sleep 600) & exec -a "ros2 launch dummy" sleep 600'
+   gone 28576
+   gone 28580
+   teleop session 28585 members: 1; launch session 28579 members: 2; recorder group 28578 members: 0
+   decoy 28581 (same driver name, not recorded) still alive: correctly untouched

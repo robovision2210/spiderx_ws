@@ -1,0 +1,4 @@
+29922     1 29922 29922 bash /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/tools/watchdog.sh /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/run 7200
+29944     1 29944 29944 bash -c bash /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/tools/s4d_e_shadow_guarded.sh /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/run /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/bag; echo "guarded run exit $?"
+29945 29944 29944 29944 bash /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/tools/s4d_e_shadow_guarded.sh /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/run /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/bag
+29948 29945 29944 29944 bash /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/tools/s4d_e_shadow_run.sh /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/run /root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/bag

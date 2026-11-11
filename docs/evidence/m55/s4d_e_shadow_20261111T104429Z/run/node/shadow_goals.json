@@ -1,0 +1,16 @@
+[
+ {
+  "b_from": 0,
+  "b_to": 1,
+  "direction": 1,
+  "duration_s": 1.9,
+  "fingerprint": "748bd1df2da4252417017fbdb8f68ac3ffe63725c3c1c1791802977fffb28690",
+  "kind": "shift",
+  "leg": null,
+  "level": 2,
+  "phase": 0,
+  "points": 18,
+  "seq": 1,
+  "wall": 3570.948174633
+ }
+]
