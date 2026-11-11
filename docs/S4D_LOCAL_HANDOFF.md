@@ -33,8 +33,20 @@ acceptance verdict. Nothing in it has been run on your PC. Every result quoted b
   - The body does not move in shadow, so no distance, cycle band or drift is demonstrated.
   - Its evidence is committed on this branch: `docs/evidence/m55/s4d_shadow_20261110T072920Z/` (`d4fe748`), with the disabled-validation record `docs/evidence/m55/s4d_fresh_disabled_20261110T071506Z/` (`fdcbb70`).
   - The raw bag is not in the repository. A lossless gzip copy was delivered as a conversation attachment; a durable off-container copy is unconfirmed until you confirm one.
-- **Not done anywhere:** a live S4d-M attempt, S4d-E, or any enabling. All three gates are `False`
-  on every pushed commit.
+- One S4d-M **live** attempt on 2026-11-11: **PASS, for the approved S4d-M simulation scope only**. The committed `score_s4d.py`, run without `--shadow`, rated M1–M16 PASS.
+  - It ran from the disabled baseline `9cc1f68`, through a local enabling branch (`bd4a40e`, the two-line M55 patch) that was never pushed.
+  - 111 goals, 0 cancels. F leg +0.30006 m and R leg −0.29985 m, each approximately 0.3 m (0.300 ± 0.015 m). Maximum tracking error 0.00225 rad.
+  - The close while moving ended `lease_expired`, as the node-clock evidence predicts. The reconnect probe stayed DISARMED with zero goals.
+  - Full restore: DISABLED AND VERIFIED. The enabling branch was deleted after verification, and both installations import all three gates `False`.
+  - Findings:
+    - six `[ERROR]` startup retries from `gz_ros2_control` before it connected;
+    - the simulator server was killed by SIGKILL during shutdown, after the script;
+    - about 34.5 MB of recording per wall minute.
+  - Its evidence is committed on this branch: `docs/evidence/m55/s4d_live_20261111T052817Z/` (`6558abf`).
+  - The raw bag (348,086,272 bytes, sha256 `9320eb43…`) is not in the repository. The original was delivered as a conversation attachment; a durable off-container copy is unconfirmed until you confirm one.
+- **Not done anywhere:** S4d-E, S4e (human keyboard operation), hardware or navigation. Full S4 acceptance is not complete.
+  - The only enabling was the local S4d-M branch above, now deleted.
+  - All three gates are `False` on every pushed commit.
 
 **Local verification status: none for S4d.** The last local verification you reported was M6.0-D
 (offline, mock and isolated-domain only), on `claude/spiderx-m6d-live-playback` at `412eb45`
@@ -155,8 +167,8 @@ behaviour, the plant or timing on your PC.
   - Check which version your apt packages provide (A), and do not assume the cloud plant.
   - `build_overlay.sh` targets the RoboStack toolchain. An equivalent overlay for `/opt/ros/humble`
     is a separate, reviewed step.
-- The S4d-M **live** attempt (`docs/S4D_ACCEPTANCE_PLAN.md` §13–§14), S4d-E (OD10), and S4e human
-  keyboard work (OD9).
+- S4d-E (OD10) and S4e human keyboard work (OD9). The cloud S4d-M live attempt is done (§0); any
+  repeat of it, in the cloud or on your PC, would be a new attempt.
 - Any enabling change. Enabling branches are local only (`local/m55-s4d-m-*`) and never pushed;
   `scripts/m61_restore_and_verify_disabled.sh` restores and verifies afterwards.
 
@@ -172,4 +184,5 @@ behaviour, the plant or timing on your PC.
 | Paths with `python3.11`, `/opt/mm` or `/root` in instructions | cloud-specific | translate to `python3.10`, `/opt/ros/humble`, your `WS`; never copy |
 
 Report back: A's output, the SHA you synchronized to, C's counts and skips, the gate lines and
-the two refusals. A live S4d-M attempt still needs a separate review and authorization.
+the two refusals. Any local simulation launch, live or shadow, still needs a separate review and
+authorization.
