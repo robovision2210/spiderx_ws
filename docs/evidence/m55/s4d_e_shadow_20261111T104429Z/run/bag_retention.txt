@@ -31,5 +31,7 @@ To read it later:
   tools/s4d_e_shadow_run.sh and --shadow.
 - Check the bytes first: `sha256sum bag_0.db3` must print c2925073998b43d57d0b409a80f42ab31b5fd8fede66a5f03b938e25886ef534.
 
-Preservation: when this file was written, the only copy of the raw bytes was in the cloud container. A committed hash
-is not a backup.
+Export: the ORIGINAL bag_0.db3 and metadata.yaml were delivered as conversation attachments by 2026-11-11T11:24:11Z
+  (uncompressed: 50200576 bytes is below the 500 MiB attachment limit, so no compression was needed; the copies sent
+  were verified against the sha256 values above before sending).
+Preservation: a durable off-container copy is UNCONFIRMED. A committed hash is not a backup.

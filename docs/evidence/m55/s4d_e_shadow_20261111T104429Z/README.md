@@ -191,7 +191,7 @@ came within the script's 1500 s limit.
   and the traffic. It carries no verdict.
 
 ## Files
-- Bag: kept outside the repository; see `run/bag_retention.txt`.
+- Bag: kept outside the repository; see `run/bag_retention.txt`. The original bag and `metadata.yaml` were delivered as conversation attachments; a durable off-container copy is unconfirmed.
 - Gzipped here: `run/driver/driver.jsonl`, `run/premotion/maps_full.txt` and `run/launch.log`. Their original hashes
   are in `provenance/gzipped_originals_SHA256SUMS.txt`.
 - The batch journal snapshot is in `provenance/`.
