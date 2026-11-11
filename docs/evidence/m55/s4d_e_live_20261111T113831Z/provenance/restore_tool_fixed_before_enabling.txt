@@ -1,0 +1,11 @@
+2026-11-11T11:50:01Z restore, cleanup and watchdog tools FIXED BEFORE ENABLING (not changed after this point):
+de7cbe04d862a3ea1f4bd891400bc276dd04da8111690dde35b27e9ea4481af3  restore_cmd.sh
+655a3ea4ed7a3454048a1bb9b663c21eb22c33fca102634b6d7647b5f4d3d56c  cleanup.sh
+aa923bb5cf91d56bdca16826ed3441a8218994e96ac9e1c7f51af9bb4d814f32  watchdog.sh
+b8a7319681e495ba3b66d42ce07c2f8767c2fbe85f8dfd368c4be362347abe76  run_install_gates.sh
+4de2407185d279792be4a506395d0d98497727dae7a6f32f678dca522b4feeb3  enable_build.sh
+e2d7fa480f3d623d4e26dcd3c92a19748c69ad61c7dba144cf79de2c191a10dd  s4d_e_live_run.sh
+4adf153face9878080aae4e57de76894bcaa56aa8d609452a06847dd0460fd83  s4d_e_live_guarded.sh
+7a169d546efd1227755d1efcf39ecd373e6499610651bf496a36a334b822c120  operator_prekey.sh
+scripts/m61_restore_and_verify_disabled.sh blob at HEAD 6df3f9fbe714f725e5691d542c56cb46c37d2f16 (= 87198b9: 6df3f9fbe714f725e5691d542c56cb46c37d2f16)
+restore_cmd.sh: --base 16d939f5a0e06afa3478093f0b491e3e8ce60673; --enabling-ref + --delete-enabling-branch only once enabling_branch.txt exists; pid files only if they exist (stub-tested R1-R4); then back onto claude/spiderx-s4d-e-preparation only if it still points at the baseline; then the run installation's gates (fresh environment)

@@ -1,0 +1,4 @@
+[11:42:44] gates (imported): True False False /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/fake_enabled/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[11:42:44] enabling branch: recorded 'local/m55-s4d-e-TEST', checked out 'master', diff vs 64346b39dfe502f17995be7a1c9992fdb6a63113:  remote-tracking refs: 0; worktree entries: 0
+[11:42:44] REFUSED before the launch (nothing launched, no key): the checked-out branch is not the recorded enabling branch
+[11:42:44] end

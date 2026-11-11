@@ -1,0 +1,12 @@
+26c26
+< bash $EVT/premotion_checks.sh $RUN > $RUN/premotion_stdout.txt 2>&1
+---
+> bash /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/stub/premotion_stub.sh $RUN PASS > $RUN/premotion_stdout.txt 2>&1
+29c29
+< ( source $EVT/env.sh; cd / && PYTHONDONTWRITEBYTECODE=1 python3 $EVT/settle_check.py --out $D/settle_check.json --dispatch --timeout-s 600 ) > $D/settle_check.log 2>&1
+---
+> bash /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/stub/settle_stub.sh $D > $D/settle_check.log 2>&1
+37c37
+< env -i PATH=/usr/bin:/bin DISPLAY=:77 timeout 15 /usr/bin/import -display :77 -window root $RUN/captures/screenshot1_rest_before_first_key.png > $RUN/captures/screenshot1.log 2>&1
+---
+> echo STUB-SCREENSHOT $RUN/captures/screenshot1_rest_before_first_key.png > $RUN/captures/screenshot1.log 2>&1

@@ -1,0 +1,7 @@
+[11:54:22] operator: waiting for the PRE-KEY CHECKPOINT (premotion_wait.flag or the steps.log label), at most 1500 s
+[11:55:25] operator: checkpoint seen after 63 s: premotion_wait.flag yes, steps.log label yes
+[11:55:31] operator: premotion: PREMOTION VERDICT: PASS
+[11:56:18] operator: settle: SETTLE VERDICT: PASS
+[11:56:18] operator: startup lines: [ERROR]/[FATAL] 0 (recorded), process has died 0
+[11:56:18] operator: screenshot 1: exit 0 (recorded, not a criterion)
+[11:56:18] operator: GO: pre-key checks PASS (PASS: one process maps the plugin and it belongs to this launch: 7221; 3 library lines PASS; gain/update_rate/period per log_checks and params; node action clients: 1, of which the trajectory action: 1; publishers towards joint_trajectory: 0; launch-log DISPATCH lines: 1; settle

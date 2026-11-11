@@ -1,0 +1,7 @@
+ 5343     1  5343  5343 bash /root/spiderx_evidence/s4d_e_live_20261111T113831Z/tools/watchdog.sh /root/spiderx_evidence/s4d_e_live_20261111T113831Z/run 7200
+ 6917     1  6917  6917 bash -c bash /root/spiderx_evidence/s4d_e_live_20261111T113831Z/tools/s4d_e_live_guarded.sh /root/spiderx_evidence/s4d_e_live_20261111T113831Z/run /root/spiderx_evidence/s4d_e_
+ 6918  6917  6917  6917 bash /root/spiderx_evidence/s4d_e_live_20261111T113831Z/tools/s4d_e_live_guarded.sh /root/spiderx_evidence/s4d_e_live_20261111T113831Z/run /root/spiderx_evidence/s4d_e_live_202
+ 6921  6918  6917  6917 bash /root/spiderx_evidence/s4d_e_live_20261111T113831Z/tools/s4d_e_live_run.sh /root/spiderx_evidence/s4d_e_live_20261111T113831Z/run /root/spiderx_evidence/s4d_e_live_2026111
+ 7024  6921  6917  6917 bash /root/spiderx_evidence/s4d_e_live_20261111T113831Z/tools/stage_start.sh /root/spiderx_evidence/s4d_e_live_20261111T113831Z/run
+ 7025  6921  6917  6917 tee -a /root/spiderx_evidence/s4d_e_live_20261111T113831Z/run/steps.log
+operator pre-key pid 7060

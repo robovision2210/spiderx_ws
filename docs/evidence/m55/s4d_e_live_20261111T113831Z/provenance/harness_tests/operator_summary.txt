@@ -1,0 +1,6 @@
+P1 (premotion and settle PASS): operator exit 0; checkpoint seen after 8 s: premotion_wait.flag yes, steps.log label yes; go.flag yes; abort.flag no; stub driver started: 1
+   P1 wrapper: Terminated; launch session left: 0
+P2 (premotion FAIL: wrong mode): operator exit 1; abort.flag: operator pre-key checks FAILED: premotion(PREMOTION VERDICT: FAIL: node_shadow_log action_clients (STUB: wrong mode)); run: ABORT: pre-key checks failed: operator pre-key checks FAILED: premotion(PREMOTION VERDICT: FAIL: node_shadow_log action_clients (; driver started: no; recorder: no
+   P2 wrapper: guarded exit 1; launch session left: 0
+P3 (run refused before the checkpoint: no watchdog): operator exit 2; operator: the run ended before the checkpoint: [11:46:54] end; go.flag no
+   P3 wrapper: guarded exit 1; launch session left: 0

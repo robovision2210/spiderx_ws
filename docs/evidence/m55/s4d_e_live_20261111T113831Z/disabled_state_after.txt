@@ -1,0 +1,29 @@
+2026-11-11T12:00:53Z disabled state after the S4d-E LIVE attempt (after the full restore)
+branch claude/spiderx-s4d-e-preparation HEAD 16d939f5a0e06afa3478093f0b491e3e8ce60673 = origin 16d939f5a0e06afa3478093f0b491e3e8ce60673; worktree entries 0; local/* branches 0; remote-tracking local/* refs 0; ls-remote local/* heads 0
+src/spiderx_controller/spiderx_controller/m55_contract.py:19:M55_LOCOMOTION_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m61_live_contract.py:19:M61_LIVE_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m6_live_contract.py:18:LIVE_DISPATCH_ENABLED = False
+== installation A_run_install: /root/spiderx_e_live_enabled_20261111T113831Z/install (2026-11-11T11:59:13Z)
+module m55_contract /root/spiderx_e_live_enabled_20261111T113831Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py (this installation: 
+module m61_live_contract /root/spiderx_e_live_enabled_20261111T113831Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py (this
+module m6_live_contract /root/spiderx_e_live_enabled_20261111T113831Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py (this in
+gates {'LIVE_DISPATCH_ENABLED': False, 'M55_LOCOMOTION_DISPATCH_ENABLED': False, 'M61_LIVE_DISPATCH_ENABLED': False}
+PASS m6_gait_replay.py --live refused, exit 3, HARD-DISABLED
+PASS m6_live_playback --live refused, exit 3, HARD-DISABLED
+INSTALLATION A_run_install VERDICT: PASS
+library goals 54 fingerprints_sha256 62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732 library.json equals the disabled baseline True
+== installation B_workspace: /home/user/spiderx_ws/install (2026-11-11T12:00:02Z)
+module m55_contract /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py (this installation: True )
+module m61_live_contract /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py (this installation: True )
+module m6_live_contract /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py (this installation: True )
+gates {'LIVE_DISPATCH_ENABLED': False, 'M55_LOCOMOTION_DISPATCH_ENABLED': False, 'M61_LIVE_DISPATCH_ENABLED': False}
+PASS m6_gait_replay.py --live refused, exit 3, HARD-DISABLED
+PASS m6_live_playback --live refused, exit 3, HARD-DISABLED
+INSTALLATION B_workspace VERDICT: PASS
+library goals 54 fingerprints_sha256 62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732 library.json equals the disabled baseline True
+library.json sha256 (A, B, the run node's, enabled B1, disabled before enabling): 917fc4d796efe234 917fc4d796efe234 917fc4d796efe234 917fc4d796efe234 917fc4d796efe234 
+restore report restore_verify_20261111T115845Z.txt: 8 ok lines; VERDICT: DISABLED AND VERIFIED; M6 --live refusals 2 of 2 (after the gates were confirmed False); Deleted branch local/m55-s4d-e-20261111T115013Z (was 01ed29e). (after verification; never pushed: enabled/never_pushed_check.txt)
+run installation check: RUN INSTALLATION GATES: PASS: all three False, imported from /root/spiderx_e_live_enabled_20261111T113831Z/install
+processes (gz/ros2/m55/driver/bag/teleop/Xvfb/strace/daemon/watchdog/operator): 0
+watchdog: 2026-11-11T11:58:45Z watchdog 5343 stood down on stopped.flag without acting (no watchdog.txt)
+OVERALL: DISABLED AND VERIFIED (full restore against 16d939f; run installation gates; installations A and B)

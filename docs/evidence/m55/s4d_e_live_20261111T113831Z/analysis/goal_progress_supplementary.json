@@ -1,0 +1,19 @@
+{
+ "status_first_STARTING_or_WALKING_receipt": 1794398234.3546965,
+ "status_first_FAULTED_receipt": 1794398234.4423268,
+ "status_first_FAULTED_no_goal_receipt": 1794398234.5529752,
+ "sim_at_first_goal_status": 31.25,
+ "sim_at_first_FAULTED_status": 31.27,
+ "sim_at_first_FAULTED_no_goal_status": 31.29,
+ "controller_reference_max_change_from_pre_goal_rad": 1.166812642176015e-10,
+ "controller_actual_max_change_from_pre_goal_rad": 1.2256942473427417e-10,
+ "joint_states_max_change_from_pre_goal_rad": 1.2256942473427417e-10,
+ "feedback_samples": [
+  {
+   "receipt": 1794398234.4059675,
+   "max_abs_desired_minus_pre_goal_ref_rad": 5.831274735222549e-11,
+   "max_abs_error_rad": 0.0
+  }
+ ],
+ "note": "supplementary only; the verdict is score/summary.json"
+}

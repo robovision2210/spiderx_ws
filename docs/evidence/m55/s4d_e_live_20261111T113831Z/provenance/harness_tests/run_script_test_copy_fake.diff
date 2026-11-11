@@ -1,0 +1,16 @@
+28,30c28,30
+< RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools; WS=/home/user/spiderx_ws
+< RUNINST=/root/spiderx_e_live_enabled_20261111T113831Z/install
+< BASE=16d939f5a0e06afa3478093f0b491e3e8ce60673
+---
+> RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools; WS=/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/repo
+> RUNINST=/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/fake_disabled/install
+> BASE=64346b39dfe502f17995be7a1c9992fdb6a63113
+115c115
+< cap() { timeout 20 ros2 node info /spiderx_locomotion > $RUN/captures/$1_node_info.txt 2>&1
+---
+> cap() { echo "STUB-CAP $1"; return 0; timeout 20 ros2 node info /spiderx_locomotion > $RUN/captures/$1_node_info.txt 2>&1
+120c120
+< setsid ros2 bag record -s sqlite3 --include-hidden-topics -o $BAG /spiderx/locomotion/status /joint_states \
+---
+> setsid bash /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/stub/rec.sh -s sqlite3 --include-hidden-topics -o $BAG /spiderx/locomotion/status /joint_states \

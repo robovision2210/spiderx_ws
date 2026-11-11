@@ -1,0 +1,277 @@
+{
+ "bag_topics": {
+  "/cmd_vel": {
+   "messages": 949,
+   "type": "geometry_msgs/msg/Twist"
+  },
+  "/joint_states": {
+   "messages": 2264,
+   "type": "sensor_msgs/msg/JointState"
+  },
+  "/leg_trajectory_controller/controller_state": {
+   "messages": 1084,
+   "type": "control_msgs/msg/JointTrajectoryControllerState"
+  },
+  "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": {
+   "messages": 1,
+   "present_in_bag": true,
+   "type": "control_msgs/action/FollowJointTrajectory_FeedbackMessage"
+  },
+  "/leg_trajectory_controller/joint_trajectory": {
+   "messages": 0,
+   "present_in_bag": false,
+   "type": null
+  },
+  "/spiderx/locomotion/status": {
+   "messages": 219,
+   "type": "std_msgs/msg/String"
+  },
+  "/spiderx/sim/world_poses": {
+   "messages": 5571,
+   "type": "tf2_msgs/msg/TFMessage"
+  }
+ },
+ "controller_state": {
+  "max_reference_change_rad": 1.166812642176015e-10,
+  "messages": 1084,
+  "reference_points_nonempty": true
+ },
+ "controller_traffic": {
+  "action_clients_after": {
+   "client_nodes": [
+    "/rosbag2_recorder",
+    "/spiderx_locomotion"
+   ],
+   "count": 2
+  },
+  "action_clients_before": {
+   "client_nodes": [
+    "/spiderx_locomotion"
+   ],
+   "count": 1
+  },
+  "bag_action_feedback_messages": 1,
+  "bag_joint_trajectory_messages": 0,
+  "controller_reference_max_change_rad": 1.166812642176015e-10,
+  "jtc_log_goal_or_cancel_lines": 4
+ },
+ "exits": {
+  "locomotion_node_lines": [
+   "[INFO] [m55_locomotion_node-7]: process has finished cleanly [pid 7121]"
+  ],
+  "server_exit_strace": [
+   "--- SIGINT {si_signo=SIGINT, si_code=SI_USER, si_pid=7108, si_uid=0} ---",
+   "+++ exited with 0 +++"
+  ]
+ },
+ "joint_states_main": {
+  "max_joint_motion_joint": "lr_foot_joint",
+  "max_joint_motion_rad": 1.2839936762163569e-10,
+  "max_receive_gap_s": 0.10317730903625488,
+  "max_stamp_gap_s": 0.010000000000005116,
+  "rtf": 0.21027414687181273,
+  "rtf_10s_windows_max": 0.22603102447051723,
+  "rtf_10s_windows_min": 0.19056004418197198,
+  "samples": 2264,
+  "sim_s": 22.63,
+  "wall_s": 107.62140917778015
+ },
+ "launch_log": {
+  "aborted": 0,
+  "error_lines": [],
+  "exception": 0,
+  "jtc_cancel_request": 1,
+  "jtc_canceling": 1,
+  "jtc_goal_accepted": 1,
+  "jtc_goal_received": 1,
+  "process_died": 0,
+  "process_died_lines": [],
+  "process_exits": [
+   "create-3",
+   "spawner-5",
+   "spawner-8",
+   "parameter_bridge-4",
+   "parameter_bridge-6",
+   "robot_state_publisher-2",
+   "m55_locomotion_node-7",
+   "ign gazebo-1"
+  ],
+  "sending_signal": 0,
+  "sigkill": 0,
+  "signal_sent_by": 0,
+  "sigterm": 0,
+  "terminate_called": 0,
+  "what": 0
+ },
+ "node_events": {
+  "cancel": [
+   {
+    "event": "cancel_sent",
+    "n": 10,
+    "seq": 1,
+    "state": "FAULTED",
+    "wall": 1371.459638147
+   },
+   {
+    "code": 0,
+    "event": "cancel_response",
+    "n": 12,
+    "seq": 1,
+    "state": "FAULTED",
+    "wall": 1371.472122664
+   }
+  ],
+  "counts": {
+   "cancel_response": 1,
+   "cancel_sent": 1,
+   "fault": 1,
+   "goal_response": 1,
+   "goal_sent": 1,
+   "level_change": 1,
+   "refused": 2,
+   "request": 4,
+   "result": 1,
+   "transition": 4
+  },
+  "faults": [
+   {
+    "event": "fault",
+    "n": 8,
+    "reason": "estop",
+    "state": "WALKING",
+    "wall": 1371.459638147
+   }
+  ],
+  "refused": [
+   {
+    "event": "refused",
+    "n": 14,
+    "reason": "faulted_reset_required",
+    "request": "disarm",
+    "state": "FAULTED",
+    "wall": 1418.621863528
+   },
+   {
+    "event": "refused",
+    "n": 16,
+    "reason": "faulted_reset_required",
+    "request": "disarm",
+    "state": "FAULTED",
+    "wall": 1418.625025652
+   }
+  ],
+  "results_not_succeeded": [
+   {
+    "error_code": 0,
+    "error_string": "",
+    "event": "result",
+    "n": 13,
+    "seq": 1,
+    "state": "FAULTED",
+    "status": 5,
+    "wall": 1371.520558915
+   }
+  ],
+  "transitions": [
+   [
+    "DISARMED",
+    "READY",
+    "arm"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "FAULTED",
+    "estop"
+   ]
+  ]
+ },
+ "node_final_status.json": {
+  "command_rejections": {},
+  "cycles": 0,
+  "dispatch_gate": true,
+  "faults": [
+   "estop"
+  ],
+  "goals_recorded": 1,
+  "mode": "dispatch",
+  "state": "FAULTED"
+ },
+ "status": {
+  "body": {
+   "tilt_max": 1.541388099311085e-07,
+   "xy_first": [
+    5.947860159682367e-12,
+    -8.856811112726685e-09
+   ],
+   "xy_last": [
+    5.945384469698973e-12,
+    -9.176530988087766e-09
+   ],
+   "xy_travel_m": 3.1971987537066606e-10,
+   "yaw_change_rad": 2.0125660948504577e-14,
+   "z_max": 0.05450432578984906,
+   "z_min": 0.05449529462174566
+  },
+  "final": {
+   "boundary": 0,
+   "command_rejections": {},
+   "cycles": 0,
+   "faults": [
+    "estop"
+   ],
+   "goals_recorded": 1,
+   "phases_completed": 0,
+   "state": "FAULTED"
+  },
+  "joint_states_margin_to_0.5s": 0.4072125790000882,
+  "max_ages_s": {
+   "body_pose_age_s": 0.03343300599999566,
+   "graph_age_s": 1.0038066370000251,
+   "joint_states_age_s": 0.09278742099991177
+  },
+  "messages": 219,
+  "modes": [
+   [
+    "dispatch",
+    true
+   ]
+  ],
+  "state_changes_seen_in_status": [
+   {
+    "bag_receipt_unix_s": 1794398181.553,
+    "sim_s_node_joint_state_stamp": 20.2,
+    "state": "DISARMED"
+   },
+   {
+    "bag_receipt_unix_s": 1794398234.192,
+    "sim_s_node_joint_state_stamp": 31.2,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1794398234.355,
+    "sim_s_node_joint_state_stamp": 31.25,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1794398234.404,
+    "sim_s_node_joint_state_stamp": 31.26,
+    "state": "WALKING"
+   },
+   {
+    "bag_receipt_unix_s": 1794398234.442,
+    "sim_s_node_joint_state_stamp": 31.27,
+    "state": "FAULTED"
+   }
+  ]
+ }
+}

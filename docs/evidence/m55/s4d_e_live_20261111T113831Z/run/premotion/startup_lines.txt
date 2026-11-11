@@ -1,0 +1,4 @@
+[ERROR]/[FATAL] lines: 0; 'process has died': 0
+== [WARN] lines (recorded, not a criterion)
+205:[ign gazebo-1] [WARN] [1794398066.517142663] [gz_ros2_control]:  Desired controller update period (0.01 s) is slower than the gazebo simulation period (0.001 s).
+224:[ign gazebo-1] [WARN] [1794398070.295230253] [leg_trajectory_controller]: [Deprecated]: "allow_nonzero_velocity_at_trajectory_end" is set to true. The default behavior will change to false.

@@ -1,0 +1,5 @@
+Action: /leg_trajectory_controller/follow_joint_trajectory
+Action clients: 1
+    /spiderx_locomotion
+Action servers: 1
+    /leg_trajectory_controller

@@ -1,0 +1,14 @@
+17c17
+< R=/root/spiderx_evidence/s4d_e_live_20261111T113831Z
+---
+> R=/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/R3
+19c19
+< RUNINST=/root/spiderx_e_live_enabled_20261111T113831Z/install
+---
+> RUNINST=/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/R3/no_run_install
+25,26c25,26
+< cd /home/user/spiderx_ws && env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+<   bash scripts/m61_restore_and_verify_disabled.sh --base $BASE \
+---
+> cd /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/repo && env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+>   bash /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/stub/restore_stub.sh --base $BASE \

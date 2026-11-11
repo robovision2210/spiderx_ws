@@ -1,0 +1,11 @@
+W1 (6 s): exit 0 after 10 s; stopped.flag yes; actions: STUB cleanup.sh STUB restore_cmd.sh 
+W2 (60 s, stopped.flag at 2 s): exit 0 after 5 s; acted: no
+W3 (default): deadline - start = 7200 s; exit 0; acted: no
+I1: wrapper group 2552 gone: yes; Terminated; cleanup runs: 2
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/run_wd_interrupt.sh: line 22: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/I1/run/driver/stub_driver.log: No such file or directory
+   launch session 2638: 0 left; xvfb 2639 alive: no; recorder group none: n/a left; driver.pid: none; stub driver log: 
+   steps tail: [11:43:55] locomotion node pid(s)  (launch session 2638) reniced -5|[11:43:58] PRE-KEY CHECKPOINT: waiting for go.flag or abort.flag (at most 1500 s)|
+I2 before the interruption: driver 3005 running: yes; recorder group 2976: 1 process(es)
+I2: wrapper group 2810 gone: yes; Terminated; cleanup runs: 2
+   launch session 2896: 0 left; xvfb 2897 alive: no; recorder group 2976: 0 left; driver.pid: 3005; stub driver log: started pid 3005 args ['--out', '/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/I2/run/driver']|interrupted by SIGTERM|
+   steps tail: [11:44:14] OD16 before recording: PASS: 21061599232 B free on /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness

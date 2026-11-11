@@ -1,0 +1,21 @@
+changed from S4d-M live analyze_s4d_live_supplementary.py: analyze_s4d_e_live_supplementary.py
+changed from S4d-M live cleanup.sh: cleanup.sh
+changed from S4d-M live enable_build.sh: enable_build.sh
+changed from S4d-M live env.sh: env.sh
+changed from S4d-M live input_checks.sh: input_checks.sh
+changed from S4d-M live prelaunch_checks.sh: prelaunch_checks.sh
+changed from S4d-M live premotion_checks.sh: premotion_checks.sh
+changed from S4d-M live restore_cmd.sh: restore_cmd.sh
+changed from S4d-M live s4d_live_guarded.sh: s4d_e_live_guarded.sh
+changed from S4d-M live s4d_live_run.sh: s4d_e_live_run.sh
+changed from S4d-M live watchdog.sh: watchdog.sh
+new: operator_prekey.sh
+same as S4d-M live: install_check.py
+same as S4d-M live: install_check.sh
+same as S4d-M live: library_json.py
+same as S4d-M live: run_install_gates.sh
+same as S4d-M live: settle_check.py
+same as S4d-M live: stage_start.sh
+same as S4d-M live: stage_stop.sh
+same as S4d-M live: stage_wait_controllers.sh
+note: cleanup.sh is byte-identical to the S4d-E shadow cleanup.sh (the S4d-M live cleanup.sh with the E driver name)

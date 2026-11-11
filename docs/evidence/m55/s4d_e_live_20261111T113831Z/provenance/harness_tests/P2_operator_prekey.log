@@ -1,0 +1,7 @@
+[11:46:40] operator: waiting for the PRE-KEY CHECKPOINT (premotion_wait.flag or the steps.log label), at most 120 s
+[11:46:48] operator: checkpoint seen after 8 s: premotion_wait.flag yes, steps.log label yes
+[11:46:48] operator: premotion: PREMOTION VERDICT: FAIL: node_shadow_log action_clients (STUB: wrong mode)
+[11:46:48] operator: settle: SETTLE VERDICT: PASS
+[11:46:48] operator: startup lines: [ERROR]/[FATAL] 0 (recorded), process has died 0
+[11:46:48] operator: screenshot 1: exit 0 (recorded, not a criterion)
+[11:46:48] operator: ABORT: premotion(PREMOTION VERDICT: FAIL: node_shadow_log action_clients (STUB: wrong mode))
