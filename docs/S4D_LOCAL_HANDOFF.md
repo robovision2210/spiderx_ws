@@ -11,7 +11,7 @@ acceptance verdict. Nothing in it has been run on your PC. Every result quoted b
 
 | Branch | Head | PR |
 |---|---|---|
-| `claude/spiderx-s4d-preparation` | this file's commit; parent `8f99bcc` (tested executable) | #24 (draft) → `claude/spiderx-s4d-plan` |
+| `claude/spiderx-s4d-preparation` | documentation and evidence commits on top of `8f99bcc` (tested executable; no code change since) | #24 (draft) → `claude/spiderx-s4d-plan` |
 | `claude/spiderx-s4d-plan` | `34396cf` | no PR; on top of `claude/spiderx-s4c-preparation` |
 | `claude/spiderx-s4c-preparation` | `40f5f2c` | #23 → s4b |
 | `claude/spiderx-s4b-preparation` | `20a7c83` | #22 → s4a |
@@ -31,7 +31,8 @@ acceptance verdict. Nothing in it has been run on your PC. Every result quoted b
   - The real controller received **0** goals, cancels and feedback.
   - Verify-only restore: DISABLED AND VERIFIED.
   - The body does not move in shadow, so no distance, cycle band or drift is demonstrated.
-  - Its evidence is **uncommitted** in the cloud workspace, pending your review, so it is not in the branch you fetch.
+  - Its evidence is committed on this branch: `docs/evidence/m55/s4d_shadow_20261110T072920Z/` (`d4fe748`), with the disabled-validation record `docs/evidence/m55/s4d_fresh_disabled_20261110T071506Z/` (`fdcbb70`).
+  - The raw bag is not in the repository. A lossless gzip copy was delivered as a conversation attachment; a durable off-container copy is unconfirmed until you confirm one.
 - **Not done anywhere:** a live S4d-M attempt, S4d-E, or any enabling. All three gates are `False`
   on every pushed commit.
 
@@ -87,7 +88,7 @@ push to make this work.
 ```bash
 cd "$WS"
 git fetch origin claude/spiderx-s4d-preparation       # changes no file in the worktree
-git log --oneline -3 origin/claude/spiderx-s4d-preparation   # the top commit adds this file; its parent is 8f99bcc
+git log --oneline -5 origin/claude/spiderx-s4d-preparation   # documentation/evidence commits on top of 8f99bcc (code unchanged)
 git rev-parse origin/claude/spiderx-s4d-preparation   # compare with the SHA reported to you
 ```
 
