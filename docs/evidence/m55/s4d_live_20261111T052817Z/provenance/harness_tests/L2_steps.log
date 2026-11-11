@@ -1,0 +1,3 @@
+[05:38:07] gates (imported): False False False /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/live_harness_tests/fake_disabled/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[05:38:07] REFUSED before the launch (nothing launched, no key): the imported gates are not exactly M55 True, M61 False, M6.0-D False
+[05:38:07] end

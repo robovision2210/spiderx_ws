@@ -1,0 +1,12 @@
+scorer exit 0 (63 s)
+{"M1": "PASS", "M2": "PASS", "M3": "PASS", "M4": "PASS", "M5": "PASS", "M6": "PASS", "M7": "PASS", "M8": "PASS", "M9": "PASS", "M10": "PASS", "M11": "PASS", "M12": "PASS", "M13": "PASS", "M14": "PASS", "M15": "PASS", "M16": "PASS"} PASS
+analysis exit 0
+before restore and scoring 2026-11-11T06:03:21Z:
+9320eb43f999c87f15dbb774010be36c937037e1b4c2db4d1a77cc5777646adc  /root/spiderx_evidence/s4d_live_20261111T052817Z/bag/bag_0.db3
+348086272 bytes
+after scoring 2026-11-11T06:07:07Z:
+9320eb43f999c87f15dbb774010be36c937037e1b4c2db4d1a77cc5777646adc  /root/spiderx_evidence/s4d_live_20261111T052817Z/bag/bag_0.db3
+348086272 bytes
+after the supplementary analysis 2026-11-11T06:07:15Z:
+9320eb43f999c87f15dbb774010be36c937037e1b4c2db4d1a77cc5777646adc  /root/spiderx_evidence/s4d_live_20261111T052817Z/bag/bag_0.db3
+348086272 bytes

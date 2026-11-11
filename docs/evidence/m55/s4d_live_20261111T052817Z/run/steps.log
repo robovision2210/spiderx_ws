@@ -1,0 +1,25 @@
+[05:50:08] gates (imported): True False False /root/spiderx_live_enabled_20261111T052817Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[05:50:09] enabling branch: recorded 'local/m55-s4d-m-20261111T054531Z', checked out 'local/m55-s4d-m-20261111T054531Z', diff vs 9cc1f6844de11abc630387d4c6c441a623463094: 1 1 src/spiderx_controller/spiderx_controller/m55_contract.py;1 1 src/spiderx_controller/test/m55_gate.py; remote-tracking refs: 0; worktree entries: 0
+[05:50:09] OD8 before the launch: PASS: watchdog 4069 has 6920 s left >= 5400 + 900 s
+[05:50:09] OD16 before the launch: PASS: 21554458624 B free on /root/spiderx_evidence/s4d_live_20261111T052817Z; T 6920 s; E = 2 x 30.8 MB/min (planning assumption) x T = 7104533333 B; need max(5 GiB, 2E + 100000000 B) = 14309066667 B
+[05:50:09] launch
+launch pid 6480 pgid 6480 xvfb 6475
+[05:50:40] controllers: exit 0
+[05:50:43] gazebo gui pid(s) 6686  reniced +19
+[05:51:05] node up after 23 s: locomotion node up in DISPATCH mode (dispatch gate True); levels [1.06, 1.9, 2.34] mm/s
+[05:51:05] locomotion node pid(s) 6565  (launch session 6480) reniced -5
+[05:51:08] pre-key checks: waiting for go.flag or abort.flag (at most 1500 s)
+[05:52:40] pre-key checks passed: pre-key checks PASS (server 6683 alone maps only the r2 libraries with provenance hashes 3a8f2044/06777e14, no stock/mixed; gain 1.0 log+param; update_rate 100; period 0.001 s; both controllers active; node 6565 DISPATCH (gate True) in the launch session 6480, the action's only client; 0 command pub
+[05:52:41] OD8 before the first key: PASS: watchdog 4069 has 6768 s left >= 5400 + 900 s
+[05:52:41] captures before
+[05:52:42] OD16 before recording: PASS: 21553180672 B free on /root/spiderx_evidence/s4d_live_20261111T052817Z; T 6767 s; E = 2 x 30.8 MB/min (planning assumption) x T = 6947453333 B; need max(5 GiB, 2E + 100000000 B) = 13994906667 B
+[05:52:46] driver
+[06:02:43] driver exit 0: {"close": {"disarmed_sim_s": 361.74, "event": "teleop_closed", "exit_code": 0, "goal_111_duration_s": 1.9, "pid": 7632, "step": "Q", "t_bound_from": 2332.588375516, "t_exit_seen": 2332.588432745, "wai
+[06:02:46] captures after
+[06:02:49] bag stopped
+[06:02:49] teleop sessions the driver logged: 7632 8494 ; teleop processes left in them after the driver (its two q closes should leave none): none
+[06:02:49] screenshot 2: exit 0
+[06:02:51] strace (signals only) attached to simulator server 6683: strace: Process 6683 attached 
+[06:02:51] stop launch
+[06:03:02] server exit (strace): +++ killed by SIGKILL +++
+[06:03:02] end

@@ -1,0 +1,8 @@
+{
+ "gates": {
+  "spiderx_controller.m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED": false,
+  "spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED": false,
+  "spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED": false
+ },
+ "install_base": "/root/spiderx_live_enabled_20261111T052817Z/install"
+}

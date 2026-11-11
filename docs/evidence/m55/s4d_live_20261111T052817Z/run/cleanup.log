@@ -1,0 +1,7 @@
+[06:03:02] cleanup start
+driver: 7616: not running
+teleop session 7632: nothing left
+teleop session 8494: nothing left
+recorder: 7585: not running
+[06:03:03] cleanup done; relevant processes still present (listed, not killed):
+none

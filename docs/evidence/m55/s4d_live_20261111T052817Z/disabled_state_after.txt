@@ -1,0 +1,22 @@
+2026-11-11T06:03:58Z disabled state after the S4d-M LIVE attempt (after the full restore)
+branch claude/spiderx-s4d-preparation HEAD 9cc1f6844de11abc630387d4c6c441a623463094 worktree entries 0 local/* branches 0
+src/spiderx_controller/spiderx_controller/m55_contract.py:19:M55_LOCOMOTION_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m61_live_contract.py:19:M61_LIVE_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m6_live_contract.py:18:LIVE_DISPATCH_ENABLED = False
+== normal workspace installation (fresh env: toolchain, r2 overlay, /home/user/spiderx_ws/install)
+M55_LOCOMOTION_DISPATCH_ENABLED False /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+M61_LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+{"goals": 54, "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732", "m55_gate_imported": false}
+917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e
+== run installation (fresh env: toolchain, r2 overlay, /root/spiderx_live_enabled_20261111T052817Z/install; its symlinks resolve into the restored src/)
+M55_LOCOMOTION_DISPATCH_ENABLED False /root/spiderx_live_enabled_20261111T052817Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+M61_LIVE_DISPATCH_ENABLED False /root/spiderx_live_enabled_20261111T052817Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+LIVE_DISPATCH_ENABLED False /root/spiderx_live_enabled_20261111T052817Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+{"goals": 54, "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732", "m55_gate_imported": false}
+917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e
+restore report: VERDICT: DISABLED AND VERIFIED; M6 --live refusals: 2 of 2 (after the gates were confirmed False)
+run installation check: RUN INSTALLATION GATES: PASS: all three False, imported from /root/spiderx_live_enabled_20261111T052817Z/install
+enabling branch local/m55-s4d-m-20261111T054531Z (bd4a40e) deleted by the restore after verification; remote local/* heads: 0; remote-tracking local/* refs: 0
+processes (gz/ros2/m55/driver/bag/teleop/Xvfb/watchdog): 0
+watchdog: 2026-11-11T06:03:21Z watchdog 4069 stood down on stopped.flag without acting (no watchdog.txt)

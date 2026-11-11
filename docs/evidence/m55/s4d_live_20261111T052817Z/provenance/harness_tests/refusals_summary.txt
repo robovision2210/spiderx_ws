@@ -1,0 +1,10 @@
+L1 exit 1: REFUSED before the launch (nothing launched, no key): the run installation /root/spiderx_live_enabled_20261111T052817Z/install is not in the environment
+L2 exit 1: REFUSED before the launch (nothing launched, no key): the imported gates are not exactly M55 True, M61 False, M6.0-D False
+L3 exit 1: REFUSED before the launch (nothing launched, no key): no recorded local/m55-s4d-m-* enabling branch
+L4 exit 1: REFUSED before the launch (nothing launched, no key): the checked-out branch is not the recorded enabling branch
+L4w exit 1: REFUSED before the launch (nothing launched, no key): the enabling commit is not exactly the two-line M55 patch
+L5 exit 1: REFUSED before the launch (nothing launched, no key): OD8 time budget
+L6 exit 1: REFUSED before the launch (nothing launched, no key): OD8 time budget
+L7 exit 1: REFUSED before the launch (nothing launched, no key): OD16 disk
+L8 exit 1: ABORT: OD8 time budget before the first key (no key pressed)
+L9 exit 1: ABORT: OD16 disk before recording (no recording, no key pressed)

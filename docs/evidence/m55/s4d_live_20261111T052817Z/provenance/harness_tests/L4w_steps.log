@@ -1,0 +1,4 @@
+[05:38:08] gates (imported): True False False /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/live_harness_tests/fake_enabled/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[05:38:08] enabling branch: recorded 'local/m55-s4d-m-WIDE', checked out 'local/m55-s4d-m-WIDE', diff vs e9f2cc394221e7da49d2f8500126bd86b2f62b94: 1 0 scripts/s4/s4d_driver.py;1 1 src/spiderx_controller/spiderx_controller/m55_contract.py;1 1 src/spiderx_controller/test/m55_gate.py; remote-tracking refs: 0; worktree entries: 0
+[05:38:08] REFUSED before the launch (nothing launched, no key): the enabling commit is not exactly the two-line M55 patch
+[05:38:08] end

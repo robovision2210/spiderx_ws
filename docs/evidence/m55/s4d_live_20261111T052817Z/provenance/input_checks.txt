@@ -1,0 +1,71 @@
+== input checks 2026-11-11T05:33:36Z
+branch claude/spiderx-s4d-preparation HEAD 9cc1f6844de11abc630387d4c6c441a623463094 worktree entries 0 local/* branches 0 remote local/* refs 0
+PASS branch, baseline HEAD, clean worktree, no local/* branch or remote ref
+files changed 8f99bcc4ab27294265da91a31ce03999423acc7f..9cc1f6844de11abc630387d4c6c441a623463094 outside docs/: none
+PASS the executable inputs equal the tested executable 8f99bcc
+== toolchain (installed 2026-10-29 by scripts/env/cloud_env_setup.sh 57cc33f8...)
+57cc33f84f9968dff4960bc85b1c1e7baf60025e42ade94061679673996c6193  scripts/env/cloud_env_setup.sh
+compiler: x86_64-conda-linux-gnu-g++ (conda-forge gcc 15.3.0-7) 15.3.0
+PASS compiler = overlay provenance
+ROS_DISTRO=humble prefix=/opt/mm/root/envs/humble
+6.16.0
+== r2 overlay provenance
+PASS overlay provenance = the S3 run's committed copy
+PASS patch 0001-plugin-node-parameter-overrides 14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac
+PASS patch 0002-destructor-no-second-node-removal 520e73cc59a68025b237347e7e54df64b45739048fcc90a623011f728cba6261
+PASS library libgz_ros2_control-system.so 3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27 (2026-10-31 15:38:27)
+PASS library libgz_hardware_plugins.so 06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5 (2026-10-31 15:38:27)
+overlay source HEAD bfc5845aa7f0250cbc384773dba5c9847d609b95
+PASS overlay source: every present file = upstream bfc5845 + 0001 + 0002
+overlay reference tree kept, not deleted: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/s4d_live_inputs/overlay_ref.o5pyzC
+== the normal workspace installation (restoration target; rebuilt incrementally by restore_cmd.sh)
+files 413: symlinks into src/ equal to the HEAD blob 169; generated build outputs 164; toolchain ament env-hook symlinks 14; bytecode caches 66; problems 0
+PASS the B1 bases /root/spiderx_live_enabled_20261111T052817Z do not exist yet
+== the recorded disabled validation (batch step 2), reused: no rebuild, no suite rerun
+PASS manifest docs/evidence/m55/s4d_fresh_disabled_20261110T071506Z
+PASS 1983 collected tests at 8f99bcc4ab27294265da91a31ce03999423acc7f, 0 failures, 0 skipped; collection PASS; step 2 PASS
+PASS src/, scripts/ and third_party/ unchanged since 8f99bcc4ab27294265da91a31ce03999423acc7f: reuse
+== gates and phase library (fresh import from the normal installation: env -i, toolchain, overlay, install; from /)
+M55_LOCOMOTION_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+M61_LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+{"goals": 54, "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732", "m55_gate_imported": false}
+PASS three gates False
+PASS phase library 54 goals 62f8a100...
+config: ab0dccd43fefe877fac21e1c51d1fdd0ae197ac456b8c42502b0bb7ba5e42a93 src/spiderx_controller/config/m55_locomotion.yaml
+PASS config = the step-2 and shadow config
+== the modules the S4d driver and scorer import (in the toolchain + normal installation), each = its HEAD blob
+imported: scripts/s2/adjudicate_s2.py scripts/s2/response_law.py scripts/s2/s2_driver.py scripts/s3/s3_driver.py scripts/s4/s4a_driver.py scripts/s4/s4b_driver.py scripts/s4/s4c_driver.py scripts/s4/s4d_driver.py scripts/s3/score_s3.py scripts/s4/score_s4a.py scripts/s4/score_s4b.py scripts/s4/score_s4c.py scripts/s4/score_s4d.py
+febabf8aae7519a7bce9b061ecd60806245c55a551fadbe351e2e8786fd013ee  scripts/s2/adjudicate_s2.py = HEAD blob = the S4d shadow run's
+f293ecf8db9c003bcb24032aa60f995890ee3b6b319c47ed3aa5ae01089ea7f1  scripts/s2/response_law.py = HEAD blob = the S4d shadow run's
+44cd495913b413c3f984adb581c699258a6da5cc7495c820ce3ef5e92ed78388  scripts/s2/s2_driver.py = HEAD blob = the S4d shadow run's
+0af5b90a410acfcb4b7e3967d1aaff0d8eb2e23c441aea83fe7bbf4233c612e7  scripts/s3/s3_driver.py = HEAD blob = the S4d shadow run's
+243974e75a5784b3a482364f29e6e1b978cc24e12a847927f2c2bfb00643bc50  scripts/s4/s4a_driver.py = HEAD blob = the S4d shadow run's
+f0e68c648232304a0acb580a8b47e8d57e56431b21a199622627df3a6596051a  scripts/s4/s4b_driver.py = HEAD blob = the S4d shadow run's
+d0ff8acbe73433d3831f854a747680a94dcea64f1914de7dce3af2054390b8a7  scripts/s4/s4c_driver.py = HEAD blob = the S4d shadow run's
+98942ef7dd90bf313efeb44f68ed0dd2cbe46f2f16c23af423c4b6236330eec1  scripts/s4/s4d_driver.py = HEAD blob = the S4d shadow run's
+1c8ef9848ee771a99044210a2f0099e1aa8b2679c2639b3bfbbe3d1f8c458996  scripts/s3/score_s3.py = HEAD blob = the S4d shadow run's
+631fe2ec8cab638780511d919df51617410868508b9073ff61e83aab39d6e66a  scripts/s4/score_s4a.py = HEAD blob = the S4d shadow run's
+a9716d5297163d2d11d2b77ad6cf19784b4bda0a2c855e72ec82c53a02c08126  scripts/s4/score_s4b.py = HEAD blob = the S4d shadow run's
+fe1b5c03879efc264bc6762ed340e93c969682c0c2fbd32af9b758d5b32e6f4d  scripts/s4/score_s4c.py = HEAD blob = the S4d shadow run's
+fe484378adefe465225adb2dbd1aa69a1419a958155a916a06bedf5d3271ad5a  scripts/s4/score_s4d.py = HEAD blob = the S4d shadow run's
+== enabling patch (applied only on the local enabling branch, by enable_build.sh)
+d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236  docs/patches/m55_enable_s2.UNAPPLIED.patch
+PASS patch hash (the S4c live attempts' patch)
+PASS git apply --check (applies forward to the disabled tree)
+1	1	src/spiderx_controller/spiderx_controller/m55_contract.py
+1	1	src/spiderx_controller/test/m55_gate.py
+PASS exactly the M55 gate and its test pin
+== the S4d shadow evidence (committed d4fe748) vs now
+PASS shadow evidence manifest
+PASS shadow inputs record 3a8f20441caad3ca... (same as now)
+PASS shadow inputs record 06777e140ea1858b... (same as now)
+PASS shadow inputs record 62f8a10075e90571... (same as now)
+PASS the shadow launch's server mapped these r2 libraries
+PASS shadow node library.json 917fc4d7...
+== OD16 storage before the build (B1 bases measured by step 2: 11,154,692 B) and the recording requirement at T = 7200 s
+avail 21569142784 B; need max(5 GiB, 2E + 0.1 GB) + B1 = 14895154692 B (E = 2 x 30.8 MB/min, a PLANNING ASSUMPTION, x 7200 s) -> PASS
+== processes
+no leftover processes
+display :77 free
+INPUT VERDICT: PASS

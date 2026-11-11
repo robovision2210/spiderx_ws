@@ -1,0 +1,14 @@
+[05:45:31 +0 s] start: branch claude/spiderx-s4d-preparation HEAD 9cc1f6844de11abc630387d4c6c441a623463094 worktree entries 0
+[05:45:31 +0 s] patch docs/patches/m55_enable_s2.UNAPPLIED.patch: sha256 d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236, scope 1 1 src/spiderx_controller/spiderx_controller/m55_contract.py;1 1 src/spiderx_controller/test/m55_gate.py;, applies
+[05:45:31 +0 s] created local/m55-s4d-m-20261111T054531Z from 9cc1f6844de11abc630387d4c6c441a623463094 (recorded in enabling_branch.txt)
+[05:45:31 +0 s] enabling commit bd4a40e40d8ae5b0595d7c7a755ad40ab40c79cc: diff 1 1 src/spiderx_controller/spiderx_controller/m55_contract.py;1 1 src/spiderx_controller/test/m55_gate.py;; source gates: M55_LOCOMOTION_DISPATCH_ENABLED = True;M61_LIVE_DISPATCH_ENABLED = False;LIVE_DISPATCH_ENABLED = False;
+[05:45:31 +0 s] B1 build start (new bases /root/spiderx_live_enabled_20261111T052817Z)
+[05:45:59 +28 s] B1 build exit 0: Summary: 8 packages finished [26.1s]
+[05:45:59 +28 s] enabled M5.5 tests start
+[05:47:53 +142 s] enabled M5.5 tests exit 0: 245 passed, 2 warnings in 112.18s (0:01:52)
+gate M55_LOCOMOTION_DISPATCH_ENABLED True /root/spiderx_live_enabled_20261111T052817Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+gate M61_LIVE_DISPATCH_ENABLED False /root/spiderx_live_enabled_20261111T052817Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+gate LIVE_DISPATCH_ENABLED False /root/spiderx_live_enabled_20261111T052817Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+{"m55_gate_imported": true, "out": "/root/spiderx_evidence/s4d_live_20261111T052817Z/enabled/library.json"}
+[05:49:30 +239 s] library: {"goals": 54, "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732", "m55_gate_imported": true}; enabled library.json 917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e (disabled 917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e)
+[05:49:30 +239 s] ENABLE AND BUILD: PASS (239 s)

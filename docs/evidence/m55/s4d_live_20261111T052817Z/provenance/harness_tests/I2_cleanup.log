@@ -1,0 +1,18 @@
+[05:39:52] cleanup start
+driver: 3195: not running
+teleop sessions: none recorded
+recorder group 3170: SIGINT, then SIGKILL after 15 s
+launch group 3080: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 3080 still has: 3080 [sleep] <defunct>;
+launch session 3080: SIGKILL to those
+[05:40:08] cleanup done; relevant processes still present (listed, not killed):
+none
+[05:40:08] cleanup start
+driver: 3195: not running
+teleop sessions: none recorded
+recorder: 3170: not running
+launch group 3080: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 3080 still has: 3080 [sleep] <defunct>;
+launch session 3080: SIGKILL to those
+[05:40:09] cleanup done; relevant processes still present (listed, not killed):
+none
