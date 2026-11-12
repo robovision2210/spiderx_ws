@@ -1,0 +1,19 @@
+[15:52:42] gates (imported): True False False
+[15:52:42] launch
+launch pid 29699 pgid 29699 xvfb 29685
+[15:53:03] controllers: exit 0
+[15:53:06] gazebo gui pid(s) 29840  reniced +19
+[15:53:51] node up after 45 s: locomotion node up in DISPATCH mode (dispatch gate True); levels [1.06, 1.9, 2.34] mm/s
+[15:53:51] locomotion node pid(s) 29759  (launch session 29699) reniced -5
+[15:53:54] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[15:55:27] pre-shadow checks passed: pre-arm checks PASS (server 29834 maps the r2 libraries with provenance hashes, no stock/mixed; gain 1.0 log+param; update_rate 100; period 0.001 s; both controllers active; node 29759 DISPATCH (gate True) in the launch session, the action's only client; 0 command publishers; settle 10.04 s sim, z 0
+[15:55:27] captures before
+[15:55:33] driver
+[15:58:30] driver exit 0: {"command_rejections": {}, "cycles": [{"cycle": 1, "cycles_count": -1, "direction": -1, "forward_m": -0.019992215504035106, "lateral_m": 1.385644597756342e-05, "sim": 56.79, "yaw_rad": 3.6050898720436
+[15:58:33] captures after
+[15:58:35] bag stopped
+[15:58:35] screenshot 2: exit 0
+[15:58:38] strace (signals only) attached to simulator server 29834: strace: Process 29834 attached 
+[15:58:38] stop launch
+[15:58:44] server exit (strace): +++ exited with 0 +++
+[15:58:44] end

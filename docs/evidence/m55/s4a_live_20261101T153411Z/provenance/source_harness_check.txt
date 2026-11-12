@@ -1,0 +1,3 @@
+== source harness copies 2026-11-01T15:34:11Z (committed at baseline e5899f4; historical copies not modified)
+PASS tools_s4a_shadow = the committed S4a shadow harness (14 files)
+PASS tools_s3_live = the committed S3 live harness (DISPATCH-mode lines, disabled_build_test.sh, library_json.py, collection_check.py)
