@@ -1,0 +1,5 @@
+ 2673  2602  2602   0  0.0  \_ /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_descrip
+ 2675  2673  2602   0  0.3  |   \_ ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spi
+ 2759  2675  2602   0 74.9  |       \_ ign gazebo server
+ 2764  2675  2602  19  121  |       \_ ign gazebo gui
+ 2687  2602  2602  -5 93.4  \_ python3 /home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidenc

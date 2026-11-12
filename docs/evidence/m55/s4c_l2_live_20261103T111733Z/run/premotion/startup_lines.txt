@@ -1,0 +1,1 @@
+59:[ign gazebo-1] [INFO] [1793705317.062889263] [gz_ros2_control]: connected to service!! robot_state_publisher asking for robot_description

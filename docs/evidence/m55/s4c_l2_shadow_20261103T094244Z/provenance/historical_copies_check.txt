@@ -1,0 +1,15 @@
+analyze_s4c_shadow_supplementary.py: OK
+cleanup.sh: OK
+env.sh: OK
+input_checks.sh: OK
+library_json.py: OK
+prelaunch_checks.sh: OK
+premotion_checks.sh: OK
+restore_cmd.sh: OK
+s4c_shadow_guarded.sh: OK
+s4c_shadow_run.sh: OK
+settle_check.py: OK
+stage_start.sh: OK
+stage_stop.sh: OK
+stage_wait_controllers.sh: OK
+watchdog.sh: OK

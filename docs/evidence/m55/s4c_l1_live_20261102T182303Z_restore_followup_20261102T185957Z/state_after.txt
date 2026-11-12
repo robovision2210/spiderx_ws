@@ -1,0 +1,9 @@
+branch claude/spiderx-s4c-preparation HEAD 0d84ebd3a7a972719e656638a7f2fa0c4558a98b worktree entries 0 (before the follow-up evidence was written)
+remote branch: 0d84ebd; local/* branches: 0
+src/spiderx_controller/spiderx_controller/m55_contract.py:19:M55_LOCOMOTION_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m61_live_contract.py:19:M61_LIVE_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m6_live_contract.py:18:LIVE_DISPATCH_ENABLED = False
+processes (gz/ros2/m55/driver/bag/watchdog/colcon): 0
+existing trees modified since the follow-up began: 0
+fresh bases kept: /root/spiderx_fresh_disabled_20261102T185957Z (17M)
+checked 2026-11-02T19:14:06Z

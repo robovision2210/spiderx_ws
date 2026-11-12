@@ -1,0 +1,5 @@
+{"A_install": "/root/spiderx_fresh_disabled_20261102T185957Z/install", "B_install": "/home/user/spiderx_ws/install", "files_A": 359, "files_B": 359, "same": 355, "differ": 4, "only_in_A": 0, "only_in_B": 0}
+differs: setup.bash
+differs: setup.ps1
+differs: setup.sh
+differs: setup.zsh

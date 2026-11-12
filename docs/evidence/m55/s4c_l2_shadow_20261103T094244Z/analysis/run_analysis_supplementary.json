@@ -1,0 +1,279 @@
+{
+ "bag_topics": {
+  "/cmd_vel": {
+   "messages": 3727,
+   "type": "geometry_msgs/msg/Twist"
+  },
+  "/joint_states": {
+   "messages": 7383,
+   "type": "sensor_msgs/msg/JointState"
+  },
+  "/leg_trajectory_controller/controller_state": {
+   "messages": 3574,
+   "type": "control_msgs/msg/JointTrajectoryControllerState"
+  },
+  "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": {
+   "messages": 0,
+   "present_in_bag": true,
+   "type": "control_msgs/action/FollowJointTrajectory_FeedbackMessage"
+  },
+  "/leg_trajectory_controller/joint_trajectory": {
+   "messages": 0,
+   "present_in_bag": false,
+   "type": null
+  },
+  "/spiderx/locomotion/status": {
+   "messages": 892,
+   "type": "std_msgs/msg/String"
+  },
+  "/spiderx/sim/world_poses": {
+   "messages": 22043,
+   "type": "tf2_msgs/msg/TFMessage"
+  }
+ },
+ "controller_state": {
+  "max_reference_change_rad": 0.0,
+  "messages": 3574,
+  "reference_points_nonempty": true
+ },
+ "controller_traffic": {
+  "action_clients_after": {
+   "client_nodes": [
+    "/rosbag2_recorder"
+   ],
+   "count": 1
+  },
+  "action_clients_before": {
+   "client_nodes": [],
+   "count": 0
+  },
+  "bag_action_feedback_messages": 0,
+  "bag_joint_trajectory_messages": 0,
+  "controller_reference_max_change_rad": 0.0,
+  "jtc_log_goal_or_cancel_lines": 0
+ },
+ "exits": {
+  "locomotion_node_lines": [
+   "[INFO] [m55_locomotion_node-7]: process has finished cleanly [pid 1651]"
+  ],
+  "server_exit_strace": [
+   "--- SIGINT {si_signo=SIGINT, si_code=SI_USER, si_pid=1636, si_uid=0} ---",
+   "+++ exited with 0 +++"
+  ]
+ },
+ "joint_states_main": {
+  "max_joint_motion_joint": "rr_foot_joint",
+  "max_joint_motion_rad": 5.889154739219242e-12,
+  "max_receive_gap_s": 0.17927789688110352,
+  "max_stamp_gap_s": 0.010000000000005116,
+  "rtf": 0.1670874448857104,
+  "rtf_10s_windows_max": 0.18898627554992148,
+  "rtf_10s_windows_min": 0.11563570768234262,
+  "samples": 7383,
+  "sim_s": 73.82000000000001,
+  "wall_s": 441.804589509964
+ },
+ "launch_log": {
+  "aborted": 0,
+  "error_lines": [
+   "[ign gazebo-1] [ERROR] [1793699375.786491204] [gz_ros2_control]: robot_state_publisher service not available, waiting again...",
+   "[ign gazebo-1] [ERROR] [1793699376.286751141] [gz_ros2_control]: robot_state_publisher service not available, waiting again..."
+  ],
+  "exception": 0,
+  "jtc_cancel_request": 0,
+  "jtc_canceling": 0,
+  "jtc_goal_accepted": 0,
+  "jtc_goal_received": 0,
+  "process_died": 0,
+  "process_died_lines": [],
+  "process_exits": [
+   "create-3",
+   "spawner-5",
+   "spawner-8",
+   "parameter_bridge-4",
+   "parameter_bridge-6",
+   "robot_state_publisher-2",
+   "m55_locomotion_node-7",
+   "ign gazebo-1"
+  ],
+  "sending_signal": 0,
+  "sigkill": 0,
+  "signal_sent_by": 0,
+  "sigterm": 0,
+  "terminate_called": 0,
+  "what": 0
+ },
+ "node_events": {
+  "cancel": [],
+  "counts": {
+   "goal_response": 18,
+   "goal_sent": 18,
+   "level_change": 1,
+   "phase_done": 18,
+   "request": 7,
+   "result": 18,
+   "transition": 10
+  },
+  "faults": [],
+  "refused": [],
+  "results_not_succeeded": [],
+  "transitions": [
+   [
+    "DISARMED",
+    "READY",
+    "arm"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "STOPPING",
+    "stop"
+   ],
+   [
+    "STOPPING",
+    "READY",
+    "stopped"
+   ],
+   [
+    "READY",
+    "STARTING",
+    "dispatch"
+   ],
+   [
+    "STARTING",
+    "WALKING",
+    "accepted"
+   ],
+   [
+    "WALKING",
+    "STOPPING",
+    "stop"
+   ],
+   [
+    "STOPPING",
+    "READY",
+    "stopped"
+   ],
+   [
+    "READY",
+    "DISARMED",
+    "disarm"
+   ]
+  ]
+ },
+ "node_final_status.json": {
+  "command_rejections": {},
+  "cycles": 0,
+  "dispatch_gate": false,
+  "faults": [],
+  "goals_recorded": 18,
+  "mode": "shadow",
+  "state": "DISARMED"
+ },
+ "node_shadow_goals.json": 18,
+ "status": {
+  "body": {
+   "tilt_max": 1.541388099311085e-07,
+   "xy_first": [
+    5.926129138691499e-12,
+    -8.869547623189705e-09
+   ],
+   "xy_last": [
+    5.925243997263818e-12,
+    -1.0021558262952107e-08
+   ],
+   "xy_travel_m": 1.1520106397627427e-09,
+   "yaw_change_rad": 6.571000787955907e-14,
+   "z_max": 0.0545043257991047,
+   "z_min": 0.0544952946398776
+  },
+  "final": {
+   "boundary": 0,
+   "command_rejections": {},
+   "cycles": 0,
+   "faults": [],
+   "goals_recorded": 18,
+   "phases_completed": 18,
+   "state": "DISARMED"
+  },
+  "joint_states_margin_to_0.5s": 0.3702140740001596,
+  "max_ages_s": {
+   "body_pose_age_s": 0.059273423999911756,
+   "graph_age_s": 1.007771283000011,
+   "joint_states_age_s": 0.1297859259998404
+  },
+  "messages": 892,
+  "modes": [
+   [
+    "shadow",
+    false
+   ]
+  ],
+  "state_changes_seen_in_status": [
+   {
+    "bag_receipt_unix_s": 1793699536.048,
+    "sim_s_node_joint_state_stamp": 21.54,
+    "state": "DISARMED"
+   },
+   {
+    "bag_receipt_unix_s": 1793699604.698,
+    "sim_s_node_joint_state_stamp": 32.24,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793699604.804,
+    "sim_s_node_joint_state_stamp": 32.25,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793699604.848,
+    "sim_s_node_joint_state_stamp": 32.26,
+    "state": "WALKING"
+   },
+   {
+    "bag_receipt_unix_s": 1793699756.587,
+    "sim_s_node_joint_state_stamp": 56.81,
+    "state": "STOPPING"
+   },
+   {
+    "bag_receipt_unix_s": 1793699763.602,
+    "sim_s_node_joint_state_stamp": 57.98,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793699765.198,
+    "sim_s_node_joint_state_stamp": 58.29,
+    "state": "STARTING"
+   },
+   {
+    "bag_receipt_unix_s": 1793699765.249,
+    "sim_s_node_joint_state_stamp": 58.3,
+    "state": "WALKING"
+   },
+   {
+    "bag_receipt_unix_s": 1793699901.098,
+    "sim_s_node_joint_state_stamp": 82.11,
+    "state": "STOPPING"
+   },
+   {
+    "bag_receipt_unix_s": 1793699912.448,
+    "sim_s_node_joint_state_stamp": 84.0,
+    "state": "READY"
+   },
+   {
+    "bag_receipt_unix_s": 1793699913.959,
+    "sim_s_node_joint_state_stamp": 84.25,
+    "state": "DISARMED"
+   }
+  ]
+ }
+}

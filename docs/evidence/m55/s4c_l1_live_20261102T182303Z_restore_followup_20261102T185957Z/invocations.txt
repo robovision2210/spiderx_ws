@@ -1,0 +1,9 @@
+# The top-level invocations, in order (each tool's own commands are in tools/):
+bash tools/fresh_build_test.sh <follow-up root> /root/spiderx_fresh_disabled_20261102T185957Z > fresh/build_and_test_summary.txt
+bash tools/install_check.sh A /root/spiderx_fresh_disabled_20261102T185957Z/install /home/user/spiderx_ws/install install_A > install_A/install_check.txt
+bash tools/install_check.sh B /home/user/spiderx_ws/install /root/spiderx_fresh_disabled_20261102T185957Z/install install_B > install_B/install_check.txt
+python3 tools/compare_installs.py /root/spiderx_fresh_disabled_20261102T185957Z/{install,build} /home/user/spiderx_ws/{install,build} compare/install_A_vs_B.json
+# fresh_build_test.sh, in fresh env -i shells (toolchain /opt/mm/activate.sh, then the r2 overlay local_setup):
+#   PYTHONPATH=/opt/mm/st59site colcon --log-base F/log build --build-base F/build --install-base F/install --symlink-install
+#   (F/install/setup.bash sourced) PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 colcon --log-base F/log test --build-base F/build --install-base F/install --event-handlers console_direct-
+#   colcon --log-base F/log test-result --test-result-base F/build --verbose; python3 tools/collection_check.py F <t0> fresh/colcon_test_result.txt

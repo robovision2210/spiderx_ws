@@ -1,0 +1,4 @@
+2026-11-02T18:45:50Z before the launch: tools/restore_cmd.sh changed from the clean rebuild to an incremental
+toolchain rebuild (no deletion of build/ and install/). A built-in safety check stopped the clean-build
+directory deletion in this session (first for the enabled build); the deletion is left to the owner.
+The watchdog runs the same restore_cmd.sh. harness_SHA256SUMS_initial.txt holds the hashes before the change.

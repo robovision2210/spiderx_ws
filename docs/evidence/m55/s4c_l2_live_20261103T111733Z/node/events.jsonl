@@ -1,0 +1,90 @@
+{"event": "transition", "n": 1, "previous": "DISARMED", "state": "READY", "wall": 1136.373981173, "why": "arm"}
+{"event": "request", "message": "armed at boundary 0 (level 0, posture error 0.0000 rad)", "n": 2, "request": "arm", "state": "READY", "wall": 1136.373981173}
+{"event": "level_change", "level": 2, "n": 3, "previous": 0, "state": "READY", "wall": 1136.521911299}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 4.514681147399999e-09, "direction": 1, "duration_s": 1.9, "event": "goal_sent", "fingerprint": "748bd1df2da4252417017fbdb8f68ac3ffe63725c3c1c1791802977fffb28690", "kind": "shift", "leg": null, "level": 2, "n": 4, "phase": 0, "points": 18, "seq": 1, "state": "READY", "wall": 1136.521911299}
+{"event": "transition", "n": 5, "previous": "READY", "state": "STARTING", "wall": 1136.521911299, "why": "dispatch"}
+{"accepted": true, "event": "goal_response", "n": 6, "seq": 1, "state": "STARTING", "wall": 1136.571003843}
+{"event": "transition", "n": 7, "previous": "STARTING", "state": "WALKING", "wall": 1136.571003843, "why": "accepted"}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 8, "seq": 1, "state": "WALKING", "status": 4, "wall": 1142.324168264}
+{"b": 1, "direction": 1, "event": "phase_done", "n": 9, "phase": 0, "state": "WALKING", "wall": 1142.324168264}
+{"b_from": 1, "b_to": 2, "continuity_error_rad": 6.038656727436198e-11, "direction": 1, "duration_s": 4.6, "event": "goal_sent", "fingerprint": "2af28c41d54344f72c3dcdfa1ab9c1145d2677e7f26812837e58b37978078340", "kind": "swing", "leg": "rear_left", "level": 2, "n": 10, "phase": 1, "points": 45, "seq": 2, "state": "WALKING", "wall": 1142.370969382}
+{"accepted": true, "event": "goal_response", "n": 11, "seq": 2, "state": "WALKING", "wall": 1142.421530825}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 12, "seq": 2, "state": "WALKING", "status": 4, "wall": 1150.720926775}
+{"b": 2, "direction": 1, "event": "phase_done", "n": 13, "phase": 1, "state": "WALKING", "wall": 1150.720926775}
+{"b_from": 2, "b_to": 3, "continuity_error_rad": 8.395620310075458e-11, "direction": 1, "duration_s": 0.8, "event": "goal_sent", "fingerprint": "33111ae1981d8e8d70b90d2d6327e156071527a5549972f48c3f4cadf353c1c5", "kind": "shift", "leg": null, "level": 2, "n": 14, "phase": 2, "points": 7, "seq": 3, "state": "WALKING", "wall": 1150.771081876}
+{"accepted": true, "event": "goal_response", "n": 15, "seq": 3, "state": "WALKING", "wall": 1150.824364511}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 16, "seq": 3, "state": "WALKING", "status": 4, "wall": 1152.172208625}
+{"b": 3, "direction": 1, "event": "phase_done", "n": 17, "phase": 2, "state": "WALKING", "wall": 1152.172208625}
+{"b_from": 3, "b_to": 4, "continuity_error_rad": 1.115821601782585e-10, "direction": 1, "duration_s": 4.7, "event": "goal_sent", "fingerprint": "0f246e4a96c1ca3af5795da028d3956c5fcc15c61e8120cf7bc23aca9e2bd578", "kind": "swing", "leg": "front_left", "level": 2, "n": 18, "phase": 3, "points": 46, "seq": 4, "state": "WALKING", "wall": 1152.221094213}
+{"accepted": true, "event": "goal_response", "n": 19, "seq": 4, "state": "WALKING", "wall": 1152.270991355}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 20, "seq": 4, "state": "WALKING", "status": 4, "wall": 1160.471077795}
+{"b": 4, "direction": 1, "event": "phase_done", "n": 21, "phase": 3, "state": "WALKING", "wall": 1160.471077795}
+{"b_from": 4, "b_to": 5, "continuity_error_rad": 1.1097320284925161e-10, "direction": 1, "duration_s": 3.2, "event": "goal_sent", "fingerprint": "9e7355c56fb20778c5827f41f0f49d70fe2c13fcde4196f178d5e66857516c05", "kind": "shift", "leg": null, "level": 2, "n": 22, "phase": 4, "points": 31, "seq": 5, "state": "WALKING", "wall": 1160.520992665}
+{"accepted": true, "event": "goal_response", "n": 23, "seq": 5, "state": "WALKING", "wall": 1160.572187543}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 24, "seq": 5, "state": "WALKING", "status": 4, "wall": 1167.871325297}
+{"b": 5, "direction": 1, "event": "phase_done", "n": 25, "phase": 4, "state": "WALKING", "wall": 1167.871325297}
+{"b_from": 5, "b_to": 6, "continuity_error_rad": 9.515859281106209e-11, "direction": 1, "duration_s": 4.2, "event": "goal_sent", "fingerprint": "214af7be8557922cbde4dd8547380fa4178e039654602f510c42cdde9647ef06", "kind": "swing", "leg": "rear_right", "level": 2, "n": 26, "phase": 5, "points": 41, "seq": 6, "state": "WALKING", "wall": 1167.92158476}
+{"accepted": true, "event": "goal_response", "n": 27, "seq": 6, "state": "WALKING", "wall": 1167.971048273}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 28, "seq": 6, "state": "WALKING", "status": 4, "wall": 1175.972395926}
+{"b": 6, "direction": 1, "event": "phase_done", "n": 29, "phase": 5, "state": "WALKING", "wall": 1175.972395926}
+{"b_from": 6, "b_to": 7, "continuity_error_rad": 9.931924033201867e-11, "direction": 1, "duration_s": 0.8, "event": "goal_sent", "fingerprint": "5cef5dac75170c69fcd8dcd45489304fff317b1d2abd9ef0707c755ce89d8dc5", "kind": "shift", "leg": null, "level": 2, "n": 30, "phase": 6, "points": 7, "seq": 7, "state": "WALKING", "wall": 1176.021048782}
+{"accepted": true, "event": "goal_response", "n": 31, "seq": 7, "state": "WALKING", "wall": 1176.071078709}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 32, "seq": 7, "state": "WALKING", "status": 4, "wall": 1177.971756108}
+{"b": 7, "direction": 1, "event": "phase_done", "n": 33, "phase": 6, "state": "WALKING", "wall": 1177.971756108}
+{"b_from": 7, "b_to": 8, "continuity_error_rad": 1.0441306846908915e-10, "direction": 1, "duration_s": 4.2, "event": "goal_sent", "fingerprint": "b7a2f4a8edae505ceca6dd86c74cd2ba0351398678748c3be935f763dd2938fc", "kind": "swing", "leg": "front_right", "level": 2, "n": 34, "phase": 7, "points": 41, "seq": 8, "state": "WALKING", "wall": 1178.021021703}
+{"accepted": true, "event": "goal_response", "n": 35, "seq": 8, "state": "WALKING", "wall": 1178.071037465}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 36, "seq": 8, "state": "WALKING", "status": 4, "wall": 1186.071024151}
+{"b": 8, "direction": 1, "event": "phase_done", "n": 37, "phase": 7, "state": "WALKING", "wall": 1186.071024151}
+{"b_from": 8, "b_to": 9, "continuity_error_rad": 1.2751542877165178e-10, "direction": 1, "duration_s": 1.2, "event": "goal_sent", "fingerprint": "33eebb2107ed5622242436bea5c44ad9f886cbc7fc92cdcb61d54b044cae9212", "kind": "shift", "leg": null, "level": 2, "n": 38, "phase": 8, "points": 11, "seq": 9, "state": "WALKING", "wall": 1186.122678514}
+{"accepted": true, "event": "goal_response", "n": 39, "seq": 9, "state": "WALKING", "wall": 1186.172725749}
+{"event": "transition", "n": 40, "previous": "WALKING", "state": "STOPPING", "wall": 1186.258403669, "why": "stop"}
+{"event": "request", "message": "stopping after the current phase (held until a zero command)", "n": 41, "request": "stop", "state": "STOPPING", "wall": 1186.258403669}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 42, "seq": 9, "state": "STOPPING", "status": 4, "wall": 1189.621029002}
+{"b": 0, "direction": 1, "event": "phase_done", "n": 43, "phase": 8, "state": "STOPPING", "wall": 1189.621029002}
+{"event": "transition", "n": 44, "previous": "STOPPING", "state": "READY", "wall": 1189.771070431, "why": "stopped"}
+{"b_from": 9, "b_to": 8, "continuity_error_rad": 5.8309701559278e-11, "direction": -1, "duration_s": 1.2, "event": "goal_sent", "fingerprint": "25144a03f6f586043e1cf2fff831f438b37209477d319816e4da76436a94e561", "kind": "shift", "leg": null, "level": 2, "n": 45, "phase": 8, "points": 11, "seq": 10, "state": "READY", "wall": 1191.326089945}
+{"event": "transition", "n": 46, "previous": "READY", "state": "STARTING", "wall": 1191.326089945, "why": "dispatch"}
+{"accepted": true, "event": "goal_response", "n": 47, "seq": 10, "state": "STARTING", "wall": 1191.371087267}
+{"event": "transition", "n": 48, "previous": "STARTING", "state": "WALKING", "wall": 1191.371087267, "why": "accepted"}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 49, "seq": 10, "state": "WALKING", "status": 4, "wall": 1195.97411804}
+{"b": 8, "direction": -1, "event": "phase_done", "n": 50, "phase": 8, "state": "WALKING", "wall": 1195.97411804}
+{"b_from": 8, "b_to": 7, "continuity_error_rad": 1.272790969841786e-10, "direction": -1, "duration_s": 4.2, "event": "goal_sent", "fingerprint": "3cd5495d2b1ea31e48075e61fadc080bdb74f1df8b8f04da4b4e374ed4d9dae2", "kind": "swing", "leg": "front_right", "level": 2, "n": 51, "phase": 7, "points": 41, "seq": 11, "state": "WALKING", "wall": 1196.021974874}
+{"accepted": true, "event": "goal_response", "n": 52, "seq": 11, "state": "WALKING", "wall": 1196.071133262}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 53, "seq": 11, "state": "WALKING", "status": 4, "wall": 1203.970977661}
+{"b": 7, "direction": -1, "event": "phase_done", "n": 54, "phase": 7, "state": "WALKING", "wall": 1203.970977661}
+{"b_from": 7, "b_to": 6, "continuity_error_rad": 1.0625633012351088e-10, "direction": -1, "duration_s": 0.8, "event": "goal_sent", "fingerprint": "4173015238e9a6dea4a592120041ba5f2d6c22cbdf32a6f2e34172919b686197", "kind": "shift", "leg": null, "level": 2, "n": 55, "phase": 6, "points": 7, "seq": 12, "state": "WALKING", "wall": 1204.02138192}
+{"accepted": true, "event": "goal_response", "n": 56, "seq": 12, "state": "WALKING", "wall": 1204.073300929}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 57, "seq": 12, "state": "WALKING", "status": 4, "wall": 1205.674005042}
+{"b": 6, "direction": -1, "event": "phase_done", "n": 58, "phase": 6, "state": "WALKING", "wall": 1205.674005042}
+{"b_from": 6, "b_to": 5, "continuity_error_rad": 9.381655868834216e-11, "direction": -1, "duration_s": 4.2, "event": "goal_sent", "fingerprint": "f358d649f6ec144045d20d08429fea3a216571564622fb3cfaab9fc31ddb5e4b", "kind": "swing", "leg": "rear_right", "level": 2, "n": 59, "phase": 5, "points": 41, "seq": 13, "state": "WALKING", "wall": 1205.721002857}
+{"accepted": true, "event": "goal_response", "n": 60, "seq": 13, "state": "WALKING", "wall": 1205.770952458}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 61, "seq": 13, "state": "WALKING", "status": 4, "wall": 1214.976719153}
+{"b": 5, "direction": -1, "event": "phase_done", "n": 62, "phase": 5, "state": "WALKING", "wall": 1214.976719153}
+{"b_from": 5, "b_to": 4, "continuity_error_rad": 7.426584347491882e-11, "direction": -1, "duration_s": 3.2, "event": "goal_sent", "fingerprint": "92197c56d13ddb8710f98ae04e76fc0ab9cc5721eb638327907c60ebf40bbe93", "kind": "shift", "leg": null, "level": 2, "n": 63, "phase": 4, "points": 31, "seq": 14, "state": "WALKING", "wall": 1215.02102471}
+{"accepted": true, "event": "goal_response", "n": 64, "seq": 14, "state": "WALKING", "wall": 1215.071524978}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 65, "seq": 14, "state": "WALKING", "status": 4, "wall": 1223.121699408}
+{"b": 4, "direction": -1, "event": "phase_done", "n": 66, "phase": 4, "state": "WALKING", "wall": 1223.121699408}
+{"b_from": 4, "b_to": 3, "continuity_error_rad": 6.35092881062782e-11, "direction": -1, "duration_s": 4.7, "event": "goal_sent", "fingerprint": "92da336d3470f15e8cb4896776c65bb9411ade8c01c684ea7608b08a60835f5b", "kind": "swing", "leg": "front_left", "level": 2, "n": 67, "phase": 3, "points": 46, "seq": 15, "state": "WALKING", "wall": 1223.171127626}
+{"accepted": true, "event": "goal_response", "n": 68, "seq": 15, "state": "WALKING", "wall": 1223.221004154}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 69, "seq": 15, "state": "WALKING", "status": 4, "wall": 1232.221064757}
+{"b": 3, "direction": -1, "event": "phase_done", "n": 70, "phase": 3, "state": "WALKING", "wall": 1232.221064757}
+{"b_from": 3, "b_to": 2, "continuity_error_rad": 1.1157821888652109e-10, "direction": -1, "duration_s": 0.8, "event": "goal_sent", "fingerprint": "82d25e8072b8a0911e36a51148b07ce341c8e00c840cbf1291f0260d1c57a04c", "kind": "shift", "leg": null, "level": 2, "n": 71, "phase": 2, "points": 7, "seq": 16, "state": "WALKING", "wall": 1232.271056962}
+{"accepted": true, "event": "goal_response", "n": 72, "seq": 16, "state": "WALKING", "wall": 1232.324757283}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 73, "seq": 16, "state": "WALKING", "status": 4, "wall": 1234.122417374}
+{"b": 2, "direction": -1, "event": "phase_done", "n": 74, "phase": 2, "state": "WALKING", "wall": 1234.122417374}
+{"b_from": 2, "b_to": 1, "continuity_error_rad": 8.39518038420195e-11, "direction": -1, "duration_s": 4.6, "event": "goal_sent", "fingerprint": "35058f55c1a24010f9c778461b5b2bd5d073e75f2da80115e2678f573c82e84a", "kind": "swing", "leg": "rear_left", "level": 2, "n": 75, "phase": 1, "points": 45, "seq": 17, "state": "WALKING", "wall": 1234.170984566}
+{"accepted": true, "event": "goal_response", "n": 76, "seq": 17, "state": "WALKING", "wall": 1234.227988215}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 77, "seq": 17, "state": "WALKING", "status": 4, "wall": 1242.871009806}
+{"b": 1, "direction": -1, "event": "phase_done", "n": 78, "phase": 1, "state": "WALKING", "wall": 1242.871009806}
+{"b_from": 1, "b_to": 0, "continuity_error_rad": 5.606676928282539e-11, "direction": -1, "duration_s": 1.9, "event": "goal_sent", "fingerprint": "48aa9d8dfac60eed8f1be9b0d793950b374222c85d4030fcdaa094263b802689", "kind": "shift", "leg": null, "level": 2, "n": 79, "phase": 0, "points": 18, "seq": 18, "state": "WALKING", "wall": 1242.921005524}
+{"accepted": true, "event": "goal_response", "n": 80, "seq": 18, "state": "WALKING", "wall": 1242.970930355}
+{"event": "transition", "n": 81, "previous": "WALKING", "state": "STOPPING", "wall": 1243.224090058, "why": "stop"}
+{"event": "request", "message": "stopping after the current phase (held until a zero command)", "n": 82, "request": "stop", "state": "STOPPING", "wall": 1243.224090058}
+{"error_code": 0, "error_string": "Goal successfully reached!", "event": "result", "n": 83, "seq": 18, "state": "STOPPING", "status": 4, "wall": 1248.070987832}
+{"b": 0, "direction": -1, "event": "phase_done", "n": 84, "phase": 0, "state": "STOPPING", "wall": 1248.070987832}
+{"event": "transition", "n": 85, "previous": "STOPPING", "state": "READY", "wall": 1248.273448279, "why": "stopped"}
+{"event": "transition", "n": 86, "previous": "READY", "state": "DISARMED", "wall": 1249.811372075, "why": "disarm"}
+{"event": "request", "message": "disarmed", "n": 87, "request": "disarm", "state": "DISARMED", "wall": 1249.811372075}
+{"event": "request", "message": "not moving (DISARMED); held until a zero command", "n": 88, "request": "stop", "state": "DISARMED", "wall": 1249.812894122}
+{"event": "request", "message": "already disarmed", "n": 89, "request": "disarm", "state": "DISARMED", "wall": 1249.814040415}
+{"event": "request", "message": "not moving (DISARMED); held until a zero command", "n": 90, "request": "stop", "state": "DISARMED", "wall": 1249.814428988}

@@ -1,0 +1,9 @@
+2026-11-03T11:22:15Z, recorded BEFORE enabling and BEFORE the launch.
+Build procedure for this attempt (owner-authorized, 2026-11-03): the established INCREMENTAL
+'PYTHONPATH=/opt/mm/st59site colcon build --symlink-install' in a toolchain-only shell, for the enabled
+build and for the restoration rebuild (tools/restore_cmd.sh --build-cmd). It is NOT a clean enabled build.
+build/, install/ and log/ are not deleted. The restoration procedure (tools/restore_cmd.sh, sha256
+916cf374b19ba0cfbda8661ea64bf45d289f76c65db0a09fb76b9c037a9da715) is fixed now and is not changed after the launch.
+Disabled validation is reused, not rerun: the fresh disabled build and full suite of the restoration
+follow-up (d5a6692, run at 0d84ebd; 1972 tests, 0 failures); src/, scripts/ and third_party/ are
+unchanged since (provenance/input_checks.txt).
