@@ -1,0 +1,6 @@
+== direct tests (not collected by colcon) 2026-11-01T12:00:14Z at d91879989138543f43b6c6733217669b773c0337
+-- src/spiderx_scripts/test (pytest)
+2 passed in 0.12s
+-- scripts/s3 (unittest)
+Ran 69 tests in 11.590s
+OK

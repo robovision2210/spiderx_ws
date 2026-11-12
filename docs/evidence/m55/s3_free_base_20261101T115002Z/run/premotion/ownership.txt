@@ -1,0 +1,55 @@
+== ros2 control list_controllers
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+== ros2 action info
+Action: /leg_trajectory_controller/follow_joint_trajectory
+Action clients: 1
+    /spiderx_locomotion
+Action servers: 1
+    /leg_trajectory_controller
+== ros2 topic info joint_trajectory
+Type: trajectory_msgs/msg/JointTrajectory
+Publisher count: 0
+Subscription count: 1
+== driver/teleop processes
+none
+== locomotion node processes: 8103 (session 8030; launch session 8030)
+== ros2 node info /spiderx_locomotion
+/spiderx_locomotion
+  Subscribers:
+    /cmd_vel: geometry_msgs/msg/Twist
+    /joint_states: sensor_msgs/msg/JointState
+    /spiderx/sim/world_poses: tf2_msgs/msg/TFMessage
+  Publishers:
+    /parameter_events: rcl_interfaces/msg/ParameterEvent
+    /rosout: rcl_interfaces/msg/Log
+    /spiderx/locomotion/status: std_msgs/msg/String
+  Service Servers:
+    /spiderx/locomotion/arm: std_srvs/srv/Trigger
+    /spiderx/locomotion/disarm: std_srvs/srv/Trigger
+    /spiderx/locomotion/estop: std_srvs/srv/Trigger
+    /spiderx/locomotion/home: std_srvs/srv/Trigger
+    /spiderx/locomotion/reset: std_srvs/srv/Trigger
+    /spiderx/locomotion/stop: std_srvs/srv/Trigger
+    /spiderx_locomotion/describe_parameters: rcl_interfaces/srv/DescribeParameters
+    /spiderx_locomotion/get_parameter_types: rcl_interfaces/srv/GetParameterTypes
+    /spiderx_locomotion/get_parameters: rcl_interfaces/srv/GetParameters
+    /spiderx_locomotion/list_parameters: rcl_interfaces/srv/ListParameters
+    /spiderx_locomotion/set_parameters: rcl_interfaces/srv/SetParameters
+    /spiderx_locomotion/set_parameters_atomically: rcl_interfaces/srv/SetParametersAtomically
+  Service Clients:
+
+  Action Servers:
+
+  Action Clients:
+    /leg_trajectory_controller/follow_joint_trajectory: control_msgs/action/FollowJointTrajectory
+node action clients: 1, of which the trajectory action: 1; publishers towards joint_trajectory: 0; launch-log DISPATCH lines: 1
+== ros2 node list
+/controller_manager
+/gz_ros2_control
+/joint_state_broadcaster
+/leg_trajectory_controller
+/robot_state_publisher
+/spiderx_gz_bridge
+/spiderx_locomotion
+/spiderx_sim_ground_truth_bridge

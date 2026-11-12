@@ -1,0 +1,1 @@
+{"frozen_A3": "UNMEASURED", "frozen_failed": ["estop_fault_after_key", "early_cancel_request", "no_unplanned_fault_before"], "Retrospective assessment under criteria revision S3-r1": "PASS", "S3_r1_failed": []}

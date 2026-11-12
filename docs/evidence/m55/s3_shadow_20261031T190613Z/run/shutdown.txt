@@ -1,0 +1,5 @@
+SIGINT sent to process group 1377
+process group empty after 4 s
+The daemon has been stopped
+--- remaining (expect nothing):
+2806 /bin/bash -c source /root/.claude/shell-snapshots/snapshot-bash-1793473022179-kti6i6.sh 2>/dev/null || true && \builtin export BUN_OPTIONS="--smol${BUN_OPTIONS:+ $BUN_OPTIONS}" && shopt -u extglob 2>/dev/null || true && { \builtin unalias -- 'which'; \builtin unset -f -- 'which'; } >/dev/null 2>&1 || true && { \builtin unalias -- 'unsetenv'; \builtin unset -f -- 'unsetenv'; } >/dev/null 2>&1 || true && eval 'R=/root/spiderx_evidence/s3_shadow_20261031T190613Z/run; for i in $(seq 1 40); do grep -q "\] end$" $R/steps.log && break; sleep 3; done; sed -n '"'"'/driver exit/,$p'"'"' $R/steps.log | cut -c1-220; echo ===; cat $R/shutdown.txt; echo ===; cat $R/server_exit_strace.txt 2>/dev/null | tail -8; echo ===; pgrep -af "ign gazebo|gz sim|ruby|parameter_bridge|controller_manager|robot_state_publisher|ros2 launch|_ros2_daemon|Xvfb|spawner|m55_|s[23]_driver|ros2 bag|strace" | grep -v pgrep || echo "no leftovers"' < /dev/null && pwd -P >| /tmp/claude-f0ba-cwd

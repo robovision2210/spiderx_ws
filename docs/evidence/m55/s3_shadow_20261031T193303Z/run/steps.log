@@ -1,0 +1,19 @@
+[19:34:37] gates (imported): False False False
+[19:34:37] launch
+launch pid 4486 pgid 4486 xvfb 4474
+[19:34:56] controllers: exit 0
+[19:34:59] gazebo gui pid(s) 4632  reniced +19
+[19:35:38] node up after 40 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[19:35:38] locomotion node pid(s) 4536  (launch session 4486) reniced -5
+[19:35:41] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[19:36:58] settle bag stopped
+[19:36:58] pre-shadow checks passed: pre-shadow checks PASS (premotion: server 4620 maps the r2 libraries with provenance hashes, gain 1.0 log+param, update_rate 100, period 0.001 s, controllers active, 0 action clients, 0 command publishers, node 4536 SHADOW in launch session; settle: 10.02 s sim, z 0.054500 m, range 9.0e-6 m, tilt 1.
+[19:36:58] captures before
+[19:37:04] driver
+[19:47:28] driver exit 0: {"command_rejections": {}, "cycles": [{"cycle": 1, "forward_m": -3.0841521614147527e-10, "lateral_m": 6.504126199999305e-17, "progress_lower_bound": "Minimum forward-progress condition not applicable:
+[19:47:31] captures after
+[19:47:33] bag stopped
+[19:47:35] strace (signals only) attached to simulator server 4620: strace: Process 4620 attached 
+[19:47:35] stop launch
+[19:47:41] server exit (strace): +++ exited with 0 +++
+[19:47:41] end

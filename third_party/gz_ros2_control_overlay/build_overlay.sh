@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Build the SpiderX overlay of gz_ros2_control: the pinned upstream release plus one patch,
-# into its own colcon workspace. Never writes to the toolchain (/opt/mm) or to this repository.
+# Build the SpiderX overlay of gz_ros2_control: the pinned upstream release plus the patch series
+# in patches/ (applied in order), into its own colcon workspace. Never writes to the toolchain (/opt/mm) or to this repository.
 #
 #   source /opt/mm/activate.sh
 #   third_party/gz_ros2_control_overlay/build_overlay.sh [WORKSPACE]   # default ~/spiderx_gz_overlay_ws
 #
-# Fetches with git (network needed once); refuses an existing checkout that is not the pinned
-# commit plus exactly this patch. Builds with the environment's own compilers, runs the offline
-# gtest, and writes WORKSPACE/OVERLAY_PROVENANCE.txt. Runtime order (see README.md):
+# Fetches with git (network needed once) into a new, empty workspace only, and verifies the pinned
+# commit before applying the patches. Builds with the environment's own compilers, runs the
+# offline gtests, and writes WORKSPACE/OVERLAY_PROVENANCE.txt. Runtime order (see README.md):
 #   source /opt/mm/activate.sh; source WORKSPACE/install/local_setup.bash;
 #   source <spiderx_ws>/install/local_setup.bash
 set -euo pipefail
@@ -18,7 +18,8 @@ COMMIT=bfc5845aa7f0250cbc384773dba5c9847d609b95
 PACKAGE_DIR=gz_ros2_control
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PATCH="$HERE/patches/0001-plugin-node-parameter-overrides.patch"
+PATCHES=("$HERE/patches/0001-plugin-node-parameter-overrides.patch"
+         "$HERE/patches/0002-destructor-no-second-node-removal.patch")
 WS="$(realpath -m "${1:-${SPIDERX_GZ_OVERLAY_WS:-$HOME/spiderx_gz_overlay_ws}}")"
 SRC="$WS/src/gz_ros2_control"
 
@@ -41,9 +42,12 @@ git -C "$SRC" sparse-checkout set "$PACKAGE_DIR"          # this package only (+
 git -C "$SRC" -c advice.detachedHead=false checkout -q --detach FETCH_HEAD
 [ "$(git -C "$SRC" rev-parse HEAD)" = "$COMMIT" ] \
   || die "tag $TAG is not commit $COMMIT any more; refusing to build"
-git -C "$SRC" apply --check "$PATCH"
-git -C "$SRC" apply "$PATCH"
-echo "build_overlay: fetched $TAG ($COMMIT) and applied $(basename "$PATCH")"
+for p in "${PATCHES[@]}"; do
+  git -C "$SRC" apply --check "$p"
+  git -C "$SRC" apply "$p"
+  echo "build_overlay: applied $(basename "$p")"
+done
+echo "build_overlay: fetched $TAG ($COMMIT) and applied ${#PATCHES[@]} patches"
 
 cd "$WS"
 # -include cstdint: the environment's GCC 15 cannot compile gtest_vendor's googletest 1.10
@@ -55,13 +59,15 @@ CC="$CC_BIN" CXX="$CXX_BIN" colcon --log-base "$WS/log" build \
   -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON "-DCMAKE_CXX_FLAGS=-include cstdint"
 colcon --log-base "$WS/log" test \
   --base-paths "$SRC/$PACKAGE_DIR" --build-base "$WS/build" --install-base "$WS/install" \
-  --ctest-args -R '^test_parameter_loading$'
+  --ctest-args -R '^test_(parameter_loading|shutdown_teardown)$'
 colcon test-result --test-result-base "$WS/build/gz_ros2_control" --verbose
 
 LIB="$WS/install/gz_ros2_control/lib"
 {
   echo "upstream $REPO_URL tag $TAG commit $COMMIT"
-  echo "patch $(sha256sum "$PATCH" | cut -d' ' -f1) $(basename "$PATCH")"
+  for p in "${PATCHES[@]}"; do
+    echo "patch $(sha256sum "$p" | cut -d' ' -f1) $(basename "$p")"
+  done
   echo "compiler $("$CXX_BIN" --version | head -1)"
   echo "toolchain $CONDA_PREFIX"
   for f in "$LIB/libgz_ros2_control-system.so" "$LIB/libgz_hardware_plugins.so"; do

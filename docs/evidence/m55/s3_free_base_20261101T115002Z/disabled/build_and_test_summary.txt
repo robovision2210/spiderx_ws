@@ -1,0 +1,8 @@
+start 2026-11-01T11:50:06Z branch claude/spiderx-s3-preparation head d91879989138543f43b6c6733217669b773c0337 worktree 0
+build exit=0
+test exit=0
+result exit=0
+Summary: 1946 tests, 0 errors, 0 failures, 0 skipped
+xunit testcases 1896 + CTest entries 50 = 1946; colcon test-result: ('1946', '0', '0', '0')
+COLLECTION VERDICT: PASS
+end 2026-11-01T11:59:59Z

@@ -3,9 +3,9 @@
 **Status:** on branch `claude/spiderx-sim-actuator-model`.
 - Phase A (implementation and offline tests) is done.
 - Phase B (launch-only verification) ran once on 2026-10-30: PASS, loading and configuration only (§5).
-- Phase C (an S2 attempt) is NOT authorized; its draft is `docs/S2_PHASE_C_ATTEMPT_DRAFT.md`.
-- No goal or cancel has been sent on the modified plant, and the gain-response law has not been measured.
-- All three dispatch gates stay False. S2 stays **FAIL** (2026-10-29) and S3 stays blocked.
+- Phase C (one S2 attempt) ran on 2026-10-30: 59 goals and 1 scripted cancel; the response law measured ĝ = 1.0 (SUPPORTED). The frozen scorer's verdict stays **FAIL** (P4 FAIL, P2 UNMEASURED): `docs/evidence/m55/s2_phase_c_20261030T062140Z/` (commit `47b066d`).
+- **Owner decision (2026-10-31):** S2 fixed-base validation accepted retrospectively under criteria revision r1. Not walking, contact or balance validation. Basis: the retrospective assessment under r1 (`docs/evidence/m55/s2_phase_c_20261030T062140Z_adjudication_r1/`, commit `a033041`), with its documented evidence limitations.
+- The 2026-10-29 attempt stays **FAIL** (tracking). All three dispatch gates stay False. S3 motion stays NOT authorized.
 - **Evidence:** `docs/evidence/m55/s2_fixed_base_20261029T100210Z/analysis_offline_20261029/` (commit `9c1a61b`), including `REVIEW_ADDENDUM.md`.
 
 **Decision (owner).** Route (a): an explicitly idealized position servo with gain 1.0, for this simulation-only software-integration milestone.

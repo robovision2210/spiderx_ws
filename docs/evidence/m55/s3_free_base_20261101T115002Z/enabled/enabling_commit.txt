@@ -1,0 +1,35 @@
+== enabling 2026-11-01T12:02:27Z
+branch local/m55-s3-20261101T120227Z from d91879989138543f43b6c6733217669b773c0337
+d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236  docs/patches/m55_enable_s2.UNAPPLIED.patch
+applied
+--- diff (expect 2 lines: the gate and its pin)
+diff --git a/src/spiderx_controller/spiderx_controller/m55_contract.py b/src/spiderx_controller/spiderx_controller/m55_contract.py
+index 86d14e7..ab93f06 100644
+--- a/src/spiderx_controller/spiderx_controller/m55_contract.py
++++ b/src/spiderx_controller/spiderx_controller/m55_contract.py
+@@ -16,7 +16,7 @@ Enabling it is a separate, reviewed, owner-approved change after the local accep
+ (docs/M55_KEYBOARD_WALKING.md); it is not part of this milestone.
+ """
+ 
+-M55_LOCOMOTION_DISPATCH_ENABLED = False
++M55_LOCOMOTION_DISPATCH_ENABLED = True
+ 
+ M55_DISPATCH_DISABLED_MESSAGE = (
+     'continuous locomotion dispatch is hard-disabled in this build '
+diff --git a/src/spiderx_controller/test/m55_gate.py b/src/spiderx_controller/test/m55_gate.py
+index 5f4be06..833c51f 100644
+--- a/src/spiderx_controller/test/m55_gate.py
++++ b/src/spiderx_controller/test/m55_gate.py
+@@ -5,4 +5,4 @@ Enabling M5.5 dispatch is a separate, owner-approved change after the local acce
+ (docs/M55_KEYBOARD_WALKING.md): it flips m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED and this
+ expectation together, and nothing else. On main both stay False.
+ """
+-EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = False
++EXPECTED_M55_LOCOMOTION_DISPATCH_ENABLED = True
+1	1	src/spiderx_controller/spiderx_controller/m55_contract.py
+1	1	src/spiderx_controller/test/m55_gate.py
+enabling commit 85ac127711fdeb8af90645c5e05df2c8a4638e55 on local/m55-s3-20261101T120227Z; upstream: fatal: no upstream configured for branch 'local/m55-s3-20261101T120227Z'
+changes vs baseline:  2 files changed, 2 insertions(+), 2 deletions(-)
+src/spiderx_controller/spiderx_controller/m55_contract.py
+src/spiderx_controller/test/m55_gate.py
+0

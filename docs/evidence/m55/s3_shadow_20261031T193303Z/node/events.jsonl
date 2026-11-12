@@ -1,0 +1,241 @@
+{"event": "transition", "n": 1, "previous": "DISARMED", "state": "READY", "wall": 2547.394864497, "why": "arm"}
+{"event": "request", "message": "armed at boundary 0 (level 0, posture error 0.0000 rad)", "n": 2, "request": "arm", "state": "READY", "wall": 2547.394864497}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 2.220446049250313e-16, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 3, "phase": 0, "points": 16, "seq": 1, "state": "READY", "wall": 2547.517945612}
+{"event": "transition", "n": 4, "previous": "READY", "state": "STARTING", "wall": 2547.517945612, "why": "dispatch"}
+{"accepted": true, "event": "goal_response", "n": 5, "seq": 1, "state": "STARTING", "wall": 2547.56798095}
+{"event": "transition", "n": 6, "previous": "STARTING", "state": "WALKING", "wall": 2547.56798095, "why": "accepted"}
+{"error_code": 0, "error_string": "", "event": "result", "n": 7, "seq": 1, "state": "WALKING", "status": 4, "wall": 2555.51799267}
+{"b": 1, "direction": 1, "event": "phase_done", "n": 8, "phase": 0, "state": "WALKING", "wall": 2555.51799267}
+{"b_from": 1, "b_to": 2, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "f11066369f383464d76dc281b2349fe367c235373eb43e9c346f5345ca23fb55", "kind": "swing", "leg": "rear_left", "level": 0, "n": 9, "phase": 1, "points": 23, "seq": 2, "state": "WALKING", "wall": 2555.51799267}
+{"accepted": true, "event": "goal_response", "n": 10, "seq": 2, "state": "WALKING", "wall": 2555.567943445}
+{"error_code": 0, "error_string": "", "event": "result", "n": 11, "seq": 2, "state": "WALKING", "status": 4, "wall": 2566.869546928}
+{"b": 2, "direction": 1, "event": "phase_done", "n": 12, "phase": 1, "state": "WALKING", "wall": 2566.869546928}
+{"b_from": 2, "b_to": 3, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "413a6b1db8398473e30469fcf15188bf49e3bf8a56c6a2fcb6708f69923efccd", "kind": "shift", "leg": null, "level": 0, "n": 13, "phase": 2, "points": 16, "seq": 3, "state": "WALKING", "wall": 2566.869546928}
+{"accepted": true, "event": "goal_response", "n": 14, "seq": 3, "state": "WALKING", "wall": 2566.917982512}
+{"error_code": 0, "error_string": "", "event": "result", "n": 15, "seq": 3, "state": "WALKING", "status": 4, "wall": 2575.220180915}
+{"b": 3, "direction": 1, "event": "phase_done", "n": 16, "phase": 2, "state": "WALKING", "wall": 2575.220180915}
+{"b_from": 3, "b_to": 4, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "c8c2f5054e926e9c3a1351e6583dff188fd30f0ea8dc9216cb080b0162e8b8aa", "kind": "swing", "leg": "front_left", "level": 0, "n": 17, "phase": 3, "points": 23, "seq": 4, "state": "WALKING", "wall": 2575.220180915}
+{"accepted": true, "event": "goal_response", "n": 18, "seq": 4, "state": "WALKING", "wall": 2575.268041441}
+{"error_code": 0, "error_string": "", "event": "result", "n": 19, "seq": 4, "state": "WALKING", "status": 4, "wall": 2586.918027096}
+{"b": 4, "direction": 1, "event": "phase_done", "n": 20, "phase": 3, "state": "WALKING", "wall": 2586.918027096}
+{"b_from": 4, "b_to": 5, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.8, "event": "goal_sent", "fingerprint": "287a329385f495fe8c684d07cad2bb67d50b5ae650dc6de26f575584e39d7ea8", "kind": "shift", "leg": null, "level": 0, "n": 21, "phase": 4, "points": 27, "seq": 5, "state": "WALKING", "wall": 2586.918027096}
+{"accepted": true, "event": "goal_response", "n": 22, "seq": 5, "state": "WALKING", "wall": 2586.967965081}
+{"error_code": 0, "error_string": "", "event": "result", "n": 23, "seq": 5, "state": "WALKING", "status": 4, "wall": 2599.968912232}
+{"b": 5, "direction": 1, "event": "phase_done", "n": 24, "phase": 4, "state": "WALKING", "wall": 2599.968912232}
+{"b_from": 5, "b_to": 6, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.5, "event": "goal_sent", "fingerprint": "a36ee4b50ece8dcad7e8ddc644d0fff33716cc4d37a695e788920f50849fc771", "kind": "swing", "leg": "rear_right", "level": 0, "n": 25, "phase": 5, "points": 24, "seq": 6, "state": "WALKING", "wall": 2599.968912232}
+{"accepted": true, "event": "goal_response", "n": 26, "seq": 6, "state": "WALKING", "wall": 2600.017944309}
+{"error_code": 0, "error_string": "", "event": "result", "n": 27, "seq": 6, "state": "WALKING", "status": 4, "wall": 2611.567897519}
+{"b": 6, "direction": 1, "event": "phase_done", "n": 28, "phase": 5, "state": "WALKING", "wall": 2611.567897519}
+{"b_from": 6, "b_to": 7, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "5fad92a3696bd9b5b357b1dd77b046c6a5a6c499c08a85c9c693f0a2ac3c8409", "kind": "shift", "leg": null, "level": 0, "n": 29, "phase": 6, "points": 16, "seq": 7, "state": "WALKING", "wall": 2611.567897519}
+{"accepted": true, "event": "goal_response", "n": 30, "seq": 7, "state": "WALKING", "wall": 2611.617891566}
+{"error_code": 0, "error_string": "", "event": "result", "n": 31, "seq": 7, "state": "WALKING", "status": 4, "wall": 2619.867963801}
+{"b": 7, "direction": 1, "event": "phase_done", "n": 32, "phase": 6, "state": "WALKING", "wall": 2619.867963801}
+{"b_from": 7, "b_to": 8, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "65230e26d9a8c75a2d3940ded953e5b0c8b1d06739b6fbc9fad94327ebf05c50", "kind": "swing", "leg": "front_right", "level": 0, "n": 33, "phase": 7, "points": 23, "seq": 8, "state": "WALKING", "wall": 2619.867963801}
+{"accepted": true, "event": "goal_response", "n": 34, "seq": 8, "state": "WALKING", "wall": 2619.917950062}
+{"error_code": 0, "error_string": "", "event": "result", "n": 35, "seq": 8, "state": "WALKING", "status": 4, "wall": 2630.768434413}
+{"b": 8, "direction": 1, "event": "phase_done", "n": 36, "phase": 7, "state": "WALKING", "wall": 2630.768434413}
+{"b_from": 8, "b_to": 9, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.2, "event": "goal_sent", "fingerprint": "41a83f6b4a4a53c405e0ab33284a17ad1bf3626d51d51f83c70c81e741b52021", "kind": "shift", "leg": null, "level": 0, "n": 37, "phase": 8, "points": 11, "seq": 9, "state": "WALKING", "wall": 2630.768434413}
+{"accepted": true, "event": "goal_response", "n": 38, "seq": 9, "state": "WALKING", "wall": 2630.818005414}
+{"event": "transition", "n": 39, "previous": "WALKING", "state": "STOPPING", "wall": 2630.880930648, "why": "stop"}
+{"event": "request", "message": "stopping after the current phase (held until a zero command)", "n": 40, "request": "stop", "state": "STOPPING", "wall": 2630.880930648}
+{"error_code": 0, "error_string": "", "event": "result", "n": 41, "seq": 9, "state": "STOPPING", "status": 4, "wall": 2636.367889014}
+{"b": 0, "direction": 1, "event": "phase_done", "n": 42, "phase": 8, "state": "STOPPING", "wall": 2636.367889014}
+{"event": "transition", "n": 43, "previous": "STOPPING", "state": "READY", "wall": 2636.367889014, "why": "stopped"}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 44, "phase": 0, "points": 16, "seq": 10, "state": "READY", "wall": 2637.968135376}
+{"event": "transition", "n": 45, "previous": "READY", "state": "STARTING", "wall": 2637.968135376, "why": "dispatch"}
+{"accepted": true, "event": "goal_response", "n": 46, "seq": 10, "state": "STARTING", "wall": 2638.020227382}
+{"event": "transition", "n": 47, "previous": "STARTING", "state": "WALKING", "wall": 2638.020227382, "why": "accepted"}
+{"error_code": 0, "error_string": "", "event": "result", "n": 48, "seq": 10, "state": "WALKING", "status": 4, "wall": 2645.918009993}
+{"b": 1, "direction": 1, "event": "phase_done", "n": 49, "phase": 0, "state": "WALKING", "wall": 2645.918009993}
+{"b_from": 1, "b_to": 2, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "f11066369f383464d76dc281b2349fe367c235373eb43e9c346f5345ca23fb55", "kind": "swing", "leg": "rear_left", "level": 0, "n": 50, "phase": 1, "points": 23, "seq": 11, "state": "WALKING", "wall": 2645.918009993}
+{"accepted": true, "event": "goal_response", "n": 51, "seq": 11, "state": "WALKING", "wall": 2645.967957416}
+{"error_code": 0, "error_string": "", "event": "result", "n": 52, "seq": 11, "state": "WALKING", "status": 4, "wall": 2656.767922628}
+{"b": 2, "direction": 1, "event": "phase_done", "n": 53, "phase": 1, "state": "WALKING", "wall": 2656.767922628}
+{"b_from": 2, "b_to": 3, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "413a6b1db8398473e30469fcf15188bf49e3bf8a56c6a2fcb6708f69923efccd", "kind": "shift", "leg": null, "level": 0, "n": 54, "phase": 2, "points": 16, "seq": 12, "state": "WALKING", "wall": 2656.767922628}
+{"accepted": true, "event": "goal_response", "n": 55, "seq": 12, "state": "WALKING", "wall": 2656.817999806}
+{"error_code": 0, "error_string": "", "event": "result", "n": 56, "seq": 12, "state": "WALKING", "status": 4, "wall": 2664.368200463}
+{"b": 3, "direction": 1, "event": "phase_done", "n": 57, "phase": 2, "state": "WALKING", "wall": 2664.368200463}
+{"b_from": 3, "b_to": 4, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "c8c2f5054e926e9c3a1351e6583dff188fd30f0ea8dc9216cb080b0162e8b8aa", "kind": "swing", "leg": "front_left", "level": 0, "n": 58, "phase": 3, "points": 23, "seq": 13, "state": "WALKING", "wall": 2664.368200463}
+{"accepted": true, "event": "goal_response", "n": 59, "seq": 13, "state": "WALKING", "wall": 2664.41934968}
+{"error_code": 0, "error_string": "", "event": "result", "n": 60, "seq": 13, "state": "WALKING", "status": 4, "wall": 2675.268993076}
+{"b": 4, "direction": 1, "event": "phase_done", "n": 61, "phase": 3, "state": "WALKING", "wall": 2675.268993076}
+{"b_from": 4, "b_to": 5, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.8, "event": "goal_sent", "fingerprint": "287a329385f495fe8c684d07cad2bb67d50b5ae650dc6de26f575584e39d7ea8", "kind": "shift", "leg": null, "level": 0, "n": 62, "phase": 4, "points": 27, "seq": 14, "state": "WALKING", "wall": 2675.268993076}
+{"accepted": true, "event": "goal_response", "n": 63, "seq": 14, "state": "WALKING", "wall": 2675.317972401}
+{"error_code": 0, "error_string": "", "event": "result", "n": 64, "seq": 14, "state": "WALKING", "status": 4, "wall": 2688.067969882}
+{"b": 5, "direction": 1, "event": "phase_done", "n": 65, "phase": 4, "state": "WALKING", "wall": 2688.067969882}
+{"b_from": 5, "b_to": 6, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.5, "event": "goal_sent", "fingerprint": "a36ee4b50ece8dcad7e8ddc644d0fff33716cc4d37a695e788920f50849fc771", "kind": "swing", "leg": "rear_right", "level": 0, "n": 66, "phase": 5, "points": 24, "seq": 15, "state": "WALKING", "wall": 2688.067969882}
+{"accepted": true, "event": "goal_response", "n": 67, "seq": 15, "state": "WALKING", "wall": 2688.11894606}
+{"error_code": 0, "error_string": "", "event": "result", "n": 68, "seq": 15, "state": "WALKING", "status": 4, "wall": 2699.717918021}
+{"b": 6, "direction": 1, "event": "phase_done", "n": 69, "phase": 5, "state": "WALKING", "wall": 2699.717918021}
+{"b_from": 6, "b_to": 7, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "5fad92a3696bd9b5b357b1dd77b046c6a5a6c499c08a85c9c693f0a2ac3c8409", "kind": "shift", "leg": null, "level": 0, "n": 70, "phase": 6, "points": 16, "seq": 16, "state": "WALKING", "wall": 2699.717918021}
+{"accepted": true, "event": "goal_response", "n": 71, "seq": 16, "state": "WALKING", "wall": 2699.768375372}
+{"error_code": 0, "error_string": "", "event": "result", "n": 72, "seq": 16, "state": "WALKING", "status": 4, "wall": 2707.967959022}
+{"b": 7, "direction": 1, "event": "phase_done", "n": 73, "phase": 6, "state": "WALKING", "wall": 2707.967959022}
+{"b_from": 7, "b_to": 8, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "65230e26d9a8c75a2d3940ded953e5b0c8b1d06739b6fbc9fad94327ebf05c50", "kind": "swing", "leg": "front_right", "level": 0, "n": 74, "phase": 7, "points": 23, "seq": 17, "state": "WALKING", "wall": 2707.967959022}
+{"accepted": true, "event": "goal_response", "n": 75, "seq": 17, "state": "WALKING", "wall": 2708.020176076}
+{"error_code": 0, "error_string": "", "event": "result", "n": 76, "seq": 17, "state": "WALKING", "status": 4, "wall": 2719.068742853}
+{"b": 8, "direction": 1, "event": "phase_done", "n": 77, "phase": 7, "state": "WALKING", "wall": 2719.068742853}
+{"b_from": 8, "b_to": 9, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.2, "event": "goal_sent", "fingerprint": "41a83f6b4a4a53c405e0ab33284a17ad1bf3626d51d51f83c70c81e741b52021", "kind": "shift", "leg": null, "level": 0, "n": 78, "phase": 8, "points": 11, "seq": 18, "state": "WALKING", "wall": 2719.068742853}
+{"accepted": true, "event": "goal_response", "n": 79, "seq": 18, "state": "WALKING", "wall": 2719.117977844}
+{"error_code": 0, "error_string": "", "event": "result", "n": 80, "seq": 18, "state": "WALKING", "status": 4, "wall": 2724.517947936}
+{"b": 0, "direction": 1, "event": "phase_done", "n": 81, "phase": 8, "state": "WALKING", "wall": 2724.517947936}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 82, "phase": 0, "points": 16, "seq": 19, "state": "WALKING", "wall": 2724.517947936}
+{"accepted": true, "event": "goal_response", "n": 83, "seq": 19, "state": "WALKING", "wall": 2724.568213793}
+{"error_code": 0, "error_string": "", "event": "result", "n": 84, "seq": 19, "state": "WALKING", "status": 4, "wall": 2732.217987912}
+{"b": 1, "direction": 1, "event": "phase_done", "n": 85, "phase": 0, "state": "WALKING", "wall": 2732.217987912}
+{"b_from": 1, "b_to": 2, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "f11066369f383464d76dc281b2349fe367c235373eb43e9c346f5345ca23fb55", "kind": "swing", "leg": "rear_left", "level": 0, "n": 86, "phase": 1, "points": 23, "seq": 20, "state": "WALKING", "wall": 2732.217987912}
+{"accepted": true, "event": "goal_response", "n": 87, "seq": 20, "state": "WALKING", "wall": 2732.26793605}
+{"error_code": 0, "error_string": "", "event": "result", "n": 88, "seq": 20, "state": "WALKING", "status": 4, "wall": 2743.667914298}
+{"b": 2, "direction": 1, "event": "phase_done", "n": 89, "phase": 1, "state": "WALKING", "wall": 2743.667914298}
+{"b_from": 2, "b_to": 3, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "413a6b1db8398473e30469fcf15188bf49e3bf8a56c6a2fcb6708f69923efccd", "kind": "shift", "leg": null, "level": 0, "n": 90, "phase": 2, "points": 16, "seq": 21, "state": "WALKING", "wall": 2743.667914298}
+{"accepted": true, "event": "goal_response", "n": 91, "seq": 21, "state": "WALKING", "wall": 2743.725730935}
+{"error_code": 0, "error_string": "", "event": "result", "n": 92, "seq": 21, "state": "WALKING", "status": 4, "wall": 2751.66804303}
+{"b": 3, "direction": 1, "event": "phase_done", "n": 93, "phase": 2, "state": "WALKING", "wall": 2751.66804303}
+{"b_from": 3, "b_to": 4, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "c8c2f5054e926e9c3a1351e6583dff188fd30f0ea8dc9216cb080b0162e8b8aa", "kind": "swing", "leg": "front_left", "level": 0, "n": 94, "phase": 3, "points": 23, "seq": 22, "state": "WALKING", "wall": 2751.66804303}
+{"accepted": true, "event": "goal_response", "n": 95, "seq": 22, "state": "WALKING", "wall": 2751.720191962}
+{"error_code": 0, "error_string": "", "event": "result", "n": 96, "seq": 22, "state": "WALKING", "status": 4, "wall": 2763.369072346}
+{"b": 4, "direction": 1, "event": "phase_done", "n": 97, "phase": 3, "state": "WALKING", "wall": 2763.369072346}
+{"b_from": 4, "b_to": 5, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.8, "event": "goal_sent", "fingerprint": "287a329385f495fe8c684d07cad2bb67d50b5ae650dc6de26f575584e39d7ea8", "kind": "shift", "leg": null, "level": 0, "n": 98, "phase": 4, "points": 27, "seq": 23, "state": "WALKING", "wall": 2763.369072346}
+{"accepted": true, "event": "goal_response", "n": 99, "seq": 23, "state": "WALKING", "wall": 2763.418047281}
+{"error_code": 0, "error_string": "", "event": "result", "n": 100, "seq": 23, "state": "WALKING", "status": 4, "wall": 2776.767931252}
+{"b": 5, "direction": 1, "event": "phase_done", "n": 101, "phase": 4, "state": "WALKING", "wall": 2776.767931252}
+{"b_from": 5, "b_to": 6, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.5, "event": "goal_sent", "fingerprint": "a36ee4b50ece8dcad7e8ddc644d0fff33716cc4d37a695e788920f50849fc771", "kind": "swing", "leg": "rear_right", "level": 0, "n": 102, "phase": 5, "points": 24, "seq": 24, "state": "WALKING", "wall": 2776.767931252}
+{"accepted": true, "event": "goal_response", "n": 103, "seq": 24, "state": "WALKING", "wall": 2776.817948602}
+{"error_code": 0, "error_string": "", "event": "result", "n": 104, "seq": 24, "state": "WALKING", "status": 4, "wall": 2789.567983283}
+{"b": 6, "direction": 1, "event": "phase_done", "n": 105, "phase": 5, "state": "WALKING", "wall": 2789.567983283}
+{"b_from": 6, "b_to": 7, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "5fad92a3696bd9b5b357b1dd77b046c6a5a6c499c08a85c9c693f0a2ac3c8409", "kind": "shift", "leg": null, "level": 0, "n": 106, "phase": 6, "points": 16, "seq": 25, "state": "WALKING", "wall": 2789.567983283}
+{"accepted": true, "event": "goal_response", "n": 107, "seq": 25, "state": "WALKING", "wall": 2789.619605409}
+{"error_code": 0, "error_string": "", "event": "result", "n": 108, "seq": 25, "state": "WALKING", "status": 4, "wall": 2797.472190344}
+{"b": 7, "direction": 1, "event": "phase_done", "n": 109, "phase": 6, "state": "WALKING", "wall": 2797.472190344}
+{"b_from": 7, "b_to": 8, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "65230e26d9a8c75a2d3940ded953e5b0c8b1d06739b6fbc9fad94327ebf05c50", "kind": "swing", "leg": "front_right", "level": 0, "n": 110, "phase": 7, "points": 23, "seq": 26, "state": "WALKING", "wall": 2797.472190344}
+{"accepted": true, "event": "goal_response", "n": 111, "seq": 26, "state": "WALKING", "wall": 2797.518530578}
+{"error_code": 0, "error_string": "", "event": "result", "n": 112, "seq": 26, "state": "WALKING", "status": 4, "wall": 2807.917963974}
+{"b": 8, "direction": 1, "event": "phase_done", "n": 113, "phase": 7, "state": "WALKING", "wall": 2807.917963974}
+{"b_from": 8, "b_to": 9, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.2, "event": "goal_sent", "fingerprint": "41a83f6b4a4a53c405e0ab33284a17ad1bf3626d51d51f83c70c81e741b52021", "kind": "shift", "leg": null, "level": 0, "n": 114, "phase": 8, "points": 11, "seq": 27, "state": "WALKING", "wall": 2807.917963974}
+{"accepted": true, "event": "goal_response", "n": 115, "seq": 27, "state": "WALKING", "wall": 2807.968783755}
+{"error_code": 0, "error_string": "", "event": "result", "n": 116, "seq": 27, "state": "WALKING", "status": 4, "wall": 2813.367901017}
+{"b": 0, "direction": 1, "event": "phase_done", "n": 117, "phase": 8, "state": "WALKING", "wall": 2813.367901017}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 118, "phase": 0, "points": 16, "seq": 28, "state": "WALKING", "wall": 2813.367901017}
+{"accepted": true, "event": "goal_response", "n": 119, "seq": 28, "state": "WALKING", "wall": 2813.418241352}
+{"error_code": 0, "error_string": "", "event": "result", "n": 120, "seq": 28, "state": "WALKING", "status": 4, "wall": 2821.172175988}
+{"b": 1, "direction": 1, "event": "phase_done", "n": 121, "phase": 0, "state": "WALKING", "wall": 2821.172175988}
+{"b_from": 1, "b_to": 2, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "f11066369f383464d76dc281b2349fe367c235373eb43e9c346f5345ca23fb55", "kind": "swing", "leg": "rear_left", "level": 0, "n": 122, "phase": 1, "points": 23, "seq": 29, "state": "WALKING", "wall": 2821.172175988}
+{"accepted": true, "event": "goal_response", "n": 123, "seq": 29, "state": "WALKING", "wall": 2821.218087533}
+{"error_code": 0, "error_string": "", "event": "result", "n": 124, "seq": 29, "state": "WALKING", "status": 4, "wall": 2832.41917146}
+{"b": 2, "direction": 1, "event": "phase_done", "n": 125, "phase": 1, "state": "WALKING", "wall": 2832.41917146}
+{"b_from": 2, "b_to": 3, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "413a6b1db8398473e30469fcf15188bf49e3bf8a56c6a2fcb6708f69923efccd", "kind": "shift", "leg": null, "level": 0, "n": 126, "phase": 2, "points": 16, "seq": 30, "state": "WALKING", "wall": 2832.41917146}
+{"accepted": true, "event": "goal_response", "n": 127, "seq": 30, "state": "WALKING", "wall": 2832.468058521}
+{"error_code": 0, "error_string": "", "event": "result", "n": 128, "seq": 30, "state": "WALKING", "status": 4, "wall": 2840.618070703}
+{"b": 3, "direction": 1, "event": "phase_done", "n": 129, "phase": 2, "state": "WALKING", "wall": 2840.618070703}
+{"b_from": 3, "b_to": 4, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "c8c2f5054e926e9c3a1351e6583dff188fd30f0ea8dc9216cb080b0162e8b8aa", "kind": "swing", "leg": "front_left", "level": 0, "n": 130, "phase": 3, "points": 23, "seq": 31, "state": "WALKING", "wall": 2840.618070703}
+{"accepted": true, "event": "goal_response", "n": 131, "seq": 31, "state": "WALKING", "wall": 2840.667951277}
+{"error_code": 0, "error_string": "", "event": "result", "n": 132, "seq": 31, "state": "WALKING", "status": 4, "wall": 2851.318039997}
+{"b": 4, "direction": 1, "event": "phase_done", "n": 133, "phase": 3, "state": "WALKING", "wall": 2851.318039997}
+{"b_from": 4, "b_to": 5, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.8, "event": "goal_sent", "fingerprint": "287a329385f495fe8c684d07cad2bb67d50b5ae650dc6de26f575584e39d7ea8", "kind": "shift", "leg": null, "level": 0, "n": 134, "phase": 4, "points": 27, "seq": 32, "state": "WALKING", "wall": 2851.318039997}
+{"accepted": true, "event": "goal_response", "n": 135, "seq": 32, "state": "WALKING", "wall": 2851.3681375}
+{"error_code": 0, "error_string": "", "event": "result", "n": 136, "seq": 32, "state": "WALKING", "status": 4, "wall": 2864.067928182}
+{"b": 5, "direction": 1, "event": "phase_done", "n": 137, "phase": 4, "state": "WALKING", "wall": 2864.067928182}
+{"b_from": 5, "b_to": 6, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.5, "event": "goal_sent", "fingerprint": "a36ee4b50ece8dcad7e8ddc644d0fff33716cc4d37a695e788920f50849fc771", "kind": "swing", "leg": "rear_right", "level": 0, "n": 138, "phase": 5, "points": 24, "seq": 33, "state": "WALKING", "wall": 2864.067928182}
+{"accepted": true, "event": "goal_response", "n": 139, "seq": 33, "state": "WALKING", "wall": 2864.117941937}
+{"error_code": 0, "error_string": "", "event": "result", "n": 140, "seq": 33, "state": "WALKING", "status": 4, "wall": 2875.767975648}
+{"b": 6, "direction": 1, "event": "phase_done", "n": 141, "phase": 5, "state": "WALKING", "wall": 2875.767975648}
+{"b_from": 6, "b_to": 7, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "5fad92a3696bd9b5b357b1dd77b046c6a5a6c499c08a85c9c693f0a2ac3c8409", "kind": "shift", "leg": null, "level": 0, "n": 142, "phase": 6, "points": 16, "seq": 34, "state": "WALKING", "wall": 2875.767975648}
+{"accepted": true, "event": "goal_response", "n": 143, "seq": 34, "state": "WALKING", "wall": 2875.818926256}
+{"error_code": 0, "error_string": "", "event": "result", "n": 144, "seq": 34, "state": "WALKING", "status": 4, "wall": 2883.667993724}
+{"b": 7, "direction": 1, "event": "phase_done", "n": 145, "phase": 6, "state": "WALKING", "wall": 2883.667993724}
+{"b_from": 7, "b_to": 8, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "65230e26d9a8c75a2d3940ded953e5b0c8b1d06739b6fbc9fad94327ebf05c50", "kind": "swing", "leg": "front_right", "level": 0, "n": 146, "phase": 7, "points": 23, "seq": 35, "state": "WALKING", "wall": 2883.667993724}
+{"accepted": true, "event": "goal_response", "n": 147, "seq": 35, "state": "WALKING", "wall": 2883.717925771}
+{"error_code": 0, "error_string": "", "event": "result", "n": 148, "seq": 35, "state": "WALKING", "status": 4, "wall": 2894.618068216}
+{"b": 8, "direction": 1, "event": "phase_done", "n": 149, "phase": 7, "state": "WALKING", "wall": 2894.618068216}
+{"b_from": 8, "b_to": 9, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.2, "event": "goal_sent", "fingerprint": "41a83f6b4a4a53c405e0ab33284a17ad1bf3626d51d51f83c70c81e741b52021", "kind": "shift", "leg": null, "level": 0, "n": 150, "phase": 8, "points": 11, "seq": 36, "state": "WALKING", "wall": 2894.618068216}
+{"accepted": true, "event": "goal_response", "n": 151, "seq": 36, "state": "WALKING", "wall": 2894.668064589}
+{"error_code": 0, "error_string": "", "event": "result", "n": 152, "seq": 36, "state": "WALKING", "status": 4, "wall": 2900.117960837}
+{"b": 0, "direction": 1, "event": "phase_done", "n": 153, "phase": 8, "state": "WALKING", "wall": 2900.117960837}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 154, "phase": 0, "points": 16, "seq": 37, "state": "WALKING", "wall": 2900.117960837}
+{"accepted": true, "event": "goal_response", "n": 155, "seq": 37, "state": "WALKING", "wall": 2900.167976133}
+{"error_code": 0, "error_string": "", "event": "result", "n": 156, "seq": 37, "state": "WALKING", "status": 4, "wall": 2908.318158403}
+{"b": 1, "direction": 1, "event": "phase_done", "n": 157, "phase": 0, "state": "WALKING", "wall": 2908.318158403}
+{"b_from": 1, "b_to": 2, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "f11066369f383464d76dc281b2349fe367c235373eb43e9c346f5345ca23fb55", "kind": "swing", "leg": "rear_left", "level": 0, "n": 158, "phase": 1, "points": 23, "seq": 38, "state": "WALKING", "wall": 2908.318158403}
+{"accepted": true, "event": "goal_response", "n": 159, "seq": 38, "state": "WALKING", "wall": 2908.367907346}
+{"error_code": 0, "error_string": "", "event": "result", "n": 160, "seq": 38, "state": "WALKING", "status": 4, "wall": 2919.067992325}
+{"b": 2, "direction": 1, "event": "phase_done", "n": 161, "phase": 1, "state": "WALKING", "wall": 2919.067992325}
+{"b_from": 2, "b_to": 3, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "413a6b1db8398473e30469fcf15188bf49e3bf8a56c6a2fcb6708f69923efccd", "kind": "shift", "leg": null, "level": 0, "n": 162, "phase": 2, "points": 16, "seq": 39, "state": "WALKING", "wall": 2919.067992325}
+{"accepted": true, "event": "goal_response", "n": 163, "seq": 39, "state": "WALKING", "wall": 2919.117999069}
+{"error_code": 0, "error_string": "", "event": "result", "n": 164, "seq": 39, "state": "WALKING", "status": 4, "wall": 2926.717960888}
+{"b": 3, "direction": 1, "event": "phase_done", "n": 165, "phase": 2, "state": "WALKING", "wall": 2926.717960888}
+{"b_from": 3, "b_to": 4, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "c8c2f5054e926e9c3a1351e6583dff188fd30f0ea8dc9216cb080b0162e8b8aa", "kind": "swing", "leg": "front_left", "level": 0, "n": 166, "phase": 3, "points": 23, "seq": 40, "state": "WALKING", "wall": 2926.717960888}
+{"accepted": true, "event": "goal_response", "n": 167, "seq": 40, "state": "WALKING", "wall": 2926.767944205}
+{"error_code": 0, "error_string": "", "event": "result", "n": 168, "seq": 40, "state": "WALKING", "status": 4, "wall": 2937.818063566}
+{"b": 4, "direction": 1, "event": "phase_done", "n": 169, "phase": 3, "state": "WALKING", "wall": 2937.818063566}
+{"b_from": 4, "b_to": 5, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.8, "event": "goal_sent", "fingerprint": "287a329385f495fe8c684d07cad2bb67d50b5ae650dc6de26f575584e39d7ea8", "kind": "shift", "leg": null, "level": 0, "n": 170, "phase": 4, "points": 27, "seq": 41, "state": "WALKING", "wall": 2937.818063566}
+{"accepted": true, "event": "goal_response", "n": 171, "seq": 41, "state": "WALKING", "wall": 2937.868053735}
+{"error_code": 0, "error_string": "", "event": "result", "n": 172, "seq": 41, "state": "WALKING", "status": 4, "wall": 2950.517970152}
+{"b": 5, "direction": 1, "event": "phase_done", "n": 173, "phase": 4, "state": "WALKING", "wall": 2950.517970152}
+{"b_from": 5, "b_to": 6, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.5, "event": "goal_sent", "fingerprint": "a36ee4b50ece8dcad7e8ddc644d0fff33716cc4d37a695e788920f50849fc771", "kind": "swing", "leg": "rear_right", "level": 0, "n": 174, "phase": 5, "points": 24, "seq": 42, "state": "WALKING", "wall": 2950.517970152}
+{"accepted": true, "event": "goal_response", "n": 175, "seq": 42, "state": "WALKING", "wall": 2950.567987921}
+{"error_code": 0, "error_string": "", "event": "result", "n": 176, "seq": 42, "state": "WALKING", "status": 4, "wall": 2962.573282337}
+{"b": 6, "direction": 1, "event": "phase_done", "n": 177, "phase": 5, "state": "WALKING", "wall": 2962.573282337}
+{"b_from": 6, "b_to": 7, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "5fad92a3696bd9b5b357b1dd77b046c6a5a6c499c08a85c9c693f0a2ac3c8409", "kind": "shift", "leg": null, "level": 0, "n": 178, "phase": 6, "points": 16, "seq": 43, "state": "WALKING", "wall": 2962.573282337}
+{"accepted": true, "event": "goal_response", "n": 179, "seq": 43, "state": "WALKING", "wall": 2962.618177272}
+{"error_code": 0, "error_string": "", "event": "result", "n": 180, "seq": 43, "state": "WALKING", "status": 4, "wall": 2970.520186747}
+{"b": 7, "direction": 1, "event": "phase_done", "n": 181, "phase": 6, "state": "WALKING", "wall": 2970.520186747}
+{"b_from": 7, "b_to": 8, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "65230e26d9a8c75a2d3940ded953e5b0c8b1d06739b6fbc9fad94327ebf05c50", "kind": "swing", "leg": "front_right", "level": 0, "n": 182, "phase": 7, "points": 23, "seq": 44, "state": "WALKING", "wall": 2970.520186747}
+{"accepted": true, "event": "goal_response", "n": 183, "seq": 44, "state": "WALKING", "wall": 2970.567991881}
+{"error_code": 0, "error_string": "", "event": "result", "n": 184, "seq": 44, "state": "WALKING", "status": 4, "wall": 2981.268053239}
+{"b": 8, "direction": 1, "event": "phase_done", "n": 185, "phase": 7, "state": "WALKING", "wall": 2981.268053239}
+{"b_from": 8, "b_to": 9, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.2, "event": "goal_sent", "fingerprint": "41a83f6b4a4a53c405e0ab33284a17ad1bf3626d51d51f83c70c81e741b52021", "kind": "shift", "leg": null, "level": 0, "n": 186, "phase": 8, "points": 11, "seq": 45, "state": "WALKING", "wall": 2981.268053239}
+{"accepted": true, "event": "goal_response", "n": 187, "seq": 45, "state": "WALKING", "wall": 2981.317966612}
+{"error_code": 0, "error_string": "", "event": "result", "n": 188, "seq": 45, "state": "WALKING", "status": 4, "wall": 2986.867977504}
+{"b": 0, "direction": 1, "event": "phase_done", "n": 189, "phase": 8, "state": "WALKING", "wall": 2986.867977504}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 190, "phase": 0, "points": 16, "seq": 46, "state": "WALKING", "wall": 2986.867977504}
+{"accepted": true, "event": "goal_response", "n": 191, "seq": 46, "state": "WALKING", "wall": 2986.918039264}
+{"error_code": 0, "error_string": "", "event": "result", "n": 192, "seq": 46, "state": "WALKING", "status": 4, "wall": 2994.917975436}
+{"b": 1, "direction": 1, "event": "phase_done", "n": 193, "phase": 0, "state": "WALKING", "wall": 2994.917975436}
+{"b_from": 1, "b_to": 2, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "f11066369f383464d76dc281b2349fe367c235373eb43e9c346f5345ca23fb55", "kind": "swing", "leg": "rear_left", "level": 0, "n": 194, "phase": 1, "points": 23, "seq": 47, "state": "WALKING", "wall": 2994.917975436}
+{"accepted": true, "event": "goal_response", "n": 195, "seq": 47, "state": "WALKING", "wall": 2994.968083605}
+{"error_code": 0, "error_string": "", "event": "result", "n": 196, "seq": 47, "state": "WALKING", "status": 4, "wall": 3006.368674018}
+{"b": 2, "direction": 1, "event": "phase_done", "n": 197, "phase": 1, "state": "WALKING", "wall": 3006.368674018}
+{"b_from": 2, "b_to": 3, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "413a6b1db8398473e30469fcf15188bf49e3bf8a56c6a2fcb6708f69923efccd", "kind": "shift", "leg": null, "level": 0, "n": 198, "phase": 2, "points": 16, "seq": 48, "state": "WALKING", "wall": 3006.368674018}
+{"accepted": true, "event": "goal_response", "n": 199, "seq": 48, "state": "WALKING", "wall": 3006.417950864}
+{"error_code": 0, "error_string": "", "event": "result", "n": 200, "seq": 48, "state": "WALKING", "status": 4, "wall": 3014.067987237}
+{"b": 3, "direction": 1, "event": "phase_done", "n": 201, "phase": 2, "state": "WALKING", "wall": 3014.067987237}
+{"b_from": 3, "b_to": 4, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "c8c2f5054e926e9c3a1351e6583dff188fd30f0ea8dc9216cb080b0162e8b8aa", "kind": "swing", "leg": "front_left", "level": 0, "n": 202, "phase": 3, "points": 23, "seq": 49, "state": "WALKING", "wall": 3014.067987237}
+{"accepted": true, "event": "goal_response", "n": 203, "seq": 49, "state": "WALKING", "wall": 3014.117980488}
+{"error_code": 0, "error_string": "", "event": "result", "n": 204, "seq": 49, "state": "WALKING", "status": 4, "wall": 3024.918040995}
+{"b": 4, "direction": 1, "event": "phase_done", "n": 205, "phase": 3, "state": "WALKING", "wall": 3024.918040995}
+{"b_from": 4, "b_to": 5, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.8, "event": "goal_sent", "fingerprint": "287a329385f495fe8c684d07cad2bb67d50b5ae650dc6de26f575584e39d7ea8", "kind": "shift", "leg": null, "level": 0, "n": 206, "phase": 4, "points": 27, "seq": 50, "state": "WALKING", "wall": 3024.918040995}
+{"accepted": true, "event": "goal_response", "n": 207, "seq": 50, "state": "WALKING", "wall": 3024.968041083}
+{"error_code": 0, "error_string": "", "event": "result", "n": 208, "seq": 50, "state": "WALKING", "status": 4, "wall": 3037.567978511}
+{"b": 5, "direction": 1, "event": "phase_done", "n": 209, "phase": 4, "state": "WALKING", "wall": 3037.567978511}
+{"b_from": 5, "b_to": 6, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.5, "event": "goal_sent", "fingerprint": "a36ee4b50ece8dcad7e8ddc644d0fff33716cc4d37a695e788920f50849fc771", "kind": "swing", "leg": "rear_right", "level": 0, "n": 210, "phase": 5, "points": 24, "seq": 51, "state": "WALKING", "wall": 3037.567978511}
+{"accepted": true, "event": "goal_response", "n": 211, "seq": 51, "state": "WALKING", "wall": 3037.617942561}
+{"error_code": 0, "error_string": "", "event": "result", "n": 212, "seq": 51, "state": "WALKING", "status": 4, "wall": 3048.217977513}
+{"b": 6, "direction": 1, "event": "phase_done", "n": 213, "phase": 5, "state": "WALKING", "wall": 3048.217977513}
+{"b_from": 6, "b_to": 7, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "5fad92a3696bd9b5b357b1dd77b046c6a5a6c499c08a85c9c693f0a2ac3c8409", "kind": "shift", "leg": null, "level": 0, "n": 214, "phase": 6, "points": 16, "seq": 52, "state": "WALKING", "wall": 3048.217977513}
+{"accepted": true, "event": "goal_response", "n": 215, "seq": 52, "state": "WALKING", "wall": 3048.26803045}
+{"error_code": 0, "error_string": "", "event": "result", "n": 216, "seq": 52, "state": "WALKING", "status": 4, "wall": 3055.66797617}
+{"b": 7, "direction": 1, "event": "phase_done", "n": 217, "phase": 6, "state": "WALKING", "wall": 3055.66797617}
+{"b_from": 7, "b_to": 8, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 2.4, "event": "goal_sent", "fingerprint": "65230e26d9a8c75a2d3940ded953e5b0c8b1d06739b6fbc9fad94327ebf05c50", "kind": "swing", "leg": "front_right", "level": 0, "n": 218, "phase": 7, "points": 23, "seq": 53, "state": "WALKING", "wall": 3055.66797617}
+{"accepted": true, "event": "goal_response", "n": 219, "seq": 53, "state": "WALKING", "wall": 3055.718671826}
+{"error_code": 0, "error_string": "", "event": "result", "n": 220, "seq": 53, "state": "WALKING", "status": 4, "wall": 3067.018062698}
+{"b": 8, "direction": 1, "event": "phase_done", "n": 221, "phase": 7, "state": "WALKING", "wall": 3067.018062698}
+{"b_from": 8, "b_to": 9, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.2, "event": "goal_sent", "fingerprint": "41a83f6b4a4a53c405e0ab33284a17ad1bf3626d51d51f83c70c81e741b52021", "kind": "shift", "leg": null, "level": 0, "n": 222, "phase": 8, "points": 11, "seq": 54, "state": "WALKING", "wall": 3067.018062698}
+{"accepted": true, "event": "goal_response", "n": 223, "seq": 54, "state": "WALKING", "wall": 3067.068459999}
+{"event": "transition", "n": 224, "previous": "WALKING", "state": "STOPPING", "wall": 3067.385157751, "why": "stop"}
+{"event": "request", "message": "stopping after the current phase (held until a zero command)", "n": 225, "request": "stop", "state": "STOPPING", "wall": 3067.385157751}
+{"error_code": 0, "error_string": "", "event": "result", "n": 226, "seq": 54, "state": "STOPPING", "status": 4, "wall": 3072.568153641}
+{"b": 0, "direction": 1, "event": "phase_done", "n": 227, "phase": 8, "state": "STOPPING", "wall": 3072.568153641}
+{"event": "transition", "n": 228, "previous": "STOPPING", "state": "READY", "wall": 3072.568153641, "why": "stopped"}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 0.0, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 229, "phase": 0, "points": 16, "seq": 55, "state": "READY", "wall": 3074.218064857}
+{"event": "transition", "n": 230, "previous": "READY", "state": "STARTING", "wall": 3074.218064857, "why": "dispatch"}
+{"event": "fault", "n": 231, "reason": "estop", "state": "STARTING", "wall": 3074.221007107}
+{"event": "transition", "n": 232, "previous": "STARTING", "state": "FAULTED", "wall": 3074.221007107, "why": "estop"}
+{"event": "cancel_sent", "n": 233, "seq": 55, "state": "FAULTED", "wall": 3074.221007107}
+{"event": "request", "message": "emergency stop: goal cancelled (if any), holding; reset and arm to continue", "n": 234, "request": "estop", "state": "FAULTED", "wall": 3074.221007107}
+{"accepted": true, "event": "goal_response", "n": 235, "seq": 55, "state": "FAULTED", "wall": 3074.268449137}
+{"code": 0, "event": "cancel_response", "n": 236, "seq": 55, "state": "FAULTED", "wall": 3074.268449137}
+{"error_code": 0, "error_string": "shadow cancel", "event": "result", "n": 237, "seq": 55, "state": "FAULTED", "status": 5, "wall": 3074.268449137}
+{"event": "refused", "n": 238, "reason": "faulted_reset_required", "request": "disarm", "state": "FAULTED", "wall": 3120.411301702}
+{"event": "request", "message": "not moving (FAULTED); held until a zero command", "n": 239, "request": "stop", "state": "FAULTED", "wall": 3120.415038927}
+{"event": "refused", "n": 240, "reason": "faulted_reset_required", "request": "disarm", "state": "FAULTED", "wall": 3120.415799872}
+{"event": "request", "message": "not moving (FAULTED); held until a zero command", "n": 241, "request": "stop", "state": "FAULTED", "wall": 3120.416377265}
