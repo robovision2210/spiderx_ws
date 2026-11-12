@@ -1,0 +1,28 @@
+== before cleanup: recorded driver 3243, teleop session 3253, recorder group 3245, launch 3246, xvfb 3247; decoys 3250 3251 NOT recorded
+== cleanup.sh
+[11:44:59] cleanup start
+driver 3243: SIGINT, then SIGKILL after 10 s
+teleop session 3253: SIGKILL to: 3253 ros2 run spiderx_controller m55_teleop_keyboard 600;3254 m55_teleop_keyboard child-of-teleop-session 600;
+recorder group 3245: SIGINT, then SIGKILL after 15 s
+launch group 3246: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 3246 still has: 3246 ros2 launch dummy 600;3248 gz sim server dummy-ignores-SIGINT 600;3249 ign gazebo dummy 600;
+launch session 3246: SIGKILL to those
+Xvfb 3247: SIGTERM
+[11:45:25] cleanup done; relevant processes still present (listed, not killed):
+3244 python3 -c  import os, pty, sys, time pid, fd = pty.fork() if pid == 0:     os.execvp("bash", ["bash", "-c", "(exec -a \"m55_teleop_keyboard child-of-teleop-session\" sleep 600) & exec -a \"ros2 run spiderx_controller m55_teleop_keyboard\" sleep 600"]) open("teleop.pid", "w").write(str(pid)); time.sleep(600)
+3251 m55_teleop_keyboard DECOY-unowned 600
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/c2_setup_and_run.sh: line 20:  3243 Killed                  bash -c 'echo $$ > driver.pid; exec -a "python3 /x/scripts/s4/s4d_e_driver.py --out d" sleep 600'
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/c2_setup_and_run.sh: line 20:  3245 Killed                  setsid bash -c 'exec -a "python3 ros2 bag record -s sqlite3 dummy" sleep 600'
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/c2_setup_and_run.sh: line 20:  3246 Killed                  setsid bash -c 'set -m; (trap "" INT; exec -a "gz sim server dummy-ignores-SIGINT" sleep 600) & (exec -a "ign gazebo dummy" sleep 600) & exec -a "ros2 launch dummy" sleep 600'
+== after
+gone 3243
+gone 3247
+teleop session 3253 members: 1; launch session 3246 members: 2; recorder group 3245 members: 0
+decoy_driver 3250 still alive (not owned: correctly untouched)
+decoy_teleop 3251 still alive (not owned: correctly untouched)
+(test teardown: the two decoys stopped by the test itself)
+-- stub shutdown.txt
+STUB stage_stop: SIGINT to launch group 3246
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/c2_setup_and_run.sh: line 25:  3250 Killed                  bash -c 'exec -a "python3 /x/scripts/s4/s4d_e_driver.py --out d" sleep 600'
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_live_harness_tests/c2_setup_and_run.sh: line 25:  3251 Killed                  bash -c 'exec -a "m55_teleop_keyboard DECOY-unowned" sleep 600'
+11:47:09 C2 test teardown: the pty-forking helper python (3244, the test's own process; its teleop session already stopped by cleanup.sh) stopped with SIGTERM

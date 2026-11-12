@@ -1,0 +1,314 @@
+[INFO] [launch]: All log files can be found below /root/.ros/log/2026-11-11-11-54-23-292149-vm-7074
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [ign gazebo-1]: process started with pid [7106]
+[INFO] [robot_state_publisher-2]: process started with pid [7109]
+[INFO] [create-3]: process started with pid [7111]
+[INFO] [parameter_bridge-4]: process started with pid [7114]
+[INFO] [spawner-5]: process started with pid [7116]
+[INFO] [parameter_bridge-6]: process started with pid [7118]
+[INFO] [m55_locomotion_node-7]: process started with pid [7121]
+[robot_state_publisher-2] [INFO] [1794398063.865856152] [robot_state_publisher]: got segment b_s1_1
+[robot_state_publisher-2] [INFO] [1794398063.865925039] [robot_state_publisher]: got segment b_s1_c_horn_1
+[robot_state_publisher-2] [INFO] [1794398063.865933027] [robot_state_publisher]: got segment b_s2_1
+[robot_state_publisher-2] [INFO] [1794398063.865936014] [robot_state_publisher]: got segment b_s2_c_horn_1
+[robot_state_publisher-2] [INFO] [1794398063.865938521] [robot_state_publisher]: got segment b_s3_1
+[robot_state_publisher-2] [INFO] [1794398063.865941655] [robot_state_publisher]: got segment b_s3_c_horn_1
+[robot_state_publisher-2] [INFO] [1794398063.865944058] [robot_state_publisher]: got segment b_s4_1
+[robot_state_publisher-2] [INFO] [1794398063.865946122] [robot_state_publisher]: got segment b_s4_c_horn_1
+[robot_state_publisher-2] [INFO] [1794398063.865948240] [robot_state_publisher]: got segment base_link
+[robot_state_publisher-2] [INFO] [1794398063.865950337] [robot_state_publisher]: got segment dummy_link
+[robot_state_publisher-2] [INFO] [1794398063.865952416] [robot_state_publisher]: got segment lf_c_horn_1
+[robot_state_publisher-2] [INFO] [1794398063.865954497] [robot_state_publisher]: got segment lf_foot_1
+[robot_state_publisher-2] [INFO] [1794398063.865956538] [robot_state_publisher]: got segment lf_holder_1
+[robot_state_publisher-2] [INFO] [1794398063.865958860] [robot_state_publisher]: got segment lf_holder_suppor1_1
+[robot_state_publisher-2] [INFO] [1794398063.865961043] [robot_state_publisher]: got segment lf_thigh_1
+[robot_state_publisher-2] [INFO] [1794398063.865963225] [robot_state_publisher]: got segment lidar_link
+[robot_state_publisher-2] [INFO] [1794398063.865965109] [robot_state_publisher]: got segment lr_c_horn_1
+[robot_state_publisher-2] [INFO] [1794398063.865967079] [robot_state_publisher]: got segment lr_foot_1
+[robot_state_publisher-2] [INFO] [1794398063.865969150] [robot_state_publisher]: got segment lr_holder_1
+[robot_state_publisher-2] [INFO] [1794398063.865971236] [robot_state_publisher]: got segment lr_holder_suppor1_1
+[robot_state_publisher-2] [INFO] [1794398063.865973259] [robot_state_publisher]: got segment lr_thigh_1
+[robot_state_publisher-2] [INFO] [1794398063.866012811] [robot_state_publisher]: got segment rf_c_horn_1
+[robot_state_publisher-2] [INFO] [1794398063.866016492] [robot_state_publisher]: got segment rf_foot_1
+[robot_state_publisher-2] [INFO] [1794398063.866019687] [robot_state_publisher]: got segment rf_holder_1
+[robot_state_publisher-2] [INFO] [1794398063.866021964] [robot_state_publisher]: got segment rf_holder_suppor1_1
+[robot_state_publisher-2] [INFO] [1794398063.866024897] [robot_state_publisher]: got segment rf_thigh_1
+[robot_state_publisher-2] [INFO] [1794398063.866027229] [robot_state_publisher]: got segment rr_c_horn_1
+[robot_state_publisher-2] [INFO] [1794398063.866029499] [robot_state_publisher]: got segment rr_foot_1
+[robot_state_publisher-2] [INFO] [1794398063.866031787] [robot_state_publisher]: got segment rr_holder_1
+[robot_state_publisher-2] [INFO] [1794398063.866034036] [robot_state_publisher]: got segment rr_holder_suppor1_1
+[robot_state_publisher-2] [INFO] [1794398063.866036378] [robot_state_publisher]: got segment rr_thigh_1
+[robot_state_publisher-2] [INFO] [1794398063.866038623] [robot_state_publisher]: got segment top_1
+[create-3] [INFO] [1794398063.867214963] [spawn_spiderx]: Requesting list of world names.
+[parameter_bridge-6] [INFO] [1794398063.887131914] [spiderx_sim_ground_truth_bridge]: Creating GZ->ROS Bridge: [/world/spiderx_fortress/pose/info (ignition.msgs.Pose_V) -> /world/spiderx_fortress/pose/info (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[spawner-5] [INFO] [1794398064.089733777] [spawner_joint_state_broadcaster]: waiting for service /controller_manager/list_controllers to become available...
+[m55_locomotion_node-7] M5.5: building and validating the crawl templates (3 levels, ~20 s each) ...
+[ign gazebo-1] QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-root'
+[m55_locomotion_node-7]   designing and validating the 20 mm crawl template
+[create-3] [INFO] [1794398064.643704409] [spawn_spiderx]: Waiting messages on topic [robot_description].
+[create-3] [INFO] [1794398064.657027998] [spawn_spiderx]: Requested creation of entity.
+[create-3] [INFO] [1794398064.657629860] [spawn_spiderx]: OK creation of entity.
+[INFO] [create-3]: process has finished cleanly [pid 7111]
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/StyleDialog.qml:112:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/StyleDialog.qml:105:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/StyleDialog.qml:98:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:102:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:27:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::/Gazebo/GazeboDrawer.qml:242:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[parameter_bridge-4] [INFO] [1794398064.903954877] [spiderx_gz_bridge]: Creating GZ->ROS Bridge: [/clock (gz.msgs.Clock) -> /clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
+[parameter_bridge-4] [INFO] [1794398064.906082132] [spiderx_gz_bridge]: Creating GZ->ROS Bridge: [/spiderx/scan (gz.msgs.LaserScan) -> /scan (sensor_msgs/msg/LaserScan)] (Lazy 0)
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;31m[GUI] [Err] [Plugin.cc:147] [0m[1;31mFailed to instantiate QML file [:/EntityContextMenuPlugin/EntityContextMenuPlugin.qml].
+[ign gazebo-1] * file::/EntityContextMenuPlugin/EntityContextMenuPlugin.qml:22:1: module "IgnGazebo" is not installed[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::/Spawn/Spawn.qml:32:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::/WorldControl/WorldControl.qml:30:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::/TransformControl/TransformControl.qml:104:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::/TransformControl/TransformControl.qml:99:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::/TransformControl/TransformControl.qml:94:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::/TransformControl/TransformControl.qml:89:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;31m[GUI] [Err] [Plugin.cc:147] [0m[1;31mFailed to instantiate QML file [:/ComponentInspector/ComponentInspector.qml].
+[ign gazebo-1] * file::/ComponentInspector/ComponentInspector.qml:23:1: module "IgnGazebo" is not installed[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;31m[GUI] [Err] [Plugin.cc:147] [0m[1;31mFailed to instantiate QML file [:/EntityTree/EntityTree.qml].
+[ign gazebo-1] * file::/EntityTree/EntityTree.qml:25:1: module "IgnGazebo" is not installed[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::/WorldStats/WorldStats.qml:53:3: QML RowLayout: Binding loop detected for property "x"[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Ogre2RenderTarget.cc:574] [0m[1;33mAnti-aliasing level of '[0m[1;33m8[0m[1;33m' [0m[1;33mis not supported; valid FSAA levels are: [0m[1;33m[ 0 ][0m[1;33m. Setting to 0[0m[1;33m[0m
+[ign gazebo-1] Warning: class_loader.impl: SEVERE WARNING!!! A namespace collision has occurred with plugin factory for class mock_components::GenericSystem. New factory will OVERWRITE existing one. This situation occurs when libraries containing plugins are directly linked against an executable (the one running right now generating this message). Please separate plugins out into their own library or just don't link against the library and use either class_loader::ClassLoader/MultiLibraryClassLoader to open.
+[ign gazebo-1]          at line 253 in /opt/mm/root/envs/humble/include/class_loader/class_loader/class_loader_core.hpp
+[ign gazebo-1] [INFO] [1794398066.266833202] [GazeboSimROS2ControlPlugin]: robot_param_node is robot_state_publisher
+[ign gazebo-1] [INFO] [1794398066.266859233] [GazeboSimROS2ControlPlugin]: robot_param_node is robot_description
+[ign gazebo-1] [INFO] [1794398066.321258710] [gz_ros2_control]: connected to service!! robot_state_publisher asking for robot_description
+[ign gazebo-1] [INFO] [1794398066.322837973] [gz_ros2_control]: Received URDF from param server
+[ign gazebo-1] [INFO] [1794398066.336644085] [gz_ros2_control]: The position_proportional_gain has been set to: 1
+[ign gazebo-1] [INFO] [1794398066.336716181] [gz_ros2_control]: Loading joint: lf_hip
+[ign gazebo-1] [INFO] [1794398066.336728810] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336732672] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336741606] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336745708] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336748728] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336763383] [gz_ros2_control]: Loading joint: lf_thigh_joint
+[ign gazebo-1] [INFO] [1794398066.336767142] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336770069] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336773368] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336776829] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336779675] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336786069] [gz_ros2_control]: Loading joint: lf_foot_joint
+[ign gazebo-1] [INFO] [1794398066.336789214] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336791860] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336794520] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336797050] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336799356] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336805856] [gz_ros2_control]: Loading joint: rf_hip
+[ign gazebo-1] [INFO] [1794398066.336808345] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336810659] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336813454] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336815699] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336817986] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336824052] [gz_ros2_control]: Loading joint: rf_thigh_joint
+[ign gazebo-1] [INFO] [1794398066.336826538] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336829078] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336832055] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336834664] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336836963] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336842159] [gz_ros2_control]: Loading joint: rf_foot_joint
+[ign gazebo-1] [INFO] [1794398066.336844726] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336846824] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336849048] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336851548] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336853596] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336859067] [gz_ros2_control]: Loading joint: lr_hip
+[ign gazebo-1] [INFO] [1794398066.336861437] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336863708] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336865817] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336867883] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336870269] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336876069] [gz_ros2_control]: Loading joint: lr_thigh_joint
+[ign gazebo-1] [INFO] [1794398066.336878564] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336880755] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336882862] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336884976] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336887388] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336892724] [gz_ros2_control]: Loading joint: lr_foot_joint
+[ign gazebo-1] [INFO] [1794398066.336895135] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336897363] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336900328] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336902676] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336904733] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336911014] [gz_ros2_control]: Loading joint: rr_hip
+[ign gazebo-1] [INFO] [1794398066.336913942] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336916237] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336918556] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336920767] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336923075] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336928427] [gz_ros2_control]: Loading joint: rr_thigh_joint
+[ign gazebo-1] [INFO] [1794398066.336951882] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336954249] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336962645] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336964791] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336967540] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336972780] [gz_ros2_control]: Loading joint: rr_foot_joint
+[ign gazebo-1] [INFO] [1794398066.336975462] [gz_ros2_control]: 	State:
+[ign gazebo-1] [INFO] [1794398066.336978420] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.336981373] [gz_ros2_control]: 		 velocity
+[ign gazebo-1] [INFO] [1794398066.336983627] [gz_ros2_control]: 	Command:
+[ign gazebo-1] [INFO] [1794398066.336985902] [gz_ros2_control]: 		 position
+[ign gazebo-1] [INFO] [1794398066.337082428] [resource_manager]: Initialize hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1794398066.337108173] [resource_manager]: Successful initialization of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1794398066.337287666] [resource_manager]: 'configure' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1794398066.337293660] [gz_ros2_control]: System Successfully configured!
+[ign gazebo-1] [INFO] [1794398066.337303783] [resource_manager]: Successful 'configure' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1794398066.337310098] [resource_manager]: 'activate' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1794398066.337313304] [resource_manager]: Successful 'activate' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1794398066.337319603] [gz_ros2_control]: Loading controller_manager
+[ign gazebo-1] [WARN] [1794398066.517142663] [gz_ros2_control]:  Desired controller update period (0.01 s) is slower than the gazebo simulation period (0.001 s).
+[ign gazebo-1] [1;33m[Wrn] [Model.hh:69] [0m[1;33mSkipping serialization / deserialization for models [0m[1;33mwith //pose/@relative_to attribute.[0m[1;33m[0m
+[ign gazebo-1] [1;33m[Wrn] [Component.hh:144] [0m[1;33mTrying to serialize component with data type [[0m[1;33mN3sdf3v125WorldE[0m[1;33m], which doesn't have [0m[1;33m`operator<<`. Component will not be serialized.[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Component.hh:189] [0m[1;33mTrying to deserialize component with data type [[0m[1;33mN3sdf3v125WorldE[0m[1;33m], which doesn't have [0m[1;33m`operator>>`. Component will not be deserialized.[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[ign gazebo-1] [INFO] [1794398066.695214236] [controller_manager]: Loading controller 'joint_state_broadcaster'
+[spawner-5] [INFO] [1794398066.727012439] [spawner_joint_state_broadcaster]: [94mLoaded [1mjoint_state_broadcaster[0m
+[ign gazebo-1] [INFO] [1794398066.727986020] [controller_manager]: Configuring controller 'joint_state_broadcaster'
+[ign gazebo-1] [INFO] [1794398066.728053830] [joint_state_broadcaster]: 'joints' or 'interfaces' parameter is empty. All available state interfaces will be published
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[spawner-5] [INFO] [1794398067.071170569] [spawner_joint_state_broadcaster]: [92mConfigured and activated [1mjoint_state_broadcaster[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Model.hh:98] [0m[1;33mUnable to deserialize sdf::Model[0m[1;33m[0m
+[INFO] [spawner-5]: process has finished cleanly [pid 7116]
+[INFO] [spawner-8]: process started with pid [7382]
+[spawner-8] [INFO] [1794398067.473285005] [spawner_leg_trajectory_controller]: waiting for service /controller_manager/list_controllers to become available...
+[ign gazebo-1] [INFO] [1794398070.245013553] [controller_manager]: Loading controller 'leg_trajectory_controller'
+[ign gazebo-1] [WARN] [1794398070.295230253] [leg_trajectory_controller]: [Deprecated]: "allow_nonzero_velocity_at_trajectory_end" is set to true. The default behavior will change to false.
+[spawner-8] [INFO] [1794398071.135218458] [spawner_leg_trajectory_controller]: [94mLoaded [1mleg_trajectory_controller[0m
+[ign gazebo-1] [INFO] [1794398071.137640571] [controller_manager]: Configuring controller 'leg_trajectory_controller'
+[ign gazebo-1] [INFO] [1794398071.137861200] [leg_trajectory_controller]: No specific joint names are used for command interfaces. Using 'joints' parameter.
+[ign gazebo-1] [INFO] [1794398071.137879043] [leg_trajectory_controller]: Command interfaces are [position] and state interfaces are [position velocity].
+[ign gazebo-1] [INFO] [1794398071.137892908] [leg_trajectory_controller]: Using 'splines' interpolation method.
+[ign gazebo-1] [INFO] [1794398071.139244096] [leg_trajectory_controller]: Controller state will be published at 50.00 Hz.
+[ign gazebo-1] [INFO] [1794398071.146184981] [leg_trajectory_controller]: Action status changes will be monitored at 20.00 Hz.
+[spawner-8] [INFO] [1794398074.043101609] [spawner_leg_trajectory_controller]: [92mConfigured and activated [1mleg_trajectory_controller[0m
+[INFO] [spawner-8]: process has finished cleanly [pid 7382]
+[m55_locomotion_node-7]   designing and validating the 40 mm crawl template
+[m55_locomotion_node-7]   designing and validating the 60 mm crawl template
+[m55_locomotion_node-7] [INFO] [1794398120.569873157] [spiderx_locomotion]: M5.5 locomotion node up in DISPATCH mode (dispatch gate True); levels [1.06, 1.9, 2.34] mm/s
+[ign gazebo-1] [INFO] [1794398234.354723921] [leg_trajectory_controller]: Received new action goal
+[ign gazebo-1] [INFO] [1794398234.355330916] [leg_trajectory_controller]: Accepted new action goal
+[ign gazebo-1] [INFO] [1794398234.443066955] [leg_trajectory_controller]: Got request to cancel goal
+[ign gazebo-1] [INFO] [1794398234.443113111] [leg_trajectory_controller]: Canceling active action goal because cancel callback received.
+[parameter_bridge-4] [INFO] [1794398291.754844207] [rclcpp]: signal_handler(signum=2)
+[parameter_bridge-6] [INFO] [1794398291.754904942] [rclcpp]: signal_handler(signum=2)
+[robot_state_publisher-2] [INFO] [1794398291.755153969] [rclcpp]: signal_handler(signum=2)
+[INFO] [parameter_bridge-4]: process has finished cleanly [pid 7114]
+[INFO] [parameter_bridge-6]: process has finished cleanly [pid 7118]
+[INFO] [robot_state_publisher-2]: process has finished cleanly [pid 7109]
+[INFO] [m55_locomotion_node-7]: process has finished cleanly [pid 7121]
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:52: TypeError: Cannot read property 'dialogOnExitText' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:54: TypeError: Cannot read property 'exitDialogShowCloseGui' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:53: TypeError: Cannot read property 'exitDialogShowShutdown' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:251: TypeError: Cannot read property 'showDrawer' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/SideDrawer.qml:93: TypeError: Cannot read property 'showDefaultDrawerOpts' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/IgnSplit.qml:56: TypeError: Cannot read property 'pluginCount' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:41: TypeError: Cannot read property 'toolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:42: TypeError: Cannot read property 'toolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:43: TypeError: Cannot read property 'toolBarColorDark' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:44: TypeError: Cannot read property 'toolBarTextColorDark' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:45: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:46: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:47: TypeError: Cannot read property 'pluginToolBarColorDark' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:48: TypeError: Cannot read property 'pluginToolBarTextColorDark' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:50: TypeError: Cannot read property 'defaultExitAction' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:51: TypeError: Cannot read property 'showDialogOnExit' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:55: TypeError: Cannot read property 'exitDialogShutdownText' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:56: TypeError: Cannot read property 'exitDialogCloseGuiText' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:66: TypeError: Cannot read property 'toolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:76: TypeError: Cannot read property 'toolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:219: TypeError: Cannot read property 'showPluginMenu' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:202: TypeError: Cannot read property 'showDrawer' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:188: TypeError: Cannot read property 'showDrawer' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [INFO] [1794398292.158340482] [rclcpp]: signal_handler(signum=2)
+[ign gazebo-1] [INFO] [1794398292.160741083] [controller_manager]: Shutdown request received....
+[ign gazebo-1] [INFO] [1794398292.160879103] [controller_manager]: Shutting down all controllers in the controller manager.
+[ign gazebo-1] [INFO] [1794398292.160917788] [controller_manager]: Deactivating controller 'joint_state_broadcaster'
+[ign gazebo-1] [INFO] [1794398292.160943484] [controller_manager]: Shutting down controller 'joint_state_broadcaster'
+[ign gazebo-1] [INFO] [1794398292.160953867] [controller_manager]: Deactivating controller 'leg_trajectory_controller'
+[ign gazebo-1] [INFO] [1794398292.160991774] [controller_manager]: Shutting down controller 'leg_trajectory_controller'
+[ign gazebo-1] [INFO] [1794398292.161023356] [resource_manager]: 'deactivate' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1794398292.161059393] [resource_manager]: Successful 'deactivate' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1794398292.161064072] [resource_manager]: 'shutdown' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1794398292.161066580] [resource_manager]: Successful 'shutdown' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1794398292.161068695] [controller_manager]: Shutting down the controller manager.
+[INFO] [ign gazebo-1]: process has finished cleanly [pid 7106]
+[INFO] [launch]: process[ign gazebo-1] was required: shutting down launched system

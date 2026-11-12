@@ -1,0 +1,23 @@
+{
+ "AMENT_PREFIX_PATH": "/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_scripts:/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_navigation:/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_mapping:/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_localization:/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_bringup:/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_firmware:/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_controller:/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_description:/root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control:/opt/mm/root/envs/humble",
+ "PYTHONPATH": "/root/spiderx_fresh_disabled_20261111T104338Z/build/spiderx_scripts:/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_scripts/lib/python3.11/site-packages:/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_controller/lib/python3.11/site-packages:/opt/mm/root/envs/humble/lib/python311/site-packages:/opt/mm/root/envs/humble/lib/python3.11/site-packages",
+ "all_from_this_installation": true,
+ "install_base": "/root/spiderx_fresh_disabled_20261111T104338Z/install",
+ "modules": {
+  "m55_contract": {
+   "imported_as": "/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py",
+   "imported_from_this_installation": true,
+   "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py"
+  },
+  "m61_live_contract": {
+   "imported_as": "/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py",
+   "imported_from_this_installation": true,
+   "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py"
+  },
+  "m6_live_contract": {
+   "imported_as": "/root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py",
+   "imported_from_this_installation": true,
+   "resolves_to": "/home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py"
+  }
+ }
+}

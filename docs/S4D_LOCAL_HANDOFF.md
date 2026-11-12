@@ -11,6 +11,7 @@ acceptance verdict. Nothing in it has been run on your PC. Every result quoted b
 
 | Branch | Head | PR |
 |---|---|---|
+| `claude/spiderx-s4d-e-preparation` | S4d-E driver, scorer, tests and restore pattern (validated executable `87198b9`), then evidence and documentation commits | #25 (draft) → `claude/spiderx-s4d-preparation` (added 2026-11-11) |
 | `claude/spiderx-s4d-preparation` | documentation and evidence commits on top of `8f99bcc` (tested executable; no code change since) | #24 (draft) → `claude/spiderx-s4d-plan` |
 | `claude/spiderx-s4d-plan` | `34396cf` | no PR; on top of `claude/spiderx-s4c-preparation` |
 | `claude/spiderx-s4c-preparation` | `40f5f2c` | #23 → s4b |
@@ -44,8 +45,19 @@ acceptance verdict. Nothing in it has been run on your PC. Every result quoted b
     - about 34.5 MB of recording per wall minute.
   - Its evidence is committed on this branch: `docs/evidence/m55/s4d_live_20261111T052817Z/` (`6558abf`).
   - The raw bag (348,086,272 bytes, sha256 `9320eb43…`) is not in the repository. The original was delivered as a conversation attachment; a durable off-container copy is unconfirmed until you confirm one.
-- **Not done anywhere:** S4d-E, S4e (human keyboard operation), hardware or navigation. Full S4 acceptance is not complete.
-  - The only enabling was the local S4d-M branch above, now deleted.
+- **S4d-E, the level-2 estop (cloud, 2026-11-11, branch `claude/spiderx-s4d-e-preparation`).**
+  - **Shadow rehearsal:** PASS (SHADOW ONLY).
+  - **Live attempt:** PASS under the frozen contract `docs/S4D_E_CONTRACT.md`; E1–E12 PASS.
+    - It ran from the disabled baseline `16d939f` (executable `87198b9`), through a local enabling branch (`01ed29e`, the same two-line M55 patch). That branch was never pushed, and it was deleted after verification.
+    - The real controller accepted ONE level-2 0→1 shift goal. `x` followed one attributed real feedback sample.
+    - There was ONE cancel: response 0, result CANCELED. FAULTED came on the request's node-clock instant.
+    - The body held over 10 s of sim. `q` gave exactly the two reset-required disarm refusals.
+    - The cancel came about 0.04 s of sim after the goal started, before measurable motion. The attempt shows the estop, cancel and hold path, not a moving body being stopped.
+    - The simulator server exited 0 on SIGINT. The full restore gave DISABLED AND VERIFIED.
+  - **Evidence:** `docs/evidence/m55/s4d_e_shadow_20261111T104429Z/` and `docs/evidence/m55/s4d_e_live_20261111T113831Z/` (`e1891c7`).
+  - **Raw bag:** 51,060,736 bytes, sha256 `858c6eb4…`. It is not in the repository; a durable off-container copy is unconfirmed until you confirm one.
+- **Not done anywhere:** S4e (human keyboard operation), hardware or navigation. Full S4 acceptance is not complete.
+  - The only enablings were the local S4d-M and S4d-E branches above, both deleted after verification.
   - All three gates are `False` on every pushed commit.
 
 **Local verification status: none for S4d.** The last local verification you reported was M6.0-D
@@ -167,9 +179,9 @@ behaviour, the plant or timing on your PC.
   - Check which version your apt packages provide (A), and do not assume the cloud plant.
   - `build_overlay.sh` targets the RoboStack toolchain. An equivalent overlay for `/opt/ros/humble`
     is a separate, reviewed step.
-- S4d-E (OD10) and S4e human keyboard work (OD9). The cloud S4d-M live attempt is done (§0); any
-  repeat of it, in the cloud or on your PC, would be a new attempt.
-- Any enabling change. Enabling branches are local only (`local/m55-s4d-m-*`) and never pushed;
+- S4e human keyboard work (OD9). The cloud S4d-M and S4d-E live attempts are done (§0); any
+  repeat of either, in the cloud or on your PC, would be a new attempt.
+- Any enabling change. Enabling branches are local only (`local/m55-s4d-m-*`, `local/m55-s4d-e-*`) and never pushed;
   `scripts/m61_restore_and_verify_disabled.sh` restores and verifies afterwards.
 
 ## Common environment failures

@@ -1,0 +1,18 @@
+Starting >>> spiderx_description
+Starting >>> spiderx_firmware
+Starting >>> spiderx_localization
+Starting >>> spiderx_mapping
+Finished <<< spiderx_localization [0.09s]
+Starting >>> spiderx_navigation
+Finished <<< spiderx_mapping [0.11s]
+Finished <<< spiderx_description [0.14s]
+Finished <<< spiderx_firmware [0.15s]
+Starting >>> spiderx_controller
+Finished <<< spiderx_navigation [0.13s]
+Finished <<< spiderx_controller [0.34s]
+Starting >>> spiderx_bringup
+Starting >>> spiderx_scripts
+Finished <<< spiderx_bringup [0.34s]
+Finished <<< spiderx_scripts [0.94s]
+
+Summary: 8 packages finished [1.89s]

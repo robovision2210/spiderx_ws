@@ -1,0 +1,282 @@
+{
+ "E": {
+  "E1": {
+   "cancels": 1,
+   "checks": {
+    "driver_script_complete": true,
+    "exactly_one_cancel_for_goal_1": true,
+    "exactly_one_goal_level_2_0_to_1_the_shift": true,
+    "keys_exactly_plus_plus_a_w_x_q": true,
+    "mode_and_gate_in_every_status": true,
+    "no_refusal_before_q": true,
+    "no_status_with_more_than_one_goal_recorded": true,
+    "one_fault_the_estop": true,
+    "requests_before_q_exactly_arm_estop": true
+   },
+   "driver_result": "script complete (shadow rehearsal: dispatch disabled; not S4d-E acceptance)",
+   "goals": 1,
+   "keys": [
+    "'+'",
+    "'+'",
+    "'a'",
+    "'w'",
+    "'x'",
+    "'q'"
+   ],
+   "verdict": "PASS"
+  },
+  "E10": {
+   "checks": {
+    "after_q_exactly_stop_x2_and_disarm_x2": true,
+    "disarms_refused_reset_required_and_no_other_refusal": true,
+    "no_transition_after_q": true,
+    "stops_accepted_with_the_faulted_message": true,
+    "teleop_exit_0_within_15_s": true
+   },
+   "close_requests": [
+    [
+     "stop",
+     "ok",
+     "not moving (FAULTED); held until a zero command"
+    ],
+    [
+     "stop",
+     "ok",
+     "not moving (FAULTED); held until a zero command"
+    ],
+    [
+     "disarm",
+     "refused",
+     "faulted_reset_required"
+    ],
+    [
+     "disarm",
+     "refused",
+     "faulted_reset_required"
+    ]
+   ],
+   "verdict": "PASS"
+  },
+  "E11": {
+   "checks": {
+    "driver_script_complete": true,
+    "min_joint_margin_at_least_0_02_rad": true,
+    "node_observed_ages_within_monitor_limits": true,
+    "tilt_at_most_0_10_rad_after_arm": true,
+    "travel_from_the_arm_pose_at_most_0_15_m": true
+   },
+   "max_ages_s": {
+    "body_pose_age_s": 0.022835800999928324,
+    "graph_age_s": 1.0020727729997816,
+    "joint_states_age_s": 0.0924361699999281
+   },
+   "max_tilt_rad": 1.541388099311085e-07,
+   "min_joint_margin": [
+    0.43633199551980684,
+    "rr_foot_joint",
+    -4.48019315663963e-09
+   ],
+   "travel_m": 1.822190822631994e-10,
+   "verdict": "PASS"
+  },
+  "E12": {
+   "checks": {
+    "library_identity": true,
+    "restore_report_normal_installation": true,
+    "run_installation_imports_all_three_gates_false": true
+   },
+   "library": {
+    "disabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+    "enabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+    "verdict": "PASS"
+   },
+   "restore": {
+    "checks": {
+     "gates_false_imported": true,
+     "m6_gait_replay_live_exit_3": true,
+     "m6_live_playback_live_exit_3": true,
+     "no_simulation_or_node_leftover": true,
+     "verdict_disabled_and_verified": true
+    },
+    "verdict": "PASS"
+   },
+   "run_installation": {
+    "gates": {
+     "spiderx_controller.m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED": false,
+     "spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED": false,
+     "spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED": false
+    },
+    "install_base": "/root/spiderx_fresh_disabled_20261111T104338Z/install"
+   },
+   "verdict": "PASS"
+  },
+  "E2": {
+   "checks": {
+    "confirmed_2_3_then_3_3_each_attributed": true,
+    "each_plus_while_disarmed_with_no_goal": true,
+    "goal_1_at_level_2": true,
+    "one_level_change_to_2_in_ready_after_arm_before_goal_1": true,
+    "two_plus_before_arm": true
+   },
+   "confirmations": [
+    {
+     "label": "2/3",
+     "press": 1,
+     "received_before_the_write_returned": false,
+     "speed_mm_s": "1.90",
+     "t_after_write": 3570.747197123,
+     "t_before_write": 3570.747156254,
+     "t_receipt": 3570.747405031
+    },
+    {
+     "label": "3/3",
+     "press": 2,
+     "received_before_the_write_returned": false,
+     "speed_mm_s": "2.34",
+     "t_after_write": 3570.798436929,
+     "t_before_write": 3570.798406498,
+     "t_receipt": 3570.798610207
+    }
+   ],
+   "verdict": "PASS"
+  },
+  "E3": {
+   "checks": {
+    "estop_request_while_goal_1_active": true,
+    "one_estop_key_the_scripted_x_written": true,
+    "x_within_0_95_s_of_sim": true,
+    "x_written_after_goal_1_was_sent": true
+   },
+   "estop_request_t": 3571.003375902,
+   "feedback_precondition": "not applicable: dispatch disabled (shadow rehearsal): no real feedback can exist in shadow",
+   "verdict": "PASS",
+   "x_record": {
+    "attributed_feedback_before_x": 0,
+    "feedback_goal_id": null,
+    "feedback_precondition": "not applicable: dispatch disabled (shadow rehearsal)",
+    "sim_elapsed_since_goal1_seen_s": 0.0,
+    "t_after_write": 3571.000977461,
+    "t_before_write": 3571.000926175,
+    "write_result": 1
+   }
+  },
+  "E4": {
+   "checks": {
+    "faulted_within_0_050_s_of_the_request_node_clock": true,
+    "no_estop_service_fallback": true,
+    "one_cancel_seq_1_in_the_same_handling": true,
+    "one_estop_fault_after_the_write_began": true,
+    "one_teleop_estop_ok_after_the_fault_with_the_node_message": true,
+    "one_transition_to_faulted_why_estop": true
+   },
+   "key_write_to_request_latency_s_recorded_only": 0.002398440999968443,
+   "request_to_faulted_s_node_clock": 0.0,
+   "times": {
+    "cancel_sent": 3571.003375902,
+    "estop_request": 3571.003375902,
+    "faulted": 3571.003375902,
+    "x_after_write": 3571.000977461,
+    "x_before_write": 3571.000926175
+   },
+   "verdict": "PASS"
+  },
+  "E5": {
+   "checks": {
+    "cancel_response_0": true,
+    "modeled_shadow_cancel": true,
+    "result_canceled": true
+   },
+   "error_string": "shadow cancel",
+   "result_status": 5,
+   "verdict": "PASS"
+  },
+  "E6": {
+   "checks": {
+    "faulted_with_no_goal_throughout": true,
+    "measured_hold": true
+   },
+   "end_t": 3617.7888083457947,
+   "hold": {
+    "faulted_with_one_cancel": true,
+    "joint_samples": 1001,
+    "max_joint_motion_rad": 5.888011374745944e-12,
+    "max_tilt_rad": 1.541388099311085e-07,
+    "min_z_m": 0.05449529464297139,
+    "pose_samples": 2430,
+    "result_canceled": true,
+    "verdict": "PASS",
+    "window_sim_s": [
+     155.357,
+     165.357
+    ]
+   },
+   "statuses": 94,
+   "verdict": "PASS"
+  },
+  "E7": {
+   "checks": {
+    "final_state_faulted": true,
+    "last_transition_is_the_estop": true,
+    "no_goal_after_the_fault": true,
+    "no_request_between_x_and_q": true,
+    "no_reset_arm_or_home_after_x": true,
+    "one_goal_in_total": true
+   },
+   "verdict": "PASS"
+  },
+  "E8": {
+   "note": "not applicable: dispatch disabled (shadow rehearsal)",
+   "verdict": "N/A"
+  },
+  "E9": {
+   "controller_log": {
+    "accepted": 0,
+    "cancel_requests": 0,
+    "ok": false,
+    "received": 0
+   },
+   "feedback_messages": 0,
+   "terms": {
+    "captures_before_after_zero_publishers": true,
+    "controller_log_0_received_0_accepted_0_cancel": true,
+    "controller_reference_unchanged": true,
+    "foreign_clients_0_and_publishers_0_in_every_status": true,
+    "joint_trajectory_absent": true,
+    "no_feedback_at_the_driver": true,
+    "no_feedback_in_the_bag": true
+   },
+   "verdict": "PASS"
+  }
+ },
+ "alignment": {
+  "offset": 1794391885.1484365,
+  "offset_s": 1794391885.1484365,
+  "ok": true,
+  "reason": null,
+  "tol": 0.004669666290283203,
+  "uncertainty_s": 0.00116
+ },
+ "bag": {
+  "messages": {
+   "/joint_states": 2294,
+   "/leg_trajectory_controller/controller_state": 1085,
+   "/spiderx/locomotion/status": 214
+  },
+  "open_mode": "sqlite3 mode=ro&immutable=1",
+  "path": "/root/spiderx_evidence/s4d_e_shadow_20261111T104429Z/bag/bag_0.db3",
+  "sha256_after": "c2925073998b43d57d0b409a80f42ab31b5fd8fede66a5f03b938e25886ef534",
+  "sha256_after_scan": "c2925073998b43d57d0b409a80f42ab31b5fd8fede66a5f03b938e25886ef534",
+  "sha256_before": "c2925073998b43d57d0b409a80f42ab31b5fd8fede66a5f03b938e25886ef534",
+  "unchanged": true
+ },
+ "feedback_attribution": {
+  "after_result": [],
+  "goal_id": null,
+  "ids": [],
+  "samples": [],
+  "unattributed": []
+ },
+ "overall": "PASS (SHADOW ONLY: not S4d-E acceptance)",
+ "schema": "spiderx.s4d_e_score/1",
+ "shadow": true
+}

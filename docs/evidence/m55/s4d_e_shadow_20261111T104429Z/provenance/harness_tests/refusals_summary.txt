@@ -1,0 +1,9 @@
+S1 exit 1: REFUSED before the launch (nothing launched, no key): the run installation /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_harness_tests/nonexistent/install is not in the environmen
+S2 exit 1: REFUSED before the launch (nothing launched, no key): the imported gates are not all False
+S3 exit 1: REFUSED before the launch (nothing launched, no key): OD8 time budget
+S4 exit 1: REFUSED before the launch (nothing launched, no key): OD8 time budget
+S5 exit 1: REFUSED before the launch (nothing launched, no key): OD16 disk
+S6 exit 1: ABORT: OD8 time budget before the first key (no key pressed)
+S7 exit 1: ABORT: OD16 disk before recording (no recording, no key pressed)
+S6: key/driver started: no; recorder started: no
+S7: key/driver started: no; recorder started: no

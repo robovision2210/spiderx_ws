@@ -1,0 +1,18 @@
+[11:43:58] cleanup start
+driver: no pid recorded: not running
+teleop sessions: none recorded
+recorder: no pid recorded: not running
+launch group 2638: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 2638 still has: 2638 [sleep] <defunct>;
+launch session 2638: SIGKILL to those
+[11:43:59] cleanup done; relevant processes still present (listed, not killed):
+none
+[11:43:59] cleanup start
+driver: no pid recorded: not running
+teleop sessions: none recorded
+recorder: no pid recorded: not running
+launch group 2638: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 2638 still has: 2638 [sleep] <defunct>;
+launch session 2638: SIGKILL to those
+[11:44:00] cleanup done; relevant processes still present (listed, not killed):
+none

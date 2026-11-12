@@ -1,0 +1,16 @@
+[10:47:16] gates (imported): False False False /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_harness_tests/fake_disabled/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[10:47:16] OD8 before the launch: PASS: watchdog 15812 has 7198 s left >= 1800 + 900 s
+[10:47:16] OD16 before the launch: PASS: 21175545856 B free on /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_harness_tests/S7/bagparent; T 7198 s; E = 2 x 30.8 MB/min (planning assumption) x T = 7389946667 B; need max(5 GiB, 2E + 100000000 B) = 14879893333 B
+[10:47:16] launch
+STUB launch pid 15879
+[10:47:16] controllers: exit 0
+[10:47:19] gazebo gui pid(s)  reniced +19
+[10:47:19] node up after 1 s: locomotion node up in SHADOW mode (dispatch gate False)
+[10:47:19] locomotion node pid(s)  (launch session 15879) reniced -5
+[10:47:22] pre-shadow checks: waiting for go.flag or abort.flag (at most 1500 s)
+[10:48:16] pre-shadow checks passed: test: pre-key checks PASS (stub)
+[10:48:16] OD8 before the first key: PASS: watchdog 15812 has 11000 s left >= 1800 + 900 s
+[10:48:16] captures before
+[10:48:16] OD16 before recording: FAIL: 21174915072 B free on /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_harness_tests/S7/bagparent; T 11000 s; E = 2 x 30.8 MB/min (planning assumption) x T = 11293333333 B; need max(5 GiB, 2E + 100000000 B) = 22686666667 B
+[10:48:16] ABORT: OD16 disk before recording (no recording, no key pressed)
+[10:48:16] end

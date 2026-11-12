@@ -25,7 +25,8 @@ ENABLING_S3 = 'local/m55-s3-20261031T000000Z'
 ENABLING_S4A = 'local/m55-s4a-20261101T000000Z'
 ENABLING_S4B = 'local/m55-s4b-20261102T000000Z'
 ENABLING_S4C = {1: 'local/m55-s4c-l1-20261103T000000Z', 2: 'local/m55-s4c-l2-20261103T000000Z'}
-ENABLING_S4D_M = 'local/m55-s4d-m-20261109T000000Z'       # S4d-M only: no S4d-E pattern
+ENABLING_S4D_M = 'local/m55-s4d-m-20261109T000000Z'       # S4d-M
+ENABLING_S4D_E = 'local/m55-s4d-e-20261111T000000Z'       # S4d-E (S4D_E_CONTRACT.md section 6)
 FAKE_ROS2 = """#!/usr/bin/env bash
 case "$1 $2 $3" in
   "pkg prefix spiderx_controller") echo "{ws}/install/spiderx_controller" ;;
@@ -503,7 +504,6 @@ def test_a_pushed_s4d_m_branch_is_never_deleted(ws, quiet_host):
 
 
 @pytest.mark.parametrize('other', ['local/m55-s4d-20261109T000000Z',
-                                   'local/m55-s4d-e-20261109T000000Z',
                                    'local/m55-s4d-m20261109T000000Z',
                                    'local/m55-s4d-mx-20261109T000000Z',
                                    'local/m55-s4dm-20261109T000000Z',
@@ -551,3 +551,55 @@ def test_a_leftover_m55_node_fails(ws, quiet_host):
     finally:
         dummy.kill()
         dummy.wait()
+
+
+# ------------------------------------------------- S4d-E (docs/S4D_E_CONTRACT.md section 6)
+def test_full_s4d_e_restore_preserves_restores_and_deletes_the_branch(ws, quiet_host):
+    commit = enable_on_branch(ws, ENABLING_S4D_E, m55=True)
+    rc, out = run(ws, '--base base', f'--enabling-ref {ENABLING_S4D_E}', "--build-cmd 'true'",
+                  '--delete-enabling-branch')
+    assert rc == 0, out
+    ev = ws.parent / 'evidence'
+    assert (ev / 'enabling_commit.txt').read_text().split() == [ENABLING_S4D_E, commit]
+    assert '+M55_LOCOMOTION_DISPATCH_ENABLED = True' in (ev / 'enabling_commit.patch').read_text()
+    assert git(ws, 'rev-parse', '--abbrev-ref', 'HEAD') == 'base'
+    assert git(ws, 'branch', '--list', 'local/m55-s4d-*') == ''
+    rep = report(ws)
+    assert 'ok: a. all three gates False' in rep and f'Deleted branch {ENABLING_S4D_E}' in rep
+    assert rep.index('ok: c. m6_live_playback --live refused') < rep.index('Deleted branch')
+
+
+def test_an_s4d_e_branch_is_kept_when_a_check_fails(ws, quiet_host):
+    enable_on_branch(ws, ENABLING_S4D_E, m55=True)
+    rc, _ = run(ws, '--base base', f'--enabling-ref {ENABLING_S4D_E}', '--verify-only',
+                '--delete-enabling-branch')
+    assert rc == 1
+    assert git(ws, 'branch', '--list', ENABLING_S4D_E).strip().lstrip('* ') == ENABLING_S4D_E
+    assert 'not deleted: a check failed' in report(ws)
+
+
+def test_a_pushed_s4d_e_branch_is_never_deleted(ws, quiet_host):
+    enable_on_branch(ws, ENABLING_S4D_E, m55=True)
+    git(ws, 'update-ref', f'refs/remotes/origin/{ENABLING_S4D_E}', ENABLING_S4D_E)
+    rc, _ = run(ws, '--base base', f'--enabling-ref {ENABLING_S4D_E}', "--build-cmd 'true'",
+                '--delete-enabling-branch')
+    assert rc == 1
+    assert git(ws, 'branch', '--list', ENABLING_S4D_E).strip() == ENABLING_S4D_E
+    assert 'a remote-tracking ref exists' in report(ws)
+
+
+@pytest.mark.parametrize('other', ['local/m55-s4d-e20261111T000000Z',
+                                   'local/m55-s4d-ex-20261111T000000Z',
+                                   'local/m55-s4de-20261111T000000Z',
+                                   'local/m55-s4d-E-20261111T000000Z',
+                                   'local/m55-s4d-estop-20261111T000000Z',
+                                   'local/m55-s4d-e',
+                                   'local/m55-s4e-20261111T000000Z',
+                                   'local/s4d-e-20261111T000000Z'])
+def test_s4d_e_look_alike_names_are_never_deleted(ws, quiet_host, other):
+    enable_on_branch(ws, other, m55=True)
+    rc, _ = run(ws, '--base base', f'--enabling-ref {other}', "--build-cmd 'true'",
+                '--delete-enabling-branch')
+    assert rc == 1
+    assert git(ws, 'branch', '--list', other).strip() == other
+    assert 'refusing to delete' in report(ws)

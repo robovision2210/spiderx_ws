@@ -1,0 +1,23 @@
+2026-11-11T11:17:17Z disabled state after the S4d-E SHADOW rehearsal (no enabling at any point; verify-only restore)
+branch claude/spiderx-s4d-e-preparation HEAD 87198b951506b35ee4d95f3c124c0327a9647ae6 worktree entries 0 local/* branches 0 remote-tracking local/* refs 0
+src/spiderx_controller/spiderx_controller/m55_contract.py:19:M55_LOCOMOTION_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m61_live_contract.py:19:M61_LIVE_DISPATCH_ENABLED = False
+src/spiderx_controller/spiderx_controller/m6_live_contract.py:18:LIVE_DISPATCH_ENABLED = False
+== installation A_run_install: /root/spiderx_fresh_disabled_20261111T104338Z/install (2026-11-11T11:15:18Z)
+gates {'LIVE_DISPATCH_ENABLED': False, 'M55_LOCOMOTION_DISPATCH_ENABLED': False, 'M61_LIVE_DISPATCH_ENABLED': False}
+PASS m6_gait_replay.py --live refused, exit 3, HARD-DISABLED
+PASS m6_live_playback --live refused, exit 3, HARD-DISABLED
+INSTALLATION A_run_install VERDICT: PASS
+library goals 54 fingerprints_sha256 62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732 library.json equals the disabled baseline True
+== installation B_workspace: /home/user/spiderx_ws/install (2026-11-11T11:16:11Z)
+gates {'LIVE_DISPATCH_ENABLED': False, 'M55_LOCOMOTION_DISPATCH_ENABLED': False, 'M61_LIVE_DISPATCH_ENABLED': False}
+PASS m6_gait_replay.py --live refused, exit 3, HARD-DISABLED
+PASS m6_live_playback --live refused, exit 3, HARD-DISABLED
+INSTALLATION B_workspace VERDICT: PASS
+library goals 54 fingerprints_sha256 62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732 library.json equals the disabled baseline True
+library.json sha256 (A, B, the run's node library.json, the disabled baseline): 917fc4d796efe234 917fc4d796efe234 917fc4d796efe234 917fc4d796efe234 
+restore report restore_verify_20261111T111223Z.txt: 7 ok lines; VERDICT: DISABLED AND VERIFIED; M6 --live refusals 2 of 2 (after the gates were confirmed False)
+run installation check: RUN INSTALLATION GATES: PASS: all three False, imported from /root/spiderx_fresh_disabled_20261111T104338Z/install
+processes (gz/ros2/m55/driver/bag/teleop/Xvfb/strace/daemon): 0
+watchdog: 2026-11-11T11:12:23Z watchdog 29922 stood down on stopped.flag without acting (no watchdog.txt)
+OVERALL: DISABLED AND VERIFIED (restore verify-only, run installation gates, installations A and B)

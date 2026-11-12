@@ -1,0 +1,10 @@
+workspace /root/spiderx_fresh_disabled_20261111T104338Z; run start 1794393822.0
+spiderx_bringup: 0 registered CTest targets
+spiderx_controller: 50 registered CTest targets, 50 CTest entries, 1943 xunit testcases, failures+errors 0; missing result none; not passed none; stale none -> PASS
+spiderx_description: 0 registered CTest targets
+spiderx_firmware: 0 registered CTest targets
+spiderx_localization: 0 registered CTest targets
+spiderx_mapping: 0 registered CTest targets
+spiderx_navigation: 0 registered CTest targets
+xunit testcases 1943 + CTest entries 50 = 1993; colcon test-result: ('1993', '0', '0', '0')
+COLLECTION VERDICT: PASS

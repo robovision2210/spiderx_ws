@@ -1,0 +1,31 @@
+[11:54:20] gates (imported): True False False /root/spiderx_e_live_enabled_20261111T113831Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[11:54:20] enabling branch: recorded 'local/m55-s4d-e-20261111T115013Z', checked out 'local/m55-s4d-e-20261111T115013Z', diff vs 16d939f5a0e06afa3478093f0b491e3e8ce60673: 1 1 src/spiderx_controller/spiderx_controller/m55_contract.py;1 1 src/spiderx_controller/test/m55_gate.py; remote-tracking refs: 0; worktree entries: 0
+[11:54:20] enabling-to-launch: PASS: 247 s since the enabling start <= 900 s
+[11:54:20] OD8 before the launch: PASS: watchdog 5343 has 6953 s left >= 1800 + 900 s
+[11:54:20] OD16 before the launch: PASS: 21048266752 B free on /root/spiderx_evidence/s4d_e_live_20261111T113831Z; T 6953 s; E = 2 x 30.8 MB/min (planning assumption) x T = 7138413333 B; need max(5 GiB, 2E + 100000000 B) = 14376826667 B
+[11:54:20] launch
+launch pid 7074 pgid 7074 xvfb 7052
+both controllers active after 10 s of polling
+[INFO] [1794398070.699721970] [_ros2cli_7408]: waiting for service /controller_manager/list_controllers to become available...
+joint_state_broadcaster   joint_state_broadcaster/JointStateBroadcaster          active
+leg_trajectory_controller joint_trajectory_controller/JointTrajectoryController  active
+[11:54:37] controllers: exit 0
+[11:54:40] gazebo gui pid(s) 7224  reniced +19
+[11:55:20] node up after 41 s: locomotion node up in DISPATCH mode (dispatch gate True); levels [1.06, 1.9, 2.34] mm/s
+[11:55:20] locomotion node pid(s) 7121  (launch session 7074) reniced -5
+[11:55:23] PRE-KEY CHECKPOINT: waiting for go.flag or abort.flag (at most 1500 s)
+[11:56:18] pre-key checks passed: pre-key checks PASS (PASS: one process maps the plugin and it belongs to this launch: 7221; 3 library lines PASS; gain/update_rate/period per log_checks and params; node action clients: 1, of which the trajectory action: 1; publishers towards joint_trajectory: 0; launch-log DISPATCH lines: 1; settle
+[11:56:18] OD8 before the first key: PASS: watchdog 5343 has 6835 s left >= 1800 + 900 s
+[11:56:18] captures before
+[11:56:20] OD16 before recording: PASS: 21047029760 B free on /root/spiderx_evidence/s4d_e_live_20261111T113831Z; T 6833 s; E = 2 x 30.8 MB/min (planning assumption) x T = 7015213333 B; need max(5 GiB, 2E + 100000000 B) = 14130426667 B
+[11:56:24] driver
+[11:58:03] driver exit 0: {"after_close": {"goals_recorded": 1, "last_refusal": {"reason": "faulted_reset_required", "request": "disarm", "wall": 1418.625025652}, "max_seq": 1, "state": "FAULTED"}, "close": {"event": "teleop_c
+[11:58:06] captures after
+[11:58:09] bag stopped
+[11:58:09] teleop sessions the driver logged: 8614 ; teleop processes left in them after the driver (its q close should leave none): none
+[11:58:09] screenshot 2: exit 0
+[11:58:11] strace (signals only) attached to simulator server 7221: strace: Process 7221 attached 
+[11:58:11] stop launch
+[11:58:17] server exit (strace): +++ exited with 0 +++
+[11:58:17] end
+guarded run exit 0

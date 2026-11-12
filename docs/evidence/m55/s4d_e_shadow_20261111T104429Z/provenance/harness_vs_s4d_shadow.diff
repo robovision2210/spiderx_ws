@@ -1,0 +1,192 @@
+# S4d-E shadow harness (tools/) vs the committed S4d-M shadow harness (tools_s4d_shadow/, manifest-verified)
+--- tools_s4d_shadow/env.sh	2026-11-10 07:23:12.450750637 +0000
++++ tools/env.sh	2026-11-11 10:44:29.780790286 +0000
+@@ -5,10 +5,10 @@
+ # patches 0001 and 0002), after the toolchain and before the workspace, so ament, pluginlib and
+ # the launch resolve it first.
+ source /root/spiderx_gz_overlay_ws_r2/install/local_setup.bash
+-# S4d-M shadow change (the only one): the workspace layer is the fresh DISABLED run installation,
+-# built and tested at 8f99bcc in new bases (batch step 2, --symlink-install), not the existing
+-# workspace installation /home/user/spiderx_ws/install, which is not sourced.
+-source /root/spiderx_fresh_disabled_20261110T071506Z/install/setup.bash
++# S4d-E shadow change (the only one): the workspace layer is the fresh DISABLED run installation,
++# built and tested at 87198b9 (the S4d-E branch) in new bases (E batch step 6, --symlink-install),
++# not the existing workspace installation /home/user/spiderx_ws/install, which is not sourced.
++source /root/spiderx_fresh_disabled_20261111T104338Z/install/setup.bash
+ # Discovery: identical in every shell. Domain 0 as documented (observer --domain-id 0);
+ # localhost-only so nothing outside this machine can join or be joined.
+ export ROS_DOMAIN_ID=0
+== stage_start.sh: unchanged
+== stage_stop.sh: unchanged
+== stage_wait_controllers.sh: unchanged
+== settle_check.py: unchanged
+== library_json.py: unchanged
+--- tools_s4d_shadow/cleanup.sh	2026-11-10 07:24:58.055812521 +0000
++++ tools/cleanup.sh	2026-11-11 10:44:29.784420118 +0000
+@@ -1,9 +1,9 @@
+ #!/usr/bin/env bash
+-# S4d-M shadow: idempotent stop of the processes THIS run owns (from the S4c level-2 shadow
++# S4d-E shadow (from the S4d-M shadow cleanup.sh; only the driver name changed): idempotent stop of the processes THIS run owns (from the S4c level-2 shadow
+ # cleanup.sh). S4d change: a process is stopped only through a pid, process group or session that
+ # this run recorded in RUN, and only if its command line is the expected one; a name pattern alone
+ # never kills anything here. Owned:
+-#  - the driver: RUN/driver.pid (written by the run script just before exec), s4d_driver.py;
++#  - the driver: RUN/driver.pid (written by the run script just before exec), s4d_e_driver.py;
+ #  - each teleop the driver started: its pty session (pty.fork, so the session id is the pid the
+ #    driver logged as "teleop_started" in RUN/driver/driver.jsonl), m55_teleop_keyboard;
+ #  - the recorder: RUN/bag.pid (setsid: process group = pid), "bag record";
+@@ -19,7 +19,7 @@
+ rd() { [ -f "$RUN/$1" ] && tr -dc '0-9' < "$RUN/$1"; }
+ is() { [ -n "$1" ] && kill -0 "$1" 2>/dev/null && tr '\0' ' ' < "/proc/$1/cmdline" 2>/dev/null | grep -q -- "$2"; }
+ DP=$(rd driver.pid)
+-if is "$DP" s4d_driver.py; then
++if is "$DP" s4d_e_driver.py; then
+   kill -INT "$DP"; for i in $(seq 1 20); do kill -0 "$DP" 2>/dev/null || break; sleep 0.5; done
+   if kill -0 "$DP" 2>/dev/null; then kill -KILL "$DP"; echo "driver $DP: SIGINT, then SIGKILL after 10 s"; else echo "driver $DP: stopped by SIGINT"; fi
+ else echo "driver: ${DP:-no pid recorded}: not running"; fi
+== watchdog.sh: unchanged
+== run_install_gates.sh: unchanged
+--- tools_s4d_shadow/prelaunch_checks.sh	2026-11-10 07:26:20.633825016 +0000
++++ tools/prelaunch_checks.sh	2026-11-11 10:44:29.788420119 +0000
+@@ -10,7 +10,7 @@
+ O=/root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control
+ F=0
+ echo "== source order (AMENT_PREFIX_PATH, toolchain/overlay/workspace positions)"
+-echo "$AMENT_PREFIX_PATH" | tr ":" "\n" | grep -n -E "gz_overlay|envs/humble$|spiderx_fresh_disabled_20261110T071506Z/install/spiderx_(controller|description|bringup)$|spiderx_ws/install"
++echo "$AMENT_PREFIX_PATH" | tr ":" "\n" | grep -n -E "gz_overlay|envs/humble$|spiderx_fresh_disabled_20261111T104338Z/install/spiderx_(controller|description|bringup)$|spiderx_ws/install"
+ echo "ROS_DOMAIN_ID=$ROS_DOMAIN_ID ROS_LOCALHOST_ONLY=$ROS_LOCALHOST_ONLY RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-<unset>} ROS_DISCOVERY_SERVER=${ROS_DISCOVERY_SERVER:-<unset>} DISPLAY=$DISPLAY"
+ echo "== the existing workspace installation must not be in the environment"
+ if env | grep -E "^(AMENT_PREFIX_PATH|CMAKE_PREFIX_PATH|COLCON_PREFIX_PATH|PYTHONPATH|LD_LIBRARY_PATH|PATH)=" | grep -q "/home/user/spiderx_ws/install"; then echo "FAIL /home/user/spiderx_ws/install is in the environment"; F=1
+@@ -38,6 +38,6 @@
+ want = {\"M55_LOCOMOTION_DISPATCH_ENABLED\": False, \"M61_LIVE_DISPATCH_ENABLED\": False, \"LIVE_DISPATCH_ENABLED\": False}
+ for mod, name in ((\"m55_contract\",\"M55_LOCOMOTION_DISPATCH_ENABLED\"),(\"m61_live_contract\",\"M61_LIVE_DISPATCH_ENABLED\"),(\"m6_live_contract\",\"LIVE_DISPATCH_ENABLED\")):
+     m = importlib.import_module(\"spiderx_controller.\"+mod); v = getattr(m, name)
+-    print(name, v, m.__file__, \"->\", os.path.realpath(m.__file__)); assert v is want[name] and m.__file__.startswith(\"/root/spiderx_fresh_disabled_20261110T071506Z/install/\") and os.path.realpath(m.__file__).startswith(\"/home/user/spiderx_ws/src/\")
++    print(name, v, m.__file__, \"->\", os.path.realpath(m.__file__)); assert v is want[name] and m.__file__.startswith(\"/root/spiderx_fresh_disabled_20261111T104338Z/install/\") and os.path.realpath(m.__file__).startswith(\"/home/user/spiderx_ws/src/\")
+ print(\"PASS gates M55 False, M61 False, M6.0-D False, imported from the run installation (symlinks into the workspace src/)\")" ) || F=1
+ [ "$F" = 0 ] && echo "PRELAUNCH VERDICT: PASS" || echo "PRELAUNCH VERDICT: FAIL"
+--- tools_s4d_shadow/premotion_checks.sh	2026-11-10 07:29:40.582812759 +0000
++++ tools/premotion_checks.sh	2026-11-11 10:44:29.787943098 +0000
+@@ -88,7 +88,7 @@
+ CTL=$(timeout 30 ros2 control list_controllers 2>&1 | strip)
+ ACT=$(timeout 30 ros2 action info /leg_trajectory_controller/follow_joint_trajectory 2>&1)
+ TOP=$(timeout 30 ros2 topic info /leg_trajectory_controller/joint_trajectory 2>&1)
+-FORB=$(pgrep -af "teleop|s[23]_driver|s4a_driver|s4b_driver|s4c_driver|s4d_driver" | grep -v -E "pgrep|premotion_checks" || true)
++FORB=$(pgrep -af "teleop|s[23]_driver|s4a_driver|s4b_driver|s4c_driver|s4d_driver|s4d_e_driver" | grep -v -E "pgrep|premotion_checks" || true)
+ NODEP=$(pgrep -f "spiderx_controller/m55_locomotion_node" | tr '\n' ' '); NODEP=$(echo $NODEP)
+ NODESID=$(for p in $NODEP; do ps -o sid= -p $p | tr -d ' '; done | sort -u | tr '\n' ' '); NODESID=$(echo $NODESID)
+ NINFO=$(timeout 30 ros2 node info /spiderx_locomotion 2>&1)
+--- tools_s4d_shadow/restore_cmd.sh	2026-11-10 07:29:29.261923981 +0000
++++ tools/restore_cmd.sh	2026-11-11 10:44:54.223419797 +0000
+@@ -1,17 +1,19 @@
+ #!/usr/bin/env bash
+-# S4d-M shadow verification of the disabled state (the S4c level-2 shadow restore_cmd.sh): nothing is
+-# enabled in this run, so --verify-only against the disabled baseline commit (no checkout, no
+-# rebuild, no enabling ref, no branch deletion), with the run's pid files and an explicit evidence
+-# directory. S4d change (OD12, M15): then the run installation (the fresh disabled installation this
+-# run sourced) is verified in a fresh environment (run_install_gates.sh). Exit 0 only for DISABLED AND
+-# VERIFIED and the run installation's three gates False.
+-R=/root/spiderx_evidence/s4d_shadow_20261110T072920Z
++# S4d-E shadow verification of the disabled state (the S4d-M shadow restore_cmd.sh): nothing is enabled
++# in this run, so --verify-only against the E branch commit that was validated (no checkout, no
++# rebuild, no enabling ref, no branch deletion), with the run's pid files (passed only if they exist,
++# as in the tested S4d-M live restore_cmd.sh: before a launch there is nothing to stop) and an
++# explicit evidence directory; then the run installation (the fresh disabled E installation this
++# run sourced) in a fresh environment (run_install_gates.sh). Exit 0 only for DISABLED AND VERIFIED
++# and the run installation's three gates False.
++R=/root/spiderx_evidence/s4d_e_shadow_20261111T104429Z
++ARGS=(); [ -f $R/run/launch.pid ] && ARGS+=(--launch-pid-file $R/run/launch.pid)
++[ -f $R/run/xvfb.pid ] && ARGS+=(--xvfb-pid-file $R/run/xvfb.pid)
+ cd /home/user/spiderx_ws && env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+-  bash scripts/m61_restore_and_verify_disabled.sh --base 8f99bcc4ab27294265da91a31ce03999423acc7f \
+-  --evidence $R/restore --ros-setup /opt/mm/activate.sh --verify-only \
+-  --launch-pid-file $R/run/launch.pid --xvfb-pid-file $R/run/xvfb.pid
++  bash scripts/m61_restore_and_verify_disabled.sh --base 87198b951506b35ee4d95f3c124c0327a9647ae6 \
++  --evidence $R/restore --ros-setup /opt/mm/activate.sh --verify-only "${ARGS[@]}"
+ RC1=$?
+-bash $R/tools/run_install_gates.sh /root/spiderx_fresh_disabled_20261110T071506Z/install $R/run_install
++bash $R/tools/run_install_gates.sh /root/spiderx_fresh_disabled_20261111T104338Z/install $R/run_install
+ RC2=$?
+ echo "restore --verify-only exit $RC1; run installation gates exit $RC2"
+ [ $RC1 = 0 ] && [ $RC2 = 0 ]
+--- tools_s4d_shadow/s4d_shadow_run.sh	2026-11-10 07:25:37.468581029 +0000
++++ tools/s4d_e_shadow_run.sh	2026-11-11 10:44:54.223551707 +0000
+@@ -1,30 +1,28 @@
+ #!/usr/bin/env bash
+-# S4d-M SHADOW rehearsal (ONE free-base launch; all three gates False; no goal or cancel may reach the
+-# controller): the S4c level-2 shadow run script with the committed S4d driver,
+-# scripts/s4/s4d_driver.py --shadow-rehearsal (the 111-goal plan, the close while moving and the
+-# zero-goal reconnect probe). No enabling branch or patch, no live dispatch, no retry: a failure ends
+-# the attempt. Kept from S4c:
++# S4d-E SHADOW rehearsal (ONE free-base launch; all three gates False; no goal, cancel or feedback may
++# reach or come from the controller): the tested S4d-M shadow run script with the committed S4d-E
++# driver, scripts/s4/s4d_e_driver.py --shadow-rehearsal (docs/S4D_E_CONTRACT.md section 5: + +, arm,
++# one planned shadow goal, x while it is in flight, its modeled cancellation, the measured hold and
++# q). No enabling branch or patch, no live dispatch, no retry: a failure ends the attempt. Kept:
+ #  1. the launch itself starts the M5.5 node (SHADOW: no action client, sends nothing; its evidence
+ #     in RUN/node); the launch's GUI is reniced to +19 and its node to -5;
+ #  2. once the node is up the run waits for the operator's pre-shadow checks (premotion_checks.sh,
+ #     settle_check.py, one screenshot): go.flag starts the driver; abort.flag, or no decision within
+ #     PREMOTION_WAIT_S, stops with no key pressed;
+-#  3. one recorder outside the repository, without _action/status or /clock; captures before and
+-#     after; one screenshot after a completed script; the simulator server's own exit by strace.
+-# S4d changes (harness_vs_s4c_l2_shadow.diff):
+-#  a. the environment must hold the fresh disabled run installation and not the existing workspace
+-#     installation, and the imported gates must all be False, or nothing is launched;
+-#  b. OD8: the watchdog (armed before this script) must be running, with at least the 90-minute
+-#     script cap + 15 min left, before the launch and again before the first key;
+-#  c. OD16: the disk rule on the bag's filesystem, before the launch and again just before recording;
+-#  d. the driver's and the recorder's pids are recorded (RUN/driver.pid, RUN/bag.pid) for cleanup.sh,
+-#     which stops only processes this run owns; the teleops left after the driver are recorded,
+-#     then stopped through the sessions the driver logged, not by a name pattern.
+-# Usage: s4d_shadow_run.sh <run dir> <bag dir>
++#  3. one recorder outside the repository, without _action/status or /clock, stopped BEFORE the
++#     launch is stopped; captures before and after; one screenshot after a completed script; the
++#     simulator server's own exit by strace (a SIGKILL is reported as such, never as graceful);
++#  4. the fresh disabled run installation only (refused otherwise), gates all False;
++#  5. OD8: the watchdog must have the E driver's 30-minute cap + 15 min left, before the launch and
++#     again before the first key; OD16: the disk rule before the launch and before recording;
++#  6. owned-process cleanup through the recorded pids, groups and sessions (cleanup.sh).
++# E changes (provenance/harness_vs_s4d_shadow.diff): the run installation, the driver, the 30-minute
++# cap in OD8; cleanup.sh and premotion_checks.sh know the E driver's name.
++# Usage: s4d_e_shadow_run.sh <run dir> <bag dir>
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools; WS=/home/user/spiderx_ws
+-RUNINST=/root/spiderx_fresh_disabled_20261110T071506Z/install
++RUNINST=/root/spiderx_fresh_disabled_20261111T104338Z/install
+ PREMOTION_WAIT_S=${PREMOTION_WAIT_S:-1500}
+-SCRIPT_CAP_S=5400; AFTER_S=900          # OD8: the driver's 90-minute cap; stop, cleanup, restore, verification
++SCRIPT_CAP_S=1800; AFTER_S=900          # OD8: the E driver's 30-minute cap; stop, cleanup, restore, verification
+ source $EVT/env.sh
+ step() { echo "[$(date -u +%T)] $*" | tee -a $RUN/steps.log; }
+ mkdir -p $RUN/node $RUN/captures
+@@ -105,7 +103,7 @@
+ ( sleep 120; top -b -n1 -w 160 | head -22 > $RUN/captures/top_during.txt;
+   ps -o pid,ni,pcpu,args -C ruby,python3,parameter_bridge,robot_state_publisher -w | cut -c1-160 >> $RUN/captures/top_during.txt ) &
+ step "driver"
+-bash -c 'echo $$ > "$0"; exec python3 "$@"' $RUN/driver.pid $WS/scripts/s4/s4d_driver.py --out $RUN/driver --shadow-rehearsal > $RUN/driver.out 2>&1; DRC=$?
++bash -c 'echo $$ > "$0"; exec python3 "$@"' $RUN/driver.pid $WS/scripts/s4/s4d_e_driver.py --out $RUN/driver --shadow-rehearsal > $RUN/driver.out 2>&1; DRC=$?
+ step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
+ sleep 3; step "captures after"; cap after
+ kill -INT -- -$BP 2>/dev/null; for i in $(seq 1 30); do pgrep -g $BP >/dev/null || break; sleep 0.5; done
+--- tools_s4d_shadow/s4d_shadow_guarded.sh	2026-11-10 07:23:24.484692035 +0000
++++ tools/s4d_e_shadow_guarded.sh	2026-11-11 10:44:54.223629055 +0000
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+-# The S4d-M shadow run with cleanup armed BEFORE launch (as the S4c level-2 shadow's guarded
++# The S4d-E shadow run with cleanup armed BEFORE launch (as the S4d-M shadow's guarded
+ # wrapper): cleanup.sh (owned processes only) runs on success, failure or interruption.
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools
+ mkdir -p "$RUN"
+ trap 'bash "$EVT/cleanup.sh" "$RUN" >> "$RUN/cleanup.log" 2>&1' EXIT INT TERM
+-bash "$EVT/s4d_shadow_run.sh" "$RUN" "$BAG"
++bash "$EVT/s4d_e_shadow_run.sh" "$RUN" "$BAG"
+--- tools_s4d_shadow/analyze_s4d_shadow_supplementary.py	2026-11-10 07:29:40.599146421 +0000
++++ tools/analyze_s4d_e_shadow_supplementary.py	2026-11-11 10:44:29.796420119 +0000
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-"""SUPPLEMENTARY, read-only analysis of the ONE S4d-M SHADOW rehearsal (no ROS graph; the bag
++"""SUPPLEMENTARY, read-only analysis of the ONE S4d-E (was: S4d-M) SHADOW rehearsal (no ROS graph; the bag
+ opened read-only/immutable). It is the S4c level-2 shadow supplementary analysis (the S4b live one),
+ unchanged but for this docstring: the verdict is the committed score_s4d.py --shadow output
+ (score/summary.json), never this file. It records RTF, node-observed ages, transitions, controller
+== new: input_checks.sh (E input checks); the S4d-M shadow input_checks.sh is not used

@@ -1,0 +1,21 @@
+== installation B_workspace: /home/user/spiderx_ws/install (2026-11-11T12:00:02Z)
+PASS the other installation (/root/spiderx_e_live_enabled_20261111T113831Z/install) is not in this environment
+ros2 pkg prefix spiderx_controller: /home/user/spiderx_ws/install/spiderx_controller
+PASS the package prefix is this installation
+module m55_contract /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py (this installation: True )
+module m55_locomotion /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_locomotion.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_locomotion.py (this installation: True )
+module m55_teleop /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_teleop.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_teleop.py (this installation: True )
+module m61_live_contract /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py (this installation: True )
+module m6_action_client /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_action_client.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_action_client.py (this installation: True )
+module m6_live_contract /home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py (this installation: True )
+gates {'LIVE_DISPATCH_ENABLED': False, 'M55_LOCOMOTION_DISPATCH_ENABLED': False, 'M61_LIVE_DISPATCH_ENABLED': False}
+library {'baseline_library_json_sha256': '917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e', 'fingerprints_sha256': '62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732', 'goals': 54, 'library_json_equals_baseline': True, 'library_json_sha256': '917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e'}
+config {'equals_src': True, 'path': '/home/user/spiderx_ws/install/spiderx_controller/share/spiderx_controller/config/m55_locomotion.yaml', 'resolves_to': '/home/user/spiderx_ws/src/spiderx_controller/config/m55_locomotion.yaml', 'sha256': 'ab0dccd43fefe877fac21e1c51d1fdd0ae197ac456b8c42502b0bb7ba5e42a93', 'src_sha256': 'ab0dccd43fefe877fac21e1c51d1fdd0ae197ac456b8c42502b0bb7ba5e42a93'}
+PASS all three gates False, every module imported from this installation
+executable m6_gait_replay.py: /home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m6_gait_replay.py -> /home/user/spiderx_ws/src/spiderx_controller/scripts/m6_gait_replay.py
+PASS m6_gait_replay.py --live refused, exit 3, HARD-DISABLED
+executable m6_live_playback: /home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m6_live_playback -> /home/user/spiderx_ws/src/spiderx_controller/scripts/m6_live_playback
+PASS m6_live_playback --live refused, exit 3, HARD-DISABLED
+PASS library.json = the disabled baseline
+PASS the loaded config = src
+INSTALLATION B_workspace VERDICT: PASS

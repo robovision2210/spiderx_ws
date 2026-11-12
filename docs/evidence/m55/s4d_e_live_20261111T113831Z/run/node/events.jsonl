@@ -1,0 +1,17 @@
+{"event": "transition", "n": 1, "previous": "DISARMED", "state": "READY", "wall": 1371.208947434, "why": "arm"}
+{"event": "request", "message": "armed at boundary 0 (level 0, posture error 0.0000 rad)", "n": 2, "request": "arm", "state": "READY", "wall": 1371.208947434}
+{"event": "level_change", "level": 2, "n": 3, "previous": 0, "state": "READY", "wall": 1371.37075437}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 4.635782383078757e-09, "direction": 1, "duration_s": 1.9, "event": "goal_sent", "fingerprint": "748bd1df2da4252417017fbdb8f68ac3ffe63725c3c1c1791802977fffb28690", "kind": "shift", "leg": null, "level": 2, "n": 4, "phase": 0, "points": 18, "seq": 1, "state": "READY", "wall": 1371.37075437}
+{"event": "transition", "n": 5, "previous": "READY", "state": "STARTING", "wall": 1371.37075437, "why": "dispatch"}
+{"accepted": true, "event": "goal_response", "n": 6, "seq": 1, "state": "STARTING", "wall": 1371.420438274}
+{"event": "transition", "n": 7, "previous": "STARTING", "state": "WALKING", "wall": 1371.420438274, "why": "accepted"}
+{"event": "fault", "n": 8, "reason": "estop", "state": "WALKING", "wall": 1371.459638147}
+{"event": "transition", "n": 9, "previous": "WALKING", "state": "FAULTED", "wall": 1371.459638147, "why": "estop"}
+{"event": "cancel_sent", "n": 10, "seq": 1, "state": "FAULTED", "wall": 1371.459638147}
+{"event": "request", "message": "emergency stop: goal cancelled (if any), holding; reset and arm to continue", "n": 11, "request": "estop", "state": "FAULTED", "wall": 1371.459638147}
+{"code": 0, "event": "cancel_response", "n": 12, "seq": 1, "state": "FAULTED", "wall": 1371.472122664}
+{"error_code": 0, "error_string": "", "event": "result", "n": 13, "seq": 1, "state": "FAULTED", "status": 5, "wall": 1371.520558915}
+{"event": "refused", "n": 14, "reason": "faulted_reset_required", "request": "disarm", "state": "FAULTED", "wall": 1418.621863528}
+{"event": "request", "message": "not moving (FAULTED); held until a zero command", "n": 15, "request": "stop", "state": "FAULTED", "wall": 1418.623626583}
+{"event": "refused", "n": 16, "reason": "faulted_reset_required", "request": "disarm", "state": "FAULTED", "wall": 1418.625025652}
+{"event": "request", "message": "not moving (FAULTED); held until a zero command", "n": 17, "request": "stop", "state": "FAULTED", "wall": 1418.626189398}

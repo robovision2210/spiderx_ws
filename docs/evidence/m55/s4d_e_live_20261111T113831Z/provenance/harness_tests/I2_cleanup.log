@@ -1,0 +1,18 @@
+[11:44:18] cleanup start
+driver: 3005: not running
+teleop sessions: none recorded
+recorder group 2976: SIGINT, then SIGKILL after 15 s
+launch group 2896: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 2896 still has: 2896 [sleep] <defunct>;
+launch session 2896: SIGKILL to those
+[11:44:34] cleanup done; relevant processes still present (listed, not killed):
+none
+[11:44:34] cleanup start
+driver: 3005: not running
+teleop sessions: none recorded
+recorder: 2976: not running
+launch group 2896: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 2896 still has: 2896 [sleep] <defunct>;
+launch session 2896: SIGKILL to those
+[11:44:35] cleanup done; relevant processes still present (listed, not killed):
+none

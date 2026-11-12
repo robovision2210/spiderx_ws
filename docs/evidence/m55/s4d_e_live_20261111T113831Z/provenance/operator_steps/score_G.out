@@ -1,0 +1,12 @@
+scorer exit 0 (11 s)
+{"E1": "PASS", "E2": "PASS", "E3": "PASS", "E4": "PASS", "E5": "PASS", "E6": "PASS", "E7": "PASS", "E8": "PASS", "E9": "PASS", "E10": "PASS", "E11": "PASS", "E12": "PASS"} PASS
+analysis exit 0
+before restore and scoring 2026-11-11T11:58:45Z:
+858c6eb4c393a08e33a57f30027ba81f9c8b7c26068b229957ada2bce6128741  /root/spiderx_evidence/s4d_e_live_20261111T113831Z/bag/bag_0.db3
+51060736 bytes
+after scoring 2026-11-11T12:01:20Z:
+858c6eb4c393a08e33a57f30027ba81f9c8b7c26068b229957ada2bce6128741  /root/spiderx_evidence/s4d_e_live_20261111T113831Z/bag/bag_0.db3
+51060736 bytes
+after the supplementary analysis 2026-11-11T12:01:21Z:
+858c6eb4c393a08e33a57f30027ba81f9c8b7c26068b229957ada2bce6128741  /root/spiderx_evidence/s4d_e_live_20261111T113831Z/bag/bag_0.db3
+51060736 bytes

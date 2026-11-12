@@ -1,0 +1,3 @@
+shell A: ROS_DOMAIN_ID=0 ROS_LOCALHOST_ONLY=1 DISPLAY=:77
+rmw rmw_fastrtps_cpp
+AMENT_PREFIX_PATH head: /root/spiderx_fresh_disabled_20261111T104338Z/install/spiderx_scripts

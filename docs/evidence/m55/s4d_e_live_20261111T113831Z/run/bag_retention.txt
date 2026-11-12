@@ -1,0 +1,37 @@
+S4d-E LIVE attempt raw recording (rosbag2), recorded 2026-11-11 in the cloud session container.
+The bag is NOT in the repository. This file records what is needed to identify and read it.
+
+Location (cloud container only, not durable):  /root/spiderx_evidence/s4d_e_live_20261111T113831Z/bag/
+  bag_0.db3      51060736 bytes  sha256 858c6eb4c393a08e33a57f30027ba81f9c8b7c26068b229957ada2bce6128741
+  metadata.yaml      3540 bytes  sha256 dba4df6f4d6624b8d5919f7108f71acc5d76097fd6a0569adf0083279e4a217d
+  (metadata.yaml is byte-identical to run/bag_metadata.yaml; bag hashes before the restore, after scoring and
+  after the supplementary analysis: run/bag_hashes.txt, all three equal)
+
+Format: rosbag2 metadata version 5, storage plugin sqlite3, serialization cdr, no compression, one file.
+Recorded with ROS 2 Humble (RoboStack) by `ros2 bag record -s sqlite3 --include-hidden-topics` (tools/s4d_e_live_run.sh).
+Start 1794398181.065580218 s since the epoch (2026-11-11T11:56:21Z); duration 107.646926731 s; 10088 messages.
+
+Topics (type; messages):
+  /spiderx/locomotion/status                                           std_msgs/msg/String (JSON text)                           219
+  /joint_states                                                        sensor_msgs/msg/JointState                               2264
+  /spiderx/sim/world_poses                                             tf2_msgs/msg/TFMessage                                   5571
+  /cmd_vel                                                             geometry_msgs/msg/Twist                                   949
+  /leg_trajectory_controller/controller_state                          control_msgs/msg/JointTrajectoryControllerState          1084
+  /leg_trajectory_controller/follow_joint_trajectory/_action/feedback  control_msgs/action/FollowJointTrajectory_FeedbackMessage   1
+    (subscribed by the recorder at 1794398181.062, before the first key; the one message is goal 1's feedback)
+  /leg_trajectory_controller/joint_trajectory: requested, never published, so absent from the bag (no publisher).
+  Not recorded by design: _action/status (the node counts its subscribers as foreign action clients) and /clock.
+
+To read it later:
+- Keep bag_0.db3 and metadata.yaml together in one directory. `ros2 bag info <dir>` and `ros2 bag play <dir>` need
+  ROS 2 Humble with the rosbag2 sqlite3 plugin and the message packages above.
+- score_s4d_e.py (at 16d939f = 87198b9 for this file) reads bag_0.db3 directly with sqlite3 (read-only, immutable)
+  and rclpy deserialization. Re-scoring also needs this evidence directory's run/ (driver/driver.jsonl and launch.log
+  decompressed from their .gz copies), disabled/library.json, restore/restore_verify_20261111T115845Z.txt,
+  run_install/run_install_gates.json and tools/s4d_e_live_run.sh, without --shadow.
+- Check the bytes first: `sha256sum bag_0.db3` must print 858c6eb4c393a08e33a57f30027ba81f9c8b7c26068b229957ada2bce6128741.
+
+Export: the ORIGINAL bag_0.db3 and metadata.yaml were delivered as conversation attachments by 2026-11-11T17:27:17Z
+  (uncompressed: 51060736 bytes is below the 500 MiB attachment limit, so no compression was needed; the copies sent
+  were verified against the sha256 values above before sending).
+Preservation: a durable off-container copy is UNCONFIRMED. A committed hash is not a backup.

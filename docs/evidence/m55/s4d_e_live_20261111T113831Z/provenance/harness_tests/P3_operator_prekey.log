@@ -1,0 +1,2 @@
+[11:46:54] operator: waiting for the PRE-KEY CHECKPOINT (premotion_wait.flag or the steps.log label), at most 120 s
+[11:46:55] operator: the run ended before the checkpoint: [11:46:54] end

@@ -1,0 +1,30 @@
+== 2026-11-11T10:57:34Z repository
+branch claude/spiderx-s4d-e-preparation HEAD 87198b951506b35ee4d95f3c124c0327a9647ae6 origin 87198b951506b35ee4d95f3c124c0327a9647ae6 worktree entries 0 local/* 0
+PASS the validated E SHA, clean, = origin, no local/* branch
+M55_LOCOMOTION_DISPATCH_ENABLED = False;M61_LIVE_DISPATCH_ENABLED = False;LIVE_DISPATCH_ENABLED = False;
+PASS source gates all False
+== step 6 (fresh disabled validation at the same SHA)
+PASS step 6 at 87198b951506b35ee4d95f3c124c0327a9647ae6: 1993/0/0/0, both installations PASS
+== the run installation /root/spiderx_fresh_disabled_20261111T104338Z/install: python modules are symlinks into src/ equal to their HEAD blobs
+60 symlinked modules, 0 differ
+PASS run installation = HEAD
+== r2 overlay libraries vs provenance
+PASS libgz_ros2_control-system.so 3a8f20441caad3ca
+PASS libgz_hardware_plugins.so 06777e140ea1858b
+PASS config ab0dccd4
+== E tooling = HEAD blobs
+6beb86a70b84 scripts/s4/s4d_e_driver.py = HEAD
+0981d91113b3 scripts/s4/score_s4d_e.py = HEAD
+5b66d2ca5b6d scripts/s4/s4c_driver.py = HEAD
+bb2b815a4a92 scripts/s4/s4a_driver.py = HEAD
+3ae36fcaa923 scripts/s3/s3_driver.py = HEAD
+85dcee4bf19e scripts/s2/s2_driver.py = HEAD
+9692c019441d scripts/s4/score_s4d.py = HEAD
+6df3f9fbe714 scripts/m61_restore_and_verify_disabled.sh = HEAD
+== host
+PASS no relevant process
+PASS display :77 free
+PASS no run or bag directory yet
+PASS the E shadow launch is unused (journal)
+PASS OD16 now: 21171666944 B free; need 14884000000 B (T 7200 s; 2x 30.8 MB/min planning assumption)
+INPUT VERDICT: PASS

@@ -1,0 +1,5 @@
+[10:46:13] gates (imported): False False False /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_harness_tests/fake_disabled/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[10:46:13] OD8 before the launch: PASS: watchdog 15301 has 11999 s left >= 1800 + 900 s
+[10:46:13] OD16 before the launch: FAIL: 21176070144 B free on /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/e_harness_tests/S5/bagparent; T 11999 s; E = 2 x 30.8 MB/min (planning assumption) x T = 12318973333 B; need max(5 GiB, 2E + 100000000 B) = 24737946667 B
+[10:46:13] REFUSED before the launch (nothing launched, no key): OD16 disk
+[10:46:13] end

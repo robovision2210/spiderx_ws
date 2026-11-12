@@ -1,0 +1,18 @@
+commit 01ed29ed70176656a6bcb383628bf0edc8f464c1
+Author:     Claude <noreply@anthropic.com>
+AuthorDate: Wed Nov 11 11:50:13 2026 +0000
+Commit:     Claude <noreply@anthropic.com>
+CommitDate: Wed Nov 11 11:50:13 2026 +0000
+
+    LOCAL ONLY, NEVER PUSHED: enable M5.5 dispatch for the one S4d-E live attempt
+    
+    Applies docs/patches/m55_enable_s2.UNAPPLIED.patch (sha256 d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236): the M55 gate and
+    its test pin, two lines. M61 and M6.0-D stay False. Deleted by
+    scripts/m61_restore_and_verify_disabled.sh only after DISABLED AND VERIFIED.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01QzFL2kguRig19KtzFfqEm3
+
+ src/spiderx_controller/spiderx_controller/m55_contract.py | 2 +-
+ src/spiderx_controller/test/m55_gate.py                   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
