@@ -1,0 +1,1 @@
+PASS tools_s4a_shadow = the committed S4a shadow harness (2026-11-02T08:58:32Z; historical copy unchanged)

@@ -1,0 +1,5 @@
+10798 10753 10753   0  0.0  \_ /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_descrip
+10801 10798 10753   0  0.3  |   \_ ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spi
+10909 10801 10753   0 89.4  |       \_ ign gazebo server
+10912 10801 10753  19  158  |       \_ ign gazebo gui
+10813 10753 10753  -5 91.6  \_ python3 /home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidenc

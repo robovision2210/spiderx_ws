@@ -23,6 +23,7 @@ ENABLING = 'local/m61-one-cycle-20261010T000000Z'
 ENABLING_S2 = 'local/m55-s2-20261013T000000Z'
 ENABLING_S3 = 'local/m55-s3-20261031T000000Z'
 ENABLING_S4A = 'local/m55-s4a-20261101T000000Z'
+ENABLING_S4B = 'local/m55-s4b-20261102T000000Z'
 FAKE_ROS2 = """#!/usr/bin/env bash
 case "$1 $2 $3" in
   "pkg prefix spiderx_controller") echo "{ws}/install/spiderx_controller" ;;
@@ -351,8 +352,55 @@ def test_a_pushed_s4a_branch_is_never_deleted(ws, quiet_host):
 
 @pytest.mark.parametrize('other', ['local/m55-s4ab-20261101T000000Z',
                                    'local/m55-s4-20261101T000000Z',
-                                   'local/m55-s4b-20261101T000000Z'])
+                                   'local/m55-s4c-20261101T000000Z'])
 def test_s4a_look_alike_and_later_stage_names_are_never_deleted(ws, quiet_host, other):
+    enable_on_branch(ws, other, m55=True)
+    rc, _ = run(ws, '--base base', f'--enabling-ref {other}', "--build-cmd 'true'",
+                '--delete-enabling-branch')
+    assert rc == 1
+    assert git(ws, 'branch', '--list', other).strip() == other
+    assert 'refusing to delete' in report(ws)
+
+
+def test_full_s4b_restore_preserves_restores_and_deletes_the_m55_s4b_branch(ws, quiet_host):
+    commit = enable_on_branch(ws, ENABLING_S4B, m55=True)
+    rc, out = run(ws, '--base base', f'--enabling-ref {ENABLING_S4B}', "--build-cmd 'true'",
+                  '--delete-enabling-branch')
+    assert rc == 0, out
+    ev = ws.parent / 'evidence'
+    assert (ev / 'enabling_commit.txt').read_text().split() == [ENABLING_S4B, commit]
+    assert '+M55_LOCOMOTION_DISPATCH_ENABLED = True' in (ev / 'enabling_commit.patch').read_text()
+    assert git(ws, 'rev-parse', '--abbrev-ref', 'HEAD') == 'base'
+    assert git(ws, 'branch', '--list', 'local/m55-s4b-*') == ''
+    rep = report(ws)
+    assert 'ok: a. all three gates False' in rep and f'Deleted branch {ENABLING_S4B}' in rep
+    assert rep.index('ok: c. m6_live_playback --live refused') < rep.index('Deleted branch')
+
+
+def test_an_s4b_branch_is_kept_when_a_check_fails(ws, quiet_host):
+    enable_on_branch(ws, ENABLING_S4B, m55=True)
+    rc, _ = run(ws, '--base base', f'--enabling-ref {ENABLING_S4B}', '--verify-only',
+                '--delete-enabling-branch')
+    assert rc == 1
+    assert git(ws, 'branch', '--list', ENABLING_S4B).strip().lstrip('* ') == ENABLING_S4B
+    assert 'not deleted: a check failed' in report(ws)
+
+
+def test_a_pushed_s4b_branch_is_never_deleted(ws, quiet_host):
+    enable_on_branch(ws, ENABLING_S4B, m55=True)
+    git(ws, 'update-ref', f'refs/remotes/origin/{ENABLING_S4B}', ENABLING_S4B)
+    rc, _ = run(ws, '--base base', f'--enabling-ref {ENABLING_S4B}', "--build-cmd 'true'",
+                '--delete-enabling-branch')
+    assert rc == 1
+    assert git(ws, 'branch', '--list', ENABLING_S4B).strip() == ENABLING_S4B
+    assert 'a remote-tracking ref exists' in report(ws)
+
+
+@pytest.mark.parametrize('other', ['local/m55-s4bc-20261102T000000Z',
+                                   'local/m55-s4bx20261102T000000Z',
+                                   'local/m55-s4c-20261102T000000Z',
+                                   'local/m55-s4d-20261102T000000Z'])
+def test_s4b_look_alike_and_later_stage_names_are_never_deleted(ws, quiet_host, other):
     enable_on_branch(ws, other, m55=True)
     rc, _ = run(ws, '--base base', f'--enabling-ref {other}', "--build-cmd 'true'",
                 '--delete-enabling-branch')
