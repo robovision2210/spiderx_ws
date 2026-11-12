@@ -1,0 +1,10 @@
+[2026-10-30T05:38:18Z] watchdog started pid 1099 deadline 1500 s
+[2026-10-30T05:38:18Z] stage_start (fortress_m61a_fixed_base.launch.py via run-local env.sh)
+launch pid 1144 pgid 1144 xvfb 1139
+[2026-10-30T05:38:22Z] wait for controllers
+[2026-10-30T05:39:06Z] stage_wait_controllers rc=0
+[2026-10-30T05:39:12Z] watchdog actual pid 1101 (setsid forked; pid file corrected)
+observer goals_sent 0 publishers_created 0 mode preflight
+[2026-10-30T05:40:34Z] stop: flag watchdog, then stage_stop
+watchdog exited
+[2026-10-30T05:40:51Z] stage_stop rc=0

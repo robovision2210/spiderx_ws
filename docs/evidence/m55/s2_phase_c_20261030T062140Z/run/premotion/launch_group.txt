@@ -1,0 +1,10 @@
+launch pid = session 8022
+  PID  PPID   SID  PGID ELAPSED COMMAND
+ 8022     1  8022  8022      33 /opt/mm/root/envs/humble/bin/python /opt/mm/root/envs/humble/bin/ros2 launch spiderx_bringup fortress_m61a_fixed_base.launch.py
+ 8075  8022  8022  8022      32 /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spiderx_fortress.sdf 
+ 8077  8022  8022  8022      32 /opt/mm/root/envs/humble/lib/robot_state_publisher/robot_state_publisher --ros-args -r __node:=robot_state_publisher --params-file /tmp/launch_params_bfos55qb
+ 8078  8075  8022  8022      32 ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spiderx_fortress.sdf
+ 8083  8022  8022  8022      32 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge --ros-args -r __node:=spiderx_gz_bridge --params-file /tmp/launch_params_h8ky7380
+ 8085  8022  8022  8022      31 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge /world/spiderx_fortress/pose/info@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V --ros-args -r __node:=spiderx_
+ 8166  8078  8022  8166      31 ign gazebo server
+ 8169  8078  8022  8169      31 ign gazebo gui

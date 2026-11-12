@@ -1,0 +1,33 @@
+== source order (AMENT_PREFIX_PATH, toolchain/overlay/workspace positions)
+5:/home/user/spiderx_ws/install/spiderx_bringup
+7:/home/user/spiderx_ws/install/spiderx_controller
+8:/home/user/spiderx_ws/install/spiderx_description
+9:/root/spiderx_gz_overlay_ws/install/gz_ros2_control
+10:/opt/mm/root/envs/humble
+ROS_DOMAIN_ID=0 ROS_LOCALHOST_ONLY=1 RMW_IMPLEMENTATION=<unset> ROS_DISCOVERY_SERVER=<unset> DISPLAY=:77
+== ament lookup
+/root/spiderx_gz_overlay_ws/install/gz_ros2_control
+PASS ament prefix = overlay
+== pluginlib
+{'gz_ros2_control': '/root/spiderx_gz_overlay_ws/install/gz_ros2_control'}
+PASS pluginlib = overlay
+== plugin XML library path
+library path="gz_hardware_plugins"
+== dependency resolution
+libgz_ros2_control-system.so: unresolved=0
+libgz_hardware_plugins.so: unresolved=0
+PASS dlopen RTLD_NOW both
+== plugin search path overrides (must be empty before launch)
+IGN_GAZEBO_SYSTEM_PLUGIN_PATH=<unset> GZ_SIM_SYSTEM_PLUGIN_PATH=<unset>
+no gz_ros2_control in ~/.ignition/gazebo/plugins
+no gz_ros2_control in the ign-gazebo default plugin dir
+LD_LIBRARY_PATH entries:
+/root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib
+/opt/mm/root/envs/humble/opt/rviz_ogre_vendor/lib
+launch-time plugin dir: /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib
+== gates (fresh import; expected M55 True, M61 False, M6.0-D False)
+M55_LOCOMOTION_DISPATCH_ENABLED True /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+M61_LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+LIVE_DISPATCH_ENABLED False /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+PASS gates M55 True, M61 False, M6.0-D False, imported from this workspace
+PRELAUNCH VERDICT: PASS

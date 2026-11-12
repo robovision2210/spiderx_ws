@@ -1,0 +1,38 @@
+2,6c2,8
+< # S2 shadow rehearsal (design section 2 A2): the welded fixed-base launch (frozen M6.1-A harness:
+< # env.sh, stage_start.sh, stage_wait_controllers.sh, stage_stop.sh), the M6.1-A read-only
+< # preflight, the M5.5 node in SHADOW (gate False), a bag, the S2 driver (teleop keys only),
+< # captures, a clean stop. Nothing can reach the controller: the node has no action client and no
+< # command publisher while the gate is False. Usage: s2_rehearsal.sh <run dir> <bag dir>
+---
+> # S2 Phase C run: the frozen s2_rehearsal.sh (welded launch, preflight, node, bag, S2 driver,
+> # captures, clean stop) with three run-local changes (phase_c_run.diff):
+> #  1. after preflight READY the run waits for the operator's pre-motion checks: go.flag starts
+> #     the node and the driver; abort.flag, or no decision within PREMOTION_WAIT_S, stops with no goal;
+> #  2. the driver's exit code is kept (DRC);
+> #  3. one Gazebo screenshot after the script, only if the driver exited 0 and the launch is up.
+> # Usage: phase_c_run.sh <run dir> <bag dir>
+7a10
+> PREMOTION_WAIT_S=${PREMOTION_WAIT_S:-1500}
+28a32,39
+> # Phase C change 1: the operator's pre-motion checks (plugin provenance, gain, rate, timestep,
+> # ownership, weld, screenshot 1). Nothing that can send a goal exists until go.flag.
+> touch $RUN/premotion_wait.flag
+> step "pre-motion checks: waiting for go.flag or abort.flag (at most $PREMOTION_WAIT_S s)"
+> for i in $(seq 1 $PREMOTION_WAIT_S); do { [ -f $RUN/go.flag ] || [ -f $RUN/abort.flag ]; } && break; sleep 1; done
+> [ -f $RUN/abort.flag ] && abort "pre-motion checks failed: $(head -c 300 $RUN/abort.flag)"
+> [ -f $RUN/go.flag ] || abort "no pre-motion decision within $PREMOTION_WAIT_S s"
+> step "pre-motion checks passed: $(head -c 300 $RUN/go.flag)"
+49c60
+< step "driver"; python3 $EVT/s2_driver.py --out $RUN/driver --levels 0,1,2 > $RUN/driver.out 2>&1; step "driver exit $?: $(tail -1 $RUN/driver.out | cut -c1-200)"
+---
+> step "driver"; python3 $EVT/s2_driver.py --out $RUN/driver --levels 0,1,2 > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
+54a66,73
+> # Phase C change 3: screenshot 2, only after a completed script (no goal in flight: the node is
+> # stopped) and only if the simulator is still up; it never delays cleanup by more than 15 s.
+> if [ "$DRC" = 0 ] && pgrep -g "$(cat $RUN/launch.pid)" > /dev/null; then
+>   env -i PATH=/usr/bin:/bin DISPLAY=:77 timeout 15 /usr/bin/import -display :77 -window root $RUN/captures/screenshot2_after_script.png > $RUN/captures/screenshot2.log 2>&1
+>   step "screenshot 2: exit $?"
+> else
+>   step "screenshot 2 skipped (driver exit $DRC or launch gone)"
+> fi

@@ -1,0 +1,4 @@
+863b2b9ff3c21298c5c311b4982381c8f5e6089a59d80d95a678cb602e26239b  stage_start.sh
+19e84c9160d7c545b706ab2404b326685a4ba5b308e9fbea4629d5f84cb45470  stage_wait_controllers.sh
+df11517189b99a81c4aab425db3c0fbd8ec034a09da7c5b9170811fd5a84f64e  stage_stop.sh
+frozen copies: docs/evidence/m55/s2_fixed_base_20261029T100210Z/tools (SHA256SUMS.tools); the three stage scripts were used unchanged

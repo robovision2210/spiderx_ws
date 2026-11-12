@@ -1,0 +1,30 @@
+plant verdict: CONTRADICTED (expected gain 1.0)
+pooled g_hat 0.09999999997176866 over 4716 joint-updates, residual max 1.88e-12
+  lf_hip: g_hat 0.0999999998796493, residual max 1.57e-12
+  lf_thigh_joint: g_hat 0.09999999990955698, residual max 9.3e-13
+  lf_foot_joint: g_hat 0.10000000013290342, residual max 1.35e-12
+  rf_hip: g_hat 0.10000000011562123, residual max 1.72e-12
+  rf_thigh_joint: g_hat 0.0999999999461468, residual max 9.73e-13
+  rf_foot_joint: g_hat 0.09999999980003185, residual max 1.35e-12
+  lr_hip: g_hat 0.09999999987964932, residual max 1.57e-12
+  lr_thigh_joint: g_hat 0.09999999990955703, residual max 9.3e-13
+  lr_foot_joint: g_hat 0.10000000013290361, residual max 1.35e-12
+  rr_hip: g_hat 0.10000000011562123, residual max 1.72e-12
+  rr_thigh_joint: g_hat 0.0999999999461465, residual max 9.73e-13
+  rr_foot_joint: g_hat 0.09999999980003177, residual max 1.35e-12
+  contradiction: pooled: g_hat 0.09999999997176866 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint lf_hip: g_hat 0.0999999998796493 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint lf_thigh_joint: g_hat 0.09999999990955698 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint lf_foot_joint: g_hat 0.10000000013290342 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint rf_hip: g_hat 0.10000000011562123 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint rf_thigh_joint: g_hat 0.0999999999461468 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint rf_foot_joint: g_hat 0.09999999980003185 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint lr_hip: g_hat 0.09999999987964932 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint lr_thigh_joint: g_hat 0.09999999990955703 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint lr_foot_joint: g_hat 0.10000000013290361 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint rr_hip: g_hat 0.10000000011562123 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint rr_thigh_joint: g_hat 0.0999999999461465 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: joint rr_foot_joint: g_hat 0.09999999980003177 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: segment hold_after_cancel: g_hat 0.10000000028936379 differs from 1.0 by -0.9 (>= 1e-06)
+  contradiction: segment tracking: g_hat 0.09999999997124237 differs from 1.0 by -0.9 (>= 1e-06)
+tracking (action feedback error (desired - actual), the S2 P2 basis): FAIL, max |error| 0.020972637967721877 at 74.07 s (rr_thigh_joint), first crossing {'s': 74.0, 'joint': 'rf_thigh_joint', 'error_rad': -0.020137499030105914, 'receipt_ns': 1793269656859770276}

@@ -1,0 +1,495 @@
+SpiderX overlay patch for ros-controls/gz_ros2_control tag 0.7.15
+(commit bfc5845aa7f0250cbc384773dba5c9847d609b95), package directory gz_ros2_control/.
+
+Problem: GazeboSimROS2ControlPlugin::Configure() creates its "gz_ros2_control" node before it
+installs the <parameters> files as the context's global arguments. Parameter overrides are fixed
+when a node is created, so position_proportional_gain (declared on that node by
+GazeboSimSystem::initSim()) always took its default, 0.1, whatever the files said.
+
+Change:
+- The plugin node now also receives the <parameters> files as node-local --params-file
+  arguments (plugin_node_options()). Remapping rules and the robot_description argument are
+  passed as before; the controller manager and the controllers are configured as before.
+- The gain is declared by declare_position_proportional_gain(): default 0.1 as upstream; a value
+  that is not a finite double greater than 0 is reported and initSim() fails (never clamped or
+  replaced). The gain is still read once at start-up.
+- Offline gtest test_parameter_loading (no Gazebo).
+
+Apply from the repository root: git apply <this file>
+diff --git a/gz_ros2_control/CMakeLists.txt b/gz_ros2_control/CMakeLists.txt
+index 9c539de..2bd5bf5 100644
+--- a/gz_ros2_control/CMakeLists.txt
++++ b/gz_ros2_control/CMakeLists.txt
+@@ -119,6 +119,11 @@ ament_target_dependencies(ign_ros2_control-system
+ if(BUILD_TESTING)
+   find_package(ament_lint_auto REQUIRED)
+   ament_lint_auto_find_test_dependencies()
++
++  find_package(ament_cmake_gtest REQUIRED)
++  ament_add_gtest(test_parameter_loading test/test_parameter_loading.cpp)
++  target_include_directories(test_parameter_loading PRIVATE src)
++  ament_target_dependencies(test_parameter_loading rclcpp)
+ endif()
+ 
+ ament_export_include_directories(include)
+diff --git a/gz_ros2_control/package.xml b/gz_ros2_control/package.xml
+index 05c0c2b..c96f52f 100644
+--- a/gz_ros2_control/package.xml
++++ b/gz_ros2_control/package.xml
+@@ -24,6 +24,7 @@
+   <depend>rclcpp</depend>
+   <depend>yaml_cpp_vendor</depend>
+ 
++  <test_depend>ament_cmake_gtest</test_depend>
+   <test_depend>ament_lint_auto</test_depend>
+   <test_depend>ament_lint_common</test_depend>
+ 
+diff --git a/gz_ros2_control/src/gz_ros2_control_plugin.cpp b/gz_ros2_control/src/gz_ros2_control_plugin.cpp
+index dbcfb31..49d7424 100644
+--- a/gz_ros2_control/src/gz_ros2_control_plugin.cpp
++++ b/gz_ros2_control/src/gz_ros2_control_plugin.cpp
+@@ -53,6 +53,7 @@
+ 
+ #include "gz_ros2_control/gz_ros2_control_plugin.hpp"
+ #include "gz_ros2_control/gz_system.hpp"
++#include "parameter_loading.hpp"
+ 
+ namespace gz_ros2_control
+ {
+@@ -300,6 +301,7 @@ void GazeboSimROS2ControlPlugin::Configure(
+     "robot_param_node is %s", this->dataPtr->robot_description_.c_str());
+ 
+   std::vector<std::string> arguments = {"--ros-args"};
++  std::vector<std::string> parameter_files;
+ 
+   auto sdfPtr = const_cast<sdf::Element *>(_sdf.get());
+ 
+@@ -308,6 +310,7 @@ void GazeboSimROS2ControlPlugin::Configure(
+     std::string argument = argument_sdf->Get<std::string>();
+     arguments.push_back(RCL_PARAM_FILE_FLAG);
+     arguments.push_back(argument);
++    parameter_files.push_back(argument);
+     argument_sdf = argument_sdf->GetNextElement("parameters");
+   }
+ 
+@@ -356,7 +359,9 @@ void GazeboSimROS2ControlPlugin::Configure(
+   }
+ 
+   std::string node_name = "gz_ros2_control";
+-  this->dataPtr->node_ = rclcpp::Node::make_shared(node_name, ns);
++  // The <parameters> files also reach this node (see parameter_loading.hpp).
++  this->dataPtr->node_ = rclcpp::Node::make_shared(
++    node_name, ns, plugin_node_options(parameter_files));
+   this->dataPtr->executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
+   this->dataPtr->executor_->add_node(this->dataPtr->node_);
+   auto spin = [this]()
+diff --git a/gz_ros2_control/src/gz_system.cpp b/gz_ros2_control/src/gz_system.cpp
+index a1b367f..874bd94 100644
+--- a/gz_ros2_control/src/gz_system.cpp
++++ b/gz_ros2_control/src/gz_system.cpp
+@@ -65,6 +65,8 @@
+ 
+ #include <hardware_interface/hardware_info.hpp>
+ 
++#include "parameter_loading.hpp"
++
+ struct jointData
+ {
+   /// \brief Joint's names.
+@@ -202,14 +204,12 @@ bool GazeboSimSystem::initSim(
+ 
+   this->dataPtr->joints_.resize(this->dataPtr->n_dof_);
+ 
+-  constexpr double default_gain = 0.1;
+-
+-  try {
+-    this->dataPtr->position_proportional_gain_ = this->nh_->declare_parameter<double>(
+-      "position_proportional_gain", default_gain);
+-  } catch (rclcpp::exceptions::ParameterAlreadyDeclaredException & ex) {
+-    this->nh_->get_parameter(
+-      "position_proportional_gain", this->dataPtr->position_proportional_gain_);
++  std::string gain_error;
++  if (!declare_position_proportional_gain(
++      *this->nh_, this->dataPtr->position_proportional_gain_, gain_error))
++  {
++    RCLCPP_ERROR_STREAM(this->nh_->get_logger(), gain_error);
++    return false;
+   }
+ 
+   RCLCPP_INFO_STREAM(
+diff --git a/gz_ros2_control/src/parameter_loading.hpp b/gz_ros2_control/src/parameter_loading.hpp
+new file mode 100644
+index 0000000..a5c3041
+--- /dev/null
++++ b/gz_ros2_control/src/parameter_loading.hpp
+@@ -0,0 +1,86 @@
++// Copyright 2026 The SpiderX authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// SpiderX overlay patch for gz_ros2_control 0.7.15; not part of upstream.
++
++#ifndef PARAMETER_LOADING_HPP_
++#define PARAMETER_LOADING_HPP_
++
++#include <cmath>
++#include <sstream>
++#include <string>
++#include <vector>
++
++#include "rcl/arguments.h"
++#include "rclcpp/rclcpp.hpp"
++
++namespace gz_ros2_control
++{
++
++/// Options for the plugin's own node ("gz_ros2_control").
++/**
++ * Configure() creates this node before it installs the <parameters> files as the context's
++ * global arguments, and a node's parameter overrides are fixed when the node is created, so
++ * the files never reached it. They are therefore also given to this node as node-local
++ * --params-file arguments: entries for its fully qualified name (or matching wildcards) now
++ * apply to it. Remapping rules are not passed, so its remapping is unchanged. The controller
++ * manager and the controllers still receive the files and the rules through the global
++ * arguments, as before.
++ */
++inline rclcpp::NodeOptions plugin_node_options(const std::vector<std::string> & parameter_files)
++{
++  std::vector<std::string> arguments = {RCL_ROS_ARGS_FLAG};
++  for (const auto & file : parameter_files) {
++    arguments.push_back(RCL_PARAM_FILE_FLAG);
++    arguments.push_back(file);
++  }
++  return rclcpp::NodeOptions().arguments(arguments);
++}
++
++/// Declare position_proportional_gain on \p node (default 0.1, as upstream) and validate it.
++/**
++ * A second system on the same node reads the value already declared, as upstream does.
++ * \return false, with a message in \p error, if the value is not a floating-point number or is
++ *   not finite and greater than zero. An invalid value is reported, never clamped or replaced.
++ */
++inline bool declare_position_proportional_gain(
++  rclcpp::Node & node, double & gain, std::string & error)
++{
++  constexpr double default_gain = 0.1;
++  const std::string name = "position_proportional_gain";
++  try {
++    try {
++      gain = node.declare_parameter<double>(name, default_gain);
++    } catch (const rclcpp::exceptions::ParameterAlreadyDeclaredException &) {
++      gain = node.get_parameter(name).get_value<double>();
++    }
++  } catch (const rclcpp::exceptions::InvalidParameterTypeException & ex) {
++    error = name + " must be a floating-point number: " + ex.what();
++    return false;
++  } catch (const rclcpp::ParameterTypeException & ex) {
++    error = name + " must be a floating-point number: " + ex.what();
++    return false;
++  }
++  if (!std::isfinite(gain) || gain <= 0.0) {
++    std::ostringstream message;
++    message << name << " must be finite and greater than 0, got " << gain;
++    error = message.str();
++    return false;
++  }
++  return true;
++}
++
++}  // namespace gz_ros2_control
++
++#endif  // PARAMETER_LOADING_HPP_
+diff --git a/gz_ros2_control/test/test_parameter_loading.cpp b/gz_ros2_control/test/test_parameter_loading.cpp
+new file mode 100644
+index 0000000..cbdf1b0
+--- /dev/null
++++ b/gz_ros2_control/test/test_parameter_loading.cpp
+@@ -0,0 +1,278 @@
++// Copyright 2026 The SpiderX authors
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// SpiderX overlay patch for gz_ros2_control 0.7.15; not part of upstream. Offline: no Gazebo and
++// no executor. Each test replays the order of GazeboSimROS2ControlPlugin::Configure() in its own
++// context: init without arguments, create the plugin node with plugin_node_options() (as
++// Configure() now does), then install the files, remapping rules and robot_description as the
++// context's global arguments, then declare the gain with declare_position_proportional_gain()
++// (as GazeboSimSystem::initSim() now does).
++
++#include <gtest/gtest.h>
++#include <unistd.h>
++
++#include <cmath>
++#include <filesystem>
++#include <fstream>
++#include <limits>
++#include <memory>
++#include <string>
++#include <vector>
++
++#include "rcl/arguments.h"
++#include "rclcpp/rclcpp.hpp"
++
++#include "parameter_loading.hpp"
++
++namespace
++{
++namespace fs = std::filesystem;
++using gz_ros2_control::declare_position_proportional_gain;
++using gz_ros2_control::plugin_node_options;
++
++const char kGain[] = "position_proportional_gain";
++
++const char kControllers[] =
++  "controller_manager:\n"
++  "  ros__parameters:\n"
++  "    update_rate: 100\n"
++  "leg_trajectory_controller:\n"
++  "  ros__parameters:\n"
++  "    joints: [lf_hip, rr_foot_joint]\n";
++
++const char kPlant[] =
++  "gz_ros2_control:\n"
++  "  ros__parameters:\n"
++  "    position_proportional_gain: 1.0\n";
++
++class ParameterLoading : public ::testing::Test
++{
++protected:
++  void SetUp() override
++  {
++    context_ = std::make_shared<rclcpp::Context>();
++    context_->init(0, nullptr);
++    static int counter = 0;
++    dir_ = fs::temp_directory_path() /
++      ("gz_parameter_loading_" + std::to_string(::getpid()) + "_" + std::to_string(counter++));
++    fs::create_directories(dir_);
++  }
++
++  void TearDown() override
++  {
++    context_->shutdown("test finished");
++    fs::remove_all(dir_);
++  }
++
++  std::string file(const std::string & name, const std::string & text)
++  {
++    const fs::path path = dir_ / name;
++    std::ofstream(path) << text;
++    return path.string();
++  }
++
++  // The plugin node as Configure() creates it.
++  rclcpp::Node::SharedPtr plugin_node(
++    const std::vector<std::string> & files, const std::string & ns = "/")
++  {
++    auto options = plugin_node_options(files);
++    options.context(context_);
++    return std::make_shared<rclcpp::Node>("gz_ros2_control", ns, options);
++  }
++
++  rclcpp::Node::SharedPtr node(const std::string & name, const std::string & ns = "/")
++  {
++    return std::make_shared<rclcpp::Node>(name, ns, rclcpp::NodeOptions().context(context_));
++  }
++
++  // What Configure() does after creating its node: --ros-args, one --params-file per file,
++  // then --ros-args -r <rule> per remapping, then -p robot_description:=<urdf>.
++  void install_global_arguments(
++    const std::vector<std::string> & files, const std::vector<std::string> & remappings)
++  {
++    std::vector<std::string> arguments = {"--ros-args"};
++    for (const auto & f : files) {
++      arguments.push_back(RCL_PARAM_FILE_FLAG);
++      arguments.push_back(f);
++    }
++    if (!remappings.empty()) {
++      arguments.push_back(RCL_ROS_ARGS_FLAG);
++      for (const auto & r : remappings) {
++        arguments.push_back(RCL_REMAP_FLAG);
++        arguments.push_back(r);
++      }
++    }
++    arguments.push_back(RCL_PARAM_FLAG);
++    arguments.push_back("robot_description:=<robot name=\"r\"/>");
++    std::vector<const char *> argv;
++    for (const auto & a : arguments) {
++      argv.push_back(a.c_str());
++    }
++    rcl_arguments_t rcl_args = rcl_get_zero_initialized_arguments();
++    ASSERT_EQ(
++      RCL_RET_OK,
++      rcl_parse_arguments(
++        static_cast<int>(argv.size()), argv.data(), rcl_get_default_allocator(), &rcl_args));
++    context_->get_rcl_context()->global_arguments = rcl_args;
++  }
++
++  static double declared(const rclcpp::Node::SharedPtr & n, bool expect_ok = true)
++  {
++    double gain = std::numeric_limits<double>::quiet_NaN();
++    std::string error;
++    EXPECT_EQ(expect_ok, declare_position_proportional_gain(*n, gain, error)) << error;
++    EXPECT_EQ(expect_ok, error.empty()) << error;
++    return gain;
++  }
++
++  std::shared_ptr<rclcpp::Context> context_;
++  fs::path dir_;
++};
++
++// The defect this patch removes: with stock 0.7.15 the node is created with no arguments and
++// the files arrive only as global arguments installed afterwards.
++TEST_F(ParameterLoading, StockOrderNeverDeliveredTheFileToThePluginNode)
++{
++  const auto plant = file("plant.yaml", kPlant);
++  auto stock = std::make_shared<rclcpp::Node>(
++    "gz_ros2_control", "/", rclcpp::NodeOptions().context(context_));
++  install_global_arguments({plant}, {});
++  EXPECT_DOUBLE_EQ(0.1, declared(stock));
++}
++
++TEST_F(ParameterLoading, UnspecifiedGainKeepsTheUpstreamDefault)
++{
++  const auto controllers = file("controllers.yaml", kControllers);
++  auto plugin = plugin_node({controllers});
++  install_global_arguments({controllers}, {});
++  EXPECT_EQ(0.1, declared(plugin));
++}
++
++TEST_F(ParameterLoading, ConfiguredGainReachesThePluginNode)
++{
++  const auto controllers = file("controllers.yaml", kControllers);
++  const auto plant = file("plant.yaml", kPlant);
++  auto plugin = plugin_node({controllers, plant});
++  install_global_arguments({controllers, plant}, {});
++  EXPECT_EQ(1.0, declared(plugin));
++}
++
++TEST_F(ParameterLoading, NamespacedPluginNodeIsAddressedByItsFullName)
++{
++  const auto full = file(
++    "full.yaml", "/r1/gz_ros2_control:\n  ros__parameters:\n    position_proportional_gain: 1.0\n");
++  const auto wildcard = file(
++    "wild.yaml", "/**/gz_ros2_control:\n  ros__parameters:\n    position_proportional_gain: 0.7\n");
++  const auto root = file("root.yaml", kPlant);
++  EXPECT_EQ(1.0, declared(plugin_node({full}, "/r1")));
++  EXPECT_EQ(0.7, declared(plugin_node({wildcard}, "/r2")));
++  EXPECT_EQ(0.1, declared(plugin_node({root}, "/r3")));   // /gz_ros2_control is another node
++}
++
++TEST_F(ParameterLoading, LaterFilesTakePrecedenceAsForTheControllerManager)
++{
++  const auto a = file(
++    "a.yaml", "/**/gz_ros2_control:\n  ros__parameters:\n    position_proportional_gain: 0.5\n");
++  const auto b = file(
++    "b.yaml", "/**/gz_ros2_control:\n  ros__parameters:\n    position_proportional_gain: 1.0\n");
++  EXPECT_EQ(1.0, declared(plugin_node({a, b}, "/ab")));
++  EXPECT_EQ(0.5, declared(plugin_node({b, a}, "/ba")));
++}
++
++TEST_F(ParameterLoading, ControllerManagerControllersAndRemappingsAreUnchanged)
++{
++  const auto controllers = file("controllers.yaml", kControllers);
++  const auto plant = file("plant.yaml", kPlant);
++  auto plugin = plugin_node({controllers, plant});
++  // Created as stock 0.7.15 creates the node.
++  auto stock = std::make_shared<rclcpp::Node>(
++    "gz_ros2_control", "/stock", rclcpp::NodeOptions().context(context_));
++  install_global_arguments({controllers, plant}, {"/old_topic:=/new_topic"});
++  auto cm = node("controller_manager");
++  auto controller = node("leg_trajectory_controller");
++
++  EXPECT_EQ(100, cm->declare_parameter<int64_t>("update_rate", 0));
++  EXPECT_EQ(
++    "<robot name=\"r\"/>", cm->declare_parameter<std::string>("robot_description", ""));
++  EXPECT_FALSE(cm->has_parameter(kGain));
++  EXPECT_EQ(
++    (std::vector<std::string>{"lf_hip", "rr_foot_joint"}),
++    controller->declare_parameter<std::vector<std::string>>(
++      "joints", std::vector<std::string>{}));
++  EXPECT_EQ("/new_topic", cm->get_node_topics_interface()->resolve_topic_name("/old_topic"));
++
++  // The plugin node receives only its own parameter entries. Remapping rules are resolved
++  // against the global arguments when a name is resolved, so they reach the plugin node exactly
++  // as they reach a node created the stock way: the patch does not change that.
++  const auto & overrides = plugin->get_node_parameters_interface()->get_parameter_overrides();
++  ASSERT_EQ(1u, overrides.size());
++  EXPECT_EQ(1u, overrides.count(kGain));
++  EXPECT_TRUE(stock->get_node_parameters_interface()->get_parameter_overrides().empty());
++  EXPECT_EQ(
++    stock->get_node_topics_interface()->resolve_topic_name("/old_topic"),
++    plugin->get_node_topics_interface()->resolve_topic_name("/old_topic"));
++  EXPECT_EQ(1.0, declared(plugin));
++}
++
++TEST_F(ParameterLoading, SecondSystemOnTheSameNodeReadsTheDeclaredValue)
++{
++  auto plugin = plugin_node({file("plant.yaml", kPlant)});
++  EXPECT_EQ(1.0, declared(plugin));
++  EXPECT_EQ(1.0, declared(plugin));
++}
++
++TEST_F(ParameterLoading, NonFiniteOrNonPositiveGainIsRejectedNotReplaced)
++{
++  const double nan = std::numeric_limits<double>::quiet_NaN();
++  const double inf = std::numeric_limits<double>::infinity();
++  int i = 0;
++  for (const double value : {nan, inf, -inf, 0.0, -1.0}) {
++    auto n = std::make_shared<rclcpp::Node>(
++      "gz_ros2_control", "/v" + std::to_string(i++),
++      rclcpp::NodeOptions().context(context_).parameter_overrides({{kGain, value}}));
++    double gain = 0.25;
++    std::string error;
++    EXPECT_FALSE(declare_position_proportional_gain(*n, gain, error)) << value;
++    EXPECT_NE(std::string::npos, error.find("must be finite and greater than 0")) << error;
++    if (std::isnan(value)) {
++      EXPECT_TRUE(std::isnan(gain));
++    } else {
++      EXPECT_EQ(value, gain);
++    }
++  }
++}
++
++TEST_F(ParameterLoading, NonFiniteOrWrongTypeFromAFileIsRejected)
++{
++  // A non-finite value fails validation; a value of another type is not converted.
++  const std::vector<std::string> values = {".nan", ".inf", "-.inf", "1", "\"1.0\"", "true"};
++  for (size_t i = 0; i < values.size(); ++i) {
++    auto n = plugin_node(
++      {file(
++          "bad" + std::to_string(i) + ".yaml",
++          "/**/gz_ros2_control:\n  ros__parameters:\n    position_proportional_gain: " +
++          values[i] + "\n")},
++      "/bad" + std::to_string(i));
++    double gain = 0.25;
++    std::string error;
++    EXPECT_FALSE(declare_position_proportional_gain(*n, gain, error)) << values[i];
++    EXPECT_FALSE(error.empty()) << values[i];
++    if (i >= 3) {
++      EXPECT_NE(std::string::npos, error.find("must be a floating-point number")) << error;
++      EXPECT_EQ(0.25, gain) << values[i];
++    }
++  }
++}
++
++}  // namespace

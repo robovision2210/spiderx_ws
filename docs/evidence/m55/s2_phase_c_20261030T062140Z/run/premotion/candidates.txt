@@ -1,0 +1,3 @@
+processes mapping libgz_ros2_control-system.so (system-wide): 8166 
+of these, in this launch's session: 8166
+PASS: one process maps the plugin and it belongs to this launch: 8166

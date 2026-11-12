@@ -1,0 +1,12 @@
+branch claude/spiderx-sim-actuator-model HEAD 502214d93cd92fda41c41114dba5375085a601aa; working tree clean before launch: yes (git status empty)
+PR #19: open, draft, head 502214d (read via GitHub API before launch)
+overlay workspace (located by search, not assumed): /root/spiderx_gz_overlay_ws
+overlay src commit bfc5845aa7f0250cbc384773dba5c9847d609b95 origin https://github.com/ros-controls/gz_ros2_control.git
+committed patch sha256 (HEAD) 14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac
+overlay src = pinned commit + exactly the committed patch (reverse-apply ok; modified-file diffs and new files identical to the patch)
+installed library sha256 now:
+ef37a04fda30cb0449529b12a97a7af272f00f2d4e14d4664df615815975b328  /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+c3db97f2f98af80af73174088604c9aa0a27f71463cecf2daac3c3db3747fbd3  /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+SpiderX src changes ec7f122..HEAD: src/spiderx_controller/test/test_sim_actuator_model.py src/spiderx_description/config/gz_ros2_control_plant.yaml src/spiderx_description/urdf/spiderx_fortress_control.xacro 
+install symlinks: 267, dangling 0; 14 outside the workspace are ament env hooks into the toolchain
+14/14 key runtime inputs (launch, xacros, plant yaml, controllers yaml, world, bridge yaml, gate modules, observer) identical to HEAD blobs

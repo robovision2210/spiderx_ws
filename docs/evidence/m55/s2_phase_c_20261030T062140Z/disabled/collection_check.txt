@@ -1,0 +1,10 @@
+workspace /home/user/spiderx_ws; run start 1793341314.0
+spiderx_bringup: 0 registered CTest targets
+spiderx_controller: 49 registered CTest targets, 49 CTest entries, 1888 xunit testcases, failures+errors 0; missing result none; not passed none; stale none -> PASS
+spiderx_description: 0 registered CTest targets
+spiderx_firmware: 0 registered CTest targets
+spiderx_localization: 0 registered CTest targets
+spiderx_mapping: 0 registered CTest targets
+spiderx_navigation: 0 registered CTest targets
+xunit testcases 1888 + CTest entries 49 = 1937; colcon test-result: ('1937', '0', '0', '0')
+COLLECTION VERDICT: PASS

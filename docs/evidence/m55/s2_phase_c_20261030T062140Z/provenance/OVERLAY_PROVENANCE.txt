@@ -1,0 +1,6 @@
+upstream https://github.com/ros-controls/gz_ros2_control.git tag 0.7.15 commit bfc5845aa7f0250cbc384773dba5c9847d609b95
+patch 14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac 0001-plugin-node-parameter-overrides.patch
+compiler x86_64-conda-linux-gnu-g++ (conda-forge gcc 15.3.0-7) 15.3.0
+toolchain /opt/mm/root/envs/humble
+library ef37a04fda30cb0449529b12a97a7af272f00f2d4e14d4664df615815975b328 /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+library c3db97f2f98af80af73174088604c9aa0a27f71463cecf2daac3c3db3747fbd3 /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so

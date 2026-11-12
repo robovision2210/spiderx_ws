@@ -1,0 +1,30 @@
+Phase C input checks 2026-10-30T06:21:40Z
+authorization unused: no local/m55-s2-* branch: 0 found; no s2_phase_c evidence before this root: 0 found
+branch claude/spiderx-sim-actuator-model HEAD f32285a90a7d4ef2c0c45d229aabd1cf4567922e origin f32285a90a7d4ef2c0c45d229aabd1cf4567922e
+working tree entries: 0
+src/ == ca49db3: yes
+44cd495913b413c3f984adb581c699258a6da5cc7495c820ce3ef5e92ed78388  scripts/s2/s2_driver.py
+e9c2efcbdd91038468e95d0e6c7d69d21632ac5ede61ef7cca4755e293607dc5  docs/evidence/m55/s2_fixed_base_20261029T100210Z/tools/analyze_s2.py
+d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236  docs/patches/m55_enable_s2.UNAPPLIED.patch
+f293ecf8db9c003bcb24032aa60f995890ee3b6b319c47ed3aa5ae01089ea7f1  scripts/s2/response_law.py
+14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac  third_party/gz_ros2_control_overlay/patches/0001-plugin-node-parameter-overrides.patch
+driver last commit 95b00f0; response_law.py last commit e1ed37a
+enabling patch: git apply --check OK (not applied)
+toolchain:  
+overlay src bfc5845aa7f0250cbc384773dba5c9847d609b95; provenance:
+upstream https://github.com/ros-controls/gz_ros2_control.git tag 0.7.15 commit bfc5845aa7f0250cbc384773dba5c9847d609b95
+patch 14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac 0001-plugin-node-parameter-overrides.patch
+compiler x86_64-conda-linux-gnu-g++ (conda-forge gcc 15.3.0-7) 15.3.0
+toolchain /opt/mm/root/envs/humble
+library ef37a04fda30cb0449529b12a97a7af272f00f2d4e14d4664df615815975b328 /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+library c3db97f2f98af80af73174088604c9aa0a27f71463cecf2daac3c3db3747fbd3 /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+overlay src = pinned commit + exactly the committed patch: verified by reverse-applying the patch in a copy (status empty afterwards)
+installed libraries now:
+ef37a04fda30cb0449529b12a97a7af272f00f2d4e14d4664df615815975b328  /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+c3db97f2f98af80af73174088604c9aa0a27f71463cecf2daac3c3db3747fbd3  /root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+overlay gtest evidence: <testsuites tests="9" failures="0" disabled="0" errors="0" time="0.177" timestamp="2026-10-29T19:02:00" name="AllTests">
+  built 19:01:52-54 (build-dir libraries hash-identical to install), gtest binary 19:01:59, results 19:02:00, provenance 19:02:00: one build_overlay.sh run
+original S2 bag: 53d093dae5828d10692364c1cebe3144f89b8c6507e1d5646c596a3a6256d816  /root/spiderx_evidence/s2_run_20261029T100210Z/bag/bag_0.db3
+leftover simulation processes: 0
+screenshot tool: /usr/bin/import (ImageMagick, pre-installed), tested on a throwaway Xvfb display
+toolchain (re-recorded without set -u): Python 3.11.17, pytest 9.2.0, gazebo 6.16.0, colcon-core 0.19.0, python /opt/mm/root/envs/humble/bin/python3

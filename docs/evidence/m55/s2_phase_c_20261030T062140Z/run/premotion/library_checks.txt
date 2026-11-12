@@ -1,0 +1,5 @@
+libgz_ros2_control-system.so: mappings=5 paths=['/root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_ros2_control-system.so'] deleted=0 inode=[1253385] (overlay file inode 1253385) mapped-object sha256=ef37a04fda30cb0449529b12a97a7af272f00f2d4e14d4664df615815975b328 provenance=ef37a04fda30cb0449529b12a97a7af272f00f2d4e14d4664df615815975b328 -> PASS
+libgz_hardware_plugins.so: mappings=5 paths=['/root/spiderx_gz_overlay_ws/install/gz_ros2_control/lib/libgz_hardware_plugins.so'] deleted=0 inode=[1253379] (overlay file inode 1253379) mapped-object sha256=c3db97f2f98af80af73174088604c9aa0a27f71463cecf2daac3c3db3747fbd3 provenance=c3db97f2f98af80af73174088604c9aa0a27f71463cecf2daac3c3db3747fbd3 -> PASS
+stock gz_ros2_control libraries mapped: none
+toolchain ros2_control dependencies mapped (expected, not fallback): []
+LIBRARY VERDICT: PASS

@@ -6,7 +6,9 @@
   Declares the 12 real SpiderX leg joints with a position command interface and position +
   velocity state interfaces, and loads the gz_ros2_control system plugin. The controller YAML path
   is passed in by the launch file (xacro arg controllers_file), so this package does not depend on
-  spiderx_controller.
+  spiderx_controller. A second parameters file of this package, config/gz_ros2_control_plant.yaml,
+  sets the simulated actuator model of the plugin's own node; only the patched overlay in
+  third_party/gz_ros2_control_overlay applies it (stock 0.7.15 silently keeps its default).
 
   Joint limits are NOT repeated here: gz_ros2_control and the controllers read them from the URDF
   <limit> tags, which stay unchanged.
@@ -46,6 +48,8 @@
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       <parameters>$(arg controllers_file)</parameters>
+      <!-- Simulated actuator model (position_proportional_gain): see the file's header. -->
+      <parameters>$(find spiderx_description)/config/gz_ros2_control_plant.yaml</parameters>
     </plugin>
   </gazebo>
 
