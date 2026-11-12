@@ -1,0 +1,7 @@
+W1 (deadline 6 s): watchdog exit 0 after 10 s (5 s polling)
+stopped.flag watchdog.pid watchdog.txt watchdog_armed.txt watchdog_deadline_epoch.txt 
+2026-11-10T07:35:48Z watchdog armed: pid 15173, deadline 6s, epoch 1794296154 (2026-11-10T07:35:54Z)
+2026-11-10T07:35:58Z watchdog: deadline 6s reached; cleanup.sh, then restore_cmd.sh
+STUB cleanup.sh called with /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/harness_tests2/W1/run
+STUB restore_cmd.sh called
+2026-11-10T07:35:58Z watchdog: done

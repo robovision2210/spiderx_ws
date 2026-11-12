@@ -1,0 +1,628 @@
+# S4d-M LIVE harness (tools/) vs the committed S4c level-2 LIVE harness (tools_s4c_l2_live/, manifest-verified)
+--- tools_s4c_l2_live/env.sh	2026-11-02 09:01:48.288943905 +0000
++++ tools/env.sh	2026-11-11 05:30:00.943393878 +0000
+@@ -5,7 +5,10 @@
+ # patches 0001 and 0002), after the toolchain and before the workspace, so ament, pluginlib and
+ # the launch resolve it first.
+ source /root/spiderx_gz_overlay_ws_r2/install/local_setup.bash
+-source /home/user/spiderx_ws/install/setup.bash
++# S4d-M LIVE change (the only one): the workspace layer is the fresh ENABLED run installation (OD12
++# B1), built by enable_build.sh from the local enabling branch in new bases (--symlink-install); the
++# existing workspace installation /home/user/spiderx_ws/install is not sourced.
++source /root/spiderx_live_enabled_20261111T052817Z/install/setup.bash
+ # Discovery: identical in every shell. Domain 0 as documented (observer --domain-id 0);
+ # localhost-only so nothing outside this machine can join or be joined.
+ export ROS_DOMAIN_ID=0
+== stage_start.sh: unchanged
+== stage_stop.sh: unchanged
+== stage_wait_controllers.sh: unchanged
+== settle_check.py: unchanged
+== library_json.py: unchanged
+--- tools_s4c_l2_live/cleanup.sh	2026-11-02 17:57:58.789025586 +0000
++++ tools/cleanup.sh	2026-11-10 07:24:58.055812521 +0000
+@@ -1,16 +1,47 @@
+ #!/usr/bin/env bash
+-# Idempotent stop of everything an S2 run starts (driver, teleop, bag, node, launch, Xvfb).
+-# Runs from the run wrapper's EXIT/INT/TERM trap, so it also runs after an interruption.
+-# S3 shadow adaptation: the S3 driver's name too (S4a/S4b/S4c shadow: and the S4a, S4b and S4c drivers'); the locomotion node is started by the launch here,
+-# so it stops with the launch (SIGINT to the launch group) and only a leftover is killed after it.
++# S4d-M shadow: idempotent stop of the processes THIS run owns (from the S4c level-2 shadow
++# cleanup.sh). S4d change: a process is stopped only through a pid, process group or session that
++# this run recorded in RUN, and only if its command line is the expected one; a name pattern alone
++# never kills anything here. Owned:
++#  - the driver: RUN/driver.pid (written by the run script just before exec), s4d_driver.py;
++#  - each teleop the driver started: its pty session (pty.fork, so the session id is the pid the
++#    driver logged as "teleop_started" in RUN/driver/driver.jsonl), m55_teleop_keyboard;
++#  - the recorder: RUN/bag.pid (setsid: process group = pid), "bag record";
++#  - strace: RUN/strace.pid;
++#  - the launch: SIGINT to its process group through stage_stop.sh while the group has members
++#    (which also stops the ros2 CLI daemon and Xvfb), then SIGKILL to members of the launch
++#    session (setsid: session = RUN/launch.pid) that are still left;
++#  - Xvfb: RUN/xvfb.pid.
++# Runs from the guarded wrapper's EXIT/INT/TERM trap, and from the watchdog. Ends with a report of
++# relevant processes still present; those are listed, not killed.
+ RUN=$1; EVT=$(dirname "$RUN")/tools
+ echo "[$(date -u +%T)] cleanup start"
+-pkill -INT -f "s[23]_driver.py|s4a_driver.py|s4b_driver.py|s4c_driver.py" 2>/dev/null; sleep 1; pkill -KILL -f "s[23]_driver.py|s4a_driver.py|s4b_driver.py|s4c_driver.py" 2>/dev/null
+-pkill -KILL -f "m55_teleop_keyboard" 2>/dev/null
+-pkill -INT -f "ros2 bag record" 2>/dev/null; sleep 2; pkill -KILL -f "ros2 bag record" 2>/dev/null
+-if [ -f "$RUN/node.pid" ]; then NP=$(cat "$RUN/node.pid"); kill -INT -- -"$NP" 2>/dev/null; sleep 3; kill -KILL -- -"$NP" 2>/dev/null; fi
+-if [ -f "$RUN/launch.pid" ] && pgrep -g "$(cat "$RUN/launch.pid")" >/dev/null 2>&1; then bash "$EVT/stage_stop.sh" "$RUN" >/dev/null 2>&1; fi
+-pkill -KILL -f "m55_locomotion_node" 2>/dev/null
+-[ -f "$RUN/xvfb.pid" ] && kill -TERM "$(cat "$RUN/xvfb.pid")" 2>/dev/null
+-echo "[$(date -u +%T)] cleanup done; remaining:"
+-pgrep -af "ign gazebo|gz sim|parameter_bridge|robot_state_publisher|ros2 launch|Xvfb|spawner|m55_|s[23]_driver|s4a_driver|s4b_driver|s4c_driver|ros2 bag|strace" | grep -v -E "pgrep|cleanup.sh" || echo none
++rd() { [ -f "$RUN/$1" ] && tr -dc '0-9' < "$RUN/$1"; }
++is() { [ -n "$1" ] && kill -0 "$1" 2>/dev/null && tr '\0' ' ' < "/proc/$1/cmdline" 2>/dev/null | grep -q -- "$2"; }
++DP=$(rd driver.pid)
++if is "$DP" s4d_driver.py; then
++  kill -INT "$DP"; for i in $(seq 1 20); do kill -0 "$DP" 2>/dev/null || break; sleep 0.5; done
++  if kill -0 "$DP" 2>/dev/null; then kill -KILL "$DP"; echo "driver $DP: SIGINT, then SIGKILL after 10 s"; else echo "driver $DP: stopped by SIGINT"; fi
++else echo "driver: ${DP:-no pid recorded}: not running"; fi
++TS=$(grep '"teleop_started"' "$RUN/driver/driver.jsonl" 2>/dev/null | grep -o '"pid": *[0-9]*' | grep -o '[0-9]*$' | tr '\n' ' ')
++for T in $TS; do
++  L=$(pgrep -a -s "$T" -f m55_teleop_keyboard 2>/dev/null)
++  if [ -n "$L" ]; then pkill -KILL -s "$T" -f m55_teleop_keyboard; echo "teleop session $T: SIGKILL to: $(echo "$L" | tr '\n' ';')"
++  else echo "teleop session $T: nothing left"; fi
++done
++[ -z "$TS" ] && echo "teleop sessions: none recorded"
++BP=$(rd bag.pid)
++if [ -n "$BP" ] && pgrep -g "$BP" -f "bag record" > /dev/null 2>&1; then
++  kill -INT -- -"$BP" 2>/dev/null; for i in $(seq 1 30); do pgrep -g "$BP" > /dev/null || break; sleep 0.5; done
++  if pgrep -g "$BP" > /dev/null; then kill -KILL -- -"$BP" 2>/dev/null; echo "recorder group $BP: SIGINT, then SIGKILL after 15 s"; else echo "recorder group $BP: stopped by SIGINT"; fi
++else echo "recorder: ${BP:-no pid recorded}: not running"; fi
++STP=$(rd strace.pid); is "$STP" strace && { kill -INT "$STP"; echo "strace $STP: SIGINT"; }
++LP=$(rd launch.pid)
++if [ -n "$LP" ] && pgrep -g "$LP" > /dev/null 2>&1; then bash "$EVT/stage_stop.sh" "$RUN" > /dev/null 2>&1; echo "launch group $LP: stage_stop.sh (SIGINT; shutdown.txt)"; fi
++if [ -n "$LP" ] && pgrep -s "$LP" > /dev/null 2>&1; then
++  echo "launch session $LP still has: $(pgrep -a -s "$LP" | tr '\n' ';')"; pkill -KILL -s "$LP"; echo "launch session $LP: SIGKILL to those"
++fi
++XP=$(rd xvfb.pid); is "$XP" Xvfb && { kill -TERM "$XP"; echo "Xvfb $XP: SIGTERM"; }
++sleep 1
++echo "[$(date -u +%T)] cleanup done; relevant processes still present (listed, not killed):"
++pgrep -af "ign gazebo|gz sim|parameter_bridge|robot_state_publisher|ros2 launch|Xvfb|spawner|m55_|s[23]_driver|s4[abcd]_driver|ros2 bag|bag record|strace" | grep -v -E "pgrep|cleanup.sh" || echo none
+--- tools_s4c_l2_live/watchdog.sh	2026-11-03 11:17:33.785308854 +0000
++++ tools/watchdog.sh	2026-11-11 05:30:00.990144750 +0000
+@@ -1,11 +1,18 @@
+ #!/usr/bin/env bash
+-# S4c level-2 live run-local safety net (the Phase C watchdog): if the session is interrupted and the
+-# deadline passes, stop everything the run started (cleanup.sh, which ends with stage_stop.sh), then
+-# restore and verify the disabled state (restore_cmd.sh: the exact-baseline restore, incremental rebuild).
+-# Exits without acting when RUN/stopped.flag exists.
+-RUN=$1; DEADLINE_S=${2:-3600}
++# S4d-M LIVE run-local safety net (the S4d shadow watchdog): if the session is interrupted and the
++# deadline passes, stop everything the run owns (cleanup.sh, which ends with stage_stop.sh), then
++# restore and verify the disabled state (restore_cmd.sh: the full exact-baseline restore with the
++# enabling ref, the incremental rebuild of the normal installation, and the run installation's gates).
++# Armed BEFORE enabling (OD8). Exits without acting when RUN/stopped.flag exists.
++# S4d changes (OD8): the deadline defaults to 7200 s, counted from this script's start, which is
++# before the launch; the deadline (epoch s) and this script's pid are written into RUN, so the run
++# script can check before the launch and again before the first key that the remaining time covers
++# the 90-minute script cap plus 15 min (stop, cleanup, restore and verification).
++RUN=$1; DEADLINE_S=${2:-7200}
+ EVT=$(dirname "$RUN")/tools
+ end=$(( $(date +%s) + DEADLINE_S ))
++echo "$end" > "$RUN/watchdog_deadline_epoch.txt"; echo $$ > "$RUN/watchdog.pid"
++echo "$(date -u +%FT%TZ) watchdog armed: pid $$, deadline ${DEADLINE_S}s, epoch $end ($(date -u -d @$end +%FT%TZ))" >> "$RUN/watchdog_armed.txt"
+ while [ "$(date +%s)" -lt "$end" ]; do [ -f "$RUN/stopped.flag" ] && exit 0; sleep 5; done
+ [ -f "$RUN/stopped.flag" ] && exit 0
+ touch "$RUN/stopped.flag"
+--- tools_s4c_l2_live/prelaunch_checks.sh	2026-11-03 11:17:33.785569918 +0000
++++ tools/prelaunch_checks.sh	2026-11-11 05:31:16.693550183 +0000
+@@ -1,14 +1,20 @@
+ #!/usr/bin/env bash
+-# S4c level-2 live pre-launch checks (the S4c level-1 live checks, unchanged; the S4b live checks; ENABLED build: gates expected M55 True,
+-# M61 and M6.0-D False): the run-local env.sh resolves gz_ros2_control to the r2 overlay.
++# S4d-M LIVE pre-launch checks (the S4d shadow checks with the S4c level-2 live gate expectations: ENABLED build, gates expected
++# M55 True, M61 and M6.0-D False): the run-local env.sh resolves gz_ros2_control to the verified r2 overlay.
++# S4d changes: the workspace layer is the fresh ENABLED run installation; the existing workspace
++# installation must not be in the environment, and the gates must be imported from the run
++# installation (its symlinks resolve into the workspace src/).
+ # Usage: prelaunch_checks.sh <tools dir>   Ends with "PRELAUNCH VERDICT: PASS" or "... FAIL".
+ EVT=$1
+ source $EVT/env.sh
+ O=/root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control
+ F=0
+ echo "== source order (AMENT_PREFIX_PATH, toolchain/overlay/workspace positions)"
+-echo "$AMENT_PREFIX_PATH" | tr ":" "\n" | grep -n -E "gz_overlay|envs/humble$|spiderx_ws/install/spiderx_(controller|description|bringup)$"
++echo "$AMENT_PREFIX_PATH" | tr ":" "\n" | grep -n -E "gz_overlay|envs/humble$|spiderx_live_enabled_20261111T052817Z/install/spiderx_(controller|description|bringup)$|spiderx_ws/install|spiderx_fresh_disabled"
+ echo "ROS_DOMAIN_ID=$ROS_DOMAIN_ID ROS_LOCALHOST_ONLY=$ROS_LOCALHOST_ONLY RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-<unset>} ROS_DISCOVERY_SERVER=${ROS_DISCOVERY_SERVER:-<unset>} DISPLAY=$DISPLAY"
++echo "== the existing workspace installation must not be in the environment"
++if env | grep -E "^(AMENT_PREFIX_PATH|CMAKE_PREFIX_PATH|COLCON_PREFIX_PATH|PYTHONPATH|LD_LIBRARY_PATH|PATH)=" | grep -q "/home/user/spiderx_ws/install"; then echo "FAIL /home/user/spiderx_ws/install is in the environment"; F=1
++else echo "PASS /home/user/spiderx_ws/install is not in the environment"; fi
+ echo "== ament lookup"; p=$(ros2 pkg prefix gz_ros2_control); echo "$p"
+ [ "$p" = "$O" ] && echo "PASS ament prefix = overlay" || { echo "FAIL ament prefix"; F=1; }
+ echo "== pluginlib"
+@@ -32,6 +38,6 @@
+ want = {\"M55_LOCOMOTION_DISPATCH_ENABLED\": True, \"M61_LIVE_DISPATCH_ENABLED\": False, \"LIVE_DISPATCH_ENABLED\": False}
+ for mod, name in ((\"m55_contract\",\"M55_LOCOMOTION_DISPATCH_ENABLED\"),(\"m61_live_contract\",\"M61_LIVE_DISPATCH_ENABLED\"),(\"m6_live_contract\",\"LIVE_DISPATCH_ENABLED\")):
+     m = importlib.import_module(\"spiderx_controller.\"+mod); v = getattr(m, name)
+-    print(name, v, os.path.realpath(m.__file__)); assert v is want[name] and os.path.realpath(m.__file__).startswith(\"/home/user/spiderx_ws/\")
+-print(\"PASS gates M55 True, M61 False, M6.0-D False, imported from this workspace\")" ) || F=1
++    print(name, v, m.__file__, \"->\", os.path.realpath(m.__file__)); assert v is want[name] and m.__file__.startswith(\"/root/spiderx_live_enabled_20261111T052817Z/install/\") and os.path.realpath(m.__file__).startswith(\"/home/user/spiderx_ws/src/\")
++print(\"PASS gates M55 True, M61 False, M6.0-D False, imported from the run installation (symlinks into the workspace src/)\")" ) || F=1
+ [ "$F" = 0 ] && echo "PRELAUNCH VERDICT: PASS" || echo "PRELAUNCH VERDICT: FAIL"
+--- tools_s4c_l2_live/premotion_checks.sh	2026-11-02 18:23:50.932825568 +0000
++++ tools/premotion_checks.sh	2026-11-11 05:31:16.678113486 +0000
+@@ -6,6 +6,7 @@
+ # the simulator server pid is kept for the exit observation. LIVE (the S3 live checks): the node is
+ # in DISPATCH mode and its action client is the action's only client; no command-topic publisher;
+ # no driver or teleop process yet (s4a/s4b/s4c drivers too).
++# S4d-M live (the only change): the S4d driver is a forbidden process too before go.flag.
+ # Writes RUN/premotion/ and ends with "PREMOTION VERDICT: PASS" or "... FAIL: <items>".
+ # Usage: premotion_checks.sh <run dir>
+ RUN=$1; EVT=$(dirname "$RUN")/tools; D=$RUN/premotion; mkdir -p $D
+@@ -87,7 +88,7 @@
+ CTL=$(timeout 30 ros2 control list_controllers 2>&1 | strip)
+ ACT=$(timeout 30 ros2 action info /leg_trajectory_controller/follow_joint_trajectory 2>&1)
+ TOP=$(timeout 30 ros2 topic info /leg_trajectory_controller/joint_trajectory 2>&1)
+-FORB=$(pgrep -af "teleop|s[23]_driver|s4a_driver|s4b_driver|s4c_driver" | grep -v -E "pgrep|premotion_checks" || true)
++FORB=$(pgrep -af "teleop|s[23]_driver|s4a_driver|s4b_driver|s4c_driver|s4d_driver" | grep -v -E "pgrep|premotion_checks" || true)
+ NODEP=$(pgrep -f "spiderx_controller/m55_locomotion_node" | tr '\n' ' '); NODEP=$(echo $NODEP)
+ NODESID=$(for p in $NODEP; do ps -o sid= -p $p | tr -d ' '; done | sort -u | tr '\n' ' '); NODESID=$(echo $NODESID)
+ NINFO=$(timeout 30 ros2 node info /spiderx_locomotion 2>&1)
+--- tools_s4c_l2_live/input_checks.sh	2026-11-03 11:17:33.785952038 +0000
++++ tools/input_checks.sh	2026-11-11 05:33:32.027316258 +0000
+@@ -1,22 +1,21 @@
+ #!/usr/bin/env bash
+-# S4c level-2 LIVE input checks: the S4c level-2 shadow checks at the disabled baseline 77d97fc, plus the
+-# live sections of the S4c level-1 live checks (robotics source = 069385c; the enabling patch hash,
+-# applicability and scope; the level-2 shadow evidence vs now). Read-only; no build, install, launch
+-# or deletion. Usage: input_checks.sh <scratch dir>
+-# Branch/HEAD/worktree; toolchain and r2 overlay provenance (both patches, both built libraries,
+-# overlay source = upstream + patches, extracted into a NEW unique scratch directory that is kept);
+-# installed SpiderX runtime vs HEAD and the reused build (the S4c level-1 live restore's rebuild of
+-# ea69d3f, verified by the restoration follow-up d5a6692, whose fresh build and suite are reused);
+-# fresh-import gates; phase-library identity; S4c driver/scorer at HEAD = the level-1 runs' tools.
++# S4d-M LIVE input checks, at the disabled baseline, BEFORE the watchdog and enabling (the S4d shadow input
++# checks, with the S4c level-2 live patch checks; read-only; no build, install, launch or deletion).
++# Usage: input_checks.sh <scratch dir>
+ SP=$1; WS=/home/user/spiderx_ws; OV=/root/spiderx_gz_overlay_ws_r2
+-EXP_HEAD=77d97fc765a54dcc95f2f8857b70511e4454ea70
++EXP_HEAD=9cc1f6844de11abc630387d4c6c441a623463094; TESTED=8f99bcc4ab27294265da91a31ce03999423acc7f
++EB=/root/spiderx_live_enabled_20261111T052817Z; INST=$WS/install
++FU=$WS/docs/evidence/m55/s4d_fresh_disabled_20261110T071506Z; SH=$WS/docs/evidence/m55/s4d_shadow_20261110T072920Z
+ S3E=$WS/docs/evidence/m55/s3_free_base_20261101T115002Z
+ cd $WS
+ F=""
+ echo "== input checks $(date -u +%FT%TZ)"
+-echo "branch $(git rev-parse --abbrev-ref HEAD) HEAD $(git rev-parse HEAD) worktree entries $(git status --porcelain | wc -l) local/* branches $(git branch --list 'local/*' | wc -l)"
+-[ "$(git rev-parse --abbrev-ref HEAD)" = claude/spiderx-s4c-preparation ] && [ "$(git rev-parse HEAD)" = $EXP_HEAD ] \
+-  && [ -z "$(git status --porcelain)" ] && [ -z "$(git branch --list 'local/*')" ] || F="$F git"
++echo "branch $(git rev-parse --abbrev-ref HEAD) HEAD $(git rev-parse HEAD) worktree entries $(git status --porcelain | wc -l) local/* branches $(git branch --list 'local/*' | wc -l) remote local/* refs $(git for-each-ref 'refs/remotes/*/local/*' | wc -l)"
++[ "$(git rev-parse --abbrev-ref HEAD)" = claude/spiderx-s4d-preparation ] && [ "$(git rev-parse HEAD)" = $EXP_HEAD ] \
++  && [ -z "$(git status --porcelain)" ] && [ -z "$(git branch --list 'local/*')" ] && [ -z "$(git for-each-ref 'refs/remotes/*/local/*')" ] \
++  && echo "PASS branch, baseline HEAD, clean worktree, no local/* branch or remote ref" || F="$F git"
++NE=$(git diff --name-only $TESTED $EXP_HEAD | grep -v '^docs/' || true)
++echo "files changed $TESTED..$EXP_HEAD outside docs/: ${NE:-none}"; [ -z "$NE" ] && echo "PASS the executable inputs equal the tested executable 8f99bcc" || F="$F baseline_source"
+ 
+ echo "== toolchain (installed 2026-10-29 by scripts/env/cloud_env_setup.sh 57cc33f8...)"
+ sha256sum scripts/env/cloud_env_setup.sh
+@@ -47,127 +46,101 @@
+ else echo "FAIL overlay reference tree (archive or patch apply)"; F="$F overlay_ref"; fi
+ echo "overlay reference tree kept, not deleted: ${REFD:-none}"
+ 
+-echo "== installed SpiderX runtime vs HEAD (layout $(stat -c %y install/.colcon_install_layout | cut -c1-19), setup $(stat -c %y install/local_setup.bash | cut -c1-19): the S4c level-1 live restore's incremental rebuild of ea69d3f, verified disabled by the restoration follow-up d5a6692)"
+-echo "src changes ea69d3f..HEAD: $(git diff --name-only ea69d3fbff36d210d0bcf9a3e8e152e84f162782 HEAD -- src/ | tr '\n' ' ')"
+-python3 - <<'EOF' || F="$F runtime"
++echo "== the normal workspace installation (restoration target; rebuilt incrementally by restore_cmd.sh)"
++python3 - "$INST" <<'PYEOF' || F="$F normal_runtime"
+ import hashlib, os, subprocess, sys
+-WS = '/home/user/spiderx_ws'; INST = WS + '/install'
++WS = '/home/user/spiderx_ws'; INST = sys.argv[1]
+ def sha(b): return hashlib.sha256(b).hexdigest()
+-bad, src, gen, n = [], 0, [], 0
+-hooks, caches = [], []    # toolchain ament env hooks (symlinked by colcon); Python bytecode caches
++bad, src, gen, n, hooks, caches = [], 0, [], 0, [], []
+ HOOKS = '/opt/mm/root/envs/humble/share/ament_cmake_core/cmake/environment_hooks/'
+ for p in sorted(d for d in os.listdir(INST) if os.path.isdir(os.path.join(INST, d))):
+     for root, _, files in os.walk(os.path.join(INST, p)):
+         for f in files:
+             path = os.path.join(root, f); n += 1
+-            if '/__pycache__/' in path and path.endswith('.pyc'):
+-                caches.append(path); continue          # revalidated against the source by Python
+-            if os.path.islink(path) and os.path.realpath(path).startswith(HOOKS):
+-                hooks.append(path); continue
++            if '/__pycache__/' in path and path.endswith('.pyc'): caches.append(path); continue
++            if os.path.islink(path) and os.path.realpath(path).startswith(HOOKS): hooks.append(path); continue
+             if os.path.islink(path):
+                 real = os.path.realpath(path)
+-                if not os.path.isfile(real):
+-                    bad.append(('dangling', path)); continue
++                if not os.path.isfile(real): bad.append(('dangling', path)); continue
+                 if not real.startswith(WS + '/src/'):
+-                    if real.startswith(WS + '/build/'):
+-                        gen.append(path); continue
++                    if real.startswith(WS + '/build/'): gen.append(path); continue
+                     bad.append(('outside', path, real)); continue
+                 rel = os.path.relpath(real, WS)
+                 head = subprocess.run(['git', '-C', WS, 'show', 'HEAD:' + rel], capture_output=True)
+-                if head.returncode or sha(head.stdout) != sha(open(real, 'rb').read()):
+-                    bad.append(('differs_from_HEAD', rel)); continue
++                if head.returncode or sha(head.stdout) != sha(open(real, 'rb').read()): bad.append(('differs_from_HEAD', rel)); continue
+                 src += 1
+-            else:
+-                gen.append(path)
+-late = [g for g in gen if os.path.getmtime(g) > os.path.getmtime(INST + '/local_setup.bash') + 60]
+-print(f'files {n}: symlinks into src/ equal to the HEAD blob {src}; generated build outputs {len(gen)} '
+-      f'(modified after the build: {len(late)}); toolchain ament env-hook symlinks {len(hooks)}; '
+-      f'bytecode caches {len(caches)}; problems {len(bad)}')
++            else: gen.append(path)
++print(f'files {n}: symlinks into src/ equal to the HEAD blob {src}; generated build outputs {len(gen)}; '
++      f'toolchain ament env-hook symlinks {len(hooks)}; bytecode caches {len(caches)}; problems {len(bad)}')
+ for b in bad[:20]: print('  ', b)
+-for g in late[:20]: print('  late:', g)
+-key = ['spiderx_bringup/share/spiderx_bringup/launch/fortress_m55_walking.launch.py',
+-       'spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_locomotion.py',
+-       'spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_rclpy.py',
+-       'spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_teleop.py',
+-       'spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py']
+-for k in key:
+-    p = os.path.join(INST, k)
+-    print(f'  {k} -> {os.path.relpath(os.path.realpath(p), WS) if os.path.exists(p) else "MISSING"}')
+-missing = [k for k in key if not os.path.exists(os.path.join(INST, k))]
+-sys.exit(1 if bad or late or missing or src == 0 else 0)
+-EOF
+-[ -z "$(git diff --name-only ea69d3fbff36d210d0bcf9a3e8e152e84f162782 HEAD -- src/)" ] && echo "PASS no src/ file changed since the reused build (ea69d3f)" || { echo "FAIL src/ changed since the reused build"; F="$F src_since_build"; }
++sys.exit(1 if bad or src == 0 else 0)
++PYEOF
++[ ! -e $EB ] && echo "PASS the B1 bases $EB do not exist yet" || { echo "FAIL $EB exists"; F="$F b1_bases"; }
++
++echo "== the recorded disabled validation (batch step 2), reused: no rebuild, no suite rerun"
++(cd $FU && sha256sum -c SHA256SUMS --quiet) && echo "PASS manifest ${FU#$WS/}" || F="$F fu_manifest"
++grep -q "head $TESTED worktree 0" $FU/fresh/build_and_test_summary.txt && grep -q "^Summary: 1983 tests, 0 errors, 0 failures, 0 skipped$" $FU/fresh/build_and_test_summary.txt \
++  && grep -q "^COLLECTION VERDICT: PASS$" $FU/fresh/build_and_test_summary.txt && grep -q "^STEP 2 VERDICT: PASS$" $FU/STEP2_SUMMARY.txt \
++  && echo "PASS 1983 collected tests at $TESTED, 0 failures, 0 skipped; collection PASS; step 2 PASS" || F="$F step2"
++NB=$(git diff --name-only $TESTED HEAD -- src/ scripts/ third_party/)
++[ -z "$NB" ] && echo "PASS src/, scripts/ and third_party/ unchanged since $TESTED: reuse" || { echo "FAIL changed: $NB"; F="$F stale"; }
+ 
+-echo "== gates (fresh import, env -i, from /) and phase library"
+-G=$(env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin bash -c 'source /opt/mm/activate.sh >/dev/null 2>&1; source /home/user/spiderx_ws/install/setup.bash; cd / && python3 -c "
++echo "== gates and phase library (fresh import from the normal installation: env -i, toolchain, overlay, install; from /)"
++G=$(env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin bash -c "source /opt/mm/activate.sh >/dev/null 2>&1; source $OV/install/local_setup.bash; source $INST/setup.bash; cd / && PYTHONDONTWRITEBYTECODE=1 python3 -c \"
+ import importlib, os
+-for mod, name in ((\"m55_contract\",\"M55_LOCOMOTION_DISPATCH_ENABLED\"),(\"m61_live_contract\",\"M61_LIVE_DISPATCH_ENABLED\"),(\"m6_live_contract\",\"LIVE_DISPATCH_ENABLED\")):
+-    m = importlib.import_module(\"spiderx_controller.\"+mod); print(name, getattr(m, name), os.path.realpath(m.__file__))"; python3 /home/user/spiderx_ws/docs/evidence/m55/s2_fixed_base_20261029T100210Z/tools/library_fingerprint.py 2>&1 | tail -1')
++for mod, name in (('m55_contract','M55_LOCOMOTION_DISPATCH_ENABLED'),('m61_live_contract','M61_LIVE_DISPATCH_ENABLED'),('m6_live_contract','LIVE_DISPATCH_ENABLED')):
++    m = importlib.import_module('spiderx_controller.'+mod); print(name, getattr(m, name), os.path.realpath(m.__file__))\"; PYTHONDONTWRITEBYTECODE=1 python3 $WS/docs/evidence/m55/s2_fixed_base_20261029T100210Z/tools/library_fingerprint.py 2>&1 | tail -1")
+ echo "$G"
+-[ "$(grep -c " False /home/user/spiderx_ws/src/" <<< "$G")" = 3 ] || F="$F gates"
++[ "$(grep -c " False /home/user/spiderx_ws/src/" <<< "$G")" = 3 ] && echo "PASS three gates False" || F="$F gates"
+ grep -q '"goals": 54, "fingerprints_sha256": "62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732"' <<< "$G" && echo "PASS phase library 54 goals 62f8a100..." || F="$F library_identity"
++echo "config: $(sha256sum < src/spiderx_controller/config/m55_locomotion.yaml | cut -c1-64) src/spiderx_controller/config/m55_locomotion.yaml"
++[ "$(sha256sum < src/spiderx_controller/config/m55_locomotion.yaml | cut -c1-64)" = ab0dccd43fefe877fac21e1c51d1fdd0ae197ac456b8c42502b0bb7ba5e42a93 ] && echo "PASS config = the step-2 and shadow config" || F="$F config"
+ 
+-echo "== S4c tools at HEAD (s4c_driver imports s4a_driver, s3_driver, s2_driver; score_s4c imports score_s4b, score_s4a, score_s3)"
+-for p in scripts/s4/s4c_driver.py scripts/s4/score_s4c.py scripts/s4/s4a_driver.py scripts/s4/score_s4a.py scripts/s4/score_s4b.py scripts/s3/s3_driver.py scripts/s2/s2_driver.py scripts/s3/score_s3.py; do
++echo "== the modules the S4d driver and scorer import (in the toolchain + normal installation), each = its HEAD blob"
++MODS=$(env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin bash -c "source /opt/mm/activate.sh >/dev/null 2>&1; source $OV/install/local_setup.bash; source $INST/setup.bash; cd / && PYTHONDONTWRITEBYTECODE=1 python3 -c \"
++import os, sys
++sys.path[:0] = ['$WS/scripts/s4', '$WS/scripts/s3', '$WS/scripts/s2']
++import s4d_driver, score_s4d, adjudicate_s2, response_law
++for k, m in sorted(sys.modules.items()):
++    f = getattr(m, '__file__', None) or ''
++    if f.startswith('$WS/scripts/') or f.startswith('$WS/docs/'):
++        print(os.path.relpath(f, '$WS'))
++\"" 2>&1)
++echo "imported: $(echo $MODS)"
++grep -q "scripts/s4/s4d_driver.py" <<< "$MODS" && grep -q "scripts/s4/score_s4d.py" <<< "$MODS" || F="$F tool_imports"
++for p in $MODS; do
+   w=$(sha256sum < $p | cut -c1-64); h=$(git show HEAD:$p | sha256sum | cut -c1-64)
+-  echo "$w  $p $([ "$w" = "$h" ] && echo '= HEAD blob' || { echo 'DIFFERS from HEAD'; })"; [ "$w" = "$h" ] || F="$F tool_$p"
++  if [ "$w" = "$h" ] && grep -q "^$w  $p = HEAD blob" $SH/provenance/input_checks.txt; then echo "$w  $p = HEAD blob = the S4d shadow run's"
++  else echo "$w  $p DIFFERS (HEAD $h or not the shadow run's)"; F="$F tool_$p"; fi
+ done
+-grep -q "^0af5b90a410acfcb4b7e3967d1aaff0d8eb2e23c441aea83fe7bbf4233c612e7  scripts/s3/s3_driver.py" $S3E/provenance/input_checks.txt \
+-  && [ "$(sha256sum < scripts/s3/s3_driver.py | cut -c1-64)" = 0af5b90a410acfcb4b7e3967d1aaff0d8eb2e23c441aea83fe7bbf4233c612e7 ] \
+-  && [ "$(sha256sum < scripts/s2/s2_driver.py | cut -c1-64)" = 44cd495913b413c3f984adb581c699258a6da5cc7495c820ce3ef5e92ed78388 ] \
+-  && echo "PASS s3_driver.py and s2_driver.py = the drivers that ran S3 (P4 and live)" || F="$F base_drivers"
+-
+-echo "== the S4c tools = those of the level-1 shadow and live runs (driver d0ff8acb..., scorer fe1b5c03...)"
+-L1S=$WS/docs/evidence/m55/s4c_l1_shadow_20261102T175711Z; L1L=$WS/docs/evidence/m55/s4c_l1_live_20261102T182303Z
+-for p in scripts/s4/s4c_driver.py scripts/s4/score_s4c.py scripts/s4/s4a_driver.py scripts/s4/score_s4a.py scripts/s4/score_s4b.py scripts/s3/s3_driver.py scripts/s2/s2_driver.py scripts/s3/score_s3.py; do
+-  w=$(sha256sum < $p | cut -c1-64)
+-  grep -q "^$w  $p = HEAD blob" $L1S/provenance/input_checks.txt && grep -q "^PASS $p $w = the shadow run's" $L1L/provenance/input_checks.txt \
+-    && echo "PASS $p ${w:0:8}... = the level-1 shadow and live runs' tool" || { echo "FAIL $p differs from the level-1 runs' tool"; F="$F l1_tool"; }
+-done
+-echo "== reuse of the recorded fresh disabled build and suite (restoration follow-up d5a6692, run at 0d84ebd)"
+-FU=$WS/docs/evidence/m55/s4c_l1_live_20261102T182303Z_restore_followup_20261102T185957Z
+-for d in $FU $L1S $L1L; do (cd $d && sha256sum -c SHA256SUMS --quiet) && echo "PASS manifest ${d#$WS/}" || { echo "FAIL manifest $d"; F="$F manifest"; }; done
+-grep -h -E "head |Summary:|VERDICT" $FU/fresh/build_and_test_summary.txt $FU/install_A/install_check.txt $FU/install_B/install_check.txt
+-grep -q "^Summary: 1972 tests, 0 errors, 0 failures, 0 skipped$" $FU/fresh/build_and_test_summary.txt && grep -q "^COLLECTION VERDICT: PASS$" $FU/fresh/build_and_test_summary.txt \
+-  && grep -q "^INSTALLATION A VERDICT: PASS$" $FU/install_A/install_check.txt && grep -q "^INSTALLATION B VERDICT: PASS$" $FU/install_B/install_check.txt \
+-  && echo "PASS recorded fresh build + suite (1972 tests, 0 failures) and both installation checks" || F="$F followup_verdicts"
+-NB=$(git diff --name-only 0d84ebd3a7a972719e656638a7f2fa0c4558a98b HEAD -- src/ scripts/ third_party/)
+-[ -z "$NB" ] && echo "PASS src/, scripts/ and third_party/ unchanged since the fresh build (0d84ebd): reuse, no rebuild" || { echo "FAIL changed since the fresh build: $NB"; F="$F fresh_build_stale"; }
+-echo "changes 0d84ebd..HEAD (expected: evidence and documentation only): $(git diff --name-only 0d84ebd3a7a972719e656638a7f2fa0c4558a98b HEAD | sed -E 's#^(docs/evidence/m55/[^/]+)/.*#\1/#' | sort -u | tr '\n' ' ')"
+-echo "== disabled baseline: robotics source = 069385c (the S4c correction); since then only docs/, README.md and STATUS.md"
+-NE=$(git diff --name-only 069385c8e49008b2b6f1c66d12c105f2d75923de $EXP_HEAD | grep -v -E '^docs/|^README\.md$|^STATUS\.md$' || true)
+-echo "files changed 069385c..$EXP_HEAD outside docs/, README.md and STATUS.md: ${NE:-none}"; [ -z "$NE" ] || F="$F baseline_source"
+-echo "== enabling patch (applied only on the local enabling branch, later)"
++
++echo "== enabling patch (applied only on the local enabling branch, by enable_build.sh)"
+ P=docs/patches/m55_enable_s2.UNAPPLIED.patch; h=$(sha256sum < $P | cut -c1-64); echo "$h  $P"
+-[ "$h" = d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236 ] && echo "PASS patch hash" || F="$F patch_hash"
++[ "$h" = d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236 ] && echo "PASS patch hash (the S4c live attempts' patch)" || F="$F patch_hash"
+ git apply --check $P && echo "PASS git apply --check (applies forward to the disabled tree)" || F="$F patch_apply"
+ NS=$(git apply --numstat $P); echo "$NS"
+ [ "$(echo "$NS" | wc -l)" = 2 ] && grep -qP "^1\t1\tsrc/spiderx_controller/spiderx_controller/m55_contract.py$" <<< "$NS" \
+   && grep -qP "^1\t1\tsrc/spiderx_controller/test/m55_gate.py$" <<< "$NS" && echo "PASS exactly the M55 gate and its test pin" || F="$F patch_scope"
+-git apply --stat $P | tail -1
+-echo "== the S4c level-2 shadow evidence (PASS, SHADOW ONLY; committed 77d97fc) vs the current inputs"
+-SH=docs/evidence/m55/s4c_l2_shadow_20261103T094244Z; (cd $SH && sha256sum -c SHA256SUMS --quiet) && echo "PASS level-2 shadow evidence manifest" || F="$F shadow_manifest"
+-for k in scripts/s4/s4c_driver.py scripts/s4/score_s4c.py scripts/s4/s4a_driver.py scripts/s4/score_s4a.py scripts/s4/score_s4b.py scripts/s3/s3_driver.py scripts/s2/s2_driver.py scripts/s3/score_s3.py; do
+-  now=$(sha256sum < $k | cut -c1-64); grep -q "^$now  $k = HEAD blob" $SH/provenance/input_checks.txt && echo "PASS $k ${now:0:8}... = the level-2 shadow run's" || { echo "FAIL $k"; F="$F shadow_tool"; }
+-done
+-for x in 3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27 06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5 \
+-         62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732; do
+-  grep -q $x $SH/provenance/input_checks.txt && echo "PASS level-2 shadow inputs record ${x:0:16}... (same as now)" || { echo "FAIL $x"; F="$F shadow_input"; }
+-done
++
++echo "== the S4d shadow evidence (committed d4fe748) vs now"
++(cd $SH && sha256sum -c SHA256SUMS --quiet) && echo "PASS shadow evidence manifest" || F="$F shadow_manifest"
++for x in 3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27 06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5 62f8a10075e90571bfc42afb4635eddd235d8681f589f027734fa5ca2c03e732; do
++  grep -q $x $SH/provenance/input_checks.txt && echo "PASS shadow inputs record ${x:0:16}... (same as now)" || { echo "FAIL $x"; F="$F shadow_input"; }; done
+ grep -q "mapped-object sha256=3a8f2044" $SH/run/premotion/library_checks.txt && grep -q "mapped-object sha256=06777e14" $SH/run/premotion/library_checks.txt \
+-  && echo "PASS the level-2 shadow launch's server mapped these r2 libraries" || F="$F shadow_maps"
+-a=$(sha256sum < $SH/node/library.json | cut -c1-64); b=$(sha256sum < $SH/provenance/library_disabled.json | cut -c1-64)
+-echo "library.json: level-2 shadow node $a; shadow disabled $b"
+-[ "$a" = "$b" ] && [ "$a" = 917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e ] && echo "PASS library.json identity (917fc4d7...)" || F="$F library_json"
++  && echo "PASS the shadow launch's server mapped these r2 libraries" || F="$F shadow_maps"
++a=$(sha256sum < $SH/node/library.json | cut -c1-64); [ "$a" = 917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e ] && echo "PASS shadow node library.json 917fc4d7..." || F="$F library_json"
++
++echo "== OD16 storage before the build (B1 bases measured by step 2: 11,154,692 B) and the recording requirement at T = 7200 s"
++python3 - <<'PYEOF' || F="$F storage"
++import os
++st = os.statvfs('/root/spiderx_evidence'); avail = st.f_bavail * st.f_frsize
++b1 = 11154692; E = 2 * 30.8e6 / 60 * 7200; need = max(5 * 2**30, 2 * E + 0.1e9) + b1
++print(f'avail {avail} B; need max(5 GiB, 2E + 0.1 GB) + B1 = {need:.0f} B (E = 2 x 30.8 MB/min, a PLANNING ASSUMPTION, x 7200 s)'
++      f' -> {"PASS" if avail >= need else "FAIL"}')
++raise SystemExit(0 if avail >= need else 1)
++PYEOF
+ echo "== processes"
+-LEFT=$(pgrep -af "ign gazebo|gz sim|ruby|parameter_bridge|robot_state_publisher|ros2 launch|_ros2_daemon|Xvfb|m55_|s[23]_driver|s4[abc]_driver|ros2 bag|strace|watchdog.sh" | grep -v -E "pgrep|bash -c|input_checks" || true)
++LEFT=$(pgrep -af "ign gazebo|gz sim|ruby|parameter_bridge|robot_state_publisher|ros2 launch|_ros2_daemon|Xvfb|m55_|s[23]_driver|s4[abcd]_driver|ros2 bag|bag record|strace|watchdog.sh" | grep -v -E "pgrep|bash -c|input_checks|claude/shell-snapshots" || true)
+ echo "${LEFT:-no leftover processes}"; [ -z "$LEFT" ] || F="$F processes"
+ [ -e /tmp/.X77-lock ] && { echo "display :77 lock present"; F="$F display"; } || echo "display :77 free"
+-[ "$(sha256sum < scripts/s4/s4a_driver.py | cut -c1-64)" = 243974e75a5784b3a482364f29e6e1b978cc24e12a847927f2c2bfb00643bc50 ] \
+-  && [ "$(sha256sum < scripts/s4/score_s4a.py | cut -c1-64)" = 631fe2ec8cab638780511d919df51617410868508b9073ff61e83aab39d6e66a ] \
+-  && echo "PASS s4a_driver.py and score_s4a.py = the S4a tools that ran and scored S4a" || F="$F s4a_tools"
+-[ "$(sha256sum < scripts/s4/score_s4b.py | cut -c1-64)" = a9716d5297163d2d11d2b77ad6cf19784b4bda0a2c855e72ec82c53a02c08126 ] \
+-  && echo "PASS score_s4b.py = the S4b scorer that scored S4b (score_s4c imports it)" || F="$F s4b_scorer"
+-I=$(git diff --name-only ea69d3fbff36d210d0bcf9a3e8e152e84f162782 HEAD -- src/ || true)
+-[ -z "$I" ] && echo "PASS since the reused build (ea69d3f): no src/ file changed" || { echo "FAIL src changed since the build: $I"; F="$F build_stale"; }
+ [ -z "$F" ] && echo "INPUT VERDICT: PASS" || echo "INPUT VERDICT: FAIL:$F"
+--- tools_s4c_l2_live/restore_cmd.sh	2026-11-03 11:17:33.785470048 +0000
++++ tools/restore_cmd.sh	2026-11-11 05:30:28.460952783 +0000
+@@ -1,13 +1,37 @@
+ #!/usr/bin/env bash
+-# S4c level-2 live restore (the S4c level-1 live restore_cmd.sh): the exact disabled baseline 77d97fc,
+-# the toolchain-only INCREMENTAL rebuild (colcon build --symlink-install, st59site confined to the
+-# build; the owner authorized this established procedure for this attempt; no deletion of build/,
+-# install/ or log/), the run's pid files, and the enabling branch deleted only after every
+-# verification passed (enforced by the script). Fixed before enabling; not changed after the launch.
+-# The enabling diff is two Python lines, installed as symlinks into src/.
+-R=/root/spiderx_evidence/s4c_l2_live_20261103T111733Z; B=$(cat $R/enabling_branch.txt)
++# S4d-M LIVE restore (the S4c level-2 live restore_cmd.sh, with the S4d shadow run-installation check).
++# Fixed before enabling; not changed after the launch. Used by hand after the run and by the watchdog.
++#  1. scripts/m61_restore_and_verify_disabled.sh: the exact disabled baseline 9cc1f68 (the docs-only
++#     status fix on top of the tested executable 8f99bcc); the enabling ref recorded by enable_build.sh
++#     (only once that branch exists) with --delete-enabling-branch (the script deletes it only after every
++#     verification passed, only if never pushed, and only after preserving its commit and patch); the
++#     toolchain-only INCREMENTAL rebuild of the normal installation (colcon build --symlink-install,
++#     st59site confined to the build; build/, install/ and log/ are never deleted); the run's pid files
++#     (passed only if they exist: before a launch there is nothing to stop; the leftover check still runs).
++#  2. Only if DISABLED AND VERIFIED: back onto claude/spiderx-s4d-preparation, and only if that branch
++#     still points at the baseline (the same commit: no file changes).
++#  3. The RUN installation (the fresh enabled B1 bases, symlinked into the restored src/) in a fresh
++#     environment (run_install_gates.sh; M15), if it was built.
++# Exit 0 only if all three hold.
++R=/root/spiderx_evidence/s4d_live_20261111T052817Z
++BASE=9cc1f6844de11abc630387d4c6c441a623463094; BR=claude/spiderx-s4d-preparation
++RUNINST=/root/spiderx_live_enabled_20261111T052817Z/install
++B=$(cat $R/enabling_branch.txt 2>/dev/null)
++ARGS=(); [ -n "$B" ] && ARGS+=(--enabling-ref "$B" --delete-enabling-branch)
++[ -f $R/run/launch.pid ] && ARGS+=(--launch-pid-file $R/run/launch.pid)
++[ -f $R/run/xvfb.pid ] && ARGS+=(--xvfb-pid-file $R/run/xvfb.pid)
++echo "$(date -u +%FT%TZ) restore_cmd: base $BASE; enabling ref ${B:-none}; args ${ARGS[*]}"
+ cd /home/user/spiderx_ws && env -i HOME=$HOME PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+-  bash scripts/m61_restore_and_verify_disabled.sh --base 77d97fc765a54dcc95f2f8857b70511e4454ea70 \
+-  --evidence $R/restore --enabling-ref "$B" --ros-setup /opt/mm/activate.sh \
+-  --build-cmd 'PYTHONPATH=/opt/mm/st59site colcon build --symlink-install' \
+-  --launch-pid-file $R/run/launch.pid --xvfb-pid-file $R/run/xvfb.pid --delete-enabling-branch
++  bash scripts/m61_restore_and_verify_disabled.sh --base $BASE \
++  --evidence $R/restore --ros-setup /opt/mm/activate.sh \
++  --build-cmd 'PYTHONPATH=/opt/mm/st59site colcon build --symlink-install' "${ARGS[@]}"
++RC1=$?
++RC2=1
++if [ $RC1 = 0 ] && [ "$(git rev-parse HEAD)" = $BASE ] && [ "$(git rev-parse refs/heads/$BR 2>/dev/null)" = $BASE ]; then
++  git switch -q $BR && RC2=0
++fi
++echo "after restore: branch $(git rev-parse --abbrev-ref HEAD) HEAD $(git rev-parse HEAD); status entries $(git status --porcelain | wc -l); local/* branches $(git branch --list 'local/*' | wc -l)"
++if [ -d $RUNINST ]; then bash $R/tools/run_install_gates.sh $RUNINST $R/run_install; RC3=$?
++else echo "run installation $RUNINST not built: nothing to check"; RC3=0; fi
++echo "restore exit $RC1; back on $BR at the baseline: $([ $RC2 = 0 ] && echo yes || echo NO); run installation gates exit $RC3"
++[ $RC1 = 0 ] && [ $RC2 = 0 ] && [ $RC3 = 0 ]
+--- tools_s4c_l2_live/s4c_live_run.sh	2026-11-03 11:17:33.784851115 +0000
++++ tools/s4d_live_run.sh	2026-11-11 05:30:57.769057879 +0000
+@@ -1,26 +1,80 @@
+ #!/usr/bin/env bash
+-# S4c LEVEL-2 LIVE run (ONE free-base attempt; enabled build: M55 gate True, M61 and M6.0-D False): the
+-# S4c level-1 live run script, changed only in the driver's --level (internal level 2: 60 mm stride,
+-# teleop label 3/3) and these comments (harness_vs_s4c_l1_live.diff); the driver's default LIVE mode
+-# (no --shadow-rehearsal); the pre-arm checks are the S4b live DISPATCH checks.
+-# It ends with its own stopped-state teleop close ('q'); the teleop processes left after it are
+-# recorded before the existing safety-net pkill. No level-1 rerun, extra cycle or retry. As before:
+-#  1. the launch itself starts the M5.5 node (SHADOW: no action client, sends nothing; its evidence in
+-#     RUN/node): no separate node, no m61a preflight (fixed base only); the launch's node is reniced
+-#     to -5, as Phase C started its node;
+-#  3. once the node is up the run waits for the operator's pre-shadow checks (premotion_checks.sh,
+-#     settle_check.py, one screenshot): go.flag starts the S3 script; abort.flag, or no decision
+-#     within PREMOTION_WAIT_S, stops with no key pressed;
+-#  4. the S4c driver (scripts/s4/s4c_driver.py --level 2, LIVE/default mode) replaces the S4b driver; its exit
+-#     code is kept; one screenshot after a completed script (driver exit 0, launch up, <= 15 s);
+-#  5. before the stop, strace (signals only, no system calls) observes the simulator server's own exit.
+-# Usage: s4c_live_run.sh <run dir> <bag dir>
++# S4d-M LIVE attempt (ONE free-base launch; the enabled B1 run installation: M55 gate True, M61 and M6.0-D
++# False): the S4d shadow run script (tested) with the S4c level-2 live changes. The committed S4d driver in
++# its default LIVE mode, scripts/s4/s4d_driver.py (no --shadow-rehearsal): the 111-goal plan, the close
++# while moving and the zero-goal reconnect probe. No retry, no extra cycle, no recovery motion: a stop or
++# any emergency response ends the attempt. Kept from S4c and the S4d shadow run:
++#  1. the launch itself starts the M5.5 node (SHADOW: no action client, sends nothing; its evidence
++#     in RUN/node); the launch's GUI is reniced to +19 and its node to -5;
++#  2. once the node is up the run waits for the operator's pre-key checks (premotion_checks.sh, the
++#     LIVE DISPATCH checks; settle_check.py --dispatch; one screenshot): go.flag starts the driver;
++#     abort.flag, or no decision within PREMOTION_WAIT_S, stops with no key pressed;
++#  3. one recorder outside the repository, without _action/status or /clock; captures before and
++#     after; one screenshot after a completed script; the simulator server's own exit by strace.
++# S4d changes (harness diffs in provenance/):
++#  a. the environment must hold the fresh ENABLED run installation and not the existing workspace
++#     installation; the imported gates must be exactly M55 True, M61 False, M6.0-D False, from the run
++#     installation; the checked-out branch must be the recorded local enabling branch, never pushed,
++#     differing from the disabled baseline by exactly the two-line patch; otherwise nothing is launched;
++#  b. OD8: the watchdog (armed before this script) must be running, with at least the 90-minute
++#     script cap + 15 min left, before the launch and again before the first key;
++#  c. OD16: the disk rule on the bag's filesystem, before the launch and again just before recording;
++#  d. the driver's and the recorder's pids are recorded (RUN/driver.pid, RUN/bag.pid) for cleanup.sh,
++#     which stops only processes this run owns; the teleops left after the driver are recorded,
++#     then stopped through the sessions the driver logged, not by a name pattern.
++# Usage: s4d_live_run.sh <run dir> <bag dir>
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools; WS=/home/user/spiderx_ws
++RUNINST=/root/spiderx_live_enabled_20261111T052817Z/install
++BASE=9cc1f6844de11abc630387d4c6c441a623463094
+ PREMOTION_WAIT_S=${PREMOTION_WAIT_S:-1500}
++SCRIPT_CAP_S=5400; AFTER_S=900          # OD8: the driver's 90-minute cap; stop, cleanup, restore, verification
+ source $EVT/env.sh
+ step() { echo "[$(date -u +%T)] $*" | tee -a $RUN/steps.log; }
+ mkdir -p $RUN/node $RUN/captures
+-step "gates (imported): $(python3 -c 'from spiderx_controller import m55_contract as a, m61_live_contract as b, m6_live_contract as c; print(a.M55_LOCOMOTION_DISPATCH_ENABLED, b.M61_LIVE_DISPATCH_ENABLED, c.LIVE_DISPATCH_ENABLED)')"
++refuse() { step "REFUSED before the launch (nothing launched, no key): $*"; step end; exit 1; }
++wd_check() {
++  local WP DL REM; WP=$(tr -dc '0-9' < $RUN/watchdog.pid 2>/dev/null); DL=$(tr -dc '0-9' < $RUN/watchdog_deadline_epoch.txt 2>/dev/null)
++  if [ -z "$WP" ] || [ -z "$DL" ] || ! kill -0 "$WP" 2>/dev/null || ! tr '\0' ' ' < /proc/$WP/cmdline | grep -q "watchdog.sh $RUN"; then
++    step "OD8 $1: FAIL: the watchdog is not running"; return 1; fi
++  REM=$(( DL - $(date +%s) ))
++  if [ "$REM" -ge $(( SCRIPT_CAP_S + AFTER_S )) ]; then step "OD8 $1: PASS: watchdog $WP has ${REM} s left >= ${SCRIPT_CAP_S} + ${AFTER_S} s"; return 0; fi
++  step "OD8 $1: FAIL: watchdog $WP has ${REM} s left < ${SCRIPT_CAP_S} + ${AFTER_S} s"; return 1
++}
++disk_check() {
++  local DL OUT RC; DL=$(tr -dc '0-9' < $RUN/watchdog_deadline_epoch.txt 2>/dev/null)
++  OUT=$(python3 - "$(dirname "$BAG")" "$(( ${DL:-0} - $(date +%s) ))" <<'PYEOF'
++import os, sys
++st = os.statvfs(sys.argv[1]); avail = st.f_bavail * st.f_frsize
++T = max(0, int(sys.argv[2]))   # recording-duration cap: the watchdog time left (7200 s minus the time used)
++r = 2 * 30.8e6 / 60            # B/s: 2 x the highest observed 30.8 MB per wall minute (S4b live); a PLANNING ASSUMPTION
++E = r * T
++restore = 0.1e9                # restore reserve: measured restore evidence <= 11 KB, workspace build+install 6.2 MB; rounded up
++need = max(5 * 2**30, 2 * E + restore)
++print(f'{"PASS" if avail >= need else "FAIL"}: {avail} B free on {sys.argv[1]}; T {T} s; E = 2 x 30.8 MB/min '
++      f'(planning assumption) x T = {E:.0f} B; need max(5 GiB, 2E + {restore:.0f} B) = {need:.0f} B')
++sys.exit(0 if avail >= need else 1)
++PYEOF
++); RC=$?; step "OD16 $1: $OUT"; return $RC
++}
++for v in AMENT_PREFIX_PATH CMAKE_PREFIX_PATH COLCON_PREFIX_PATH PYTHONPATH LD_LIBRARY_PATH PATH; do echo "$v=${!v}"; done > $RUN/env_run.txt
++grep -q "/home/user/spiderx_ws/install" $RUN/env_run.txt && refuse "the existing workspace installation is in the environment"
++grep -q "$RUNINST/spiderx_controller" $RUN/env_run.txt || refuse "the run installation $RUNINST is not in the environment"
++G=$(cd / && python3 -c 'from spiderx_controller import m55_contract as a, m61_live_contract as b, m6_live_contract as c; print(a.M55_LOCOMOTION_DISPATCH_ENABLED, b.M61_LIVE_DISPATCH_ENABLED, c.LIVE_DISPATCH_ENABLED, a.__file__)')
++step "gates (imported): $G"
++[ "$(echo $G | cut -d' ' -f1-3)" = "True False False" ] || refuse "the imported gates are not exactly M55 True, M61 False, M6.0-D False"
++case "$(echo $G | cut -d' ' -f4)" in $RUNINST/*) ;; *) refuse "the gates were not imported from the run installation";; esac
++EBR=$(cat $(dirname "$RUN")/enabling_branch.txt 2>/dev/null)
++CUR=$(cd $WS && git rev-parse --abbrev-ref HEAD)
++NS=$(cd $WS && git diff --numstat $BASE HEAD | tr '\t' ' ' | sort | tr '\n' ';')
++REMOTE=$(cd $WS && git for-each-ref "refs/remotes/*/$EBR" | wc -l)
++step "enabling branch: recorded '${EBR:-none}', checked out '$CUR', diff vs $BASE: $NS remote-tracking refs: $REMOTE; worktree entries: $(cd $WS && git status --porcelain | wc -l)"
++case "$EBR" in local/m55-s4d-m-*) ;; *) refuse "no recorded local/m55-s4d-m-* enabling branch";; esac
++[ "$CUR" = "$EBR" ] || refuse "the checked-out branch is not the recorded enabling branch"
++[ "$NS" = "1 1 src/spiderx_controller/spiderx_controller/m55_contract.py;1 1 src/spiderx_controller/test/m55_gate.py;" ] || refuse "the enabling commit is not exactly the two-line M55 patch"
++[ "$REMOTE" = 0 ] || refuse "the enabling branch has a remote-tracking ref (it must never be pushed)"
++[ -z "$(cd $WS && git status --porcelain)" ] || refuse "the worktree is not clean"
++wd_check "before the launch" || refuse "OD8 time budget"
++disk_check "before the launch" || refuse "OD16 disk"
+ step "launch"; bash $EVT/stage_start.sh $RUN | tee -a $RUN/steps.log
+ abort() { step "ABORT: $*"; bash $EVT/stage_stop.sh $RUN > /dev/null; step end; exit 1; }
+ bash $EVT/stage_wait_controllers.sh $RUN; RC=$?; step "controllers: exit $RC"
+@@ -31,7 +85,7 @@
+ GUI=$(pgrep -x -f "ign gazebo gui" | tr '\n' ' ')
+ [ -n "$GUI" ] && renice -n 19 -p $GUI > /dev/null
+ step "gazebo gui pid(s) $GUI reniced +19"
+-# Change 1: the node is this launch's own (fortress_m55_walking.launch.py); no second node.
++# The node is this launch's own (fortress_m55_walking.launch.py); no second node.
+ LP=$(cat $RUN/launch.pid)
+ for i in $(seq 1 400); do grep -q "locomotion node up" $RUN/launch.log && break; grep -q "process has died" $RUN/launch.log && break; sleep 1; done
+ grep -q "locomotion node up" $RUN/launch.log || abort "locomotion node not up (see launch.log)"
+@@ -41,40 +95,47 @@
+ ps -eo pid,ppid,sid,ni,pcpu,args --forest | grep -E "ign gazebo|m55_locomotion" | grep -v grep | cut -c1-140 > $RUN/captures/priorities.txt
+ step "locomotion node pid(s) $NODE (launch session $LP) reniced -5"
+ sleep 3
+-# Change 3: the operator's pre-shadow checks (plugin provenance, gain, rate, timestep, ownership,
+-# SHADOW mode, settling, screenshot). No key is pressed until go.flag.
++# The operator's pre-key checks (plugin provenance, gain, rate, timestep, ownership with the node as the
++# action's only client, DISPATCH mode with the gate True, settling, screenshot). No key until go.flag.
+ touch $RUN/premotion_wait.flag
+-step "pre-shadow checks: waiting for go.flag or abort.flag (at most $PREMOTION_WAIT_S s)"
++step "pre-key checks: waiting for go.flag or abort.flag (at most $PREMOTION_WAIT_S s)"
+ for i in $(seq 1 $PREMOTION_WAIT_S); do { [ -f $RUN/go.flag ] || [ -f $RUN/abort.flag ]; } && break; sleep 1; done
+-[ -f $RUN/abort.flag ] && abort "pre-shadow checks failed: $(head -c 300 $RUN/abort.flag)"
+-[ -f $RUN/go.flag ] || abort "no pre-shadow decision within $PREMOTION_WAIT_S s"
+-step "pre-shadow checks passed: $(head -c 300 $RUN/go.flag)"
++[ -f $RUN/abort.flag ] && abort "pre-key checks failed: $(head -c 300 $RUN/abort.flag)"
++[ -f $RUN/go.flag ] || abort "no pre-key decision within $PREMOTION_WAIT_S s"
++step "pre-key checks passed: $(head -c 300 $RUN/go.flag)"
++wd_check "before the first key" || abort "OD8 time budget before the first key (no key pressed)"
+ cap() { timeout 20 ros2 node info /spiderx_locomotion > $RUN/captures/$1_node_info.txt 2>&1
+   timeout 20 ros2 action info /leg_trajectory_controller/follow_joint_trajectory > $RUN/captures/$1_action_info.txt 2>&1
+   for t in /leg_trajectory_controller/joint_trajectory /cmd_vel /spiderx/locomotion/status; do echo "== $t"; timeout 20 ros2 topic info -v $t; done > $RUN/captures/$1_topics.txt 2>&1; }
+ step "captures before"; cap before
++disk_check "before recording" || abort "OD16 disk before recording (no recording, no key pressed)"
+ setsid ros2 bag record -s sqlite3 --include-hidden-topics -o $BAG /spiderx/locomotion/status /joint_states \
+   /spiderx/sim/world_poses /cmd_vel /leg_trajectory_controller/joint_trajectory /leg_trajectory_controller/controller_state \
+   /leg_trajectory_controller/follow_joint_trajectory/_action/feedback > $RUN/bag_record.log 2>&1 &
+ # NOT _action/status: the locomotion node counts subscribers of the action's status topic as
+ # action clients (foreign_action_clients). Not /clock: sim time is in the joint-state stamps.
+-BP=$!; sleep 4
++BP=$!; echo $BP > $RUN/bag.pid; sleep 4
+ ( sleep 120; top -b -n1 -w 160 | head -22 > $RUN/captures/top_during.txt;
+   ps -o pid,ni,pcpu,args -C ruby,python3,parameter_bridge,robot_state_publisher -w | cut -c1-160 >> $RUN/captures/top_during.txt ) &
+-step "driver"; python3 $WS/scripts/s4/s4c_driver.py --level 2 --out $RUN/driver > $RUN/driver.out 2>&1; DRC=$?; step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
++step "driver"
++bash -c 'echo $$ > "$0"; exec python3 "$@"' $RUN/driver.pid $WS/scripts/s4/s4d_driver.py --out $RUN/driver > $RUN/driver.out 2>&1; DRC=$?
++step "driver exit $DRC: $(tail -1 $RUN/driver.out | cut -c1-200)"
+ sleep 3; step "captures after"; cap after
+ kill -INT -- -$BP 2>/dev/null; for i in $(seq 1 30); do pgrep -g $BP >/dev/null || break; sleep 0.5; done
+-step "bag stopped"; TL=$(pgrep -af m55_teleop_keyboard | grep -v pgrep || true)
+-step "teleop processes after the driver (its q close should leave none): ${TL:-none}"; pkill -f m55_teleop_keyboard 2>/dev/null
+-# Phase C change 3: one screenshot after a completed script (no goal in flight), only if the
+-# simulator is still up; it never delays cleanup by more than 15 s.
++step "bag stopped"
++TS=$(grep '"teleop_started"' $RUN/driver/driver.jsonl 2>/dev/null | grep -o '"pid": *[0-9]*' | grep -o '[0-9]*$' | tr '\n' ' ')
++TL=""; for T in $TS; do TL="$TL $(pgrep -a -s $T -f m55_teleop_keyboard | tr '\n' ';')"; done; TL=$(echo $TL)
++step "teleop sessions the driver logged: ${TS:-none}; teleop processes left in them after the driver (its two q closes should leave none): ${TL:-none}"
++for T in $TS; do pkill -KILL -s $T -f m55_teleop_keyboard 2>/dev/null; done
++# One screenshot after a completed script (no goal in flight), only if the simulator is still up;
++# it never delays cleanup by more than 15 s.
+ if [ "$DRC" = 0 ] && pgrep -g "$LP" > /dev/null; then
+   env -i PATH=/usr/bin:/bin DISPLAY=:77 timeout 15 /usr/bin/import -display :77 -window root $RUN/captures/screenshot2_after_script.png > $RUN/captures/screenshot2.log 2>&1
+   step "screenshot 2: exit $?"
+ else
+   step "screenshot 2 skipped (driver exit $DRC or launch gone)"
+ fi
+-# Change 5: the simulator server's own exit (the launch reports only its ruby wrapper's exit).
++# The simulator server's own exit (the launch reports only its ruby wrapper's exit).
+ SP=$(cat $RUN/server.pid 2>/dev/null); STP=""
+ if [ -n "$SP" ] && [ "$(ps -o sid= -p $SP | tr -d ' ')" = "$LP" ]; then
+   strace -e trace=none -o $RUN/server_exit_strace.txt -p $SP > $RUN/server_exit_strace.log 2>&1 &
+--- tools_s4c_l2_live/s4c_live_guarded.sh	2026-11-03 11:17:33.785144618 +0000
++++ tools/s4d_live_guarded.sh	2026-11-11 05:31:16.663254738 +0000
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+-# The S4c level-2 live run with cleanup armed BEFORE launch (as phase_c_guarded.sh): cleanup.sh runs on
+-# success, failure or interruption.
++# The S4d-M live run with cleanup armed BEFORE launch (as the S4d shadow and S4c live guarded
++# wrappers): cleanup.sh (owned processes only) runs on success, failure or interruption.
+ RUN=$1; BAG=$2; EVT=$(dirname "$RUN")/tools
+ mkdir -p "$RUN"
+ trap 'bash "$EVT/cleanup.sh" "$RUN" >> "$RUN/cleanup.log" 2>&1' EXIT INT TERM
+-bash "$EVT/s4c_live_run.sh" "$RUN" "$BAG"
++bash "$EVT/s4d_live_run.sh" "$RUN" "$BAG"

@@ -1,0 +1,40 @@
+== before cleanup: recorded driver 3438, teleop session 3447, recorder group 3440, launch 3441, xvfb 3442; decoy 3443 is NOT recorded
+  PID  PGID   SID COMMAND
+ 3438  3437  3432 python3 /x/scripts/s4/s4d_driver.py --out d --shadow-rehearsal 600
+ 3442  3437  3432 Xvfb :99 dummy 600
+ 3443  3437  3432 m55_teleop_keyboard DECOY-unowned 600
+-- session 3447
+  PID  PGID   SID COMMAND
+ 3447  3447  3447 ros2 run spiderx_controller m55_teleop_keyboard 600
+ 3448  3447  3447 m55_teleop_keyboard child-of-teleop-session 600
+-- session 3441
+  PID  PGID   SID COMMAND
+ 3441  3441  3441 ros2 launch dummy 600
+ 3445  3445  3441 gz sim server dummy-ignores-SIGINT 600
+ 3446  3446  3441 ign gazebo dummy 600
+-- group 3440
+  PID  PGID   SID COMMAND
+ 3440  3440  3440 python3 ros2 bag record -s sqlite3 dummy 600
+== cleanup.sh
+[05:40:28] cleanup start
+driver 3438: SIGINT, then SIGKILL after 10 s
+teleop session 3447: SIGKILL to: 3447 ros2 run spiderx_controller m55_teleop_keyboard 600;3448 m55_teleop_keyboard child-of-teleop-session 600;
+recorder group 3440: SIGINT, then SIGKILL after 15 s
+launch group 3441: stage_stop.sh (SIGINT; shutdown.txt)
+launch session 3441 still has: 3441 ros2 launch dummy 600;3445 gz sim server dummy-ignores-SIGINT 600;3446 ign gazebo dummy 600;
+launch session 3441: SIGKILL to those
+Xvfb 3442: SIGTERM
+[05:41:00] cleanup done; relevant processes still present (listed, not killed):
+3439 python3 -c  import os, pty, sys, time pid, fd = pty.fork()        # as s2_driver.spawn: the teleop child gets its own session (setsid) if pid == 0:     os.execvp("bash", ["bash", "-c", "(exec -a \"m55_teleop_keyboard child-of-teleop-session\" sleep 600) & exec -a \"ros2 run spiderx_controller m55_teleop_keyboard\" sleep 600"]) open("teleop.pid", "w").write(str(pid)); time.sleep(600)
+3443 m55_teleop_keyboard DECOY-unowned 600
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/live_harness_tests/c2_setup_and_run.sh: line 19:  3438 Killed                  bash -c 'echo $$ > driver.pid; exec -a "python3 /x/scripts/s4/s4d_driver.py --out d --shadow-rehearsal" sleep 600'
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/live_harness_tests/c2_setup_and_run.sh: line 19:  3440 Killed                  setsid bash -c 'exec -a "python3 ros2 bag record -s sqlite3 dummy" sleep 600'
+/tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/live_harness_tests/c2_setup_and_run.sh: line 19:  3441 Killed                  setsid bash -c 'set -m; (trap "" INT; exec -a "gz sim server dummy-ignores-SIGINT" sleep 600) & (exec -a "ign gazebo dummy" sleep 600) & exec -a "ros2 launch dummy" sleep 600'
+== after
+gone 3438
+gone 3442
+teleop session 3447 members: 1; launch session 3441 members: 2; recorder group 3440 members: 0
+decoy 3443 still alive (not owned: correctly untouched)
+-- stub shutdown.txt
+STUB stage_stop: SIGINT to group 3441
+3441 ros2 launch dummy 600

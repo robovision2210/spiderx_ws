@@ -1,0 +1,2 @@
+--- SIGINT {si_signo=SIGINT, si_code=SI_USER, si_pid=6554, si_uid=0} ---
++++ killed by SIGKILL +++

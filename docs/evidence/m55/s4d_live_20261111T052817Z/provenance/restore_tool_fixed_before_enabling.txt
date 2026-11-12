@@ -1,0 +1,5 @@
+2026-11-11T05:41:25Z restore procedure FIXED before the watchdog and enabling:
+0b054adfb96b1d3897e1d5c1bf821386117b7027527d02b57be9b7a12dc02720  tools/restore_cmd.sh
+d66e356aaa6897e32c3decd90d33635fb162b5f73f5204af1a49d9d040d75def  tools/cleanup.sh
+0e9e72f013b5dc96e643eb2c91d9c322429094b2199dde7a245eb457de6ad094  tools/watchdog.sh
+b8a7319681e495ba3b66d42ce07c2f8767c2fbe85f8dfd368c4be362347abe76  tools/run_install_gates.sh

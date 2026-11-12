@@ -1,0 +1,155 @@
+# Exact excerpts for the S4d-M shutdown postmortem (read-only; collected 20261111T101720Z).
+# Committed run evidence: docs/evidence/m55/s4d_live_20261111T052817Z/ (paths below are relative to it unless absolute).
+
+== run/stop_utc.txt
+2026-11-11T06:02:51.520551214Z
+
+== run/shutdown.txt
+SIGINT sent to process group 6480
+process group empty after 9 s
+The daemon has been stopped
+--- remaining (expect nothing):
+none
+
+== run/steps.log (lines 17-25)
+[06:02:43] driver exit 0: {"close": {"disarmed_sim_s": 361.74, "event": "teleop_closed", "exit_code": 0, "goal_111_duration_s": 1.9, "pid": 7632, "step": "Q", "t_bound_from": 2332.588375516, "t_exit_s
+[06:02:46] captures after
+[06:02:49] bag stopped
+[06:02:49] teleop sessions the driver logged: 7632 8494 ; teleop processes left in them after the driver (its two q closes should leave none): none
+[06:02:49] screenshot 2: exit 0
+[06:02:51] strace (signals only) attached to simulator server 6683: strace: Process 6683 attached 
+[06:02:51] stop launch
+[06:03:02] server exit (strace): +++ killed by SIGKILL +++
+[06:03:02] end
+
+== run/bag_record.log (shutdown lines; ANSI stripped)
+12:[INFO] [1794376968.547691022] [rosbag2_cpp]: Writing remaining messages from cache to the bag. It may take a while
+13:[INFO] [1794376968.549499918] [rosbag2_recorder]: Event publisher thread: Exiting
+14:[INFO] [1794376968.549632515] [rosbag2_recorder]: Recording stopped
+
+== bag file times outside the repository (ls --full-time)
+2026-11-11 06:02:48.539367196 /root/spiderx_evidence/s4d_live_20261111T052817Z/bag/bag_0.db3
+2026-11-11 06:02:48.543367197 /root/spiderx_evidence/s4d_live_20261111T052817Z/bag/metadata.yaml
+
+== run/premotion/launch_group.txt (process groups)
+launch pid = session 6480
+  PID  PPID   SID  PGID ELAPSED COMMAND
+ 6480     1  6480  6480      66 /opt/mm/root/envs/humble/bin/python /opt/mm/root/envs/humble/bin/ros2 launch s
+ 6551  6480  6480  6480      65 /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /root/spiderx_
+ 6553  6480  6480  6480      65 /opt/mm/root/envs/humble/lib/robot_state_publisher/robot_state_publisher --ros
+ 6554  6551  6480  6480      65 ign gazebo -r -v 2 /root/spiderx_live_enabled_20261111T052817Z/install/spiderx
+ 6558  6480  6480  6480      65 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge --ros-args -r __no
+ 6563  6480  6480  6480      65 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge /world/spiderx_for
+ 6565  6480  6480  6480      65 python3 /root/spiderx_live_enabled_20261111T052817Z/install/spiderx_controller
+ 6683  6554  6480  6683      62 ign gazebo server
+ 6686  6554  6480  6686      62 ign gazebo gui
+
+== run/premotion/sim_process.txt (first 3 lines)
+pid 6683; ppid chain: 6554 -> 6551; session 6480 (launch.pid 6480)
+exe: /opt/mm/root/envs/humble/bin/ruby
+cmdline: ign gazebo server                                                                                              
+
+== run/server_exit_strace.log
+strace: Process 6683 attached
+== run/server_exit_strace.txt
+--- SIGINT {si_signo=SIGINT, si_code=SI_USER, si_pid=6554, si_uid=0} ---
++++ killed by SIGKILL +++
+
+== run/launch.log.gz, uncompressed lines 577-579, 637-640 (ANSI stripped)
+  [robot_state_publisher-2] [INFO] [1794376971.520911351] [rclcpp]: signal_handler(signum=2)
+  [parameter_bridge-4] [INFO] [1794376971.520915211] [rclcpp]: signal_handler(signum=2)
+  [parameter_bridge-6] [INFO] [1794376971.526336656] [rclcpp]: signal_handler(signum=2)
+  [ign gazebo-1] [INFO] [1794376972.136313643] [rclcpp]: signal_handler(signum=2)
+  [ign gazebo-1] Escalating to SIGKILL on [Ignition Gazebo Server]
+  [INFO] [ign gazebo-1]: process has finished cleanly [pid 6551]
+  [INFO] [launch]: process[ign gazebo-1] was required: shutting down launched system
+
+== ros2 launch's own timestamped log (/root/.ros/log/2026-11-11-05-50-12-178805-vm-6480/launch.log; copied here as ros_launch_log_2026-11-11-05-50-12-vm-6480.log), lines 14-19
+1794376971.6486864 [INFO] [parameter_bridge-4]: process has finished cleanly [pid 6558]
+1794376971.6522384 [INFO] [parameter_bridge-6]: process has finished cleanly [pid 6563]
+1794376971.6903777 [INFO] [robot_state_publisher-2]: process has finished cleanly [pid 6553]
+1794376971.7351859 [INFO] [m55_locomotion_node-7]: process has finished cleanly [pid 6565]
+1794376977.7145348 [INFO] [ign gazebo-1]: process has finished cleanly [pid 6551]
+1794376977.7149270 [INFO] [launch]: process[ign gazebo-1] was required: shutting down launched system
+
+== run/cleanup.log
+[06:03:02] cleanup start
+driver: 7616: not running
+teleop session 7632: nothing left
+teleop session 8494: nothing left
+recorder: 7585: not running
+[06:03:03] cleanup done; relevant processes still present (listed, not killed):
+none
+
+== the server's own ROS log file (not in the repository): size, mtime, last 120 bytes
+32768 bytes, mtime 2026-11-11 06:01:20.691361974 +0000
+[1794376880.573890585] [leg_trajectory_controller]: Goal reached, success!
+[INFO] [1794376880.693359905] [leg_trajectory
+
+== the installed ign launcher /opt/mm/root/envs/humble/lib/ruby/ignition/cmdgazebo6.rb (sha256 34e8d1a47e7927a2e5f837c5adb701418c762d0abfb15e526d00a6bb12e8e709), lines 182-206
+    def killProcess(pid, name, timeout)
+      Process.kill("-INT", pid)
+  
+      sleepSecs = 0.001
+      iterations = (timeout / sleepSecs).to_i
+      i = 0
+      killedPid = 0
+      while killedPid != pid && i < iterations
+        begin
+          killedPid = Process.waitpid(pid, Process::WNOHANG)
+        rescue
+          # The process has exited, so return.
+          return
+        end
+  
+        break if killedPid == pid
+  
+        sleep sleepSecs
+        i = i + 1
+      end
+  
+      if killedPid != pid
+        puts "Escalating to SIGKILL on [#{name}]"
+        Process.kill("-KILL", pid)
+      end
+== same file, lines 483-486, 499-502, 507-520
+          serverPid = Process.fork do
+            ENV['RMT_PORT'] = '1500'
+            Process.setpgid(0, 0)
+            Process.setproctitle('ign gazebo server')
+          guiPid = Process.fork do
+            ENV['RMT_PORT'] = '1501'
+            Process.setpgid(0, 0)
+            Process.setproctitle('ign gazebo gui')
+          Signal.trap("INT") {
+            self.killProcess(guiPid, "Ignition Gazebo GUI", 5.0)
+            self.killProcess(serverPid, "Ignition Gazebo Server", 5.0)
+            return 1
+          }
+  
+          # Wait for a child process to end
+          pid, status = Process.wait2
+  
+          if pid == serverPid
+            self.killProcess(guiPid, "Ignition Gazebo GUI", 5.0)
+          else
+            self.killProcess(serverPid, "Ignition Gazebo Server", 5.0)
+          end
+
+== SIGKILL escalation lines in the launch logs kept for 16 runs (run/launch.log or .gz)
+actuator_phase_b_20261030T053703Z:  1 Escalating to SIGKILL on [Ignition Gazebo Server];
+s2_phase_c_20261030T062140Z: none
+s2_run_20261029T100210Z: none
+s3_free_base_20261101T115002Z: none
+s3_shadow_20261031T190613Z: none
+s3_shadow_20261031T193303Z: none
+s4a_live_20261101T153411Z: none
+s4a_shadow_20261101T150658Z: none
+s4b_live_20261102T092327Z: none
+s4b_shadow_20261102T085832Z: none
+s4c_l1_live_20261102T182303Z: none
+s4c_l1_shadow_20261102T175711Z:  1 Escalating to SIGKILL on [Ignition Gazebo GUI];
+s4c_l2_live_20261103T111733Z: none
+s4c_l2_shadow_20261103T094244Z: none
+s4d_live_20261111T052817Z:  1 Escalating to SIGKILL on [Ignition Gazebo Server];
+s4d_shadow_20261110T072920Z: none

@@ -1,0 +1,1488 @@
+{
+ "M": {
+  "M1": {
+   "cancels": 0,
+   "checks": {
+    "all_succeeded": true,
+    "event_order_consistent": true,
+    "every_key_write_complete": true,
+    "exactly_111_planned_goals_in_order": true,
+    "main_keys_exactly_as_scripted": true,
+    "no_cancel": true,
+    "no_fault": true,
+    "no_refusal": true,
+    "node_dispatch_gate_true_throughout": true,
+    "one_arm_before_goal_1": true,
+    "one_goal_sent_per_seq": true,
+    "requests_before_q_exactly_arm_stop_stop_home": true
+   },
+   "faults": [],
+   "goals": 111,
+   "verdict": "PASS"
+  },
+  "M10": {
+   "checks": {
+    "disarmed_reason_matches_the_node_clock_evidence": true,
+    "disarmed_within_sim_bound": true,
+    "disarmed_within_wall_backstop": true,
+    "disarmed_without_goal_over_10_s_of_sim": true,
+    "exactly_the_close_requests_after_q": true,
+    "no_goal_after_q": true,
+    "no_key_after_q_before_the_probe": true,
+    "no_refusal_after_q": true,
+    "q_written_while_goal_111_in_flight": true,
+    "repeat_stopped_then_q_within_the_hold_window": true,
+    "still_after_the_close": true,
+    "stopping_after_the_q_write_inside_goal_111": true,
+    "stopping_then_disarmed_at_boundary_1": true,
+    "teleop_exit_code_0_within_15_s": true
+   },
+   "disarmed_sim_s": 1.9800000000000182,
+   "reason_evidence": {
+    "basis": "no command after the last status",
+    "commands_at_status": 5661,
+    "commands_at_transition": 5661,
+    "contradiction": false,
+    "expected": "lease_expired",
+    "last_command_node": 2328.005230176,
+    "lease_s": 0.5,
+    "since_last_command_s": 4.570525053999972,
+    "since_status_s": 0.24760191199993642,
+    "t_disarmed_node": 2332.57575523,
+    "t_status_node": 2332.328153318
+   },
+   "request_order_recorded": [
+    "disarm",
+    "stop",
+    "disarm",
+    "stop"
+   ],
+   "requests_after_q": {
+    "disarm": 2,
+    "stop": 2
+   },
+   "still": {
+    "joint_samples": 1000,
+    "max_joint_motion_rad": 2.498001805406602e-16,
+    "max_tilt_rad": 0.0005832191415331703,
+    "min_z_m": 0.05499818174252781,
+    "pose_samples": 876,
+    "verdict": "PASS",
+    "window_sim_s": [
+     361.74,
+     371.74
+    ]
+   },
+   "timeline_recorded_only": {
+    "disarmed_sim_s": 361.74,
+    "q_write_driver": 2328.00355338,
+    "sim_before_q_s": 359.76,
+    "teleop_exit_seen_driver": 2332.588432745
+   },
+   "transitions_after_q": [
+    [
+     "WALKING",
+     "STOPPING",
+     "disarm"
+    ],
+    [
+     "STOPPING",
+     "DISARMED",
+     "lease_expired"
+    ]
+   ],
+   "verdict": "PASS"
+  },
+  "M11": {
+   "final_goal_exception": null,
+   "findings_above_0_02_rad": {},
+   "goals": [
+    {
+     "feedback_samples": 89,
+     "max_abs_error_rad": 0.002213357467143892,
+     "seq": 1,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 98,
+     "max_abs_error_rad": 0.0021978475004392753,
+     "seq": 2,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 38,
+     "max_abs_error_rad": 0.002245582733552548,
+     "seq": 3,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 98,
+     "max_abs_error_rad": 0.0022050241354839156,
+     "seq": 4,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 109,
+     "max_abs_error_rad": 0.0021796796320115858,
+     "seq": 5,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 99,
+     "max_abs_error_rad": 0.0022249153581099246,
+     "seq": 6,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 37,
+     "max_abs_error_rad": 0.002235787981348481,
+     "seq": 7,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 94,
+     "max_abs_error_rad": 0.0022461798315946205,
+     "seq": 8,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 46,
+     "max_abs_error_rad": 0.0021926310935014917,
+     "seq": 9,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 102,
+     "max_abs_error_rad": 0.0022270790105522464,
+     "seq": 10,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 137,
+     "max_abs_error_rad": 0.0022219970622213148,
+     "seq": 11,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 22,
+     "max_abs_error_rad": 0.0021857608367939485,
+     "seq": 12,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 139,
+     "max_abs_error_rad": 0.002222915121389696,
+     "seq": 13,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 99,
+     "max_abs_error_rad": 0.002242199567631914,
+     "seq": 14,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 130,
+     "max_abs_error_rad": 0.0021991595413947407,
+     "seq": 15,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 26,
+     "max_abs_error_rad": 0.002099256171142913,
+     "seq": 16,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 129,
+     "max_abs_error_rad": 0.0022456389871668425,
+     "seq": 17,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 46,
+     "max_abs_error_rad": 0.0021757294764822646,
+     "seq": 18,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 94,
+     "max_abs_error_rad": 0.0022263186252694522,
+     "seq": 19,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 141,
+     "max_abs_error_rad": 0.002221938874728137,
+     "seq": 20,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 26,
+     "max_abs_error_rad": 0.0021734987162379538,
+     "seq": 21,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 136,
+     "max_abs_error_rad": 0.002223408635395427,
+     "seq": 22,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 108,
+     "max_abs_error_rad": 0.0022419681508190348,
+     "seq": 23,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 125,
+     "max_abs_error_rad": 0.002199159541394713,
+     "seq": 24,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 26,
+     "max_abs_error_rad": 0.0020974107351436205,
+     "seq": 25,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 123,
+     "max_abs_error_rad": 0.002245551156419362,
+     "seq": 26,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 44,
+     "max_abs_error_rad": 0.0021751152171302426,
+     "seq": 27,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 97,
+     "max_abs_error_rad": 0.0022270790088988607,
+     "seq": 28,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 138,
+     "max_abs_error_rad": 0.0022219388747281507,
+     "seq": 29,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 25,
+     "max_abs_error_rad": 0.0021857608368100467,
+     "seq": 30,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 144,
+     "max_abs_error_rad": 0.0022232439769982876,
+     "seq": 31,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 104,
+     "max_abs_error_rad": 0.002242199567633968,
+     "seq": 32,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 130,
+     "max_abs_error_rad": 0.002199195162191081,
+     "seq": 33,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 26,
+     "max_abs_error_rad": 0.0020872768751509924,
+     "seq": 34,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 125,
+     "max_abs_error_rad": 0.002245638987216192,
+     "seq": 35,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 53,
+     "max_abs_error_rad": 0.0021777632500282265,
+     "seq": 36,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 100,
+     "max_abs_error_rad": 0.0022240216405974567,
+     "seq": 37,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 148,
+     "max_abs_error_rad": 0.0022221185904246904,
+     "seq": 38,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 23,
+     "max_abs_error_rad": 0.0021673034266396773,
+     "seq": 39,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 148,
+     "max_abs_error_rad": 0.002223300313592566,
+     "seq": 40,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 104,
+     "max_abs_error_rad": 0.002242199567635078,
+     "seq": 41,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 127,
+     "max_abs_error_rad": 0.00219919516219122,
+     "seq": 42,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 23,
+     "max_abs_error_rad": 0.0020974107351488386,
+     "seq": 43,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 130,
+     "max_abs_error_rad": 0.002245551156419223,
+     "seq": 44,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 48,
+     "max_abs_error_rad": 0.0021777632469343333,
+     "seq": 45,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 95,
+     "max_abs_error_rad": 0.0022263186257375778,
+     "seq": 46,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 136,
+     "max_abs_error_rad": 0.0022219388747281507,
+     "seq": 47,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 25,
+     "max_abs_error_rad": 0.0021673034266464497,
+     "seq": 48,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 143,
+     "max_abs_error_rad": 0.002223408635395427,
+     "seq": 49,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 105,
+     "max_abs_error_rad": 0.0022419292968487714,
+     "seq": 50,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 130,
+     "max_abs_error_rad": 0.0021991951621910255,
+     "seq": 51,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 26,
+     "max_abs_error_rad": 0.0020992561711475066,
+     "seq": 52,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 120,
+     "max_abs_error_rad": 0.0022456389872161364,
+     "seq": 53,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 44,
+     "max_abs_error_rad": 0.0021757294763102633,
+     "seq": 54,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 59,
+     "max_abs_error_rad": 0.0021777632443481035,
+     "seq": 55,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 124,
+     "max_abs_error_rad": 0.002245070655171169,
+     "seq": 56,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 25,
+     "max_abs_error_rad": 0.002099256172844538,
+     "seq": 57,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 130,
+     "max_abs_error_rad": 0.002199195164601181,
+     "seq": 58,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 106,
+     "max_abs_error_rad": 0.002242199561358238,
+     "seq": 59,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 138,
+     "max_abs_error_rad": 0.0022232439783957114,
+     "seq": 60,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 24,
+     "max_abs_error_rad": 0.0021857608501098524,
+     "seq": 61,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 136,
+     "max_abs_error_rad": 0.0022221185921681014,
+     "seq": 62,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 80,
+     "max_abs_error_rad": 0.0022263027793432977,
+     "seq": 63,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 63,
+     "max_abs_error_rad": 0.0021777632457635546,
+     "seq": 64,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 122,
+     "max_abs_error_rad": 0.0022450706551711413,
+     "seq": 65,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 25,
+     "max_abs_error_rad": 0.0020974107368482015,
+     "seq": 66,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 120,
+     "max_abs_error_rad": 0.002199159543797846,
+     "seq": 67,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 102,
+     "max_abs_error_rad": 0.002241235038359074,
+     "seq": 68,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 143,
+     "max_abs_error_rad": 0.0022229151228043142,
+     "seq": 69,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 22,
+     "max_abs_error_rad": 0.0021673034402163727,
+     "seq": 70,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 135,
+     "max_abs_error_rad": 0.0022219970639715397,
+     "seq": 71,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 83,
+     "max_abs_error_rad": 0.0022263186253023842,
+     "seq": 72,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 60,
+     "max_abs_error_rad": 0.0021751152166469556,
+     "seq": 73,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 119,
+     "max_abs_error_rad": 0.0022450706551711136,
+     "seq": 74,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 22,
+     "max_abs_error_rad": 0.0020974107368481876,
+     "seq": 75,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 125,
+     "max_abs_error_rad": 0.002199159543797846,
+     "seq": 76,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 104,
+     "max_abs_error_rad": 0.0022419681403732794,
+     "seq": 77,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 145,
+     "max_abs_error_rad": 0.0022232439783957114,
+     "seq": 78,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 24,
+     "max_abs_error_rad": 0.00217349872964262,
+     "seq": 79,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 134,
+     "max_abs_error_rad": 0.00222193887646472,
+     "seq": 80,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 75,
+     "max_abs_error_rad": 0.0022240216378761057,
+     "seq": 81,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 57,
+     "max_abs_error_rad": 0.0021777632429795454,
+     "seq": 82,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 124,
+     "max_abs_error_rad": 0.002245334147580519,
+     "seq": 83,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 24,
+     "max_abs_error_rad": 0.0020872768768409877,
+     "seq": 84,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 121,
+     "max_abs_error_rad": 0.002199159543797874,
+     "seq": 85,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 101,
+     "max_abs_error_rad": 0.0022421995613938484,
+     "seq": 86,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 141,
+     "max_abs_error_rad": 0.0022234086367985684,
+     "seq": 87,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 26,
+     "max_abs_error_rad": 0.0021836184910534184,
+     "seq": 88,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 130,
+     "max_abs_error_rad": 0.00222193887646472,
+     "seq": 89,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 77,
+     "max_abs_error_rad": 0.0022263186253018707,
+     "seq": 90,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 58,
+     "max_abs_error_rad": 0.002175729470084743,
+     "seq": 91,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 123,
+     "max_abs_error_rad": 0.0022453341475804772,
+     "seq": 92,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 22,
+     "max_abs_error_rad": 0.0020872768768409877,
+     "seq": 93,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 119,
+     "max_abs_error_rad": 0.002199195164601403,
+     "seq": 94,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 101,
+     "max_abs_error_rad": 0.0022419681403313685,
+     "seq": 95,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 141,
+     "max_abs_error_rad": 0.002223300315001439,
+     "seq": 96,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 24,
+     "max_abs_error_rad": 0.0021836184910501433,
+     "seq": 97,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 139,
+     "max_abs_error_rad": 0.0022221185921681014,
+     "seq": 98,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 76,
+     "max_abs_error_rad": 0.0022263186252989703,
+     "seq": 99,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 101,
+     "max_abs_error_rad": 0.0022263186257859557,
+     "seq": 100,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 126,
+     "max_abs_error_rad": 0.0022219388747281507,
+     "seq": 101,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 24,
+     "max_abs_error_rad": 0.0021673034266227464,
+     "seq": 102,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 138,
+     "max_abs_error_rad": 0.002222915121389696,
+     "seq": 103,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 108,
+     "max_abs_error_rad": 0.0022421995676322193,
+     "seq": 104,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 121,
+     "max_abs_error_rad": 0.0021988291265876703,
+     "seq": 105,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 124,
+     "max_abs_error_rad": 0.0021988291289956052,
+     "seq": 106,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 124,
+     "max_abs_error_rad": 0.0021988291265878646,
+     "seq": 107,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 25,
+     "max_abs_error_rad": 0.0020872768751558496,
+     "seq": 108,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 118,
+     "max_abs_error_rad": 0.0022450706532224224,
+     "seq": 109,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 47,
+     "max_abs_error_rad": 0.00217572947798262,
+     "seq": 110,
+     "verdict": "PASS"
+    },
+    {
+     "feedback_samples": 93,
+     "max_abs_error_rad": 0.0022263186257234363,
+     "seq": 111,
+     "verdict": "PASS"
+    }
+   ],
+   "unattributed_feedback_ids": [],
+   "verdict": "PASS"
+  },
+  "M12": {
+   "continuity_refusals": [],
+   "max_continuity_error_rad": 4.5147396159460114e-09,
+   "verdict": "PASS"
+  },
+  "M13": {
+   "command_topic": {
+    "messages": null,
+    "present_in_bag": false,
+    "support": {
+     "captures_before_after_zero_publishers": true,
+     "discovery_demonstrated_after_start": true,
+     "node_monitored_streams_continuous": true,
+     "owner_monitor_zero_throughout": true,
+     "recorder_log_without_failure": true,
+     "recording_covers_goal_interval": true,
+     "requested_from_recorder": true
+    },
+    "term": "PASS"
+   },
+   "terms": {
+    "cancels_0": true,
+    "command_publishers_0": true,
+    "controller_log_111_received_111_accepted_0_cancel": true,
+    "foreign_clients_0": true,
+    "goals_111": true
+   },
+   "verdict": "PASS"
+  },
+  "M14": {
+   "checks": {
+    "driver_script_complete": true,
+    "min_joint_margin_at_least_0_02_rad": true,
+    "node_observed_ages_within_monitor_limits": true
+   },
+   "driver_result": "script complete",
+   "max_ages_s": {
+    "body_pose_age_s": 0.030774736000012126,
+    "graph_age_s": 1.0066823610000029,
+    "joint_states_age_s": 0.05947015000037936
+   },
+   "min_joint_margin": [
+    0.26078398099361794,
+    "lf_thigh_joint",
+    -0.35008101900638205
+   ],
+   "verdict": "PASS"
+  },
+  "M15": {
+   "checks": {
+    "library_identity": true,
+    "restore_report_normal_installation": true,
+    "run_installation_imports_all_three_gates_false": true
+   },
+   "library": {
+    "disabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+    "enabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+    "verdict": "PASS"
+   },
+   "restore": {
+    "checks": {
+     "gates_false_imported": true,
+     "m6_gait_replay_live_exit_3": true,
+     "m6_live_playback_live_exit_3": true,
+     "no_simulation_or_node_leftover": true,
+     "verdict_disabled_and_verified": true
+    },
+    "verdict": "PASS"
+   },
+   "run_installation": {
+    "gates": {
+     "spiderx_controller.m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED": false,
+     "spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED": false,
+     "spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED": false
+    },
+    "install_base": "/root/spiderx_live_enabled_20261111T052817Z/install"
+   },
+   "verdict": "PASS"
+  },
+  "M16": {
+   "checks": {
+    "close_requests_accepted_as_no_ops": true,
+    "commands_accepted_rising": true,
+    "commands_delivered_forward_at_level_2": true,
+    "confirmations_within_5_s": true,
+    "disarmed_without_goal_throughout": true,
+    "held_w_5_to_6_s": true,
+    "intent_stopped_within_5_s_of_the_release": true,
+    "level_confirmations_2_3_and_3_3_attributed": true,
+    "no_arm_goal_transition_or_refusal": true,
+    "no_command_rejection": true,
+    "no_request_before_the_probe_q": true,
+    "probe_after_the_close_observation": true,
+    "probe_keys_exactly_plus_plus_w_q": true,
+    "startup_within_30_s": true,
+    "teleop_exit_code_0_within_15_s": true
+   },
+   "commands_accepted": {
+    "before": 5661,
+    "last": 5731
+   },
+   "confirmations": [
+    {
+     "attributed": 1,
+     "expected_label": "2/3",
+     "expected_speed_mm_s": "1.90",
+     "press": 1,
+     "received_before_the_write_returned": false,
+     "t_after_write": 2349.420695798,
+     "t_before_write": 2349.420662657,
+     "t_receipt": 2349.420891101
+    },
+    {
+     "attributed": 1,
+     "expected_label": "3/3",
+     "expected_speed_mm_s": "2.34",
+     "press": 2,
+     "received_before_the_write_returned": false,
+     "t_after_write": 2349.471019263,
+     "t_before_write": 2349.471005257,
+     "t_receipt": 2349.472155019
+    }
+   ],
+   "requests_after_the_probe_q": [
+    [
+     "disarm",
+     "already disarmed"
+    ],
+    [
+     "stop",
+     "not moving (DISARMED); held until a zero command"
+    ],
+    [
+     "disarm",
+     "already disarmed"
+    ],
+    [
+     "stop",
+     "not moving (DISARMED); held until a zero command"
+    ]
+   ],
+   "verdict": "PASS"
+  },
+  "M2": {
+   "checks": {
+    "each_plus_confirmed_by_the_teleop": true,
+    "exactly_two_level_changes": true,
+    "exactly_two_plus_keys_and_no_other_level_key": true,
+    "first_plus_while_disarmed_before_the_arm": true,
+    "goals_1_to_9_at_level_1_and_10_to_111_at_level_2": true,
+    "level_change_0_to_1_between_the_arm_and_goal_1": true,
+    "level_change_1_to_2_walking_between_goal_9_and_goal_10": true,
+    "node_strides_40_and_60_mm": true,
+    "second_plus_while_goal_2_in_flight": true
+   },
+   "confirmations": [
+    {
+     "attributed": 1,
+     "expected_label": "2/3",
+     "expected_speed_mm_s": "1.90",
+     "press": 1,
+     "received_before_the_write_returned": false,
+     "t_after_write": 1803.844475305,
+     "t_before_write": 1803.843337646,
+     "t_receipt": 1803.844605751
+    },
+    {
+     "attributed": 1,
+     "expected_label": "3/3",
+     "expected_speed_mm_s": "2.34",
+     "press": 2,
+     "received_before_the_write_returned": true,
+     "t_after_write": 1808.848963122,
+     "t_before_write": 1808.848398845,
+     "t_receipt": 1808.848523362
+    }
+   ],
+   "verdict": "PASS"
+  },
+  "M3": {
+   "checks": {
+    "cycle_count_1_after_goal_9": true,
+    "displacement": true,
+    "tilt_within_0_10_rad": true
+   },
+   "cycle": {
+    "band_forward_m": [
+     0.03,
+     0.05
+    ],
+    "checks": {
+     "height_within_10_mm": true,
+     "lateral_within_10_mm": true,
+     "progress_in_band": true,
+     "progress_within_the_outer_bound": true,
+     "yaw_within_0_05_rad": true
+    },
+    "forward_m": 0.04005389250206715,
+    "from_goal": 0,
+    "height_vs_standing_m": 2.8266083302086464e-05,
+    "lateral_m": 0.00035487851128928114,
+    "outer_bound_m": 0.06,
+    "to_goal": 9,
+    "verdict": "PASS",
+    "yaw_rad": -0.00017316949428999227
+   },
+   "verdict": "PASS"
+  },
+  "M4": {
+   "checks": {
+    "cycle_count_6_at_ready": true,
+    "every_cycle": true,
+    "last_cycle_checked_before_the_next_key": true,
+    "leg_distance": true,
+    "no_goal_between_the_space_and_ready": true,
+    "one_stopping_stop_in_the_last_goal": true,
+    "ready_stopped_at_boundary_0": true,
+    "ready_within_sim_bound": true,
+    "ready_within_wall_backstop": true,
+    "space_written_while_the_last_goal_was_in_flight": true,
+    "tilt_within_0_10_rad": true,
+    "walking_continuously": true
+   },
+   "cycles": {
+    "F1": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": 0.06001161982245486,
+     "from_goal": 9,
+     "height_vs_standing_m": -3.819847546035482e-06,
+     "lateral_m": -6.827194708996034e-05,
+     "outer_bound_m": 0.08,
+     "to_goal": 18,
+     "verdict": "PASS",
+     "yaw_rad": -0.0013877093497029632
+    },
+    "F2": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": 0.060010967794289646,
+     "from_goal": 18,
+     "height_vs_standing_m": -1.428290353128192e-06,
+     "lateral_m": -6.064617107912647e-05,
+     "outer_bound_m": 0.08,
+     "to_goal": 27,
+     "verdict": "PASS",
+     "yaw_rad": -0.0012976763205407604
+    },
+    "F3": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": 0.06000719275356176,
+     "from_goal": 27,
+     "height_vs_standing_m": 6.021633083677647e-06,
+     "lateral_m": -7.496519047481807e-05,
+     "outer_bound_m": 0.08,
+     "to_goal": 36,
+     "verdict": "PASS",
+     "yaw_rad": -0.0013256821743104705
+    },
+    "F4": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": 0.06001388554855862,
+     "from_goal": 36,
+     "height_vs_standing_m": 5.391723867431697e-06,
+     "lateral_m": 2.3984202811594022e-06,
+     "outer_bound_m": 0.08,
+     "to_goal": 45,
+     "verdict": "PASS",
+     "yaw_rad": -0.0014281954211028689
+    },
+    "F5": {
+     "band_forward_m": [
+      0.05,
+      0.07
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": 0.06001580373042093,
+     "from_goal": 45,
+     "height_vs_standing_m": 7.145486640512677e-06,
+     "lateral_m": -4.895622727057471e-05,
+     "outer_bound_m": 0.08,
+     "to_goal": 54,
+     "verdict": "PASS",
+     "yaw_rad": -0.0013766801251069811
+    }
+   },
+   "leg": {
+    "band_forward_m": [
+     0.285,
+     0.315
+    ],
+    "checks": {
+     "leg_in_band": true
+    },
+    "claim": "approximately 0.3 m (0.300 m +- 0.015 m, OD1); never \"at least 0.3 m\"",
+    "forward_m": 0.30005836706551076,
+    "from_goal": 9,
+    "lateral_m": 0.0005611392021897093,
+    "to_goal": 54,
+    "verdict": "PASS",
+    "yaw_rad": -0.006815943390764044
+   },
+   "verdict": "PASS"
+  },
+  "M5": {
+   "checks": {
+    "cycle_count_1_at_ready": true,
+    "every_cycle": true,
+    "last_cycle_checked_before_the_next_key": true,
+    "leg_distance": true,
+    "no_goal_between_the_space_and_ready": true,
+    "one_stopping_stop_in_the_last_goal": true,
+    "ready_stopped_at_boundary_0": true,
+    "ready_within_sim_bound": true,
+    "ready_within_wall_backstop": true,
+    "space_written_while_the_last_goal_was_in_flight": true,
+    "tilt_within_0_10_rad": true,
+    "walking_continuously": true
+   },
+   "cycles": {
+    "R1": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -0.05996173863927003,
+     "from_goal": 54,
+     "height_vs_standing_m": 3.4097484887668505e-06,
+     "lateral_m": 0.0001335113348798882,
+     "outer_bound_m": 0.08,
+     "to_goal": 63,
+     "verdict": "PASS",
+     "yaw_rad": 0.0012893940140750095
+    },
+    "R2": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -0.05997210761164342,
+     "from_goal": 63,
+     "height_vs_standing_m": -2.1426255253295667e-06,
+     "lateral_m": 0.00012306287381237219,
+     "outer_bound_m": 0.08,
+     "to_goal": 72,
+     "verdict": "PASS",
+     "yaw_rad": 0.0012529135559004147
+    },
+    "R3": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -0.05997160104273645,
+     "from_goal": 72,
+     "height_vs_standing_m": -1.8351584572112722e-06,
+     "lateral_m": 0.00012326164235684108,
+     "outer_bound_m": 0.08,
+     "to_goal": 81,
+     "verdict": "PASS",
+     "yaw_rad": 0.001279458388300452
+    },
+    "R4": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -0.059969910510959,
+     "from_goal": 81,
+     "height_vs_standing_m": 1.700811780185052e-06,
+     "lateral_m": 0.00013445053400978904,
+     "outer_bound_m": 0.08,
+     "to_goal": 90,
+     "verdict": "PASS",
+     "yaw_rad": 0.0012370487147885276
+    },
+    "R5": {
+     "band_forward_m": [
+      -0.07,
+      -0.05
+     ],
+     "checks": {
+      "height_within_10_mm": true,
+      "lateral_within_10_mm": true,
+      "progress_in_band": true,
+      "progress_within_the_outer_bound": true,
+      "yaw_within_0_05_rad": true
+     },
+     "forward_m": -0.059974048750914104,
+     "from_goal": 90,
+     "height_vs_standing_m": 3.287843418360581e-06,
+     "lateral_m": 0.00011535449712437325,
+     "outer_bound_m": 0.08,
+     "to_goal": 99,
+     "verdict": "PASS",
+     "yaw_rad": 0.0013317212241692824
+    }
+   },
+   "leg": {
+    "band_forward_m": [
+     -0.315,
+     -0.285
+    ],
+    "checks": {
+     "leg_in_band": true
+    },
+    "claim": "approximately 0.3 m (0.300 m +- 0.015 m, OD1); never \"at least 0.3 m\"",
+    "forward_m": -0.29984638808669123,
+    "from_goal": 54,
+    "lateral_m": 0.0013920183781673764,
+    "to_goal": 99,
+    "verdict": "PASS",
+    "yaw_rad": 0.006390535897233686
+   },
+   "verdict": "PASS"
+  },
+  "M6": {
+   "all_sample_maxima_recorded_only": {
+    "heading_rad": 0.006826206106778846,
+    "lateral_m": 0.013133414292882069,
+    "note": "every bag sample from B9 to B99 in B9's frame, designed sway included; recorded only (OD2)",
+    "samples": 23946
+   },
+   "boundaries": [
+    {
+     "goal": 9,
+     "heading_rad": 0.0,
+     "lateral_m": 0.0
+    },
+    {
+     "goal": 18,
+     "heading_rad": -0.0013877093497029632,
+     "lateral_m": -6.827194708996034e-05
+    },
+    {
+     "goal": 27,
+     "heading_rad": -0.0026853856702437236,
+     "lateral_m": -4.5640305410460136e-05
+    },
+    {
+     "goal": 36,
+     "heading_rad": -0.004011067844554194,
+     "lateral_m": 4.053703627036399e-05
+    },
+    {
+     "goal": 45,
+     "heading_rad": -0.005439263265657063,
+     "lateral_m": 0.0002836545583323331
+    },
+    {
+     "goal": 54,
+     "heading_rad": -0.006815943390764044,
+     "lateral_m": 0.0005611392021897093
+    },
+    {
+     "goal": 63,
+     "heading_rad": -0.0055265493766890345,
+     "lateral_m": 0.00028595478409286073
+    },
+    {
+     "goal": 72,
+     "heading_rad": -0.00427363582078862,
+     "lateral_m": 7.757865180377441e-05
+    },
+    {
+     "goal": 81,
+     "heading_rad": -0.0029941774324881675,
+     "lateral_m": -5.5456833741881204e-05
+    },
+    {
+     "goal": 90,
+     "heading_rad": -0.0017571287176996401,
+     "lateral_m": -0.00010056718679681062
+    },
+    {
+     "goal": 99,
+     "heading_rad": -0.0004254074935303578,
+     "lateral_m": -9.059493690002332e-05
+    }
+   ],
+   "checks": {
+    "cumulative_heading_within_0_10_rad_at_every_boundary_0": true,
+    "cumulative_lateral_within_30_mm_at_every_boundary_0": true,
+    "tilt_within_0_10_rad_from_the_arm_to_the_close": true
+   },
+   "net_return_recorded_only": {
+    "from_arm": {
+     "forward_m": 0.040263364288525026,
+     "lateral_m": 0.0002643198471545836,
+     "yaw_rad": -0.0005985769878203502
+    },
+    "from_b9": {
+     "forward_m": 0.00020945610131909483,
+     "lateral_m": -9.059493690002332e-05,
+     "yaw_rad": -0.0004254074935303578
+    }
+   },
+   "verdict": "PASS"
+  },
+  "M7": {
+   "checks": {
+    "row_12_release_during_goal_106": true,
+    "row_9_release_during_goal_104": true
+   },
+   "row_12": {
+    "checks": {
+     "no_goal_between_release_and_ready": true,
+     "one_stopping_intent_stop": true,
+     "ready_stopped_at_boundary": true,
+     "ready_within_sim_bound": true,
+     "ready_within_wall_backstop": true,
+     "released_while_goal_in_flight": true,
+     "stopping_after_the_hold_window": true
+    },
+    "detection_latency_s": 0.8788721330001863,
+    "finding_detection_above_documented": false,
+    "goal": 106,
+    "ready_sim_s": 4.1299999999999955,
+    "sim_bound_s": 5.2,
+    "verdict": "PASS"
+   },
+   "row_9": {
+    "checks": {
+     "no_goal_between_release_and_ready": true,
+     "one_stopping_intent_stop": true,
+     "ready_stopped_at_boundary": true,
+     "ready_within_sim_bound": true,
+     "ready_within_wall_backstop": true,
+     "released_while_goal_in_flight": true,
+     "stopping_after_the_hold_window": true
+    },
+    "detection_latency_s": 0.8223557310002434,
+    "finding_detection_above_documented": false,
+    "goal": 104,
+    "ready_sim_s": 3.1899999999999977,
+    "sim_bound_s": 4.2,
+    "verdict": "PASS"
+   },
+   "two_goal_allowance": "not exercised (OD7): READY within the in-flight goal + 1.0 s",
+   "verdict": "PASS"
+  },
+  "M8": {
+   "checks": {
+    "forward_then_same_phase_back": true,
+    "reverse_sent_at_the_boundary": true,
+    "s_written_while_forward_goal_in_flight": true,
+    "switch_without_release": true,
+    "then_released": true
+   },
+   "release": {
+    "checks": {
+     "no_goal_between_release_and_ready": true,
+     "one_stopping_intent_stop": true,
+     "ready_stopped_at_boundary": true,
+     "ready_within_sim_bound": true,
+     "ready_within_wall_backstop": true,
+     "released_while_goal_in_flight": true,
+     "stopping_after_the_hold_window": true
+    },
+    "detection_latency_s": 0.8788721330001863,
+    "finding_detection_above_documented": false,
+    "goal": 106,
+    "ready_sim_s": 4.1299999999999955,
+    "sim_bound_s": 5.2,
+    "verdict": "PASS"
+   },
+   "verdict": "PASS"
+  },
+  "M9": {
+   "checks": {
+    "cycle_count_2_at_homed": true,
+    "home_rules": true,
+    "tilt_within_0_10_rad": true,
+    "x_composite_cycle": true
+   },
+   "cycle": {
+    "band_forward_m": [
+     0.05,
+     0.07
+    ],
+    "checks": {
+     "height_within_10_mm": true,
+     "lateral_within_10_mm": true,
+     "progress_in_band": true,
+     "progress_within_the_outer_bound": true,
+     "yaw_within_0_05_rad": true
+    },
+    "forward_m": 0.06000898814576227,
+    "from_goal": 99,
+    "height_vs_standing_m": -3.720333311044155e-06,
+    "lateral_m": -5.18019729687975e-05,
+    "outer_bound_m": 0.08,
+    "to_goal": 110,
+    "verdict": "PASS",
+    "yaw_rad": -0.0013729206949348591
+   },
+   "home": {
+    "checks": {
+     "goals_forward_to_the_cycle_boundary": true,
+     "h_at_ready_boundary_5": true,
+     "no_motion_key_during_home": true,
+     "one_homing_forward_4_phases": true,
+     "ready_homed_at_boundary_0": true,
+     "within_documented_homing_bound": true,
+     "within_wall_backstop": true
+    },
+    "home_sim_s": 10.71999999999997,
+    "verdict": "PASS"
+   },
+   "verdict": "PASS"
+  }
+ },
+ "alignment": {
+  "adjudicate_s2": {
+   "of_driver_statuses": 1217,
+   "offset_s": 1794374606.8649142,
+   "p05_p95_ms": [
+    -0.84,
+    0.78
+   ],
+   "pairs": 1217,
+   "tolerance_s": 0.024261474609375
+  },
+  "offset_s": 1794374606.8649142,
+  "ok": true,
+  "reason": null,
+  "uncertainty_s": 0.0008399999999999999
+ },
+ "bag": {
+  "messages": {
+   "/joint_states": 35491,
+   "/leg_trajectory_controller/controller_state": 15314,
+   "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": 10076,
+   "/spiderx/locomotion/status": 1234
+  },
+  "open_mode": "sqlite3 mode=ro&immutable=1",
+  "path": "/root/spiderx_evidence/s4d_live_20261111T052817Z/bag/bag_0.db3",
+  "sha256_after": "9320eb43f999c87f15dbb774010be36c937037e1b4c2db4d1a77cc5777646adc",
+  "sha256_after_pose_scan": "9320eb43f999c87f15dbb774010be36c937037e1b4c2db4d1a77cc5777646adc",
+  "sha256_before": "9320eb43f999c87f15dbb774010be36c937037e1b4c2db4d1a77cc5777646adc",
+  "unchanged": true
+ },
+ "lease_s": 0.5,
+ "overall": "PASS",
+ "schema": "spiderx.s4d_score/1",
+ "shadow": false
+}

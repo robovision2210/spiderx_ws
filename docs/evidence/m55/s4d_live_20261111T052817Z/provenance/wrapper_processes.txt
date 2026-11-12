@@ -1,0 +1,4 @@
+ 4069     1  4069  4069 bash /root/spiderx_evidence/s4d_live_20261111T052817Z/tools/watchdog.sh /root/spiderx_evidence/s4d_live_20261111T052817Z/run 7200
+ 6346     1  6346  6346 bash -c bash /root/spiderx_evidence/s4d_live_20261111T052817Z/tools/s4d_live_guarded.sh /root/spiderx_evidence/s4d_live_20261111T052817Z/run /root/spiderx_evidence/s4d_live_20261111T052817Z/bag; echo "guarded run exit $?"
+ 6348  6346  6346  6346 bash /root/spiderx_evidence/s4d_live_20261111T052817Z/tools/s4d_live_guarded.sh /root/spiderx_evidence/s4d_live_20261111T052817Z/run /root/spiderx_evidence/s4d_live_20261111T052817Z/bag
+ 6351  6348  6346  6346 bash /root/spiderx_evidence/s4d_live_20261111T052817Z/tools/s4d_live_run.sh /root/spiderx_evidence/s4d_live_20261111T052817Z/run /root/spiderx_evidence/s4d_live_20261111T052817Z/bag

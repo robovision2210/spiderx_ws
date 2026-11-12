@@ -1,0 +1,20 @@
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:128: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::qml/IgnCard.qml:139: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [INFO] [1794298425.689101006] [rclcpp]: signal_handler(signum=2)
+[ign gazebo-1] [INFO] [1794298425.691969165] [controller_manager]: Shutdown request received....
+[ign gazebo-1] [INFO] [1794298425.692181807] [controller_manager]: Shutting down all controllers in the controller manager.
+[ign gazebo-1] [INFO] [1794298425.692216705] [controller_manager]: Deactivating controller 'joint_state_broadcaster'
+[ign gazebo-1] [INFO] [1794298425.692271803] [controller_manager]: Shutting down controller 'joint_state_broadcaster'
+[ign gazebo-1] [INFO] [1794298425.692307652] [controller_manager]: Deactivating controller 'leg_trajectory_controller'
+[ign gazebo-1] [INFO] [1794298425.692369999] [controller_manager]: Shutting down controller 'leg_trajectory_controller'
+[ign gazebo-1] [INFO] [1794298425.692417023] [resource_manager]: 'deactivate' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1794298425.692429338] [resource_manager]: Successful 'deactivate' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1794298425.692432376] [resource_manager]: 'shutdown' hardware 'SpiderXGazeboSimSystem' 
+[ign gazebo-1] [INFO] [1794298425.692476819] [resource_manager]: Successful 'shutdown' of hardware 'SpiderXGazeboSimSystem'
+[ign gazebo-1] [INFO] [1794298425.692483491] [controller_manager]: Shutting down the controller manager.
+[INFO] [ign gazebo-1]: process has finished cleanly [pid 17025]
+[INFO] [launch]: process[ign gazebo-1] was required: shutting down launched system

@@ -1,0 +1,19 @@
+1794376212.1801424 [INFO] [launch]: All log files can be found below /root/.ros/log/2026-11-11-05-50-12-178805-vm-6480
+1794376212.1802785 [INFO] [launch]: Default logging verbosity is set to INFO
+1794376212.9457834 [INFO] [ign gazebo-1]: process started with pid [6551]
+1794376212.9460309 [INFO] [robot_state_publisher-2]: process started with pid [6553]
+1794376212.9461017 [INFO] [create-3]: process started with pid [6556]
+1794376212.9461527 [INFO] [parameter_bridge-4]: process started with pid [6558]
+1794376212.9461970 [INFO] [spawner-5]: process started with pid [6560]
+1794376212.9462416 [INFO] [parameter_bridge-6]: process started with pid [6563]
+1794376212.9462917 [INFO] [m55_locomotion_node-7]: process started with pid [6565]
+1794376222.2776039 [INFO] [create-3]: process has finished cleanly [pid 6556]
+1794376232.5494206 [INFO] [spawner-5]: process has finished cleanly [pid 6560]
+1794376232.5575457 [INFO] [spawner-8]: process started with pid [6822]
+1794376237.4655483 [INFO] [spawner-8]: process has finished cleanly [pid 6822]
+1794376971.6486864 [INFO] [parameter_bridge-4]: process has finished cleanly [pid 6558]
+1794376971.6522384 [INFO] [parameter_bridge-6]: process has finished cleanly [pid 6563]
+1794376971.6903777 [INFO] [robot_state_publisher-2]: process has finished cleanly [pid 6553]
+1794376971.7351859 [INFO] [m55_locomotion_node-7]: process has finished cleanly [pid 6565]
+1794376977.7145348 [INFO] [ign gazebo-1]: process has finished cleanly [pid 6551]
+1794376977.7149270 [INFO] [launch]: process[ign gazebo-1] was required: shutting down launched system

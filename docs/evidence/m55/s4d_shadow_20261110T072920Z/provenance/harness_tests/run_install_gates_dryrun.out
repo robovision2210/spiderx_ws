@@ -1,0 +1,7 @@
+spiderx_controller.m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED False
+spiderx_controller.m61_live_contract.M61_LIVE_DISPATCH_ENABLED False
+spiderx_controller.m6_live_contract.LIVE_DISPATCH_ENABLED False
+m55_contract /root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m55_contract.py
+m61_live_contract /root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m61_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m61_live_contract.py
+m6_live_contract /root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m6_live_contract.py -> /home/user/spiderx_ws/src/spiderx_controller/spiderx_controller/m6_live_contract.py
+RUN INSTALLATION GATES: PASS: all three False, imported from /root/spiderx_fresh_disabled_20261110T071506Z/install

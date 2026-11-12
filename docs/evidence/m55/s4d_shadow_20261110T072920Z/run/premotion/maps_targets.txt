@@ -1,0 +1,10 @@
+7ffb88067000-7ffb88098000 r--p 00000000 fe:00 1280173                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7ffb88098000-7ffb880d0000 r-xp 00031000 fe:00 1280173                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7ffb880d0000-7ffb880df000 r--p 00069000 fe:00 1280173                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7ffb880df000-7ffb880e2000 r--p 00078000 fe:00 1280173                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7ffb880e2000-7ffb880e4000 rw-p 0007b000 fe:00 1280173                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_hardware_plugins.so
+7ffbb009e000-7ffbb00cb000 r--p 00000000 fe:00 1280184                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+7ffbb00cb000-7ffbb0109000 r-xp 0002d000 fe:00 1280184                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+7ffbb0109000-7ffbb0119000 r--p 0006b000 fe:00 1280184                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+7ffbb0119000-7ffbb011c000 r--p 0007a000 fe:00 1280184                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so
+7ffbb011c000-7ffbb011e000 rw-p 0007d000 fe:00 1280184                    /root/spiderx_gz_overlay_ws_r2/install/gz_ros2_control/lib/libgz_ros2_control-system.so

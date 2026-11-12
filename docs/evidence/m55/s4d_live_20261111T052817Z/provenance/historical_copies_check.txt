@@ -1,0 +1,2 @@
+tools_s4c_l2_live: 15 files verified against s4c_l2_live_20261103T111733Z/SHA256SUMS
+tools_s4d_shadow: 16 files verified against s4d_shadow_20261110T072920Z/SHA256SUMS

@@ -1,0 +1,32 @@
+== before cleanup (dummies; the decoy 15251 is not recorded anywhere)
+  PID  PGID   SID COMMAND
+15246 15246 15242 python3 /x/scripts/s4/s4d_driver.py --out d --shadow-rehearsal 600
+15250 15250 15242 Xvfb :99 dummy 600
+15251 15251 15242 m55_teleop_keyboard DECOY-unowned 600
+== cleanup.sh
+[07:36:23] cleanup start
+driver 15246: stopped by SIGINT
+teleop session 15247: nothing left
+recorder: 15248: not running
+Xvfb 15250: SIGTERM
+[07:36:24] cleanup done; relevant processes still present (listed, not killed):
+15251 m55_teleop_keyboard DECOY-unowned 600
+15253 python3 ros2 bag record -s sqlite3 dummy 600
+15254 ros2 run spiderx_controller m55_teleop_keyboard 600
+15255 m55_teleop_keyboard child-of-teleop-session 600
+15256 ros2 launch dummy 600
+15257 gz sim server dummy-ignores-SIGINT 600
+15258 ign gazebo dummy 600
+[1]   Interrupt               bash -c 'echo $$ > driver.pid; exec -a "python3 /x/scripts/s4/s4d_driver.py --out d --shadow-rehearsal" sleep 600'  (wd: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/harness_tests2/C1/run)
+(wd now: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad)
+[5]-  Terminated              bash -c 'exec -a "Xvfb :99 dummy" sleep 600'  (wd: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/harness_tests2/C1/run)
+(wd now: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad)
+== after
+gone 15246
+gone 15247
+gone 15248
+gone 15249
+gone 15250
+session 15247 members: 0; session 15249 members: 0
+decoy 15251 still alive (not owned: correctly untouched)
+cat: /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/harness_tests2/C1/run/shutdown.txt: No such file or directory

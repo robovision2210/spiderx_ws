@@ -1,0 +1,15 @@
+[05:38:12] gates (imported): True False False /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/live_harness_tests/fake_enabled/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[05:38:12] enabling branch: recorded 'local/m55-s4d-m-TEST', checked out 'local/m55-s4d-m-TEST', diff vs e9f2cc394221e7da49d2f8500126bd86b2f62b94: 1 1 src/spiderx_controller/spiderx_controller/m55_contract.py;1 1 src/spiderx_controller/test/m55_gate.py; remote-tracking refs: 0; worktree entries: 0
+[05:38:12] OD8 before the launch: PASS: watchdog 2242 has 7199 s left >= 5400 + 900 s
+[05:38:12] OD16 before the launch: PASS: 21567492096 B free on /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/live_harness_tests/L8/bagparent; T 7199 s; E = 2 x 30.8 MB/min (planning assumption) x T = 7390973333 B; need max(5 GiB, 2E + 100000000 B) = 14881946667 B
+[05:38:12] launch
+STUB launch pid 2328
+[05:38:12] controllers: exit 0
+[05:38:15] gazebo gui pid(s)  reniced +19
+[05:38:15] node up after 1 s: locomotion node up in DISPATCH mode (dispatch gate True)
+[05:38:15] locomotion node pid(s)  (launch session 2328) reniced -5
+[05:38:18] pre-key checks: waiting for go.flag or abort.flag (at most 1500 s)
+[05:38:19] pre-key checks passed: test: pre-key checks PASS (stub)
+[05:38:19] OD8 before the first key: FAIL: watchdog 2242 has 1000 s left < 5400 + 900 s
+[05:38:19] ABORT: OD8 time budget before the first key (no key pressed)
+[05:38:19] end

@@ -1,0 +1,14 @@
+Raw bag of the S4d-M LIVE attempt (2026-11-11). It is NOT in the repository.
+  Location in the cloud container (not durable): /root/spiderx_evidence/s4d_live_20261111T052817Z/bag/bag_0.db3
+  sha256 9320eb43f999c87f15dbb774010be36c937037e1b4c2db4d1a77cc5777646adc, 348086272 bytes, 101,644 messages; metadata.yaml sha256 b72a910bd001bd2ffea68a7f1f3663826385858ed4aac7f5596e3a2502eaf053, 3551 bytes (identical copy: run/bag_metadata.yaml).
+  Unchanged before the restore, after scoring and after the supplementary analysis (run/bag_hashes.txt).
+  Topics: /spiderx/locomotion/status, /joint_states, /spiderx/sim/world_poses, /cmd_vel,
+  /leg_trajectory_controller/joint_trajectory (requested; never published, so absent),
+  /leg_trajectory_controller/controller_state, /leg_trajectory_controller/follow_joint_trajectory/_action/feedback.
+  Not recorded: _action/status and /clock (as in S4c and the S4d shadow run).
+Export: the ORIGINAL bag_0.db3 and metadata.yaml were delivered as conversation attachments at 2026-11-11T06:10:34Z
+  (uncompressed: 348086272 bytes is below the 500 MiB attachment limit, so no compression was needed).
+  An attachment delivered is NOT an owner-confirmed durable download. Durable off-container copy: UNCONFIRMED.
+  A committed hash is not a backup of the recording.
+Reading it: rosbag2 sqlite3 storage (ROS 2 Humble); open read-only (file:...?mode=ro&immutable=1). The verdict comes from
+  scripts/s4/score_s4d.py with the arguments in score/score_provenance.txt (no --shadow).

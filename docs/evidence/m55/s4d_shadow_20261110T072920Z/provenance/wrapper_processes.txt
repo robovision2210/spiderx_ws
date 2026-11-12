@@ -1,0 +1,4 @@
+16828     1 16828 16828 bash /root/spiderx_evidence/s4d_shadow_20261110T072920Z/tools/watchdog.sh /root/spiderx_evidence/s4d_shadow_20261110T072920Z/run 7200
+16845     1 16845 16845 bash -c bash /root/spiderx_evidence/s4d_shadow_20261110T072920Z/tools/s4d_shadow_guarded.sh /root/spiderx_evidence/s4d_shadow_20261110T072920Z/run /root/spiderx_evidence/s4d_shadow_20261110T072920Z/bag; echo "guarded run exit $?"
+16847 16845 16845 16845 bash /root/spiderx_evidence/s4d_shadow_20261110T072920Z/tools/s4d_shadow_guarded.sh /root/spiderx_evidence/s4d_shadow_20261110T072920Z/run /root/spiderx_evidence/s4d_shadow_20261110T072920Z/bag
+16850 16847 16845 16845 bash /root/spiderx_evidence/s4d_shadow_20261110T072920Z/tools/s4d_shadow_run.sh /root/spiderx_evidence/s4d_shadow_20261110T072920Z/run /root/spiderx_evidence/s4d_shadow_20261110T072920Z/bag

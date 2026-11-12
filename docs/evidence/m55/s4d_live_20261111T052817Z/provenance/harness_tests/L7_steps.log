@@ -1,0 +1,6 @@
+[05:38:10] gates (imported): True False False /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/live_harness_tests/fake_enabled/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_contract.py
+[05:38:11] enabling branch: recorded 'local/m55-s4d-m-TEST', checked out 'local/m55-s4d-m-TEST', diff vs e9f2cc394221e7da49d2f8500126bd86b2f62b94: 1 1 src/spiderx_controller/spiderx_controller/m55_contract.py;1 1 src/spiderx_controller/test/m55_gate.py; remote-tracking refs: 0; worktree entries: 0
+[05:38:11] OD8 before the launch: PASS: watchdog 2143 has 11998 s left >= 5400 + 900 s
+[05:38:11] OD16 before the launch: FAIL: 21567598592 B free on /tmp/claude-0/-home-user-spiderx-ws/1caeaf44-399a-5d1c-9275-5c90d2ce2d7f/scratchpad/live_harness_tests/L7/bagparent; T 11998 s; E = 2 x 30.8 MB/min (planning assumption) x T = 12317946667 B; need max(5 GiB, 2E + 100000000 B) = 24735893333 B
+[05:38:11] REFUSED before the launch (nothing launched, no key): OD16 disk
+[05:38:11] end

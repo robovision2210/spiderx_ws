@@ -1,0 +1,6 @@
+# sha256 and size of each ORIGINAL file before its gzip copy (originals unchanged under the run-local root)
+a50383556af20b8a1679be81612d32e0be85dd9ba8347872595afc2594b122bf  70639  run/launch.log
+1a6448144f55fdad54d4b4e71c4441ab30b67273d242b081910e290e10e5bad5  2202349  run/driver/driver.jsonl
+0b8f6d487eac2477a06e223f9074df6a0f43cd733d3095da911773f7b29ec0b4  344833  run/premotion/maps_full.txt
+2aaf17f710ef640fc553a6c43948398994ae17bbf434f7dadcc17b9d96f4f46f  3588  enabled/build.log
+60a529f26dfeab7b36ee4997cccbe97e289b5b8f266f1c12a75b78ef610c2e80  598  restore/rebuild_20261111T060321Z.log

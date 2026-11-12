@@ -1,0 +1,32 @@
+top - 07:48:59 up 48 min,  0 user,  load average: 8.23, 4.25, 1.96
+Tasks: 100 total,   2 running,  98 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 66.7 us,  5.1 sy,  2.6 ni, 23.1 id,  0.0 wa,  0.0 hi,  0.0 si,  2.6 st 
+MiB Mem :  16086.3 total,  14001.4 free,   1645.1 used,    702.1 buff/cache     
+MiB Swap:      0.0 total,      0.0 free,      0.0 used.  14441.2 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+17146 root      39  19 2898784 587288 137588 S 200.0   3.6   7:51.47 ruby
+17143 root      20   0 3852340 514820 162264 R 100.0   3.1   3:49.82 ruby
+   96 root      20   0 5688592 362188 112584 S  10.0   2.2   1:02.35 claude
+17032 root      20   0  991900  43664  32876 S  10.0   0.3   0:13.06 parameter_bridg
+17036 root      20   0  991972  43112  32244 S  10.0   0.3   0:10.87 parameter_bridg
+17038 root      15  -5 1227308  74684  34184 S  10.0   0.5   1:30.77 python3
+18195 root      20   0 1221084  68392  33640 S  10.0   0.4   0:02.03 python3
+    1 root      20   0   28704   7372   6836 S   0.0   0.0   0:00.96 process_api
+    2 root      20   0       0      0      0 S   0.0   0.0   0:00.00 kthreadd
+    3 root      20   0       0      0      0 S   0.0   0.0   0:00.00 pool_workqueue_release
+    4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-rcu_gp
+    5 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-sync_wq
+    6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-kvfree_rcu_reclaim
+    7 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-slub_flushwq
+    8 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-netns
+  PID  NI %CPU COMMAND
+17027   0  1.8 /opt/mm/root/envs/humble/lib/robot_state_publisher/robot_state_publisher --ros-args -r __node:=robot_state_publisher --params-file /tmp/launch_pa
+17028   0  0.1 ign gazebo -r -v 2 /root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_description/share/spiderx_description/worlds/spiderx_fortress.sd
+17032   0  4.7 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge --ros-args -r __node:=spiderx_gz_bridge --params-file /tmp/launch_params_1n5aiu6q
+17036   0  3.9 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge /world/spiderx_fortress/pose/info@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V --ros-a
+17038  -5 33.2 python3 /root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node --evidence-dir /root/
+17143   0 84.8 ign gazebo server
+17146  19  174 ign gazebo gui
+18160   0  2.6 python3 /home/user/spiderx_ws/scripts/s4/s4d_driver.py --out /root/spiderx_evidence/s4d_shadow_20261110T072920Z/run/driver --shadow-rehearsal
+18195   0  1.7 python3 /root/spiderx_fresh_disabled_20261110T071506Z/install/spiderx_controller/lib/spiderx_controller/m55_teleop_keyboard
