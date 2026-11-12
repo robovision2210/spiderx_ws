@@ -1,0 +1,12 @@
+start 2026-10-12T08:55:06Z head 7ada564
+build exit=0
+Summary: 8 packages finished [12.5s]
+  7 packages had stderr output: spiderx_bringup spiderx_controller spiderx_description spiderx_firmware spiderx_localization spiderx_mapping spiderx_navigation
+test exit=0
+result exit=0
+Summary: 1894 tests, 0 errors, 0 failures, 0 skipped
+end 2026-10-12T09:04:31Z
+
+imported gate modules (from this worktree's install):
+M61_LIVE_DISPATCH_ENABLED False; LIVE_DISPATCH_ENABLED False; M55_LOCOMOTION_DISPATCH_ENABLED False
+environment: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 ROS_LOCALHOST_ONLY=1; fresh worktree, rm -rf build install before the build

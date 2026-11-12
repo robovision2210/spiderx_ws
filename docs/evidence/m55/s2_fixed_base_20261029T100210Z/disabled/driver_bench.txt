@@ -1,0 +1,14 @@
+test_a_driver_error_presses_the_emergency_stop (test_s2_driver_live.LiveBranch.test_a_driver_error_presses_the_emergency_stop) ... ok
+test_above_rtf_1_6_the_lease_may_add_a_phase_and_the_driver_stops_at_59 (test_s2_driver_live.LiveBranch.test_above_rtf_1_6_the_lease_may_add_a_phase_and_the_driver_stops_at_59)
+The kill comes <= 0.5 s (2 Hz status) after dispatch and the lease expires 0.55 s ... ok
+test_an_aborted_goal_stops_the_script (test_s2_driver_live.LiveBranch.test_an_aborted_goal_stops_the_script) ... ok
+test_live_branch_completes_at_rtf_0_20 (test_s2_driver_live.LiveBranch.test_live_branch_completes_at_rtf_0_20) ... ok
+test_live_branch_completes_at_rtf_1_0 (test_s2_driver_live.LiveBranch.test_live_branch_completes_at_rtf_1_0) ... ok
+test_live_branch_completes_the_59_goal_script_at_rtf_0_59 (test_s2_driver_live.LiveBranch.test_live_branch_completes_the_59_goal_script_at_rtf_0_59) ... ok
+test_shadow_branch_plans_58_goals (test_s2_driver_live.LiveBranch.test_shadow_branch_plans_58_goals) ... ok
+test_tracking_error_above_0_02_stops_at_once (test_s2_driver_live.LiveBranch.test_tracking_error_above_0_02_stops_at_once) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.631s
+
+OK

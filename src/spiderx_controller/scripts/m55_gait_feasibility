@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+"""M5.5 OFFLINE free-base gait feasibility (see spiderx_controller/m55_feasibility.py).
+No simulator, no ROS graph, no goal.
+
+    ros2 run spiderx_controller m55_gait_feasibility [--strides 0.02 0.04] [--no-write]
+"""
+import sys
+
+from spiderx_controller.m55_feasibility import main
+
+if __name__ == '__main__':
+    sys.exit(main())

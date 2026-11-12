@@ -1,6 +1,37 @@
 # SpiderX Feature Status
 
-Last updated on branch `claude/stoic-shannon-ur2mes` (M6.1-A fixed base, stacked on the unmerged M6.1 branch `claude/spiderx-m61-trot-replay` @ `6a7f1f0`, from `main` @ `77fd171`).
+Last updated on branch `claude/spiderx-m55-keyboard-walking` (M5.5 keyboard walking, stacked on the M6.1-A branch `claude/stoic-shannon-ur2mes` @ `41fc10f` (draft PR #17, with the focused-review corrections), on the unmerged M6.1 branch `claude/spiderx-m61-trot-replay` @ `6a7f1f0`, from `main` @ `77fd171`). The M5.5 pull request is deferred until M6.1-A is reviewed. Preserved reports: [`docs/evidence/`](docs/evidence/README.md).
+
+**M5.5 keyboard walking: implemented in SHADOW mode; Cloud-verified in offline/mock/isolated-domain tests only; the new gate `M55_LOCOMOTION_DISPATCH_ENABLED` is `False`; the phase-1 shadow session ran in Cloud on 2026-10-13: nothing was sent; 10 of 13 checks passed as written, 1.7 failed on a wall-time bound; S0b fixed both findings (windowed rate rule; 1.7 in sim time, re-scored PASS); S2 fixed-base crawl prepared (criteria approved; restore script, UNAPPLIED patch, shadow rehearsal on the welded base: 58 goals planned, nothing sent), not run; nothing walks yet** ([M5.5](docs/M55_KEYBOARD_WALKING.md), [path to simulated walking](docs/PATH_TO_SIM_WALKING.md)).
+- **Gait.** A statically stable free-base crawl with body shift (not a trot: two-foot support has no static margin, and nothing here shows dynamic stability):
+  - 3 validated speed levels: 20/40/60 mm strides, 1.06/1.90/2.34 mm/s;
+  - a quasi-static margin of at least 19.4 mm (the requirement is 15 mm);
+  - joint speeds of at most 0.225 rad/s (development bound 0.25).
+- **Locomotion.**
+  - **Dispatch:** one validated phase per goal, fingerprinted, with continuity checks and a lead-in.
+  - **States:** DISARMED, READY, STARTING, WALKING, STOPPING and FAULTED.
+  - **Safety behaviour:**
+    - a 0.5 s command lease (stop, then disarm; never a silent re-arm);
+    - a controlled stop with a stop latch;
+    - an emergency stop that cancels once and holds;
+    - a fresh `reset` + `arm` after any fault;
+    - graph checks for a single command owner.
+- **Operator.** `/cmd_vel` forward/reverse only (lateral and yaw are rejected explicitly) and the keyboard teleop `m55_teleop_keyboard`.
+- **Bench.** The free-base launch `fortress_m55_walking.launch.py` (posture-hold bench + node, shadow).
+- **Focused Cloud review** ([§16](docs/M55_KEYBOARD_WALKING.md#16-focused-cloud-review-after-2857d50-findings-corrections-timing)). Corrected:
+  - the phase watchdog now runs on **sim** time; it used wall time, which would have faulted
+    every long phase at the owner's real-time factor of about 0.2;
+  - post-result feedback must be newer by its stamp, not just received later;
+  - clock anomalies;
+  - re-arm now refuses ambiguous or unverified mid-cycle postures;
+  - fresh graph snapshots at arm;
+  - M6.1 readiness now refuses a visible competing commander.
+
+  The section also has a stop-timing table (wall versus sim time). The reports are preserved in
+  `docs/evidence/`.
+- **Pending (local, each needs approval):**
+  - phase 1, the shadow keyboard session;
+  - phases 2–4, a fixed-base crawl, a bounded free-base crawl and keyboard walking, which need a separate enabling change.
 
 **M6.1 protected trot replay and M6.1-A fixed base: implemented; Cloud-verified offline, with mocks, on isolated domains and in launch-only Cloud Gazebo observations; both live gates `False` on every pushed commit. The one authorized Cloud attempt at the fixed-base cycle (2026-10-12) was refused before dispatch: 0 goals ([Cloud report §11](docs/M61A_CLOUD_VERIFICATION.md)). The refusal was reproduced read-only and fixed at `61f3ffc` (bounded action-server discovery before readiness); the read-only rehearsal on the disabled build was READY in 8 of 8 trials (§12). A second authorized cycle (§13) sent 1 goal: it was accepted and then cancelled by the client's tracking check (TRACKING_FAILED, 1 cancel). The cause is a client reference-timing defect, since the joints tracked within 0.0108 rad from acceptance; the cycle is not passed. The defect is fixed on the M6.1 side at `b0d8e75`: the reference is timed from goal acceptance, a `time_from_start = 0` fallback is recorded, and no threshold changed. A read-only probe on the disabled build drove the live streams through the tracking path with no goal: PASS (§14). A third authorized cycle then PASSED (§15): 1 goal, 0 cancels, `SUCCEEDED`, max in-flight error 0.0085 rad, E1–E11 all PASS. The body was welded, so this shows trajectory execution and tracking on a fixed base, not walking. Cleanup ended DISABLED AND VERIFIED; the gates stay `False`.**
 - **M6.1** (`6a7f1f0`, [notes](docs/M61_IMPLEMENTATION_NOTES.md)):
@@ -182,9 +213,9 @@ The architecture branch was verified **locally** by the owner: 8 packages built,
 | M6.0 gait-playback safety layers (one bounded crouch trajectory) | 🟡 Implemented; cloud + local offline/mock verified; M6.0-B graph-mode read-only preflight passed locally; M6.0-D valid playback pending | `m6_offline_preflight` (offline conversion + preflight), `m6_action_client` (single goal, mock-tested only), `m6_live_preflight` (read-only; sends no goal). No goal has been sent to a live controller; M6.0-D needs owner approval. [M6 results](docs/M6_TEST_RESULTS.md), [guide](docs/SPIDERX_M6_PLAYBACK_GUIDE.md). **Not** gait playback or walking |
 | M6.1 protected one-cycle trot replay (fixed base) | 🟡 Implemented; Cloud offline/mock/isolated verified; live hard-disabled | `m6_gait_replay.py --dry-run / --mock`; [notes](docs/M61_IMPLEMENTATION_NOTES.md). No goal has been sent. The one authorized Cloud attempt (2026-10-12) was refused before dispatch ([Cloud report §11](docs/M61A_CLOUD_VERIFICATION.md)); readiness fixed at `61f3ffc` and rehearsed without motion (§12) |
 | M6.1-A fixed-base simulation + body-pose observability | 🟡 Implemented; Cloud offline/mock/isolated verified; launch-only Cloud Gazebo observations ([Cloud report](docs/M61A_CLOUD_VERIFICATION.md)); **not run on the owner PC** | `fortress_m61a_fixed_base.launch.py`, `m61a_observe_fixed_base`, `m61a_clearance`; provisional mount 0.125 m; [implementation](docs/M61A_FIXED_BASE_IMPLEMENTATION.md) |
-| Gait playback / walking in simulation | ⚪ Future work | Unscheduled "Future — gait playback" item (owner decision). Nothing streams gait trajectories to the controllers |
+| Gait playback / walking in simulation | ⚪ Not demonstrated | The M5.5 crawl is validated offline and runs in shadow mode only; nothing streams gait trajectories to the controllers. Local acceptance phases 1–4 pending ([M5.5 §10](docs/M55_KEYBOARD_WALKING.md)) |
 | Offline evaluation study (M5) | ✅ Cloud + local offline verification passed | `m5_offline_evaluation`: staged study, Stage 0/1 gate, deterministic provenance-rich records. [M5 results](docs/M5_TEST_RESULTS.md), [guide](docs/SPIDERX_M5_EVALUATION_GUIDE.md). Offline model analysis only; **not** walking, dynamic stability, energy or hardware |
-| `/cmd_vel` → gait bridge | ⚪ Future work | M5.5: Command-velocity bridge (renamed from M5). Not implemented. Nothing consumes `/cmd_vel` today |
+| Free-base crawl, locomotion state machine and `/cmd_vel` bridge (M5.5) | 🟡 Implemented in **shadow mode**; Cloud offline/mock/isolated verified; **dispatch hard-disabled, not run in Gazebo** | `spiderx_locomotion` node (`m55_locomotion_node`), `m55_teleop_keyboard`, `m55_gait_feasibility`, `fortress_m55_walking.launch.py`; forward/reverse only, lateral/yaw rejected. [M5.5](docs/M55_KEYBOARD_WALKING.md) |
 | Odometry (`/spiderx/leg_odometry`, `/odom`) | ⚪ Future work | M7 – Odometry and state estimation (formerly M6). Not implemented. **Not faked** |
 
 ## Mapping, localization, navigation

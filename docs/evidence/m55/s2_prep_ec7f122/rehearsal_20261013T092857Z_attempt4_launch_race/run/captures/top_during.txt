@@ -1,0 +1,30 @@
+top - 09:35:14 up  1:00,  0 user,  load average: 0.28, 1.67, 3.53
+Tasks:  96 total,   1 running,  95 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 33.3 us,  0.0 sy,  0.0 ni, 66.7 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st 
+MiB Mem :  16093.2 total,  14100.7 free,    860.0 used,   1390.9 buff/cache     
+MiB Swap:      0.0 total,      0.0 free,      0.0 used.  15233.2 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+24890 root      15  -5 1179236  71352  33344 S  10.0   0.4   1:27.48 python3
+    1 root      20   0   24840   5596   5168 S   0.0   0.0   0:03.82 process_api
+    2 root      20   0       0      0      0 S   0.0   0.0   0:00.03 kthreadd
+    3 root      20   0       0      0      0 S   0.0   0.0   0:00.00 pool_workqueue_release
+    4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-rcu_gp
+    5 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-sync_wq
+    6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-kvfree_rcu_reclaim
+    7 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-slub_flushwq
+    8 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-netns
+   10 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/0:0H-events_highpri
+   13 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/R-mm_percpu_wq
+   14 root      20   0       0      0      0 S   0.0   0.0   0:00.07 ksoftirqd/0
+   15 root      20   0       0      0      0 I   0.0   0.0   0:01.54 rcu_preempt
+   16 root      20   0       0      0      0 S   0.0   0.0   0:00.00 rcu_exp_par_gp_kthread_worker/0
+   17 root      20   0       0      0      0 S   0.0   0.0   0:00.00 rcu_exp_gp_kthread_worker
+  PID  NI %CPU COMMAND
+24382   0  0.1 /opt/mm/root/envs/humble/lib/robot_state_publisher/robot_state_publisher --ros-args -r __node:=robot_state_publisher --params-file /tmp/launch_pa
+24383  10  0.0 ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_description/worlds/spiderx_fortress.sdf
+24387   0  1.6 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge --ros-args -r __node:=spiderx_gz_bridge --params-file /tmp/launch_params_albce8h2
+24390   0  1.6 /opt/mm/root/envs/humble/lib/ros_gz_bridge/parameter_bridge /world/spiderx_fortress/pose/info@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V --ros-a
+24475   0  1.4 ign gazebo server
+24479   0  1.5 ign gazebo gui
+24890  -5 40.7 [python3]

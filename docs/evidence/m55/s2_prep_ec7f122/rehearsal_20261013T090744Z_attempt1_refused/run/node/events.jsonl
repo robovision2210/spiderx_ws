@@ -1,0 +1,6 @@
+{"event": "refused", "n": 1, "reason": "command_owner_conflict", "request": "arm", "state": "DISARMED", "wall": 2134.590528993}
+{"event": "request", "message": "already disarmed", "n": 2, "request": "disarm", "state": "DISARMED", "wall": 2244.640966439}
+{"event": "request", "message": "not moving (DISARMED); held until a zero command", "n": 3, "request": "stop", "state": "DISARMED", "wall": 2244.643290273}
+{"event": "fault", "n": 4, "reason": "estop", "state": "DISARMED", "wall": 2244.662931651}
+{"event": "transition", "n": 5, "previous": "DISARMED", "state": "FAULTED", "wall": 2244.662931651, "why": "estop"}
+{"event": "request", "message": "emergency stop: goal cancelled (if any), holding; reset and arm to continue", "n": 6, "request": "estop", "state": "FAULTED", "wall": 2244.662931651}

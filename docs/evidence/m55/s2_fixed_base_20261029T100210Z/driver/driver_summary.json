@@ -1,0 +1,18 @@
+{
+ "command_rejections": {},
+ "expected_goals": 9,
+ "faults": [],
+ "final_state": "WALKING",
+ "goal_seqs_seen": [
+  1
+ ],
+ "goals_recorded": 1,
+ "levels": [
+  0,
+  1,
+  2
+ ],
+ "max_seq": 1,
+ "result": "STOP CONDITION: tracking error 0.02072062245070036 rad above 0.02 on goal 1",
+ "status_messages": 13
+}

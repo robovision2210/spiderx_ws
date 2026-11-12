@@ -1,0 +1,14 @@
+SpiderX M6.1-A fixed-base observer (READ-ONLY: no goal, no command, no publisher)
+NOT READY: body_pose_missing, body_pose_missing, body_pose_sim_time_not_advancing, joint_states_missing, sim_clock_missing, controllers_unknown, joint_state_publisher_count
+  PASS  action_clients
+  FAIL  body_pose_fresh  (body_pose_missing)
+  FAIL  body_pose_sim_progress  (body_pose_sim_time_not_advancing)
+  PASS  command_publishers
+  FAIL  controllers  (controllers_unknown)
+  FAIL  fixed_base_pose  (body_pose_missing)
+  FAIL  joint_state_publishers  (joint_state_publisher_count)
+  FAIL  joint_states  (joint_states_missing)
+  PASS  robot_description
+  FAIL  sim_clock  (sim_clock_missing)
+Evidence: docs/evidence/m55/s2_prep_ec7f122/rehearsal_20261013T092857Z/run/observer/20261013T093138Z/observation.json
+[ros2run]: Process exited with failure 1

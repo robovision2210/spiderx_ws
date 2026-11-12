@@ -1,0 +1,76 @@
+{"event": "teleop_started", "pid": 2301, "mono": 364.1738}
+{"teleop_out": "SpiderX M5.5 keyboard teleop  (simulation development; dispatch gate: False)\r\n  a arm | z disarm | w forward (hold) | s reverse (hold) | space stop | x/Esc EMERGENCY STOP\r\n  r reset after a fault | h home | +/- speed level | j/l turning: not supported | q quit\r\nNOTE: the node runs in SHADOW mode in this build - nothing moves.\r\n", "mono": 364.7017}
+{"teleop_out": "waiting for /spiderx/locomotion/status ...\r\n", "mono": 364.702}
+{"teleop_out": "state DISARMED | mode SHADOW | level 0 (1.06 mm/s) | boundary 0 | intent 0\r\n", "mono": 366.4113}
+{"key": "'a'", "step": "1.4 arm", "mono": 370.1761}
+{"teleop_out": "state READY | mode SHADOW | level 0 (1.06 mm/s) | boundary 0 | intent 0\r\n", "mono": 370.2265}
+{"teleop_out": "[arm] ok: armed at boundary 0 (level 0, posture error 0.0000 rad)\r\n", "mono": 370.5245}
+{"key": "'w'", "step": "1.5 hold w 30 s", "mono": 374.1844}
+{"teleop_out": "state STARTING | mode SHADOW | level 0 (1.06 mm/s) | boundary 0 | intent 1\r\n", "mono": 374.3333}
+{"teleop_out": "state WALKING | mode SHADOW | level 0 (1.06 mm/s) | boundary 0 | intent 1", "mono": 374.5337}
+{"teleop_out": "\r\n", "mono": 374.5338}
+{"teleop_out": "state WALKING | mode SHADOW | level 0 (1.06 mm/s) | boundary 1 | intent 1", "mono": 382.8559}
+{"teleop_out": "\r\n", "mono": 382.8563}
+{"teleop_out": "state WALKING | mode SHADOW | level 0 (1.06 mm/s) | boundary 2 | intent 1\r\n", "mono": 394.8759}
+{"teleop_out": "state WALKING | mode SHADOW | level 0 (1.06 mm/s) | boundary 3 | intent 1\r\n", "mono": 403.3733}
+{"release": "'w'", "step": "1.5 hold w 30 s", "mono": 404.2314}
+{"teleop_out": "state STOPPING | mode SHADOW | level 0 (1.06 mm/s) | boundary 3 | intent 0\r\n", "mono": 405.121}
+{"key": "'j'", "step": "1.6", "mono": 408.2443}
+{"teleop_out": "turning is not supported by the current gait (forward and reverse only); nothing was sent\r\n", "mono": 408.2447}
+{"key": "'l'", "step": "1.6", "mono": 409.2546}
+{"teleop_out": "turning is not supported by the current gait (forward and reverse only); nothing was sent\r\n", "mono": 409.2551}
+{"key": "'w'", "step": "1.7 hold", "mono": 412.2559}
+{"teleop_out": "state STOPPING | mode SHADOW | level 0 (1.06 mm/s) | boundary 3 | intent 1", "mono": 412.8443}
+{"teleop_out": "\r\n", "mono": 412.8444}
+{"teleop_out": "state STARTING | mode SHADOW | level 0 (1.06 mm/s) | boundary 4 | intent 1\r\n", "mono": 415.0957}
+{"teleop_out": "state WALKING | mode SHADOW | level 0 (1.06 mm/s) | boundary 4 | intent 1", "mono": 415.1489}
+{"teleop_out": "\r\n", "mono": 415.1496}
+{"teleop_out": "state STOPPING | mode SHADOW | level 0 (1.06 mm/s) | boundary 4 | intent 0\r\n", "mono": 415.7059}
+{"teleop_out": "state STOPPING | mode SHADOW | level 0 (1.06 mm/s) | boundary 4 | intent 1", "mono": 415.8555}
+{"teleop_out": "\r\n", "mono": 415.8562}
+{"key": "' '", "step": "1.7 space while holding w", "mono": 417.2683}
+{"teleop_out": "[stop] ok: stopping after the current phase (held until a zero command)\r\n", "mono": 417.3589}
+{"release": "'w'", "step": "1.7 release after space", "mono": 423.2981}
+{"teleop_out": "state STOPPING | mode SHADOW | level 0 (1.06 mm/s) | boundary 4 | intent 0\r\n", "mono": 424.38}
+{"key": "'w'", "step": "1.7 press again after release", "mono": 426.3118}
+{"teleop_out": "state STOPPING | mode SHADOW | level 0 (1.06 mm/s) | boundary 4 | intent 1", "mono": 426.8621}
+{"teleop_out": "\r\n", "mono": 426.8622}
+{"teleop_out": "state READY | mode SHADOW | level 0 (1.06 mm/s) | boundary 5 | intent 1\r\n", "mono": 428.9881}
+{"release": "'w'", "step": "1.7 press again after release", "mono": 430.3411}
+{"teleop_out": "state READY | mode SHADOW | level 0 (1.06 mm/s) | boundary 5 | intent 0\r\n", "mono": 431.4027}
+{"key": "'x'", "step": "1.8 estop", "mono": 436.3414}
+{"teleop_out": "state FAULTED | mode SHADOW | level 0 (1.06 mm/s) | boundary 5 | intent 0 | FAULTS estop", "mono": 436.515}
+{"teleop_out": "\r\n", "mono": 436.5151}
+{"teleop_out": "[estop] ok: emergency stop: goal cancelled (if any), holding; reset and arm to continue\r\n", "mono": 436.8141}
+{"key": "'a'", "step": "1.8 arm while faulted (refused)", "mono": 438.3424}
+{"teleop_out": "[arm] REFUSED: faulted_reset_required", "mono": 438.7198}
+{"teleop_out": "\r\n", "mono": 438.7201}
+{"teleop_out": "state FAULTED | mode SHADOW | level 0 (1.06 mm/s) | boundary 5 | intent 0 | FAULTS estop | last refusal faulted_reset_required", "mono": 438.9211}
+{"teleop_out": "\r\n", "mono": 438.9213}
+{"key": "'r'", "step": "1.8 reset", "mono": 440.3428}
+{"teleop_out": "state DISARMED | mode SHADOW | level 0 (1.06 mm/s) | boundary 5 | intent 0 | last refusal faulted_reset_required\r\n", "mono": 440.5281}
+{"teleop_out": "[reset] ok: reset: disarmed (arm again to continue)", "mono": 440.8259}
+{"teleop_out": "\r\n", "mono": 440.826}
+{"key": "'a'", "step": "1.8 arm after reset", "mono": 442.3525}
+{"teleop_out": "state READY | mode SHADOW | level 0 (1.06 mm/s) | boundary 0 | intent 0 | last refusal faulted_reset_required", "mono": 442.535}
+{"teleop_out": "\r\n", "mono": 442.5351}
+{"teleop_out": "[arm] ok: armed at boundary 0 (level 0, posture error 0.0000 rad)\r\n", "mono": 442.8355}
+{"key": "'w'", "step": "1.9 hold before kill", "mono": 445.3717}
+{"teleop_out": "state STARTING | mode SHADOW | level 0 (1.06 mm/s) | boundary 0 | intent 1 | last refusal faulted_reset_required", "mono": 445.5461}
+{"teleop_out": "\r\n", "mono": 445.5483}
+{"teleop_out": "state WALKING | mode SHADOW | level 0 (1.06 mm/s) | boundary 0 | intent 1 | last refusal faulted_reset_required\r\n", "mono": 445.7462}
+{"event": "teleop_killed", "step": "1.9 teleop crash while walking", "mono": 449.3937}
+{"event": "teleop2_started", "pid": 2328, "mono": 457.3969}
+{"teleop_out": "SpiderX M5.5 keyboard teleop  (simulation development; dispatch gate: False)\r\n  a arm | z disarm | w forward (hold) | s reverse (hold) | space stop | x/Esc EMERGENCY STOP\r\n  r reset after a fault | h home | +/- speed level | j/l turning: not supported | q quit\r\nNOTE: the node runs in SHADOW mode in this build - nothing moves.\r\n", "mono": 457.9026}
+{"teleop_out": "waiting for /spiderx/locomotion/status ...\r\n", "mono": 457.9028}
+{"teleop_out": "state DISARMED | mode SHADOW | level 0 (1.06 mm/s) | boundary 1 | intent 0 | last refusal faulted_reset_required\r\n", "mono": 459.0081}
+{"key": "'w'", "step": "1.9 new teleop, w without arm", "mono": 463.4039}
+{"teleop_out": "state DISARMED | mode SHADOW | level 0 (1.06 mm/s) | boundary 1 | intent 1 | last refusal faulted_reset_required\r\n", "mono": 463.9119}
+{"release": "'w'", "step": "1.9 new teleop, w without arm", "mono": 466.4121}
+{"teleop_out": "state DISARMED | mode SHADOW | level 0 (1.06 mm/s) | boundary 1 | intent 0 | last refusal faulted_reset_required\r\n", "mono": 467.4262}
+{"key": "'q'", "step": "quit", "mono": 470.4125}
+{"teleop_out": "[stop] ok: not moving (DISARMED); held until a zero command", "mono": 470.4153}
+{"teleop_out": "\r\n", "mono": 470.4155}
+{"teleop_out": "[disarm] ok: already disarmed\r\n", "mono": 470.4156}
+{"teleop_out": "[disarm] ok: already disarmed\r\n", "mono": 470.4166}
+{"event": "done", "mono": 470.6055}

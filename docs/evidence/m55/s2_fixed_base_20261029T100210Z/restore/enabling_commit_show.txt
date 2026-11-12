@@ -1,0 +1,17 @@
+commit 5403dbfb2d40256e749ff26e936c467025dd57a2
+Author:     Claude <noreply@anthropic.com>
+AuthorDate: Thu Oct 29 10:21:09 2026 +0000
+Commit:     Claude <noreply@anthropic.com>
+CommitDate: Thu Oct 29 10:21:09 2026 +0000
+
+    LOCAL ONLY: enable M5.5 dispatch for ONE S2 session (never push, never merge)
+    
+    Applies docs/patches/m55_enable_s2.UNAPPLIED.patch (SHA-256 d1dacac5d9b2bc0b63220c3583526d45f5edacb657394b508710978972b20236)
+    on f4f00b2: M55_LOCOMOTION_DISPATCH_ENABLED and its pin to True. M6.1 and M6.0-D gates stay False.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01QzFL2kguRig19KtzFfqEm3
+
+ src/spiderx_controller/spiderx_controller/m55_contract.py | 2 +-
+ src/spiderx_controller/test/m55_gate.py                   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)

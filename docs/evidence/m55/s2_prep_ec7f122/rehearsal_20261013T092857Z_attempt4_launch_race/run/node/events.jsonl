@@ -1,0 +1,4 @@
+{"event": "refused", "n": 1, "reason": "joint_states_missing", "request": "arm", "state": "DISARMED", "wall": 3502.185137202}
+{"event": "fault", "n": 2, "reason": "estop", "state": "DISARMED", "wall": 3612.226866594}
+{"event": "transition", "n": 3, "previous": "DISARMED", "state": "FAULTED", "wall": 3612.226866594, "why": "estop"}
+{"event": "request", "message": "emergency stop: goal cancelled (if any), holding; reset and arm to continue", "n": 4, "request": "estop", "state": "FAULTED", "wall": 3612.226866594}

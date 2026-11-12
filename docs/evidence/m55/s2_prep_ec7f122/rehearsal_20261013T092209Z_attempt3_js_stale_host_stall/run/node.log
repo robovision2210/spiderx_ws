@@ -1,0 +1,26 @@
+M5.5: building and validating the crawl templates (3 levels, ~20 s each) ...
+  designing and validating the 20 mm crawl template
+  designing and validating the 40 mm crawl template
+  designing and validating the 60 mm crawl template
+[INFO] [1791883452.545504986] [spiderx_locomotion]: M5.5 locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[WARN] [1791883452.546951700] [spiderx_locomotion]: continuous locomotion dispatch is hard-disabled in this build (m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED = False); the session runs in shadow mode and sends nothing
+Traceback (most recent call last):
+  File "/home/user/spiderx_ws/install/spiderx_controller/lib/spiderx_controller/m55_locomotion_node", line 12, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/user/spiderx_ws/install/spiderx_controller/lib/python3.11/site-packages/spiderx_controller/m55_rclpy.py", line 335, in main
+    executor.spin()
+  File "/opt/mm/root/envs/humble/lib/python3.11/site-packages/rclpy/executors.py", line 294, in spin
+    self.spin_once()
+  File "/opt/mm/root/envs/humble/lib/python3.11/site-packages/rclpy/executors.py", line 751, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/mm/root/envs/humble/lib/python3.11/site-packages/rclpy/executors.py", line 740, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/mm/root/envs/humble/lib/python3.11/site-packages/rclpy/executors.py", line 723, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/mm/root/envs/humble/lib/python3.11/site-packages/rclpy/executors.py", line 624, in _wait_for_ready_callbacks
+    raise ExternalShutdownException()
+rclpy.executors.ExternalShutdownException
+[ros2run]: Process exited with failure 1

@@ -1,0 +1,789 @@
+{
+ "checks": {
+  "controller_state": {
+   "ambiguous_rest_matches": 37,
+   "feedback_equals_one_joint_states_sample": 375,
+   "header_stamp_minus_update_time_ms": {
+    "counts": {
+     "-1.0": 93,
+     "-2.0": 14,
+     "-3.0": 11,
+     "-4.0": 6,
+     "-5.0": 4,
+     "-6.0": 4,
+     "-7.0": 1,
+     "-8.0": 1,
+     "0.0": 241
+    },
+    "max": 0.0,
+    "min": -8.0
+   },
+   "max_abs_error_minus_reference_minus_feedback": 0.0,
+   "max_abs_output_minus_reference": 0.0,
+   "messages": 412,
+   "note": "the header stamp is not the update time; the update time is identified by exact equality of the feedback block with one /joint_states sample",
+   "unmatched": 0
+  },
+  "feedback": {
+   "goal_ids": [
+    "e885a7b33adb495c9dcb8d69138facf5"
+   ],
+   "max_abs_actual_minus_joint_states_same_stamp": 0.0,
+   "max_abs_actual_velocity_minus_joint_states": 0.0,
+   "max_abs_error_minus_desired_minus_actual": 0.0,
+   "samples": 26,
+   "stamps_found_in_joint_states": 26,
+   "stamps_on_update_grid": true
+  },
+  "joint_order": {
+   "action_feedback": true,
+   "controller_state": true,
+   "goal_and_library": true,
+   "joint_states_distinct_orders": 1,
+   "joint_states_order": [
+    "lf_foot_joint",
+    "rf_hip",
+    "rf_foot_joint",
+    "rf_thigh_joint",
+    "lr_hip",
+    "lr_thigh_joint",
+    "lr_foot_joint",
+    "rr_hip",
+    "lf_hip",
+    "rr_thigh_joint",
+    "lf_thigh_joint",
+    "rr_foot_joint"
+   ],
+   "note": "/joint_states uses the broadcaster order and is mapped by name everywhere here"
+  },
+  "joint_states": {
+   "every_update_present": true,
+   "first_stamp_s": 67.73,
+   "last_stamp_s": 77.75,
+   "messages": 1003
+  }
+ },
+ "clocks": {
+  "bag_receipt_minus_node_publish_s": [
+   1793267635.4254801,
+   1793267635.4249463,
+   1793267635.4238296,
+   1793267635.4238462,
+   1793267635.4243798
+  ],
+  "goal_statuses": [
+   {
+    "bag_receipt_realtime_s": 1793269655.655801,
+    "driver_receipt_mono_s": 2020.2321,
+    "max_tracking_error_rad": 0.0,
+    "node_joint_states_age_s": 0.007519537999996828,
+    "node_publish_mono_s": 2020.230320993,
+    "node_sim_time_s": 73.07
+   },
+   {
+    "bag_receipt_realtime_s": 1793269655.6995108,
+    "driver_receipt_mono_s": 2020.2753,
+    "max_tracking_error_rad": 0.0,
+    "node_joint_states_age_s": 0.008881661000032182,
+    "node_publish_mono_s": 2020.274564398,
+    "node_sim_time_s": 73.1
+   },
+   {
+    "bag_receipt_realtime_s": 1793269655.9482696,
+    "driver_receipt_mono_s": 2020.5252,
+    "max_tracking_error_rad": 4.8206037675355835e-05,
+    "node_joint_states_age_s": 0.0015657300000384566,
+    "node_publish_mono_s": 2020.52443994,
+    "node_sim_time_s": 73.27
+   },
+   {
+    "bag_receipt_realtime_s": 1793269656.4488971,
+    "driver_receipt_mono_s": 2021.0258,
+    "max_tracking_error_rad": 0.006890549853747003,
+    "node_joint_states_age_s": 0.007368914999915432,
+    "node_publish_mono_s": 2021.025050822,
+    "node_sim_time_s": 73.67
+   },
+   {
+    "bag_receipt_realtime_s": 1793269656.9529576,
+    "driver_receipt_mono_s": 2021.5301,
+    "max_tracking_error_rad": 0.02072062245070036,
+    "node_joint_states_age_s": 0.005240712000158965,
+    "node_publish_mono_s": 2021.528577792,
+    "node_sim_time_s": 74.05
+   }
+  ],
+  "joint_states_receipts_in_stamp_order": true,
+  "local_rtf_trajectory_start_to_hold": 0.7641850505034005,
+  "mono_to_realtime_offset_s": 1793267635.4230244,
+  "offset_method": "median over the driver statuses of (bag receipt realtime - driver receipt mono), matched by identical content",
+  "offset_samples": 13,
+  "offset_spread_ms": 1.6231536865234375
+ },
+ "inputs": {
+  "bag": {
+   "messages": {
+    "/cmd_vel": 49,
+    "/joint_states": 1003,
+    "/leg_trajectory_controller/controller_state": 412,
+    "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": 26,
+    "/spiderx/locomotion/status": 35,
+    "/spiderx/sim/world_poses": 847
+   },
+   "open_mode": "sqlite3 URI mode=ro&immutable=1",
+   "path": "/root/spiderx_evidence/s2_run_20261029T100210Z/bag/bag_0.db3",
+   "sha256_after": "53d093dae5828d10692364c1cebe3144f89b8c6507e1d5646c596a3a6256d816",
+   "sha256_before": "53d093dae5828d10692364c1cebe3144f89b8c6507e1d5646c596a3a6256d816",
+   "unchanged": true
+  },
+  "goal": {
+   "path": "goal1_rebuilt.json",
+   "sha256": "d5e7ab59c436302fe89bf484f273f73f25f784637638097abacdbd8dd6debeec"
+  },
+  "run_files": {
+   "driver/driver.jsonl": "da3cc49f2a3844bb66d5703ad13d313fe2b05e5089687c9ae5c9a3b5bf7d13e4",
+   "driver/driver_summary.json": "c26838dc9feee37bcdadf13167a411b3cee9222f5f53ac929104a170b008ae48",
+   "launch.log": "85b9fca0b891efe7c7f592c040aff544306e7ca703a30f13dce9862ca79a2a07",
+   "node/events.jsonl": "72d878066aabc5febb1534540c67a8d9e2bf61a610c0f8bbe80ea30221f4d03f",
+   "node/library.json": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e"
+  }
+ },
+ "model_fits": {
+  "data": "/joint_states positions at every update vs the reconstructed reference",
+  "fits": [
+   {
+    "joints": "all_joints",
+    "max_abs_rad": 1.9041233867422847e-11,
+    "model": "discrete first-order, 10 ms updates (free run)",
+    "n": 1200,
+    "parameter": "g",
+    "rms_rad": 9.946718834467879e-12,
+    "value": 0.09999999996518733
+   },
+   {
+    "joints": "all_joints",
+    "max_abs_rad": 0.000140894201301478,
+    "model": "continuous first-order (free run)",
+    "n": 1200,
+    "parameter": "tau_s",
+    "rms_rad": 4.272288071108465e-05,
+    "value": 0.10130186382338148
+   },
+   {
+    "joints": "all_joints",
+    "max_abs_rad": 0.0013374468212389856,
+    "model": "pure delay",
+    "n": 1200,
+    "parameter": "delay_s",
+    "rms_rad": 0.0003906571929031499,
+    "value": 0.0901879006117941
+   },
+   {
+    "joints": "rr_thigh_joint",
+    "max_abs_rad": 7.584944255794798e-12,
+    "model": "discrete first-order, 10 ms updates (free run)",
+    "n": 100,
+    "parameter": "g",
+    "rms_rad": 5.168408020176817e-12,
+    "value": 0.09999999993586525
+   },
+   {
+    "joints": "rr_thigh_joint",
+    "max_abs_rad": 0.00013876434671614146,
+    "model": "continuous first-order (free run)",
+    "n": 100,
+    "parameter": "tau_s",
+    "rms_rad": 6.190747391822762e-05,
+    "value": 0.1012904777947091
+   },
+   {
+    "joints": "rr_thigh_joint",
+    "max_abs_rad": 0.0013180032173716327,
+    "model": "pure delay",
+    "n": 100,
+    "parameter": "delay_s",
+    "rms_rad": 0.0005667223617392687,
+    "value": 0.0902772217122538
+   }
+  ],
+  "method": "one parameter each, least squares (golden-section search on the RMS position residual); free-run simulation from the measured state at the trajectory start; the continuous model integrates the reconstructed spline exactly on a 0.25 ms piecewise-linear grid",
+  "samples_per_joint": 100,
+  "window_sim_s": [
+   73.08,
+   74.07
+  ]
+ },
+ "outputs_note": "timeline.csv, tracking_per_update.csv, model_fits.csv, figures",
+ "plant_law": {
+  "hold": {
+   "dx_minus_dt_times_v_next": {
+    "max_abs_rad": 2.4853204346961255e-13,
+    "n": 720,
+    "rms_rad": 2.615137539867875e-14
+   },
+   "g_per_joint": {
+    "lf_foot_joint": 0.09999999826734554,
+    "lf_hip": 0.10000000170853283,
+    "lf_thigh_joint": 0.10000000133290247,
+    "lr_foot_joint": 0.09999999826734844,
+    "lr_hip": 0.10000000170853283,
+    "lr_thigh_joint": 0.100000001332899,
+    "rf_foot_joint": 0.10000000323388128,
+    "rf_hip": 0.09999999832494476,
+    "rf_thigh_joint": 0.10000000078519551,
+    "rr_foot_joint": 0.10000000323388399,
+    "rr_hip": 0.09999999832494472,
+    "rr_thigh_joint": 0.10000000078519423
+   },
+   "g_pooled": 0.1000000003242626,
+   "joint_steps": 720,
+   "model": "x[k+1] - x[k] = g (c[k] - x[k]) per 10 ms update",
+   "residual": {
+    "max_abs_rad": 2.0608971614769628e-12,
+    "n": 720,
+    "rms_rad": 1.1235185969456867e-12
+   },
+   "residual_at_g_0.1": {
+    "max_abs_rad": 1.5346182712181605e-12,
+    "n": 720,
+    "rms_rad": 1.1320613489135672e-12
+   },
+   "updates": 60,
+   "velocity_law_k_per_s": 10.000000034427021,
+   "velocity_law_residual_rad_s": {
+    "max_abs_rad": 1.9825504432580132e-10,
+    "n": 720,
+    "rms_rad": 1.1225815068428021e-10
+   },
+   "window_sim_s": [
+    74.08,
+    74.68
+   ]
+  },
+  "pre_stop_tracking": {
+   "dx_minus_dt_times_v_next": {
+    "max_abs_rad": 4.180249896235111e-15,
+    "n": 1200,
+    "rms_rad": 2.086047072630964e-15
+   },
+   "g_per_joint": {
+    "lf_foot_joint": 0.10000000013742281,
+    "lf_hip": 0.09999999987684981,
+    "lf_thigh_joint": 0.09999999990784965,
+    "lr_foot_joint": 0.10000000013742295,
+    "lr_hip": 0.09999999987684983,
+    "lr_thigh_joint": 0.09999999990784972,
+    "rf_foot_joint": 0.0999999997972327,
+    "rf_hip": 0.10000000011856988,
+    "rf_thigh_joint": 0.0999999999449362,
+    "rr_foot_joint": 0.0999999997972327,
+    "rr_hip": 0.1000000001185699,
+    "rr_thigh_joint": 0.09999999994493604
+   },
+   "g_pooled": 0.09999999997123099,
+   "joint_steps": 1200,
+   "model": "x[k+1] - x[k] = g (c[k] - x[k]) per 10 ms update",
+   "ordering_variants": {
+    "updates": 98,
+    "variants": {
+     "command_as_computed_this_update": {
+      "g": 0.099999999970798,
+      "residual": {
+       "max_abs_rad": 1.891524914129916e-12,
+       "n": 1176,
+       "rms_rad": 1.0804502804672667e-12
+      }
+     },
+     "command_one_update_older": {
+      "g": 0.10207947352005066,
+      "residual": {
+       "max_abs_rad": 3.489464065113386e-05,
+       "n": 1176,
+       "rms_rad": 1.1524118400181856e-05
+      }
+     },
+     "reference_one_update_ahead": {
+      "g": 0.0892581354492201,
+      "residual": {
+       "max_abs_rad": 3.2074324228282235e-05,
+       "n": 1176,
+       "rms_rad": 1.0523869884931496e-05
+      }
+     }
+    },
+    "window_sim_s": [
+     73.09,
+     74.07
+    ]
+   },
+   "residual": {
+    "max_abs_rad": 1.889367785487539e-12,
+    "n": 1200,
+    "rms_rad": 1.080889900712268e-12
+   },
+   "residual_at_g_0.1": {
+    "max_abs_rad": 1.4337454834478791e-12,
+    "n": 1200,
+    "rms_rad": 1.1010638311251924e-12
+   },
+   "updates": 100,
+   "velocity_law_k_per_s": 9.999999997138787,
+   "velocity_law_residual_rad_s": {
+    "max_abs_rad": 1.8886658903483067e-10,
+    "n": 1200,
+    "rms_rad": 1.0811064862641328e-10
+   },
+   "window_sim_s": [
+    73.08,
+    74.08
+   ]
+  }
+ },
+ "reference": {
+  "first_departing_observation_sim_s": 74.08,
+  "first_point_s": 0.2,
+  "goal_fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a",
+  "hold_reference_equals_joint_states_at_sim_s": [
+   74.07
+  ],
+  "interpolation": "JTC 'splines': cubic Hermite on positions + velocities; lead-in cubic from the measured state at the first update; header stamp 0 = start at that update",
+  "last_matching_observation_sim_s": 74.07,
+  "last_point_s": 1.7,
+  "max_abs_position_residual_rad": 0.0,
+  "max_abs_velocity_residual_rad_s": 0.0,
+  "observed_refs_matched": 66,
+  "observed_refs_matched_by_source": {
+   "controller_state": 40,
+   "feedback": 26
+  },
+  "points": 16,
+  "pre_goal_reference_minus_start_state_rad": [
+   1.3435381279736092e-11,
+   1.3435381279736092e-11,
+   1.3435381279736092e-11
+  ],
+  "start_scan_best": [
+   {
+    "max_abs_residual_rad": 0.0,
+    "observed_refs": 66,
+    "t_start_s": 73.08
+   },
+   {
+    "max_abs_residual_rad": 0.002183585485800013,
+    "observed_refs": 65,
+    "t_start_s": 73.09
+   },
+   {
+    "max_abs_residual_rad": 0.0021854391561999947,
+    "observed_refs": 66,
+    "t_start_s": 73.07
+   }
+  ],
+  "trajectory_start_sim_s": 73.08
+ },
+ "timeline": [
+  {
+   "event": "node: goal 1 sent",
+   "js_receipt_after_ms": 19.38688,
+   "js_receipt_before_ms": 2.69568,
+   "mono_s": 2020.224615808,
+   "note": "",
+   "realtime_is": "mapped from mono",
+   "realtime_s": 1793269655.6476402,
+   "sim_bracket_s": [
+    73.07,
+    73.08
+   ],
+   "sim_exact_s": null,
+   "source": "node/events.jsonl goal_sent"
+  },
+  {
+   "event": "controller: Received / Accepted new action goal",
+   "js_receipt_after_ms": 13.492992,
+   "js_receipt_before_ms": 8.589568,
+   "mono_s": null,
+   "note": "",
+   "realtime_is": "recorded",
+   "realtime_s": 1793269655.6535342,
+   "sim_bracket_s": [
+    73.07,
+    73.08
+   ],
+   "sim_exact_s": null,
+   "source": "run/launch.log"
+  },
+  {
+   "event": "controller: trajectory start (first update sampling goal 1)",
+   "js_receipt_after_ms": null,
+   "js_receipt_before_ms": null,
+   "mono_s": null,
+   "note": "reference reconstruction, exact equality",
+   "realtime_is": null,
+   "realtime_s": null,
+   "sim_bracket_s": null,
+   "sim_exact_s": 73.08,
+   "source": "derived"
+  },
+  {
+   "event": "node: goal response (accepted)",
+   "js_receipt_after_ms": 13.409536,
+   "js_receipt_before_ms": 8.251904,
+   "mono_s": 2020.274483302,
+   "note": "",
+   "realtime_is": "mapped from mono",
+   "realtime_s": 1793269655.6975076,
+   "sim_bracket_s": [
+    73.1,
+    73.11
+   ],
+   "sim_exact_s": null,
+   "source": "node/events.jsonl (node tick that processed it)"
+  },
+  {
+   "event": "derived: first update with |desired - actual| > 0.02 rad",
+   "js_receipt_after_ms": null,
+   "js_receipt_before_ms": null,
+   "mono_s": null,
+   "note": "joint rf_thigh_joint (reference reconstruction and /joint_states)",
+   "realtime_is": null,
+   "realtime_s": null,
+   "sim_bracket_s": null,
+   "sim_exact_s": 74.0,
+   "source": "derived"
+  },
+  {
+   "event": "recorded: first action-feedback sample with |error| > 0.02 rad",
+   "js_receipt_after_ms": null,
+   "js_receipt_before_ms": null,
+   "mono_s": null,
+   "note": "joint rf_thigh_joint, -0.02014 rad",
+   "realtime_is": null,
+   "realtime_s": null,
+   "sim_bracket_s": null,
+   "sim_exact_s": 74.0,
+   "source": "bag feedback"
+  },
+  {
+   "event": "recorded: feedback sample whose error the stop status reported",
+   "js_receipt_after_ms": null,
+   "js_receipt_before_ms": null,
+   "mono_s": null,
+   "note": "0.02072 rad, exact float equality",
+   "realtime_is": null,
+   "realtime_s": null,
+   "sim_bracket_s": null,
+   "sim_exact_s": 74.04,
+   "source": "bag feedback"
+  },
+  {
+   "event": "node: status that triggered the stop (published)",
+   "js_receipt_after_ms": 0.672,
+   "js_receipt_before_ms": 14.273792,
+   "mono_s": 2021.528577792,
+   "note": "its sim_time_s (newest /joint_states stamp at the node) = 74.05; max 0.02072",
+   "realtime_is": "mapped from mono",
+   "realtime_s": 1793269656.9516022,
+   "sim_bracket_s": [
+    74.06,
+    74.07
+   ],
+   "sim_exact_s": null,
+   "source": "status goal.elapsed_s + goal_sent wall"
+  },
+  {
+   "event": "recorded: last action-feedback sample (maximum recorded error)",
+   "js_receipt_after_ms": 16.789504,
+   "js_receipt_before_ms": 6.546944,
+   "mono_s": null,
+   "note": "realtime is the recorder receipt",
+   "realtime_is": "recorded",
+   "realtime_s": 1793269656.958821,
+   "sim_bracket_s": [
+    74.07,
+    74.08
+   ],
+   "sim_exact_s": 74.07,
+   "source": "bag receipt"
+  },
+  {
+   "event": "driver: stop request (x written to the teleop)",
+   "js_receipt_after_ms": 14.18624,
+   "js_receipt_before_ms": 9.150208,
+   "mono_s": 2021.5384,
+   "note": "",
+   "realtime_is": "mapped from mono",
+   "realtime_s": 1793269656.9614244,
+   "sim_bracket_s": [
+    74.07,
+    74.08
+   ],
+   "sim_exact_s": null,
+   "source": "driver/driver.jsonl"
+  },
+  {
+   "event": "node: disarm request processed",
+   "js_receipt_after_ms": 10.403072,
+   "js_receipt_before_ms": 12.933376,
+   "mono_s": 2021.54218317,
+   "note": "teleop shutdown sequence after the driver's SIGTERM",
+   "realtime_is": "mapped from mono",
+   "realtime_s": 1793269656.9652076,
+   "sim_bracket_s": [
+    74.07,
+    74.08
+   ],
+   "sim_exact_s": null,
+   "source": "node/events.jsonl"
+  },
+  {
+   "event": "node: stop request processed",
+   "js_receipt_after_ms": 9.357568,
+   "js_receipt_before_ms": 13.97888,
+   "mono_s": 2021.543228743,
+   "note": "teleop shutdown sequence after the driver's SIGTERM",
+   "realtime_is": "mapped from mono",
+   "realtime_s": 1793269656.966253,
+   "sim_bracket_s": [
+    74.07,
+    74.08
+   ],
+   "sim_exact_s": null,
+   "source": "node/events.jsonl"
+  },
+  {
+   "event": "node: estop fault (FAULTED) and cancel request sent",
+   "js_receipt_after_ms": 8.970752,
+   "js_receipt_before_ms": 14.365696,
+   "mono_s": 2021.543615299,
+   "note": "",
+   "realtime_is": "mapped from mono",
+   "realtime_s": 1793269656.9666398,
+   "sim_bracket_s": [
+    74.07,
+    74.08
+   ],
+   "sim_exact_s": null,
+   "source": "node/events.jsonl fault + cancel_sent (same tick)"
+  },
+  {
+   "event": "controller: Got request to cancel goal",
+   "js_receipt_after_ms": 7.98976,
+   "js_receipt_before_ms": 15.346688,
+   "mono_s": null,
+   "note": "",
+   "realtime_is": "recorded",
+   "realtime_s": 1793269656.9676208,
+   "sim_bracket_s": [
+    74.07,
+    74.08
+   ],
+   "sim_exact_s": null,
+   "source": "run/launch.log"
+  },
+  {
+   "event": "controller: cancel callback read the state of update",
+   "js_receipt_after_ms": null,
+   "js_receipt_before_ms": null,
+   "mono_s": null,
+   "note": "hold reference equals /joint_states at this update exactly",
+   "realtime_is": null,
+   "realtime_s": null,
+   "sim_bracket_s": null,
+   "sim_exact_s": 74.07,
+   "source": "derived"
+  },
+  {
+   "event": "controller: hold in effect (first update with the hold reference)",
+   "js_receipt_after_ms": null,
+   "js_receipt_before_ms": null,
+   "mono_s": null,
+   "note": "observed reference departs; inferred command equals the hold",
+   "realtime_is": null,
+   "realtime_s": null,
+   "sim_bracket_s": null,
+   "sim_exact_s": 74.08,
+   "source": "derived"
+  },
+  {
+   "event": "node: cancel response processed",
+   "js_receipt_after_ms": 34.566912,
+   "js_receipt_before_ms": 6.929152,
+   "mono_s": 2021.574491095,
+   "note": "",
+   "realtime_is": "mapped from mono",
+   "realtime_s": 1793269656.9975154,
+   "sim_bracket_s": [
+    74.1,
+    74.11
+   ],
+   "sim_exact_s": null,
+   "source": "node/events.jsonl (tick; callback time not logged)"
+  },
+  {
+   "event": "node: result CANCELED processed",
+   "js_receipt_after_ms": 11.772672,
+   "js_receipt_before_ms": 15.742208,
+   "mono_s": 2021.624800094,
+   "note": "",
+   "realtime_is": "mapped from mono",
+   "realtime_s": 1793269657.0478246,
+   "sim_bracket_s": [
+    74.11,
+    74.12
+   ],
+   "sim_exact_s": null,
+   "source": "node/events.jsonl (tick; callback time not logged)"
+  }
+ ],
+ "tracking": {
+  "apparent_lag_worst_joint_s": {
+   "definition": "error / desired velocity at the same update, |desired velocity| > 0.05 rad/s",
+   "first": [
+    73.52,
+    0.05098656324506917
+   ],
+   "last": [
+    74.07,
+    0.09749143483388757
+   ],
+   "max": 0.09749143483388757,
+   "min": 0.05098656324506917
+  },
+  "first_crossing_derived_per_update": {
+   "error_rad": -0.020137499030105914,
+   "joint": "rf_thigh_joint",
+   "sim_s": 74.0
+  },
+  "first_crossing_recorded_controller_state": {
+   "error_rad": -0.020137499030105914,
+   "joint": "rf_thigh_joint",
+   "update_sim_s": 74.0
+  },
+  "first_crossing_recorded_feedback": {
+   "error_rad": -0.020137499030105914,
+   "joint": "rf_thigh_joint",
+   "sim_s": 74.0
+  },
+  "hold_max_abs_error_rad_all_joints": 0.00209726379588325,
+  "joints_tied_with_worst_max_abs_difference_rad": {
+   "rf_thigh_joint": 2.4534770048934007e-11
+  },
+  "per_joint_pre_stop": {
+   "lf_foot_joint": {
+    "at_sim_s": 74.07,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0011354335634991206,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.12687515578999978,
+    "max_abs_error_rad": 0.011354335624799317,
+    "signed": -0.011354335624799317
+   },
+   "lf_hip": {
+    "at_sim_s": 74.07,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0015645454587433147,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.16350564860000016,
+    "max_abs_error_rad": 0.0156454546017706,
+    "signed": 0.0156454546017706
+   },
+   "lf_thigh_joint": {
+    "at_sim_s": 74.06,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0011770362141159674,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.12267647004000007,
+    "max_abs_error_rad": 0.011778883522018946,
+    "signed": 0.011778883522018946
+   },
+   "lr_foot_joint": {
+    "at_sim_s": 74.07,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0011354335675931304,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.12687515826000026,
+    "max_abs_error_rad": 0.01135433566573947,
+    "signed": 0.01135433566573947
+   },
+   "lr_hip": {
+    "at_sim_s": 74.07,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0015645454587433147,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.16350564860000016,
+    "max_abs_error_rad": 0.0156454546017706,
+    "signed": -0.0156454546017706
+   },
+   "lr_thigh_joint": {
+    "at_sim_s": 74.06,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0011770361640932314,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.12267647956000008,
+    "max_abs_error_rad": 0.011778883055988537,
+    "signed": 0.011778883055988537
+   },
+   "rf_foot_joint": {
+    "at_sim_s": 73.98,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0006162728292848085,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.068347529,
+    "max_abs_error_rad": 0.006487389444729111,
+    "signed": -0.006487389444729111
+   },
+   "rf_hip": {
+    "at_sim_s": 74.07,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0016230021970180114,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.17037362125000013,
+    "max_abs_error_rad": 0.016230021955955652,
+    "signed": 0.016230021955955652
+   },
+   "rf_thigh_joint": {
+    "at_sim_s": 74.07,
+    "first_above_limit_sim_s": 74.0,
+    "hold_max_abs_error_rad": 0.0020972637948551837,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.21857810464000002,
+    "max_abs_error_rad": 0.020972637957440823,
+    "signed": -0.020972637957440823
+   },
+   "rr_foot_joint": {
+    "at_sim_s": 73.98,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0006162727846892486,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.068347527,
+    "max_abs_error_rad": 0.006487389996968403,
+    "signed": -0.006487389996968403
+   },
+   "rr_hip": {
+    "at_sim_s": 74.07,
+    "first_above_limit_sim_s": null,
+    "hold_max_abs_error_rad": 0.0016230021970180114,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.17037362125000013,
+    "max_abs_error_rad": 0.016230021955955652,
+    "signed": -0.016230021955955652
+   },
+   "rr_thigh_joint": {
+    "at_sim_s": 74.07,
+    "first_above_limit_sim_s": 74.0,
+    "hold_max_abs_error_rad": 0.00209726379588325,
+    "hold_max_at_sim_s": 74.08,
+    "max_abs_desired_velocity_rad_s": 0.21857810516000006,
+    "max_abs_error_rad": 0.020972637967721877,
+    "signed": -0.020972637967721877
+   }
+  },
+  "pre_stop_max_abs_error_rad_all_joints": 0.020972637967721877,
+  "recorded_feedback_max": {
+   "error_rad": -0.020972637967721877,
+   "joint": "rr_thigh_joint",
+   "sim_s": 74.07
+  },
+  "worst_joint": "rr_thigh_joint"
+ }
+}

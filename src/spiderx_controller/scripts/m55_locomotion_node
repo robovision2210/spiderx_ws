@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+"""M5.5 locomotion node (see spiderx_controller/m55_rclpy.py). Continuous locomotion dispatch is
+hard-disabled in this build: the node runs in SHADOW mode and sends nothing to the controller.
+
+    ros2 run spiderx_controller m55_locomotion_node [--evidence-dir DIR]
+"""
+import sys
+
+from spiderx_controller.m55_rclpy import main
+
+if __name__ == '__main__':
+    sys.exit(main())

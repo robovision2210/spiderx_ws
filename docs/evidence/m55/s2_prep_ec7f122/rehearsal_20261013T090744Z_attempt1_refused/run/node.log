@@ -1,0 +1,6 @@
+M5.5: building and validating the crawl templates (3 levels, ~20 s each) ...
+  designing and validating the 20 mm crawl template
+  designing and validating the 40 mm crawl template
+  designing and validating the 60 mm crawl template
+[INFO] [1791882614.685918778] [spiderx_locomotion]: M5.5 locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[WARN] [1791882614.686774980] [spiderx_locomotion]: continuous locomotion dispatch is hard-disabled in this build (m55_contract.M55_LOCOMOTION_DISPATCH_ENABLED = False); the session runs in shadow mode and sends nothing

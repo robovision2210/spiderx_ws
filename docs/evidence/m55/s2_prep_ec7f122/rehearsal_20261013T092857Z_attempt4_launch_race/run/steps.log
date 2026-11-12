@@ -1,0 +1,16 @@
+[09:28:58] gates (imported): False False False
+[09:28:58] launch
+launch pid 24313 pgid 24313 xvfb 24308
+[09:31:20] controllers: exit 2
+[09:31:23] gazebo server 24380, gui  24383 reniced +10
+[09:31:23] preflight
+[09:31:38] preflight exit 1 NOT READY
+[09:31:38] node
+[09:33:04] node up after 86 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[09:33:07] captures before
+[09:33:14] driver
+[09:35:07] driver exit 2: {"command_rejections": {}, "expected_goals": 0, "faults": [], "final_state": "DISARMED", "goal_seqs_seen": [], "goals_recorded": 0, "levels": [0, 1, 2], "max_seq": 0, "result": "STOP CONDITION: wall c
+[09:35:10] captures after
+[09:35:14] node stopped
+[09:35:14] stop launch
+[09:35:30] end

@@ -1,0 +1,7 @@
+== committed gate (False)
+240 passed, 2 warnings in 157.69s (0:02:37)
+== simulated enabled build (gate True, pin True, in memory)
+[s2_enabled_sim] gate True, pin True
+E       AssertionError: error: patch failed: src/spiderx_controller/test/m55_gate.py:5
+E         error: patch failed: src/spiderx_controller/spiderx_controller/m55_contract.py:16
+1 failed, 240 passed, 2 warnings in 161.51s (0:02:41)

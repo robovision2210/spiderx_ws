@@ -1,0 +1,68 @@
+{
+ "awaiting_joint_state": false,
+ "boundary": 0,
+ "command_rejections": {},
+ "commands_accepted": 1106,
+ "continuity_reference": "planned (shadow: nothing moves)",
+ "cycles": 0,
+ "direction": 0,
+ "disarm_pending": false,
+ "dispatch_gate": false,
+ "faults": [
+  "estop"
+ ],
+ "goal": null,
+ "goals_recorded": 0,
+ "ground_truth": null,
+ "homing": 0,
+ "intent": {
+  "direction": 0,
+  "granted_m_s": 0.0,
+  "level": null,
+  "reason": "no_command_yet",
+  "requested_m_s": 0.0
+ },
+ "joint_states_out_of_order": 0,
+ "last_refusal": {
+  "reason": "joint_states_missing",
+  "request": "arm",
+  "wall": 3502.185137202
+ },
+ "lease_age_s": null,
+ "level": 0,
+ "levels_m_s": [
+  0.0010638297872340426,
+  0.001895734597156398,
+  0.00234375
+ ],
+ "milestone": "M5.5",
+ "mode": "shadow",
+ "monitors": {
+  "body_pose_age_s": null,
+  "graph": {
+   "action_server_present": false,
+   "command_topic_publishers": 0,
+   "foreign_action_clients": 0,
+   "joint_state_publishers": 0
+  },
+  "graph_age_s": 0.22873549399992044,
+  "joint_states_age_s": null,
+  "sim_time_s": null
+ },
+ "phases_completed": 0,
+ "phases_per_cycle": 9,
+ "planned_displacement_xy_m": [
+  0.0,
+  0.0
+ ],
+ "rest": null,
+ "schema": "spiderx.m55.status/1",
+ "state": "FAULTED",
+ "stop_latched": false,
+ "stop_pending": null,
+ "strides_m": [
+  0.02,
+  0.04,
+  0.06
+ ]
+}

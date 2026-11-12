@@ -1,0 +1,87 @@
+{
+ "P": {
+  "P1": {
+   "all_succeeded": false,
+   "goals_in_runs": 1,
+   "runs_ready_at_b0": 0,
+   "script_order": false,
+   "unplanned_faults": [],
+   "verdict": "FAIL"
+  },
+  "P2": {
+   "goals_sent": 1,
+   "goals_with_feedback": 1,
+   "max_abs_error_rad": 0.020972637967721877,
+   "verdict": "FAIL"
+  },
+  "P3": {
+   "max_continuity_rad": 9.695961202961424e-05,
+   "verdict": "PASS"
+  },
+  "P4": {
+   "cancels_sent": 1,
+   "exercise_order_ok": false,
+   "goals_sent": 1,
+   "joint_trajectory_msgs": null,
+   "max_command_topic_publishers": 0,
+   "max_foreign_clients": 0,
+   "verdict": "FAIL"
+  },
+  "P5": {
+   "check_1_7": null,
+   "check_1_9": null,
+   "estop_one_cancel_last_goal_canceled": true,
+   "lease_disarmed": false,
+   "verdict": "UNMEASURED"
+  },
+  "P6": {
+   "bad_samples": 0,
+   "max_dz_m": 0.0,
+   "max_rot_rad": 0.0,
+   "max_xy_m": 0.0,
+   "pose_samples": 847,
+   "verdict": "PASS"
+  },
+  "P7": {
+   "disabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+   "enabled_library_sha256": "917fc4d796efe2344d0edcf038a1f7186d053622df250d9b389690a87d485d8e",
+   "verdict": "PASS"
+  },
+  "P8": {
+   "report": "/root/spiderx_evidence/s2_run_20261029T100210Z/restore/restore_verify_20261029T102818Z.txt",
+   "verdict": "PASS"
+  }
+ },
+ "bag_counts": {
+  "/cmd_vel": 49,
+  "/joint_states": 1003,
+  "/leg_trajectory_controller/controller_state": 412,
+  "/leg_trajectory_controller/follow_joint_trajectory/_action/feedback": 26,
+  "/spiderx/locomotion/status": 35,
+  "/spiderx/sim/world_poses": 847
+ },
+ "driver": {
+  "command_rejections": {},
+  "expected_goals": 9,
+  "faults": [],
+  "final_state": "WALKING",
+  "goal_seqs_seen": [
+   1
+  ],
+  "goals_recorded": 1,
+  "levels": [
+   0,
+   1,
+   2
+  ],
+  "max_seq": 1,
+  "result": "STOP CONDITION: tracking error 0.02072062245070036 rad above 0.02 on goal 1",
+  "status_messages": 13
+ },
+ "goals_above_0_02_rad": [
+  1
+ ],
+ "joint_state_samples": 1003,
+ "overall": "FAIL",
+ "rtf_from_status": 0.704
+}

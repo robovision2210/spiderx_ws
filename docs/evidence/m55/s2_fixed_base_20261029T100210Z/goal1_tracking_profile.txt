@@ -1,0 +1,28 @@
+goal 1 feedback (sim s since first sample; desired time_from_start; worst joint; error; desired vel of that joint; max |desired vel|)
+ 0.000 tfs 0.000 rf_hip          err -0.00001 v -0.0004 vmax 0.0004
+ 0.030 tfs 0.000 rf_hip          err -0.00002 v -0.0006 vmax 0.0006
+ 0.060 tfs 0.000 rf_hip          err -0.00003 v -0.0007 vmax 0.0007
+ 0.090 tfs 0.000 rf_hip          err -0.00004 v -0.0007 vmax 0.0007
+ 0.130 tfs 0.000 rf_hip          err -0.00005 v -0.0005 vmax 0.0005
+ 0.160 tfs 0.000 rf_hip          err -0.00004 v -0.0001 vmax 0.0001
+ 0.210 tfs 0.000 lf_hip          err +0.00004 v +0.0012 vmax 0.0016
+ 0.250 tfs 0.000 rr_thigh_joint  err -0.00016 v -0.0064 vmax 0.0064
+ 0.290 tfs 0.000 rr_thigh_joint  err -0.00046 v -0.0143 vmax 0.0143
+ 0.320 tfs 0.000 rr_thigh_joint  err -0.00083 v -0.0220 vmax 0.0220
+ 0.370 tfs 0.000 rf_thigh_joint  err -0.00174 v -0.0382 vmax 0.0382
+ 0.410 tfs 0.000 rf_thigh_joint  err -0.00273 v -0.0535 vmax 0.0535
+ 0.440 tfs 0.000 rf_thigh_joint  err -0.00361 v -0.0660 vmax 0.0660
+ 0.490 tfs 0.000 rr_thigh_joint  err -0.00533 v -0.0887 vmax 0.0887
+ 0.530 tfs 0.000 rf_thigh_joint  err -0.00689 v -0.1073 vmax 0.1073
+ 0.570 tfs 0.000 rf_thigh_joint  err -0.00856 v -0.1262 vmax 0.1262
+ 0.600 tfs 0.000 rr_thigh_joint  err -0.00986 v -0.1400 vmax 0.1400
+ 0.650 tfs 0.000 rr_thigh_joint  err -0.01204 v -0.1617 vmax 0.1617
+ 0.690 tfs 0.000 rf_thigh_joint  err -0.01375 v -0.1774 vmax 0.1774
+ 0.740 tfs 0.000 rr_thigh_joint  err -0.01577 v -0.1940 vmax 0.1940
+ 0.780 tfs 0.000 rf_thigh_joint  err -0.01722 v -0.2046 vmax 0.2046
+ 0.810 tfs 0.000 rr_thigh_joint  err -0.01819 v -0.2107 vmax 0.2107
+ 0.850 tfs 0.000 rr_thigh_joint  err -0.01929 v -0.2161 vmax 0.2161
+ 0.890 tfs 0.000 rf_thigh_joint  err -0.02014 v -0.2185 vmax 0.2185  > 0.02
+ 0.930 tfs 0.000 rr_thigh_joint  err -0.02072 v -0.2177 vmax 0.2177  > 0.02
+ 0.960 tfs 0.000 rr_thigh_joint  err -0.02097 v -0.2151 vmax 0.2151  > 0.02
+apparent lag |err/vel| over samples with |v|>0.05 rad/s: min 0.051 max 0.097 s

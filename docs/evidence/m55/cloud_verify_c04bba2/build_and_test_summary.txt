@@ -1,0 +1,10 @@
+start 2026-10-09T17:01:23Z head c04bba2 dirty: 0
+build exit=0
+
+Summary: 8 packages finished [15.9s]
+  7 packages had stderr output: spiderx_bringup spiderx_controller spiderx_description spiderx_firmware spiderx_localization spiderx_mapping spiderx_navigation
+test exit=0
+build/spiderx_scripts/pytest.xml: 2 tests, 0 errors, 0 failures, 0 skipped
+
+Summary: 1713 tests, 0 errors, 0 failures, 0 skipped
+end 2026-10-09T17:09:52Z

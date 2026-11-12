@@ -1,0 +1,3 @@
+Action: /leg_trajectory_controller/follow_joint_trajectory
+Action clients: 0
+Action servers: 0

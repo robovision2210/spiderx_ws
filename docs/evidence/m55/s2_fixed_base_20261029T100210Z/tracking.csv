@@ -1,0 +1,2 @@
+seq,level,direction,b_from,b_to,kind,duration_s,continuity_error_rad,feedback_samples,max_abs_tracking_error_rad,joint_at_max,result_status,error_code
+1,0,1,0,1,shift,1.7,9.695961202961424e-05,26,0.020972637967721877,rr_thigh_joint,5,0

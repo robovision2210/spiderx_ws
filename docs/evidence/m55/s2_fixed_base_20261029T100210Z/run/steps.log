@@ -1,0 +1,16 @@
+[10:25:36] gates (imported): True False False
+[10:25:36] launch
+launch pid 10728 pgid 10728 xvfb 10723
+[10:25:56] controllers: exit 0
+[10:25:59] gazebo gui pid(s) 10882  reniced +19
+[10:25:59] preflight
+[10:26:05] preflight exit 0 READY
+[10:26:05] node
+[10:27:22] node up after 77 s: locomotion node up in DISPATCH mode (dispatch gate True); levels [1.06, 1.9, 2.34] mm/s
+[10:27:25] captures before
+[10:27:31] driver
+[10:27:37] driver exit 2: {"command_rejections": {}, "expected_goals": 9, "faults": [], "final_state": "WALKING", "goal_seqs_seen": [1], "goals_recorded": 1, "levels": [0, 1, 2], "max_seq": 1, "result": "STOP CONDITION: tracki
+[10:27:40] captures after
+[10:27:43] node stopped
+[10:27:43] stop launch
+[10:27:50] end

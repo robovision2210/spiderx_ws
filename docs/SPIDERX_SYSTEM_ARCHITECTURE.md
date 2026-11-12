@@ -63,7 +63,7 @@ Dependency direction:
 | `/joint_states` | `sensor_msgs/JointState` | Gazebo `JointStatePublisher` | Verified in sim |
 | `/clock` | `rosgraph_msgs/Clock` | Gazebo | Verified in sim |
 | `/tf`, `/tf_static`, `/robot_description` | | `robot_state_publisher` | Verified |
-| `/cmd_vel` | `geometry_msgs/Twist` | Nav2 / teleop (future) | **No consumer** |
+| `/cmd_vel` | `geometry_msgs/Twist` | `m55_teleop_keyboard` (M5.5); Nav2 (future) | Consumed by `spiderx_locomotion` (M5.5) in **shadow mode**: forward/reverse only, lateral and yaw rejected; dispatch hard-disabled ([M5.5](M55_KEYBOARD_WALKING.md)) |
 | `/spiderx/leg_odometry` | `nav_msgs/Odometry` | future gait / leg odometry | Does not exist |
 | `/imu/data` | `sensor_msgs/Imu` | future IMU | Does not exist |
 | `/odometry/filtered` | `nav_msgs/Odometry` | EKF (future) | Blocked |

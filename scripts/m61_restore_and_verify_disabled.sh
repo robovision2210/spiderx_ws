@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-# M6.1 one-cycle cleanup and proof of the disabled state (docs/M61_CLOUD_ONE_CYCLE_PLAN.md, E11).
-# Run it after the cycle whatever happened: success, failure or interruption. It is idempotent.
+# Cleanup and proof of the disabled state after an enabled run: the M6.1 one cycle
+# (docs/M61_CLOUD_ONE_CYCLE_PLAN.md, E11) and the M5.5 S2 fixed-base crawl
+# (docs/S2_FIXED_BASE_CRAWL_DESIGN.md, P8). It always checks all three dispatch gates.
+# Run it after the run whatever happened: success, failure or interruption. It is idempotent.
 #
 #   scripts/m61_restore_and_verify_disabled.sh --base <disabled base branch or commit> \
 #       --evidence <dir> [--enabling-ref <local enabling branch or commit>] \
@@ -13,8 +15,9 @@
 # <evidence>/restore_verify_<UTC>.txt:
 #  1. Stop. With --launch-pid-file: SIGINT to that launch's process group (Ctrl+C), wait up to
 #     60 s, then SIGKILL what is left; with --xvfb-pid-file: SIGTERM to the virtual display (it is
-#     not in the launch's group). Then no simulator, bridge, spawner, launch, display or ros2-daemon
-#     process may remain. This script's own process chain is excluded, so a shell whose command
+#     not in the launch's group). Then no simulator, bridge, spawner, launch, display, ros2-daemon,
+#     M5.5 locomotion node or M5.5 teleop process may remain (stop those first: they are started
+#     outside the launch). This script's own process chain is excluded, so a shell whose command
 #     line merely contains a pattern is not reported as a leftover.
 #  2. Preserve, before any checkout or deletion: the enabling commit's id, `git show --stat`,
 #     `git format-patch`, and the SHA-256 of its src/ diff against the base. Uncommitted src/
@@ -25,16 +28,19 @@
 #  4. Rebuild: --build-cmd (default `rm -rf build install && colcon build --symlink-install`).
 #     log/ and the evidence directory are never removed.
 #  5. Verify, in a FRESH environment (env -i, then --ros-setup, then <ws>/install/setup.bash):
-#     a. Python imports spiderx_controller.m61_live_contract and m6_live_contract from <ws>, and
-#        both gates are False;
+#     a. Python imports spiderx_controller.m61_live_contract, m6_live_contract and m55_contract
+#        from <ws>, and all three gates are False;
 #     b. `ros2 pkg prefix spiderx_controller` is <ws>/install/spiderx_controller;
-#     c. ONLY IF (a) passed: `m6_gait_replay.py --live` exits 3 and prints HARD-DISABLED. The gate
-#        refuses before any ROS initialization. Stdin is /dev/null, the domain is unused and the
-#        traffic is localhost only, so even a wrong build could not reach the simulation;
+#     c. ONLY IF (a) passed: `m6_gait_replay.py --live` and `m6_live_playback --live` each exit 3
+#        and print HARD-DISABLED. The gates refuse before any ROS initialization. Stdin is
+#        /dev/null, the domain is unused and the traffic is localhost only, so even a wrong build
+#        could not reach the simulation. (M5.5 has no --live tool: its node runs in shadow mode
+#        when the gate is False, so (a) is its proof);
 #     d. the CALLING environment must not import an enabled module, or one from elsewhere. Open
 #        a new shell, or re-source, if it does.
 #  6. Only if 1-5 passed and --delete-enabling-branch was given: delete the local enabling branch.
-#     It must be named local/m61-one-cycle-*, have no remote-tracking ref and not be the base.
+#     It must be named local/m61-one-cycle-* or local/m55-s2-*, have no remote-tracking ref and
+#     not be the base.
 # --verify-only skips the checkout in 3 and the rebuild in 4. The comparison in 3, and steps 1
 # and 5, still run.
 # Exit 0: disabled and verified. 1: a check failed (do not continue; fix and re-run). 2: usage.
@@ -45,7 +51,7 @@ WS=$(cd "$SELF_DIR/.." && pwd)
 BASE= EVIDENCE= ENABLING= PIDFILE= XVFBFILE= ROS_SETUP= VERIFY_ONLY=0 DISCARD=0 DELETE=0
 BUILD_CMD='rm -rf build install && colcon build --symlink-install'
 LIVE_DOMAIN=231                       # unused here; the disabled gate refuses before any ROS call
-usage() { sed -n '2,40p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 2; }
+usage() { sed -n '2,46p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 2; }
 while [ $# -gt 0 ]; do
   case "$1" in
     --base) BASE=$2; shift 2 ;;
@@ -80,7 +86,7 @@ fail() { FAILED=1; say "FAIL: $*"; }
 ok() { say "ok: $*"; }
 git_ws() { git -C "$WS" "$@"; }
 
-say "M6.1 restore and verify, $UTC, workspace $WS, base $BASE"
+say "M6.1 / M5.5 restore and verify, $UTC, workspace $WS, base $BASE"
 BASE_COMMIT=$(git_ws rev-parse --verify "$BASE^{commit}" 2>/dev/null) || {
   say "FAIL: base $BASE is not a commit"; exit 1; }
 say "base commit $BASE_COMMIT"
@@ -101,7 +107,7 @@ leftovers() {
     [ "$ppid" = "$$" ] && continue                     # this script's own pipeline members
     [[ "$args" == *m61_restore_and_verify_disabled* ]] && continue
     if [[ "$comm" =~ ^(ruby|Xvfb|gzserver|parameter_bridg|robot_state_pub|spawner|create)$ ]] ||
-       [[ "$args" =~ (ign\ gazebo|gz\ sim|parameter_bridge|robot_state_publisher|ros2\ launch|_ros2_daemon|Xvfb|spawner|create\ -name|ros_gz) ]]; then
+       [[ "$args" =~ (ign\ gazebo|gz\ sim|parameter_bridge|robot_state_publisher|ros2\ launch|_ros2_daemon|Xvfb|spawner|create\ -name|ros_gz|m55_locomotion_node|m55_teleop_keyboard) ]]; then
       echo "$pid $comm $args"
     fi
   done
@@ -205,7 +211,8 @@ import importlib, os, sys
 ws = os.path.realpath(sys.argv[1])
 bad = 0
 for mod, attr in (("spiderx_controller.m61_live_contract", "M61_LIVE_DISPATCH_ENABLED"),
-                  ("spiderx_controller.m6_live_contract", "LIVE_DISPATCH_ENABLED")):
+                  ("spiderx_controller.m6_live_contract", "LIVE_DISPATCH_ENABLED"),
+                  ("spiderx_controller.m55_contract", "M55_LOCOMOTION_DISPATCH_ENABLED")):
     m = importlib.import_module(mod)
     path = os.path.realpath(m.__file__)
     val = getattr(m, attr)
@@ -228,7 +235,7 @@ if [ ! -f "$WS/install/setup.bash" ]; then
 else
   OUT=$(fresh "python3 -c '$IMPORT_CHECK' '$WS'" 2>&1); RC=$?
   say "$OUT"
-  if [ $RC = 0 ]; then GATES_OK=1; ok "a. both gates False in the imported modules, from this workspace"
+  if [ $RC = 0 ]; then GATES_OK=1; ok "a. all three gates False in the imported modules, from this workspace"
   else GATES_OK=0; fail "a. imported gate module enabled, unreadable or from outside the workspace"; fi
   PREFIX=$(fresh "ros2 pkg prefix spiderx_controller" 2>&1 | tail -1)
   if [ "$(realpath -m "$PREFIX")" = "$(realpath -m "$WS/install/spiderx_controller")" ]; then
@@ -237,10 +244,12 @@ else
     fail "b. ros2 pkg prefix spiderx_controller = $PREFIX (expected $WS/install/spiderx_controller)"
   fi
   if [ "$GATES_OK" = 1 ]; then
-    LIVE=$(fresh "timeout 120 ros2 run spiderx_controller m6_gait_replay.py --live --domain-id $LIVE_DOMAIN < /dev/null" 2>&1); LRC=$?
-    say "$LIVE"
-    if [ $LRC = 3 ] && grep -q "HARD-DISABLED" <<< "$LIVE"; then ok "c. --live refused, exit 3, HARD-DISABLED"
-    else fail "c. --live exit $LRC (expected 3 with HARD-DISABLED)"; fi
+    for TOOL in m6_gait_replay.py m6_live_playback; do
+      LIVE=$(fresh "timeout 120 ros2 run spiderx_controller $TOOL --live --domain-id $LIVE_DOMAIN < /dev/null" 2>&1); LRC=$?
+      say "$LIVE"
+      if [ $LRC = 3 ] && grep -q "HARD-DISABLED" <<< "$LIVE"; then ok "c. $TOOL --live refused, exit 3, HARD-DISABLED"
+      else fail "c. $TOOL --live exit $LRC (expected 3 with HARD-DISABLED)"; fi
+    done
   else
     fail "c. --live NOT run: the gate is not verified disabled"
   fi
@@ -261,8 +270,9 @@ if [ "$DELETE" = 1 ]; then
     say "not deleted: a check failed"
   elif [ -z "$ENABLING" ] || ! git_ws show-ref --verify --quiet "refs/heads/$ENABLING"; then
     say "no local branch ${ENABLING:-<none>} to delete"
-  elif [[ "$ENABLING" != local/m61-one-cycle-* ]] || [ "$ENABLING" = "$BASE" ]; then
-    fail "refusing to delete $ENABLING: not a local/m61-one-cycle-* branch, or it is the base"
+  elif { [[ "$ENABLING" != local/m61-one-cycle-* ]] && [[ "$ENABLING" != local/m55-s2-* ]]; } ||
+       [ "$ENABLING" = "$BASE" ]; then
+    fail "refusing to delete $ENABLING: not a local/m61-one-cycle-* or local/m55-s2-* branch, or it is the base"
   elif [ -n "$(git_ws for-each-ref "refs/remotes/*/$ENABLING")" ]; then
     fail "refusing to delete $ENABLING: a remote-tracking ref exists (it was pushed)"
   elif [ ! -s "$EVIDENCE/enabling_commit.patch" ]; then
@@ -273,7 +283,7 @@ if [ "$DELETE" = 1 ]; then
 else
   say "kept (no --delete-enabling-branch)"
 fi
-git_ws branch --list 'local/m61-one-cycle-*' | sed 's/^/local branch: /' | tee -a "$REPORT"
+git_ws branch --list 'local/m61-one-cycle-*' 'local/m55-s2-*' | sed 's/^/local branch: /' | tee -a "$REPORT"
 
 if [ "$FAILED" = 0 ]; then say "VERDICT: DISABLED AND VERIFIED"; exit 0; fi
 say "VERDICT: NOT VERIFIED - do not continue; fix and re-run"

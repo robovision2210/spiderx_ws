@@ -1,0 +1,4 @@
+26819 26768   0  0.0  \_ /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/s
+26822 26819   0  1.5  |   \_ ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_descript
+26913 26822   0 77.7  |       \_ ign gazebo server
+26916 26822  19  176  |       \_ ign gazebo gui

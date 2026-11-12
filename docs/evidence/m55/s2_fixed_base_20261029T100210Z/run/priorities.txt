@@ -1,0 +1,4 @@
+10768 10728   0  0.0  \_ /bin/sh -c ruby /opt/mm/root/envs/humble/bin/ign gazebo -r -v 2 /home/user/spiderx_ws/install/s
+10772 10768   0  1.3  |   \_ ign gazebo -r -v 2 /home/user/spiderx_ws/install/spiderx_description/share/spiderx_descript
+10873 10772   0 74.1  |       \_ ign gazebo server
+10882 10772  19  163  |       \_ ign gazebo gui

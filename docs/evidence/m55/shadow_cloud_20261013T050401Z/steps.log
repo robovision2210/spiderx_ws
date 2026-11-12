@@ -1,0 +1,8 @@
+[05:04:08] launch
+[05:05:18] node up after 70 s: locomotion node up in SHADOW mode (dispatch gate False); levels [1.06, 1.9, 2.34] mm/s
+[05:05:21] captures before
+[05:05:28] teleop driver
+[05:07:14] driver exit 0
+[05:07:17] captures after
+[05:07:20] stop
+[05:07:24] end

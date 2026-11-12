@@ -1,0 +1,15 @@
+{"event": "transition", "n": 1, "previous": "DISARMED", "state": "READY", "wall": 2020.061145614, "why": "arm"}
+{"event": "request", "message": "armed at boundary 0 (level 0, posture error 0.0001 rad)", "n": 2, "request": "arm", "state": "READY", "wall": 2020.061145614}
+{"b_from": 0, "b_to": 1, "continuity_error_rad": 9.695961202961424e-05, "direction": 1, "duration_s": 1.7, "event": "goal_sent", "fingerprint": "c6212306c823a167fc2b1dd0dd4ebaa65e20abe3f65ac6681490d46233d6705a", "kind": "shift", "leg": null, "level": 0, "n": 3, "phase": 0, "points": 16, "seq": 1, "state": "READY", "wall": 2020.224615808}
+{"event": "transition", "n": 4, "previous": "READY", "state": "STARTING", "wall": 2020.224615808, "why": "dispatch"}
+{"accepted": true, "event": "goal_response", "n": 5, "seq": 1, "state": "STARTING", "wall": 2020.274483302}
+{"event": "transition", "n": 6, "previous": "STARTING", "state": "WALKING", "wall": 2020.274483302, "why": "accepted"}
+{"event": "transition", "n": 7, "previous": "WALKING", "state": "STOPPING", "wall": 2021.54218317, "why": "disarm"}
+{"event": "request", "message": "stopping after the current phase, then disarming", "n": 8, "request": "disarm", "state": "STOPPING", "wall": 2021.54218317}
+{"event": "request", "message": "stopping after the current phase (held until a zero command)", "n": 9, "request": "stop", "state": "STOPPING", "wall": 2021.543228743}
+{"event": "fault", "n": 10, "reason": "estop", "state": "STOPPING", "wall": 2021.543615299}
+{"event": "transition", "n": 11, "previous": "STOPPING", "state": "FAULTED", "wall": 2021.543615299, "why": "estop"}
+{"event": "cancel_sent", "n": 12, "seq": 1, "state": "FAULTED", "wall": 2021.543615299}
+{"event": "request", "message": "emergency stop: goal cancelled (if any), holding; reset and arm to continue", "n": 13, "request": "estop", "state": "FAULTED", "wall": 2021.543615299}
+{"code": 0, "event": "cancel_response", "n": 14, "seq": 1, "state": "FAULTED", "wall": 2021.574491095}
+{"error_code": 0, "error_string": "", "event": "result", "n": 15, "seq": 1, "state": "FAULTED", "status": 5, "wall": 2021.624800094}

@@ -1,0 +1,172 @@
+[INFO] [launch]: All log files can be found below /root/.ros/log/2026-10-13-09-29-01-772450-vm-24313
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [ign gazebo-1]: process started with pid [24380]
+[INFO] [robot_state_publisher-2]: process started with pid [24382]
+[INFO] [create-3]: process started with pid [24385]
+[INFO] [parameter_bridge-4]: process started with pid [24387]
+[INFO] [parameter_bridge-5]: process started with pid [24390]
+[INFO] [spawner-6]: process started with pid [24393]
+[robot_state_publisher-2] [INFO] [1791883742.888197073] [robot_state_publisher]: got segment b_s1_1
+[robot_state_publisher-2] [INFO] [1791883742.893813916] [robot_state_publisher]: got segment b_s1_c_horn_1
+[robot_state_publisher-2] [INFO] [1791883742.893858501] [robot_state_publisher]: got segment b_s2_1
+[robot_state_publisher-2] [INFO] [1791883742.893864517] [robot_state_publisher]: got segment b_s2_c_horn_1
+[robot_state_publisher-2] [INFO] [1791883742.893869568] [robot_state_publisher]: got segment b_s3_1
+[robot_state_publisher-2] [INFO] [1791883742.893874177] [robot_state_publisher]: got segment b_s3_c_horn_1
+[robot_state_publisher-2] [INFO] [1791883742.893878281] [robot_state_publisher]: got segment b_s4_1
+[robot_state_publisher-2] [INFO] [1791883742.893882341] [robot_state_publisher]: got segment b_s4_c_horn_1
+[robot_state_publisher-2] [INFO] [1791883742.893886584] [robot_state_publisher]: got segment base_link
+[robot_state_publisher-2] [INFO] [1791883742.893891088] [robot_state_publisher]: got segment dummy_link
+[robot_state_publisher-2] [INFO] [1791883742.893895468] [robot_state_publisher]: got segment lf_c_horn_1
+[robot_state_publisher-2] [INFO] [1791883742.893899235] [robot_state_publisher]: got segment lf_foot_1
+[robot_state_publisher-2] [INFO] [1791883742.893903259] [robot_state_publisher]: got segment lf_holder_1
+[robot_state_publisher-2] [INFO] [1791883742.893906885] [robot_state_publisher]: got segment lf_holder_suppor1_1
+[robot_state_publisher-2] [INFO] [1791883742.893910793] [robot_state_publisher]: got segment lf_thigh_1
+[robot_state_publisher-2] [INFO] [1791883742.893914699] [robot_state_publisher]: got segment lidar_link
+[robot_state_publisher-2] [INFO] [1791883742.893918482] [robot_state_publisher]: got segment lr_c_horn_1
+[robot_state_publisher-2] [INFO] [1791883742.893922292] [robot_state_publisher]: got segment lr_foot_1
+[robot_state_publisher-2] [INFO] [1791883742.893926290] [robot_state_publisher]: got segment lr_holder_1
+[robot_state_publisher-2] [INFO] [1791883742.893930484] [robot_state_publisher]: got segment lr_holder_suppor1_1
+[robot_state_publisher-2] [INFO] [1791883742.893935327] [robot_state_publisher]: got segment lr_thigh_1
+[robot_state_publisher-2] [INFO] [1791883742.893939293] [robot_state_publisher]: got segment rf_c_horn_1
+[robot_state_publisher-2] [INFO] [1791883742.893943229] [robot_state_publisher]: got segment rf_foot_1
+[robot_state_publisher-2] [INFO] [1791883742.893946955] [robot_state_publisher]: got segment rf_holder_1
+[robot_state_publisher-2] [INFO] [1791883742.893950899] [robot_state_publisher]: got segment rf_holder_suppor1_1
+[robot_state_publisher-2] [INFO] [1791883742.893954744] [robot_state_publisher]: got segment rf_thigh_1
+[robot_state_publisher-2] [INFO] [1791883742.893958502] [robot_state_publisher]: got segment rr_c_horn_1
+[robot_state_publisher-2] [INFO] [1791883742.893962247] [robot_state_publisher]: got segment rr_foot_1
+[robot_state_publisher-2] [INFO] [1791883742.893965988] [robot_state_publisher]: got segment rr_holder_1
+[robot_state_publisher-2] [INFO] [1791883742.893969580] [robot_state_publisher]: got segment rr_holder_suppor1_1
+[robot_state_publisher-2] [INFO] [1791883742.893973666] [robot_state_publisher]: got segment rr_thigh_1
+[robot_state_publisher-2] [INFO] [1791883742.893977245] [robot_state_publisher]: got segment top_1
+[robot_state_publisher-2] [INFO] [1791883742.893980891] [robot_state_publisher]: got segment world
+[create-3] [INFO] [1791883742.940716841] [spawn_spiderx]: Requesting list of world names.
+[parameter_bridge-5] [INFO] [1791883742.945502278] [spiderx_sim_ground_truth_bridge]: Creating GZ->ROS Bridge: [/world/spiderx_fortress/pose/info (ignition.msgs.Pose_V) -> /world/spiderx_fortress/pose/info (tf2_msgs/msg/TFMessage)] (Lazy 0)
+[ign gazebo-1] QStandardPaths: XDG_RUNTIME_DIR not set, defaulting to '/tmp/runtime-root'
+[spawner-6] [INFO] [1791883743.457512277] [spawner_joint_state_broadcaster]: waiting for service /controller_manager/list_controllers to become available...
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/StyleDialog.qml:112:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/StyleDialog.qml:105:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/StyleDialog.qml:98:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:102:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:27:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] Broken filename passed to function[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] file::/Gazebo/GazeboDrawer.qml:242:3: QML Connections: Implicitly defined onFoo properties in Connections are deprecated. Use this syntax instead: function onFoo(<arguments>) { ... }[0m[1;33m[0m
+[parameter_bridge-4] [INFO] [1791883743.991056685] [spiderx_gz_bridge]: Creating GZ->ROS Bridge: [/clock (gz.msgs.Clock) -> /clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
+[parameter_bridge-4] [INFO] [1791883743.993080033] [spiderx_gz_bridge]: Creating GZ->ROS Bridge: [/spiderx/scan (gz.msgs.LaserScan) -> /scan (sensor_msgs/msg/LaserScan)] (Lazy 0)
+[create-3] [INFO] [1791883747.950697554] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883752.951655400] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883757.952136473] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883762.953025098] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883767.953596242] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883772.954022435] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883777.954401256] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883782.954848620] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883787.955285614] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883792.955832426] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883797.956308485] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883802.956939305] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883807.957504434] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883812.957913795] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883817.958359036] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883822.958776821] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883827.959243096] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883832.959902885] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883837.960488467] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883842.961192152] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883847.961769501] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883852.962381074] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883857.962904626] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883862.963406588] [spawn_spiderx]: Requesting list of world names.
+[spawner-6] [FATAL] [1791883863.659861457] [spawner_joint_state_broadcaster]: Could not contact service /controller_manager/list_controllers
+[ERROR] [spawner-6]: process has died [pid 24393, exit code 1, cmd '/opt/mm/root/envs/humble/lib/controller_manager/spawner joint_state_broadcaster --controller-manager /controller_manager --controller-manager-timeout 120 --switch-timeout 60 --service-call-timeout 75 --ros-args -r __node:=spawner_joint_state_broadcaster'].
+[ERROR] [spiderx_controller]: joint_state_broadcaster startup failed; leg_trajectory_controller was not started; press Ctrl+C and relaunch. (spawner exit code 1; see its output above)
+[create-3] [INFO] [1791883867.963916126] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883872.964356466] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883877.964935984] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883882.965401099] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883887.965877436] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883892.966367126] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883897.966909509] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883902.967392725] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883907.967770663] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883912.968229371] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883917.968785496] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883922.969207657] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883927.969655051] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883932.970083807] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883937.970488417] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883942.971018277] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883947.971437085] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883952.971996854] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883958.004193956] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883963.004629041] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883968.005067770] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883973.005670910] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883978.006268943] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883983.006743196] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883988.007202705] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883993.007785156] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791883998.008202573] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884003.008892004] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884008.009508754] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884013.014390735] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884018.014964857] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884023.015554173] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884028.016051445] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884033.016628606] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884038.017247413] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884043.017751013] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884048.018234286] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884053.018763586] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884058.019190534] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884063.019661618] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884068.020253415] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884073.020756411] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884078.021203996] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884083.021682959] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884088.022288912] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884093.022902881] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884098.023353337] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884103.024103610] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884108.024665448] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884113.025191073] [spawn_spiderx]: Requesting list of world names.
+[create-3] [INFO] [1791884115.000859254] [rclcpp]: signal_handler(signum=2)
+[parameter_bridge-5] [INFO] [1791884115.000932054] [rclcpp]: signal_handler(signum=2)
+[robot_state_publisher-2] [INFO] [1791884115.001439156] [rclcpp]: signal_handler(signum=2)
+[parameter_bridge-4] [INFO] [1791884115.002741337] [rclcpp]: signal_handler(signum=2)
+[INFO] [parameter_bridge-4]: process has finished cleanly [pid 24387]
+[INFO] [parameter_bridge-5]: process has finished cleanly [pid 24390]
+[INFO] [robot_state_publisher-2]: process has finished cleanly [pid 24382]
+[create-3] [INFO] [1791884118.025913604] [spawn_spiderx]: Timed out when getting world names.
+[ERROR] [create-3]: process has died [pid 24385, exit code 255, cmd '/opt/mm/root/envs/humble/lib/ros_gz_sim/create -name spiderx -topic robot_description -x 0 -y 0 -z 0 -R 0 -P 0 -Y 0 --ros-args -r __node:=spawn_spiderx'].
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:52: TypeError: Cannot read property 'dialogOnExitText' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:54: TypeError: Cannot read property 'exitDialogShowCloseGui' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:53: TypeError: Cannot read property 'exitDialogShowShutdown' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:251: TypeError: Cannot read property 'showDrawer' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/SideDrawer.qml:93: TypeError: Cannot read property 'showDefaultDrawerOpts' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/IgnSplit.qml:56: TypeError: Cannot read property 'pluginCount' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:41: TypeError: Cannot read property 'toolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:42: TypeError: Cannot read property 'toolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:43: TypeError: Cannot read property 'toolBarColorDark' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:44: TypeError: Cannot read property 'toolBarTextColorDark' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:45: TypeError: Cannot read property 'pluginToolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:46: TypeError: Cannot read property 'pluginToolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:47: TypeError: Cannot read property 'pluginToolBarColorDark' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:48: TypeError: Cannot read property 'pluginToolBarTextColorDark' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:50: TypeError: Cannot read property 'defaultExitAction' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:51: TypeError: Cannot read property 'showDialogOnExit' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:55: TypeError: Cannot read property 'exitDialogShutdownText' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:56: TypeError: Cannot read property 'exitDialogCloseGuiText' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:66: TypeError: Cannot read property 'toolBarColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:76: TypeError: Cannot read property 'toolBarTextColorLight' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:/qml/PluginMenu.qml:126: TypeError: Cannot call method 'PluginListModel' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:219: TypeError: Cannot read property 'showPluginMenu' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:202: TypeError: Cannot read property 'showDrawer' of null[0m[1;33m[0m
+[ign gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:797] [0m[1;33m[QT] qrc:qml/Main.qml:188: TypeError: Cannot read property 'showDrawer' of null[0m[1;33m[0m
+[ign gazebo-1] Escalating to SIGKILL on [Ignition Gazebo Server]
+[INFO] [ign gazebo-1]: process has finished cleanly [pid 24380]
+[INFO] [launch]: process[ign gazebo-1] was required: shutting down launched system

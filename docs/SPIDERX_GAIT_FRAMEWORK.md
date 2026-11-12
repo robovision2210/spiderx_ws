@@ -247,5 +247,5 @@ purpose. Update the pins **and** explain the change in `M4_5_TEST_RESULTS.md`.
 | Walking in Gazebo | A trajectory streamer for `leg_trajectory_controller`, contact sensing, a fall criterion and a video, as the unscheduled "Future — gait playback" item |
 | Dynamic stability (ZMP or CoP), balance | Dynamics, real masses, IMU feedback |
 | Energy or power | Servo models and measured current. The proxies only rank geometry |
-| Turning, sideways motion, `/cmd_vel` | M5.5 — Command-velocity bridge (future work; not implemented) |
+| Turning, sideways motion | Not supported: the M5.5 crawl walks forward and backward only, and `/cmd_vel` lateral/yaw components are rejected ([M5.5](M55_KEYBOARD_WALKING.md)) |
 | Hardware | Calibration, servo IDs and limits that do not exist in this repository. They must not be invented |
