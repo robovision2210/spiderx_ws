@@ -1,0 +1,30 @@
+== final state 2026-11-19T12:05:01Z (reference: /root/spiderx_evidence/s4e_current_work_root.txt, written 2026-11-19T06:32:17Z at the start of this batch)
+-- processes (gazebo, ros2, ROS daemon, bridge, colcon, pytest, launch, M6/M55 tools, drivers, observer, test decoys):
+  none
+-- /home/user/spiderx_ws: branch claude/spiderx-s4d-e-preparation HEAD 1e1146423f984f4817b28b492ea42f7fe84e5434 worktree entries 0 stashes 0
+-- files newer than the reference, outside this batch's work root and evidence:
+  /home/user/spiderx_ws: 2
+    /home/user/spiderx_ws/.git
+    /home/user/spiderx_ws/.git/config
+  /root/spiderx_postmerge_20261119T061236Z: 0
+  /root/spiderx_fresh_disabled_20261102T185957Z: 0
+  /root/spiderx_fresh_disabled_20261110T071506Z: 0
+  /root/spiderx_fresh_disabled_20261111T104338Z: 0
+  /root/spiderx_live_enabled_20261111T052817Z: 0
+  /root/spiderx_e_live_enabled_20261111T113831Z: 0
+  /root/spiderx_gz_overlay_ws_r2: 0
+  /opt/mm: 0
+-- work clone /root/spiderx_s4e_20261119T063214Z/spiderx_ws: branch spiderx/s4e-human-keyboard HEAD e7ffd207dbff6a871c6c522713ced1bddf4df0b7 (no commit made: denied); modified tracked files:
+   M README.md
+   M STATUS.md
+   M scripts/m61_restore_and_verify_disabled.sh
+   M src/spiderx_controller/test/test_m61_restore_script.py
+  untracked entries: 57
+  ignored: !! log/ !! src/spiderx_controller/launch/__pycache__/ !! src/spiderx_controller/scripts/__pycache__/ !! src/spiderx_controller/test/__pycache__/ 
+-- local branches in the work clone:   main * spiderx/s4e-human-keyboard 
+-- remote: origin/main e7ffd207dbff6a871c6c522713ced1bddf4df0b7; no push made
+-- disk: /dev/vda        252G   20G   20G  50% /
+-- notes
+  /home/user/spiderx_ws/.git/config: rewritten at 2026-11-19T12:01:59Z, during this session's worker restart (between 07:37Z and 12:02Z), before any command of this batch after the restart; not by this batch. Content: the normal remote and branch-tracking configuration (no credential in it). That checkout's branch, HEAD 1e11464, worktree and stash list are unchanged.
+  /home/user/spiderx_ws/.git directory mtime: the final-state git status (a transient index lock).
+  work clone ignored entries: log/ (colcon version-check in the toolchain check) and __pycache__/ from the test runs.

@@ -1,0 +1,12 @@
+PASS 6 modules imported from the fresh installation /root/spiderx_s4e_20261119T063214Z/bases/install
+PASS every module resolves (symlink install) into the clone /root/spiderx_s4e_20261119T063214Z/spiderx_ws/src/spiderx_controller/
+PASS installed gates: LIVE_DISPATCH_ENABLED=False, M55_LOCOMOTION_DISPATCH_ENABLED=False, M61_LIVE_DISPATCH_ENABLED=False
+PASS phase library goals 54 (expected 54)
+PASS fingerprints 62f8a100... (expected 62f8a100...)
+PASS library.json 917fc4d7... = disabled baseline 917fc4d7...
+PASS config m55_locomotion.yaml loaded from the fresh installation, resolves into the clone, sha ab0dccd4... = src
+PASS m6_gait_replay.py --live refusal text: M6.1 protected trot gait replay. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here sh
+PASS m6_live_playback --live refusal text: M6.0-D live-playback tool. Live dispatch is HARD-DISABLED in this build; --dry-run and --mock never touch a ROS graph. Nothing here shows mo
+POST-INSTALL VERDICT: PASS
+post_install_check exit 0
+PASS no old SpiderX checkout or installation path in the installation-check environment (env.txt)

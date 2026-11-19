@@ -1,0 +1,8 @@
+== score_s4e.py before its first test run (contract section 12: afterwards only defect fixes, each logged here)
+time_utc 2026-11-19T07:10:58Z
+sha256 df9a30a3b43aa7ac9649039a2cecd98e58ed7b98546386e1f9bbe1dcba756d58
+
+== defect fixes after the first test run (no criterion changed)
+2026-11-19T07:11:54Z fix 1: H7 compared the result with the string 'CANCELED'; the node logs action_msgs GoalStatus codes. Now sc.STATUS_CANCELED (5) / sc.STATUS_SUCCEEDED (4), as the frozen S3/S4d-E scorers do. Criterion unchanged: CANCELED passes, SUCCEEDED or none UNMEASURED, other FAIL.
+2026-11-19T07:11:54Z fix 2: H8 required the whole key plan to parse before finding q, so a byte relayed after q (a contradiction) read UNMEASURED instead of FAIL. Now q is the first relayed quit, parsed or not. Criterion unchanged.
+sha256 after the fixes: 653fd8e05d6928af4b86920e79da691496436e81787cc3c0cb918665f0cd09b9

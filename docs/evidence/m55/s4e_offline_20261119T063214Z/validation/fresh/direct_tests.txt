@@ -1,0 +1,16 @@
+SPIDERX_REPO=/root/spiderx_s4e_20261119T063214Z/spiderx_ws; S2_BAG=<unset>
+== direct tests (not collected by colcon) 2026-11-19T07:35:06Z at e7ffd207dbff6a871c6c522713ced1bddf4df0b7, fresh installation /root/spiderx_s4e_20261119T063214Z/bases/install sourced
+-- src/spiderx_scripts/test (pytest)
+2 passed in 0.10s
+-- scripts/s2 (unittest)
+Ran 48 tests in 1.205s
+
+OK (skipped=3)
+-- scripts/s3 (unittest, all three test files)
+Ran 86 tests in 10.027s
+
+OK
+-- scripts/s4 (unittest, S4a-S4d drivers and scorers)
+Ran 367 tests in 134.017s
+
+OK
