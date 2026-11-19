@@ -603,3 +603,61 @@ def test_s4d_e_look_alike_names_are_never_deleted(ws, quiet_host, other):
     assert rc == 1
     assert git(ws, 'branch', '--list', other).strip() == other
     assert 'refusing to delete' in report(ws)
+
+
+# ------------------------------------------------- S4e (docs/S4E_CONTRACT.md section 9)
+# The frozen S4d tests above refuse local/m55-s4e-<UTC> as a look-alike and stay unchanged, so
+# S4e uses the narrower local/m55-s4e-h-* (owner decision D9).
+ENABLING_S4E = 'local/m55-s4e-h-20261119T000000Z'
+
+
+def test_full_s4e_restore_preserves_restores_and_deletes_the_branch(ws, quiet_host):
+    commit = enable_on_branch(ws, ENABLING_S4E, m55=True)
+    rc, out = run(ws, '--base base', f'--enabling-ref {ENABLING_S4E}', "--build-cmd 'true'",
+                  '--delete-enabling-branch')
+    assert rc == 0, out
+    ev = ws.parent / 'evidence'
+    assert (ev / 'enabling_commit.txt').read_text().split() == [ENABLING_S4E, commit]
+    assert '+M55_LOCOMOTION_DISPATCH_ENABLED = True' in (ev / 'enabling_commit.patch').read_text()
+    assert git(ws, 'rev-parse', '--abbrev-ref', 'HEAD') == 'base'
+    assert git(ws, 'branch', '--list', 'local/m55-s4e-*') == ''
+    rep = report(ws)
+    assert 'ok: a. all three gates False' in rep and f'Deleted branch {ENABLING_S4E}' in rep
+    assert rep.index('ok: c. m6_live_playback --live refused') < rep.index('Deleted branch')
+
+
+def test_an_s4e_branch_is_kept_when_a_check_fails(ws, quiet_host):
+    enable_on_branch(ws, ENABLING_S4E, m55=True)
+    rc, _ = run(ws, '--base base', f'--enabling-ref {ENABLING_S4E}', '--verify-only',
+                '--delete-enabling-branch')
+    assert rc == 1
+    assert git(ws, 'branch', '--list', ENABLING_S4E).strip().lstrip('* ') == ENABLING_S4E
+    assert 'not deleted: a check failed' in report(ws)
+
+
+def test_a_pushed_s4e_branch_is_never_deleted(ws, quiet_host):
+    enable_on_branch(ws, ENABLING_S4E, m55=True)
+    git(ws, 'update-ref', f'refs/remotes/origin/{ENABLING_S4E}', ENABLING_S4E)
+    rc, _ = run(ws, '--base base', f'--enabling-ref {ENABLING_S4E}', "--build-cmd 'true'",
+                '--delete-enabling-branch')
+    assert rc == 1
+    assert git(ws, 'branch', '--list', ENABLING_S4E).strip() == ENABLING_S4E
+    assert 'a remote-tracking ref exists' in report(ws)
+
+
+@pytest.mark.parametrize('other', ['local/m55-s4e-20261119T000000Z',
+                                   'local/m55-s4e-h20261119T000000Z',
+                                   'local/m55-s4e-hx-20261119T000000Z',
+                                   'local/m55-s4eh-20261119T000000Z',
+                                   'local/m55-s4e-H-20261119T000000Z',
+                                   'local/m55-s4e-human-20261119T000000Z',
+                                   'local/m55-s4e-h',
+                                   'local/s4e-h-20261119T000000Z',
+                                   'local/m55-s4f-h-20261119T000000Z'])
+def test_s4e_look_alike_names_are_never_deleted(ws, quiet_host, other):
+    enable_on_branch(ws, other, m55=True)
+    rc, _ = run(ws, '--base base', f'--enabling-ref {other}', "--build-cmd 'true'",
+                '--delete-enabling-branch')
+    assert rc == 1
+    assert git(ws, 'branch', '--list', other).strip() == other
+    assert 'refusing to delete' in report(ws)

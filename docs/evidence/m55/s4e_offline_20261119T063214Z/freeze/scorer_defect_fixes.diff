@@ -1,0 +1,28 @@
+--- score_s4e.py (before its first test, sha256 df9a30a3...)	2026-11-19 07:08:47.993400508 +0000
++++ score_s4e.py (validated, sha256 653fd8e0...)	2026-11-19 07:11:54.247452128 +0000
+@@ -540,9 +540,9 @@
+     jw = [] if t_end is None else window(b.get('joints') or [], t_res, t_end)
+     pw = [] if t_end is None else window(b.get('poses') or [], t_res, t_end)
+     cov = t_end is not None and covered(jw, t_res, t_end) and covered(pw, t_res, t_end)
+-    if status == 'CANCELED':
++    if status == sc.STATUS_CANCELED:              # action_msgs GoalStatus codes (S3: 4, 5)
+         result_ok = True
+-    elif status in (None, 'SUCCEEDED'):
++    elif status in (None, sc.STATUS_SUCCEEDED):
+         result_ok = None
+     else:
+         result_ok = False
+@@ -577,10 +577,9 @@
+ 
+ # ------------------------------------------------------------------ H8 close
+ def assess_close(c, hold_end):
+-    k = plan_steps(c)
+-    if k is None:
+-        return unmeasured('the keys do not parse as the plan (H2)')
+-    t_q = k['K6']
++    t_q = next((t for t, a in c['obs']['tokens'] if a == QUIT), None)   # K6, parsed or not
++    if t_q is None:
++        return unmeasured('no q was relayed')
+     acc = [r for r in c['requests'] if r['t'] >= t_q]
+     ref = [r for r in c['refusals'] if r['t'] >= t_q]
+     ex = c['obs']['teleop_exit']

@@ -1,0 +1,21 @@
+diff -r /root/spiderx_evidence/postmerge_disabled_20261119T061236Z/tools/fresh_build_test.sh /root/spiderx_evidence/s4e_offline_20261119T063214Z/phase4/tools/fresh_build_test.sh
+3c3
+< # suite of a FRESH CLONE of main e7ffd20, with NEW colcon bases. Changes: the workspace is the clone; any old
+---
+> # suite of the S4e work clone (main e7ffd20 + the uncommitted S4e files), with NEW colcon bases. Changes: the workspace is the clone; any old
+12,13c12,13
+< FU=$1; F=$2; WS=/root/spiderx_postmerge_20261119T061236Z/spiderx_ws; D=$FU/fresh
+< OLD='/home/user/spiderx_ws|/root/spiderx_fresh_disabled_|/root/spiderx_live_enabled_|/root/spiderx_e_live_enabled_'
+---
+> FU=$1; F=$2; WS=/root/spiderx_s4e_20261119T063214Z/spiderx_ws; D=$FU/fresh
+> OLD='/home/user/spiderx_ws|/root/spiderx_fresh_disabled_|/root/spiderx_live_enabled_|/root/spiderx_e_live_enabled_|/root/spiderx_postmerge_'
+diff -r /root/spiderx_evidence/postmerge_disabled_20261119T061236Z/tools/install_check.py /root/spiderx_evidence/s4e_offline_20261119T063214Z/phase4/tools/install_check.py
+15c15
+< WS = '/root/spiderx_postmerge_20261119T061236Z/spiderx_ws'
+---
+> WS = '/root/spiderx_s4e_20261119T063214Z/spiderx_ws'
+diff -r /root/spiderx_evidence/postmerge_disabled_20261119T061236Z/tools/install_check.sh /root/spiderx_evidence/s4e_offline_20261119T063214Z/phase4/tools/install_check.sh
+10c10
+< BASE_LIB=/root/spiderx_postmerge_20261119T061236Z/spiderx_ws/docs/evidence/m55/s4c_l1_live_20261102T182303Z/disabled/library.json
+---
+> BASE_LIB=/root/spiderx_s4e_20261119T063214Z/spiderx_ws/docs/evidence/m55/s4c_l1_live_20261102T182303Z/disabled/library.json

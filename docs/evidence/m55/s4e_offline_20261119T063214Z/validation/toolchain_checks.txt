@@ -1,0 +1,20 @@
+== toolchain 2026-11-19T07:26:26Z
+57cc33f84f9968dff4960bc85b1c1e7baf60025e42ade94061679673996c6193  scripts/env/cloud_env_setup.sh
+PASS toolchain setup script = the recorded 57cc33f8...
+compiler: x86_64-conda-linux-gnu-g++ (conda-forge gcc 15.3.0-7) 15.3.0
+PASS compiler = overlay provenance
+ROS_DISTRO=humble prefix=/opt/mm/root/envs/humble python=Python 3.11.17
+6.16.0
+colcon-argcomplete 0.3.3: up-to-date
+== r2 overlay provenance
+PASS overlay provenance = the clone's committed S3 copy
+PASS patch 0001-plugin-node-parameter-overrides 14238400208d0452b98362da3173c0839feca0cde973d6403f03bb0d5dcd7bac (clone file = provenance)
+PASS patch 0002-destructor-no-second-node-removal 520e73cc59a68025b237347e7e54df64b45739048fcc90a623011f728cba6261 (clone file = provenance)
+PASS library libgz_ros2_control-system.so 3a8f20441caad3caff4df8912c04e673948f6cf011e34658e5d094c614031b27
+PASS library libgz_hardware_plugins.so 06777e140ea1858b1f54e95bd095bf1132b43403a86e9a00dcc2e4de0083d9d5
+PASS overlay source HEAD bfc5845
+PASS overlay source: every present file = upstream bfc5845 + the clone's 0001 + 0002
+overlay reference tree kept (not deleted): /root/spiderx_evidence/s4e_offline_20261119T063214Z/phase4/provenance/scratch/overlay_ref.1TjeUM
+config ab0dccd43fefe877fac21e1c51d1fdd0ae197ac456b8c42502b0bb7ba5e42a93
+PASS config = the validated ab0dccd4...
+TOOLCHAIN VERDICT: PASS

@@ -1,0 +1,20 @@
+== flake8 7.4.1 (mccabe: 0.7.0, pycodestyle: 2.15.0, pyflakes: 4.0.3) CPython 3.11.17 on --max-line-length 99 on the new Python files (2026-11-19T07:29:55Z)
+scripts/s4/s4e_terminal_preflight.py
+scripts/s4/test_s4e_terminal_preflight.py
+scripts/s4/s4e_observer.py
+scripts/s4/test_s4e_observer.py
+scripts/s4/score_s4e.py
+scripts/s4/test_score_s4e.py
+scripts/s4/test_s4e_harness_template.py
+flake8 exit 0 (new files)
+== appended lines of src/spiderx_controller/test/test_m61_restore_script.py (606 and later; line 92 is a pre-existing 100-column line)
+findings in the appended lines: 0
+== bash -n on the harness template
+ok scripts/s4/s4e_harness_template/checks.sh
+ok scripts/s4/s4e_harness_template/cleanup.sh
+ok scripts/s4/s4e_harness_template/env.sh
+ok scripts/s4/s4e_harness_template/guarded.sh
+ok scripts/s4/s4e_harness_template/restore.sh
+ok scripts/s4/s4e_harness_template/s4e_session.sh
+ok scripts/s4/s4e_harness_template/scan.sh
+ok scripts/s4/s4e_harness_template/watchdog.sh
